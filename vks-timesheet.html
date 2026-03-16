@@ -846,22 +846,48 @@ window.pd = ()=>{ pinBuf=pinBuf.slice(0,-1); updDots(); $('p-err').textContent='
 function updDots(){ for(let i=0;i<4;i++) $('d'+i).classList.toggle('filled',i<pinBuf.length); }
 
 async function checkPIN(){
-  const h=await hashPIN(pinBuf);
-  if(h===CD.pinHash){
-    await updateDoc(doc(db,'users',CU.uid),{pinAttempts:0});
-    setPinDone(CU.uid); enterApp();
+  const h = await hashPIN(pinBuf);
+
+  if(h === CD.pinHash){
+    await updateDoc(doc(db,'users',CU.uid), { pinAttempts:0, locked:false });
+    CD.pinAttempts = 0;
+    CD.locked = false;
+    setPinDone(CU.uid);
+    enterApp();
   } else {
-    const att=(CD.pinAttempts||0)+1;
-    if(att>=3){
-      await updateDoc(doc(db,'users',CU.uid),{locked:true,pinAttempts:att,lockedAt:Timestamp.now(),lockedReason:'3 wrong PIN attempts'});
-      await wlog({action:`${CD.name||CU.email} locked after 3 wrong PIN attempts`,actorName:CD.name||'',actorEmail:CU.email,type:'lock'});
+    const att = (CD.pinAttempts || 0) + 1;
+
+    // ADMIN SHOULD NEVER LOCK
+    if(CD.role === 'admin'){
+      await updateDoc(doc(db,'users',CU.uid), { pinAttempts:att, locked:false });
+      CD.pinAttempts = att;
+
+      $('p-err').textContent = 'Incorrect PIN.';
+      $('p-lft').textContent = `Admin account cannot be locked. Attempts: ${att}`;
+
+      pinBuf='';
+      updDots();
+      return;
+    }
+
+    if(att >= 3){
+      await updateDoc(doc(db,'users',CU.uid), {
+        locked:true,
+        pinAttempts:att,
+        lockedAt:Timestamp.now(),
+        lockedReason:'3 wrong PIN attempts'
+      });
+
       ss('sc-locked');
     } else {
-      await updateDoc(doc(db,'users',CU.uid),{pinAttempts:att});
-      CD.pinAttempts=att;
+      await updateDoc(doc(db,'users',CU.uid), { pinAttempts:att });
+      CD.pinAttempts = att;
+
       $('p-err').textContent='Incorrect PIN.';
       $('p-lft').textContent=`${3-att} attempt(s) remaining`;
-      pinBuf=''; updDots();
+
+      pinBuf='';
+      updDots();
     }
   }
 }
