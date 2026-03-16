@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>VKS · Timesheet Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --ink:#1a1410;--paper:#fdf8f2;--cream:#f5ede0;--gold:#c9960c;--gold-l:#e8b84b;
+  --rust:#b84c1e;--sage:#4a6741;--border:#ddd0be;--muted:#8a7a6a;--white:#fff;
+  --blue:#1e40af;--purple:#5b21b6;--sh:0 2px 16px rgba(26,20,16,.10);--r:10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;-webkit-text-size-adjust:100%}
+button{cursor:pointer;font-family:'DM Sans',sans-serif}
+
+/* ── SCREENS ── */
+.screen{display:none;min-height:100vh}
+.screen.active{display:flex}
+#sc-login,#sc-pin,#sc-setpin,#sc-locked,#sc-pending{
+  align-items:center;justify-content:center;padding:20px;
+  background:var(--ink);
+  background-image:repeating-linear-gradient(45deg,rgba(201,150,12,.04) 0,rgba(201,150,12,.04) 1px,transparent 0,transparent 50%);
+  background-size:20px 20px}
+
+/* ── CARDS (auth screens) ── */
+.auth-card{background:var(--paper);border-radius:18px;padding:40px 36px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.4);text-align:center}
+.firm{font-family:'DM Serif Display',serif;font-size:2rem;color:var(--gold);letter-spacing:3px}
+.firm-sub{font-size:.71rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:4px}
+.firm-tag{display:inline-block;margin-top:12px;background:var(--ink);color:var(--gold-l);font-size:.7rem;letter-spacing:2px;text-transform:uppercase;padding:4px 16px;border-radius:20px}
+.login-logo{margin-bottom:30px}
+.div-or{display:flex;align-items:center;gap:12px;margin:14px 0;color:var(--muted);font-size:.78rem}
+.div-or::before,.div-or::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* PIN */
+.pin-av{width:62px;height:62px;border-radius:50%;background:var(--cream);border:2px solid var(--border);margin:0 auto 12px;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1.5rem}
+.pin-av img{width:100%;height:100%;object-fit:cover}
+.pin-nm{font-family:'DM Serif Display',serif;font-size:1.2rem;margin-bottom:4px}
+.pin-hint{font-size:.8rem;color:var(--muted);margin-bottom:20px}
+.pin-dots{display:flex;gap:14px;justify-content:center;margin-bottom:20px}
+.dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);background:transparent;transition:all .18s}
+.dot.filled{background:var(--gold);border-color:var(--gold)}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:225px;margin:0 auto}
+.pk{padding:14px;border:1.5px solid var(--border);border-radius:12px;background:var(--white);font-size:1.1rem;font-weight:600;transition:all .18s;color:var(--ink);touch-action:manipulation}
+.pk:hover,.pk:active{background:var(--cream);border-color:var(--gold)}
+.pk.del{font-size:.82rem;color:var(--muted)}.pk.zero{grid-column:2}
+.pin-err{color:var(--rust);font-size:.8rem;margin-top:10px;min-height:18px}
+.pin-lft{font-size:.74rem;color:var(--muted);margin-top:4px}
+
+/* Set PIN */
+.spt{font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:6px}
+.sps{font-size:.82rem;color:var(--muted);margin-bottom:20px;line-height:1.6}
+
+/* Pending */
+.pend-icon{font-size:2.8rem;margin-bottom:12px}
+.pend-title{font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--gold);margin-bottom:8px}
+.pend-msg{font-size:.845rem;color:var(--muted);line-height:1.75;margin-bottom:16px}
+.pend-box{background:var(--cream);border-radius:10px;padding:13px 16px;margin-bottom:10px;text-align:left}
+.pend-box .lbl{font-size:.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:3px}
+.pend-box .val{font-weight:600;font-size:.875rem}
+.pulse{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--gold);margin-right:6px;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+
+/* Locked */
+.lock-icon{font-size:2.8rem;margin-bottom:12px}
+.lock-title{font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--rust);margin-bottom:8px}
+.lock-msg{font-size:.845rem;color:var(--muted);line-height:1.75}
+
+/* ── APP SHELL ── */
+#sc-app{flex-direction:column}
+header{background:var(--ink);padding:0 22px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.3)}
+.hbrand{font-family:'DM Serif Display',serif;color:var(--gold);font-size:1.1rem;letter-spacing:2px;white-space:nowrap}
+.hright{display:flex;align-items:center;gap:9px}
+.upill{background:rgba(201,150,12,.15);color:var(--gold-l);font-size:.73rem;padding:4px 11px;border-radius:20px;font-weight:500;display:flex;align-items:center;gap:6px;max-width:160px;overflow:hidden;white-space:nowrap}
+.upill img{width:19px;height:19px;border-radius:50%;flex-shrink:0}
+.rbadge{font-size:.63rem;letter-spacing:1px;text-transform:uppercase;background:var(--gold);color:var(--ink);padding:2px 8px;border-radius:20px;font-weight:700;white-space:nowrap}
+.tabs{background:var(--cream);border-bottom:1.5px solid var(--border);padding:0 18px;display:flex;gap:2px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:11px 14px;font-size:.8rem;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;transition:all .18s;white-space:nowrap;flex-shrink:0;touch-action:manipulation}
+.tab:hover{color:var(--ink)}.tab.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:600}
+.tbadge{display:inline-flex;align-items:center;justify-content:center;background:var(--rust);color:#fff;font-size:.6rem;font-weight:700;width:15px;height:15px;border-radius:50%;margin-left:4px}
+main{flex:1;padding:18px;max-width:1300px;margin:0 auto;width:100%}
+.page{display:none}.page.active{display:block;animation:fu .2s ease}
+@keyframes fu{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── UI COMPONENTS ── */
+.card{background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:18px;box-shadow:var(--sh);margin-bottom:16px}
+.ctitle{font-family:'DM Serif Display',serif;font-size:1.05rem;margin-bottom:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:11px;margin-bottom:18px}
+.scard{background:var(--white);border:1.5px solid var(--border);border-radius:11px;padding:14px 16px}
+.slbl{font-size:.67rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:4px}
+.sval{font-family:'DM Serif Display',serif;font-size:1.7rem;color:var(--ink)}
+.sval.g{color:var(--gold)}.sval.r{color:var(--rust)}.sval.b{color:var(--blue)}
+
+/* Storage bar */
+.stbar-bg{background:var(--cream);border-radius:8px;height:9px;overflow:hidden;margin:5px 0}
+.stbar-fill{height:100%;border-radius:8px;transition:width .8s ease;background:var(--sage)}
+.stbar-fill.warn{background:var(--gold)}.stbar-fill.danger{background:var(--rust)}
+
+/* Table */
+.tw{overflow-x:auto;border-radius:10px;border:1.5px solid var(--border);-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:.83rem;min-width:560px}
+thead{background:var(--cream)}
+th{padding:9px 12px;text-align:left;font-size:.67rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:600;white-space:nowrap}
+td{padding:9px 12px;border-top:1px solid var(--border);color:var(--ink);vertical-align:middle}
+tr:hover td{background:#fdf5e8}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.68rem;font-weight:600}
+.bg{background:#fef3c7;color:#92400e}.bs{background:#d1fae5;color:#065f46}
+.bb{background:#dbeafe;color:#1e40af}.br{background:#fee2e2;color:#991b1b}
+.bp{background:#ede9fe;color:#5b21b6}.bm{background:#f3f4f6;color:#374151}
+.bor{background:#fff7ed;color:#c2410c}
+
+/* Fields */
+.field{margin-bottom:13px}
+.field label{display:block;font-size:.73rem;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.field input,.field select,.field textarea{width:100%;padding:8px 11px;border:1.5px solid var(--border);border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:.875rem;background:var(--white);color:var(--ink);transition:border .2s;outline:none;-webkit-appearance:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold)}
+.field textarea{resize:vertical;min-height:68px}
+.fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:13px}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+
+/* Searchable dropdown */
+.sdwrap{position:relative}
+.sdinput{width:100%;padding:8px 11px;border:1.5px solid var(--border);border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:.875rem;background:var(--white);color:var(--ink);outline:none;cursor:text}
+.sdinput:focus{border-color:var(--gold)}
+.sddrop{display:none;position:absolute;top:calc(100% + 3px);left:0;right:0;background:var(--white);border:1.5px solid var(--gold);border-radius:var(--r);z-index:60;max-height:190px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.15)}
+.sddrop.open{display:block}
+.sdopt{padding:8px 11px;font-size:.855rem;cursor:pointer;color:var(--ink)}
+.sdopt:hover{background:var(--cream)}.sdopt.sel{background:#fef3c7;font-weight:600}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 18px;border:none;border-radius:var(--r);font-size:.83rem;font-weight:600;transition:all .18s;touch-action:manipulation;white-space:nowrap}
+.bp_{background:var(--gold);color:var(--white)}.bp_:hover{background:#b8850a}
+.bd{background:#fee2e2;color:var(--rust)}.bd:hover{background:#fecaca}
+.bsa{background:#e8f0e7;color:var(--sage)}.bsa:hover{background:#d4e5d2}
+.bk{background:var(--ink);color:var(--white)}.bk:hover{background:#2d2520}
+.bo{background:transparent;border:1.5px solid var(--border);color:var(--ink)}.bo:hover{border-color:var(--gold);color:var(--gold)}
+.bgoog{background:var(--white);border:1.5px solid var(--border);color:var(--ink);width:100%;padding:10px}.bgoog:hover{background:var(--cream);border-color:var(--gold)}
+.bw{width:100%}.bsm{padding:5px 10px;font-size:.75rem}.bxsm{padding:3px 7px;font-size:.68rem}
+
+/* Filter bar */
+.fbar{background:var(--cream);border-radius:11px;padding:12px 14px;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:9px;align-items:flex-end}
+.fbar .ff{display:flex;flex-direction:column;gap:3px;min-width:120px;flex:1}
+.fbar .ff label{font-size:.67rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:600}
+.fbar input,.fbar select{padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.8rem;outline:none;background:var(--white);-webkit-appearance:none;width:100%}
+.fbar input:focus,.fbar select:focus{border-color:var(--gold)}
+.faction{display:flex;gap:7px;align-items:flex-end;flex-wrap:wrap}
+
+/* Search bar */
+.sbar{display:flex;align-items:center;gap:8px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:7px 12px;margin-bottom:13px}
+.sbar input{border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:.855rem;flex:1;background:transparent;color:var(--ink)}
+.sbar span{color:var(--muted);font-size:.95rem;flex-shrink:0}
+
+/* Modal */
+.mo{display:none;position:fixed;inset:0;background:rgba(26,20,16,.65);z-index:200;align-items:center;justify-content:center;padding:16px}
+.mo.open{display:flex}
+.mbox{background:var(--white);border-radius:16px;padding:26px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.3)}
+.mtitle{font-family:'DM Serif Display',serif;font-size:1.15rem;margin-bottom:18px}
+.mact{display:flex;gap:9px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}
+
+/* Approval items */
+.appr-item{background:var(--white);border:1.5px solid var(--border);border-radius:11px;padding:13px 15px;display:flex;align-items:center;gap:11px;margin-bottom:9px;transition:all .18s}
+.appr-item.sel{border-color:var(--gold);background:#fffbf0}
+.appr-cb{width:19px;height:19px;border-radius:5px;border:2px solid var(--border);background:var(--white);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s;font-size:.7rem}
+.appr-cb.chk{background:var(--gold);border-color:var(--gold);color:white}
+.appr-info{flex:1;min-width:0}
+.appr-nm{font-weight:600;font-size:.875rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.appr-em{font-size:.73rem;color:var(--muted);margin-top:1px}
+.appr-mt{font-size:.7rem;color:var(--muted);margin-top:2px}
+.bulk-bar{background:var(--ink);color:var(--white);border-radius:10px;padding:11px 14px;display:flex;align-items:center;gap:9px;margin-bottom:12px;flex-wrap:wrap}
+.bulk-cnt{font-size:.8rem;font-weight:600;flex:1}
+
+/* Alerts */
+.err{color:var(--rust);font-size:.78rem;margin-top:7px;text-align:center}
+.notice{background:#fef3c7;border:1px solid #fcd34d;border-radius:10px;padding:11px 15px;font-size:.8rem;color:#78350f;margin-bottom:13px;line-height:1.6}
+.notice strong{color:#92400e}
+.ared{background:#fee2e2;border:1px solid #fca5a5;border-radius:10px;padding:11px 15px;font-size:.8rem;color:#991b1b;margin-bottom:13px;line-height:1.6}
+.empty{text-align:center;padding:36px 20px;color:var(--muted)}
+.empty .ei{font-size:2rem;margin-bottom:9px}
+
+/* Log */
+.log-day{margin-bottom:18px}
+.log-day-hd{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:7px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+.log-row{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid #f5ede0;font-size:.81rem}
+.log-row:last-child{border-bottom:none}
+.ldot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.ldot.entry{background:var(--sage)}.ldot.user{background:var(--gold)}.ldot.lock{background:var(--rust)}
+.ldot.export{background:var(--blue)}.ldot.delete{background:var(--rust)}.ldot.approval{background:var(--purple)}
+.ltime{font-size:.7rem;color:var(--muted);white-space:nowrap;margin-top:2px}
+.ldet{font-size:.73rem;color:var(--muted);margin-top:2px}
+
+/* Delete */
+.del-step{background:var(--cream);border-radius:10px;padding:13px 15px;margin-bottom:9px;border-left:3px solid var(--gold)}
+.del-step.danger{border-left-color:var(--rust);background:#fff5f5}
+.step-ctr{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:3px}
+
+/* Setup */
+.sstep{display:flex;gap:11px;margin-bottom:12px;padding:12px 15px;background:var(--cream);border-radius:10px}
+.snum{background:var(--gold);color:var(--white);width:23px;height:23px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem;flex-shrink:0;margin-top:1px}
+.stxt{font-size:.83rem;line-height:1.65;color:var(--ink)}.stxt strong{color:var(--gold)}
+.code{background:var(--ink);color:#a3e635;padding:1px 7px;border-radius:5px;font-family:monospace;font-size:.74rem}
+
+/* Public log */
+.pub-mo{display:none;position:fixed;inset:0;background:rgba(26,20,16,.7);z-index:300;align-items:flex-end;justify-content:center}
+.pub-mo.open{display:flex}
+.pub-sh{background:var(--paper);border-radius:18px 18px 0 0;padding:22px 18px;width:100%;max-width:580px;margin:0 auto;max-height:82vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,.3)}
+.pub-hndl{width:38px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 14px}
+
+/* Toast */
+.toast{position:fixed;bottom:18px;right:18px;background:var(--ink);color:var(--white);padding:10px 16px;border-radius:10px;font-size:.82rem;font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:500;transform:translateY(70px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);max-width:calc(100vw - 36px)}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{border-left:4px solid #4ade80}
+.toast.error{border-left:4px solid var(--rust)}
+.toast.warn{border-left:4px solid var(--gold)}
+
+/* Responsive */
+@media(max-width:768px){
+  main{padding:11px}.tabs{padding:0 9px}header{padding:0 11px;height:52px}
+  .hbrand{font-size:.95rem}.upill{max-width:100px}.rbadge{display:none}
+  .fg2{grid-template-columns:1fr}.card{padding:14px}.mbox{padding:18px}
+  .stats{grid-template-columns:1fr 1fr}.fbar{gap:7px}.fbar .ff{min-width:95px}
+}
+@media(max-width:420px){
+  .auth-card{padding:26px 16px}.stats{grid-template-columns:1fr}.firm{font-size:1.75rem}
+}
+input[type=number]{-moz-appearance:textfield}
+input[type=number]::-webkit-inner-spin-button{opacity:1}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="sc-login" class="screen active">
+  <div class="auth-card">
+    <div class="login-logo">
+      <div class="firm">VKS</div>
+      <div class="firm-sub">Vijaywargi Khabiya &amp; Saoji · Chartered Accountants</div>
+      <div class="firm-tag">Timesheet Portal</div>
+    </div>
+    <button class="btn bgoog" onclick="loginGoogle()">
+      <svg width="17" height="17" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Continue with Google
+    </button>
+    <div class="div-or">or sign in with email</div>
+    <div class="field"><label>Email</label><input type="email" id="l-em" placeholder="you@vksnagpur.com" autocomplete="email"/></div>
+    <div class="field"><label>Password</label><input type="password" id="l-pw" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')loginEmail()"/></div>
+    <button class="btn bp_ bw" onclick="loginEmail()">Sign In →</button>
+    <div id="l-err" class="err"></div>
+    <div style="text-align:center;margin-top:13px">
+      <button class="btn bo bsm" onclick="openPubLog()" style="font-size:.76rem;color:var(--muted)">📋 Activity Log</button>
+    </div>
+  </div>
+</div>
+
+<!-- PENDING -->
+<div id="sc-pending" class="screen">
+  <div class="auth-card">
+    <div class="pend-icon">⏳</div>
+    <div class="pend-title">Awaiting Approval</div>
+    <div class="pend-msg">Your account was created. Please wait for admin/HR approval before accessing the portal.</div>
+    <div class="pend-box"><div class="lbl">Status</div><div class="val"><span class="pulse"></span>Pending Admin Approval</div></div>
+    <div class="pend-box"><div class="lbl">Name</div><div class="val" id="pnd-nm">—</div></div>
+    <div class="pend-box"><div class="lbl">Email</div><div class="val" id="pnd-em">—</div></div>
+    <p style="font-size:.76rem;color:var(--muted);margin:14px 0">You will be notified by HR once approved. Contact your admin if urgent.</p>
+    <button class="btn bp_ bw" onclick="checkPendingStatus()">🔄 Check Status</button>
+    <div style="margin-top:10px"><button class="btn bo bsm" onclick="doLogout()">← Sign out</button></div>
+  </div>
+</div>
+
+<!-- SET PIN -->
+<div id="sc-setpin" class="screen">
+  <div class="auth-card">
+    <div style="font-size:2.3rem;margin-bottom:11px">🔐</div>
+    <div class="spt">Set Your 4-Digit PIN</div>
+    <div class="sps">You'll enter this PIN every time you open the portal. Keep it private.</div>
+    <div class="field" style="text-align:left"><label>Choose PIN</label>
+      <input type="password" id="sp1" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="····" style="text-align:center;font-size:1.35rem;letter-spacing:8px" autocomplete="new-password"/>
+    </div>
+    <div class="field" style="text-align:left"><label>Confirm PIN</label>
+      <input type="password" id="sp2" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="····" style="text-align:center;font-size:1.35rem;letter-spacing:8px" autocomplete="new-password" onkeydown="if(event.key==='Enter')savePIN()"/>
+    </div>
+    <div id="sp-err" class="err"></div>
+    <button class="btn bp_ bw" style="margin-top:11px" onclick="savePIN()">Save PIN & Continue →</button>
+    <div style="margin-top:10px"><button class="btn bo bsm" onclick="doLogout()">← Sign out</button></div>
+  </div>
+</div>
+
+<!-- ENTER PIN -->
+<div id="sc-pin" class="screen">
+  <div class="auth-card">
+    <div class="pin-av" id="p-av">👤</div>
+    <div class="pin-nm" id="p-nm">—</div>
+    <div class="pin-hint">Enter your PIN to continue</div>
+    <div class="pin-dots">
+      <div class="dot" id="d0"></div><div class="dot" id="d1"></div>
+      <div class="dot" id="d2"></div><div class="dot" id="d3"></div>
+    </div>
+    <div class="pin-pad">
+      <button class="pk" onclick="pp('1')">1</button><button class="pk" onclick="pp('2')">2</button><button class="pk" onclick="pp('3')">3</button>
+      <button class="pk" onclick="pp('4')">4</button><button class="pk" onclick="pp('5')">5</button><button class="pk" onclick="pp('6')">6</button>
+      <button class="pk" onclick="pp('7')">7</button><button class="pk" onclick="pp('8')">8</button><button class="pk" onclick="pp('9')">9</button>
+      <button class="pk zero" onclick="pp('0')">0</button><button class="pk del" onclick="pd()">⌫</button>
+    </div>
+    <div class="pin-err" id="p-err"></div>
+    <div class="pin-lft" id="p-lft"></div>
+    <div style="margin-top:13px"><button class="btn bo bsm" onclick="doLogout()">← Sign out</button></div>
+  </div>
+</div>
+
+<!-- LOCKED -->
+<div id="sc-locked" class="screen">
+  <div class="auth-card">
+    <div class="lock-icon">🔒</div>
+    <div class="lock-title">Account Locked</div>
+    <div class="lock-msg">3 wrong PIN attempts.<br/>Admin has been notified.<br/><br/>Contact HR to unlock your account.</div>
+    <button class="btn bo bw" style="margin-top:20px" onclick="doLogout()">← Back to Login</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="sc-app" class="screen">
+  <header>
+    <div class="hbrand">VKS · Timesheet</div>
+    <div class="hright">
+      <div class="upill"><img id="h-av" src="" alt="" style="display:none"/><span id="h-nm">—</span></div>
+      <span class="rbadge" id="h-role">—</span>
+      <button class="btn bo bsm" style="color:#fff;border-color:rgba(255,255,255,.25)" onclick="doLogout()">Out</button>
+    </div>
+  </header>
+  <div class="tabs" id="tabbar"></div>
+  <main>
+
+    <!-- LOG TIME -->
+    <div class="page" id="page-log">
+      <div class="card">
+        <div class="ctitle">🕐 Log Time Entry</div>
+        <div class="fg">
+          <div class="field"><label>Date</label><input type="date" id="e-date"/></div>
+          <div class="field"><label>Client Name</label><input type="text" id="e-client" placeholder="e.g. Sharma Enterprises"/></div>
+          <div class="field"><label>Work Type</label>
+            <select id="e-task" onchange="toggleCT()">
+              <option value="">— Select —</option>
+              <option>GST / Indirect Tax</option><option>Audit / IT</option>
+              <option>Income Tax / Direct Tax</option><option>Accounts / Bookkeeping</option>
+              <option>ROC / Company Law</option><option>Other</option>
+            </select>
+          </div>
+          <div class="field" id="ct-wrap" style="display:none"><label>Specify Work</label><input type="text" id="e-ctask" placeholder="Describe the work"/></div>
+          <div class="field"><label>Hours Worked</label><input type="number" id="e-hours" min=".5" max="24" step=".5" placeholder="e.g. 3.5"/></div>
+        </div>
+        <div class="field"><label>Remarks / Notes</label><textarea id="e-remarks" placeholder="Work done, progress, issues..."></textarea></div>
+        <button class="btn bp_" style="padding:9px 30px;margin-top:4px" onclick="submitEntry()">Submit Entry</button>
+      </div>
+    </div>
+
+    <!-- MY TIMESHEET -->
+    <div class="page" id="page-my">
+      <div class="card">
+        <div class="ctitle">📋 My Timesheet</div>
+        <div class="sbar"><span>🔍</span><input type="text" id="my-srch" placeholder="Search client, work type, remarks..." oninput="renderMyTable()"/></div>
+        <div class="fbar">
+          <div class="ff"><label>Month</label><input type="month" id="m-month"/></div>
+          <div class="ff"><label>Work Type</label>
+            <select id="m-task">
+              <option value="">All</option>
+              <option>GST / Indirect Tax</option><option>Audit / IT</option>
+              <option>Income Tax / Direct Tax</option><option>Accounts / Bookkeeping</option>
+              <option>ROC / Company Law</option><option>Other</option>
+            </select>
+          </div>
+          <div class="faction">
+            <button class="btn bo bsm" onclick="loadMyEntries()">Apply</button>
+            <button class="btn bsa bsm" onclick="exportMyXL()">⬇ Excel</button>
+          </div>
+        </div>
+        <div id="my-stats" class="stats"></div>
+        <div class="tw"><table><thead><tr><th>Date</th><th>Client</th><th>Work Type</th><th>Hrs</th><th>Remarks</th><th>Action</th></tr></thead>
+        <tbody id="my-tb"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- ADMIN: ALL TIMESHEETS -->
+    <div class="page" id="page-dash">
+      <div class="stats" id="a-stats"></div>
+      <div class="card">
+        <div class="ctitle">📊 All Timesheets</div>
+        <div class="sbar"><span>🔍</span><input type="text" id="a-srch" placeholder="Search employee, client, work type, remarks..." oninput="renderAllTable()"/></div>
+        <div class="fbar">
+          <div class="ff"><label>From Date</label><input type="date" id="a-from"/></div>
+          <div class="ff"><label>To Date</label><input type="date" id="a-to"/></div>
+          <div class="ff"><label>Employee</label>
+            <div class="sdwrap">
+              <input class="sdinput" id="a-emp-i" placeholder="All employees" oninput="sdFilter('a-emp-d','a-emp-i','a-emp-v')" onfocus="sdOpen('a-emp-d')" onblur="setTimeout(()=>sdClose('a-emp-d'),180)" autocomplete="off"/>
+              <input type="hidden" id="a-emp-v"/>
+              <div class="sddrop" id="a-emp-d"></div>
+            </div>
+          </div>
+          <div class="ff"><label>Role</label>
+            <select id="a-role">
+              <option value="">All Roles</option>
+              <option>Employee</option><option>CA Article</option>
+              <option>Manager</option><option>Senior Staff</option>
+            </select>
+          </div>
+          <div class="ff"><label>Work Type</label>
+            <select id="a-task">
+              <option value="">All</option>
+              <option>GST / Indirect Tax</option><option>Audit / IT</option>
+              <option>Income Tax / Direct Tax</option><option>Accounts / Bookkeeping</option>
+              <option>ROC / Company Law</option><option>Other</option>
+            </select>
+          </div>
+          <div class="faction">
+            <button class="btn bo bsm" onclick="loadAll()">Apply</button>
+            <button class="btn bsa bsm" onclick="exportAllXL(false)">⬇ Excel</button>
+            <button class="btn bd bsm" onclick="openDelFlow()">🗑 Delete</button>
+          </div>
+        </div>
+        <div class="tw"><table><thead><tr><th>Date</th><th>Employee</th><th>Role</th><th>Client</th><th>Work Type</th><th>Hrs</th><th>Remarks</th><th></th></tr></thead>
+        <tbody id="a-tb"></tbody></table></div>
+      </div>
+      <!-- Storage at bottom -->
+      <div class="card">
+        <div class="ctitle">💾 Firebase Storage Monitor</div>
+        <div class="stats" style="margin-bottom:13px">
+          <div class="scard"><div class="slbl">Entries</div><div class="sval g" id="st-e">—</div></div>
+          <div class="scard"><div class="slbl">Est. Used</div><div class="sval b" id="st-u">—</div></div>
+          <div class="scard"><div class="slbl">Remaining</div><div class="sval" id="st-r">—</div></div>
+          <div class="scard"><div class="slbl">% Used</div><div class="sval r" id="st-p">—</div></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted)"><span>0 MB</span><span>1,024 MB free</span></div>
+        <div class="stbar-bg"><div class="stbar-fill" id="st-bar" style="width:0%"></div></div>
+        <div style="font-size:.7rem;color:var(--muted);margin-top:3px" id="st-note"></div>
+        <div style="margin-top:11px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <button class="btn bsa bsm" onclick="refreshStorage()">🔄 Refresh</button>
+          <span style="font-size:.72rem;color:var(--muted)" id="st-upd"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- APPROVALS -->
+    <div class="page" id="page-appr">
+      <!-- New registrations -->
+      <div class="card">
+        <div class="ctitle">🆕 New Registration Requests
+          <span class="tbadge" id="appr-nc" style="display:none;background:var(--gold);color:var(--ink)">0</span>
+        </div>
+        <div id="appr-nbulk" class="bulk-bar" style="display:none">
+          <span class="bulk-cnt" id="appr-nsel">0 selected</span>
+          <button class="btn bsa bsm" onclick="selAllNew(true)">✓ All</button>
+          <button class="btn bo bsm" style="color:#fff;border-color:rgba(255,255,255,.3)" onclick="selAllNew(false)">✗ None</button>
+          <button class="btn bp_ bsm" onclick="bulkApprove()">✅ Approve</button>
+          <button class="btn bd bsm" onclick="openBulkReject()">❌ Reject</button>
+        </div>
+        <div id="appr-nlist"><div class="empty"><div class="ei">✅</div><p>No pending registrations.</p></div></div>
+      </div>
+      <!-- Locked -->
+      <div class="card">
+        <div class="ctitle">🔒 Locked Accounts
+          <span class="tbadge" id="appr-lc" style="display:none">0</span>
+        </div>
+        <div id="appr-lbulk" class="bulk-bar" style="display:none">
+          <span class="bulk-cnt" id="appr-lsel">0 selected</span>
+          <button class="btn bsa bsm" onclick="selAllLocked(true)">✓ All</button>
+          <button class="btn bo bsm" style="color:#fff;border-color:rgba(255,255,255,.3)" onclick="selAllLocked(false)">✗ None</button>
+          <button class="btn bp_ bsm" onclick="bulkUnlock()">🔓 Unlock Selected</button>
+        </div>
+        <div id="appr-llist"><div class="empty"><div class="ei">✅</div><p>No locked accounts.</p></div></div>
+      </div>
+      <!-- PIN reset -->
+      <div class="card">
+        <div class="ctitle">🔑 Reset Employee PIN</div>
+        <p style="font-size:.83rem;color:var(--muted);margin-bottom:13px">Force employee to set a new PIN on next login.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <div style="flex:1;min-width:190px">
+            <div class="sdwrap">
+              <input class="sdinput" id="rp-i" placeholder="Search employee…" oninput="sdFilter('rp-d','rp-i','rp-v')" onfocus="sdOpen('rp-d')" onblur="setTimeout(()=>sdClose('rp-d'),180)" autocomplete="off"/>
+              <input type="hidden" id="rp-v"/>
+              <div class="sddrop" id="rp-d"></div>
+            </div>
+          </div>
+          <button class="btn bk bsm" onclick="adminResetPIN()">Reset PIN</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMPLOYEES -->
+    <div class="page" id="page-emps">
+      <div class="card">
+        <div class="ctitle">👥 Manage Employees</div>
+        <div class="sbar"><span>🔍</span><input type="text" id="emp-q" placeholder="Search name, email, role, department, status…" oninput="renderEmps()"/></div>
+        <div class="fbar">
+          <div class="ff"><label>Role</label>
+            <select id="ef-role"><option value="">All Roles</option><option>Employee</option><option>CA Article</option><option>Manager</option><option>Senior Staff</option><option>Admin</option></select>
+          </div>
+          <div class="ff"><label>Department</label>
+            <select id="ef-dept"><option value="">All Depts</option><option>CA Articles</option><option>Audit Team</option><option>Tax Team</option><option>Accounts Team</option><option>Senior Staff</option><option>Management</option></select>
+          </div>
+          <div class="ff"><label>Status</label>
+            <select id="ef-stat"><option value="">All</option><option value="active">Active</option><option value="locked">Locked</option><option value="pending">Pending</option></select>
+          </div>
+          <div class="faction">
+            <button class="btn bo bsm" onclick="renderEmps()">Apply</button>
+            <button class="btn bo bsm" onclick="openImport()">📥 Import</button>
+            <button class="btn bk bsm" onclick="openAddEmp()">+ Add</button>
+          </div>
+        </div>
+        <div class="tw"><table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Dept</th><th>PIN</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="emp-tb"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- LOGS -->
+    <div class="page" id="page-logs">
+      <div class="card">
+        <div class="ctitle">📜 Activity Log <span style="font-size:.7rem;background:var(--rust);color:#fff;padding:2px 8px;border-radius:20px;margin-left:5px">Admin Only</span></div>
+        <div class="sbar"><span>🔍</span><input type="text" id="log-srch" placeholder="Search logs…" oninput="renderLogList()"/></div>
+        <div class="fbar">
+          <div class="ff"><label>From</label><input type="date" id="log-from"/></div>
+          <div class="ff"><label>To</label><input type="date" id="log-to"/></div>
+          <div class="ff"><label>Type</label>
+            <select id="log-type">
+              <option value="">All</option><option value="entry">Time Entry</option>
+              <option value="user">User</option><option value="lock">Lock/Unlock</option>
+              <option value="export">Export</option><option value="delete">Delete</option>
+              <option value="approval">Approval</option>
+            </select>
+          </div>
+          <div class="faction"><button class="btn bo bsm" onclick="loadAdminLogs()">Apply</button></div>
+        </div>
+        <div id="log-list"></div>
+      </div>
+    </div>
+
+    <!-- SETUP -->
+    <div class="page" id="page-setup">
+      <div class="card">
+        <div class="ctitle">⚙️ Setup Guide <span style="font-size:.7rem;background:var(--rust);color:#fff;padding:2px 8px;border-radius:20px;margin-left:5px">Admin · #setup</span></div>
+        <div class="notice"><strong>Hidden.</strong> Access via <span class="code">yourfile.html#setup</span></div>
+        <div class="sstep"><div class="snum">1</div><div class="stxt">Firebase → Authentication → Enable <strong>Email/Password + Google</strong> → Authorized Domains → add your GitHub Pages domain</div></div>
+        <div class="sstep"><div class="snum">2</div><div class="stxt">Firestore → Create Database → Test mode → <strong>asia-south1</strong></div></div>
+        <div class="sstep"><div class="snum">3</div><div class="stxt">Project Settings → Add Web App → copy <span class="code">firebaseConfig</span> → paste into this file</div></div>
+        <div class="sstep"><div class="snum">4</div><div class="stxt">Authentication → Add User → admin email/password → copy UID → Firestore → <span class="code">users</span> collection → doc ID = UID → fields: <span class="code">role:"admin"</span>, <span class="code">approved:true</span>, <span class="code">pinSet:false</span>, <span class="code">locked:false</span>, <span class="code">pinAttempts:0</span></div></div>
+        <div class="sstep"><div class="snum">5</div><div class="stxt">When Firestore index errors appear → click the link in the error → Create index. Repeat for each index needed (usually 2-3 times).</div></div>
+        <div class="notice" style="margin-top:4px"><strong>PIN Policy:</strong> PIN is required every session (every time browser/tab opens). Uses sessionStorage — clears automatically on close.</div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL: REJECT -->
+<div class="mo" id="m-rej">
+  <div class="mbox">
+    <div class="mtitle">❌ Reject Registrations</div>
+    <div class="ared">⚠️ You are rejecting <strong><span id="rej-cnt">?</span> user(s)</strong>. Their pending accounts will be removed.</div>
+    <div class="field"><label>Type REJECT to confirm</label><input type="text" id="rej-inp" placeholder="Type REJECT here"/></div>
+    <div class="field"><label>Reason (optional)</label><textarea id="rej-rsn" placeholder="e.g. Not a VKS employee..."></textarea></div>
+    <div id="rej-err" class="err"></div>
+    <div class="mact">
+      <button class="btn bo" onclick="cm('m-rej')">Cancel</button>
+      <button class="btn bd" onclick="confirmReject()">❌ Reject & Remove</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ADD EMP -->
+<div class="mo" id="m-addemp">
+  <div class="mbox">
+    <div class="mtitle">Add New Employee</div>
+    <div class="fg2">
+      <div class="field"><label>Full Name</label><input type="text" id="ne-nm" placeholder="Priya Sharma"/></div>
+      <div class="field"><label>Role</label>
+        <select id="ne-role"><option>CA Article</option><option>Employee</option><option>Manager</option><option>Senior Staff</option></select>
+      </div>
+    </div>
+    <div class="field"><label>Email</label><input type="email" id="ne-em" placeholder="priya@vksnagpur.com"/></div>
+    <div class="field"><label>Password (initial)</label><input type="password" id="ne-pw" placeholder="min 6 characters"/></div>
+    <div class="field"><label>Department</label>
+      <select id="ne-dept"><option>CA Articles</option><option>Audit Team</option><option>Tax Team</option><option>Accounts Team</option><option>Senior Staff</option><option>Management</option></select>
+    </div>
+    <div id="ne-err" class="err"></div>
+    <div class="mact">
+      <button class="btn bo" onclick="cm('m-addemp')">Cancel</button>
+      <button class="btn bp_" onclick="addEmp()">Create Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: IMPORT -->
+<div class="mo" id="m-import">
+  <div class="mbox">
+    <div class="mtitle">📥 Import from Excel</div>
+    <div class="notice">Columns: <strong>name, email, password</strong> · Optional: <strong>department, role</strong></div>
+    <div class="field"><label>Select File (.xlsx / .csv)</label><input type="file" id="imp-f" accept=".xlsx,.xls,.csv"/></div>
+    <div id="imp-prev" style="font-size:.76rem;color:var(--muted);margin-top:5px"></div>
+    <div id="imp-err" class="err"></div>
+    <div class="mact">
+      <button class="btn bo" onclick="cm('m-import')">Cancel</button>
+      <button class="btn bp_" onclick="doImport()">Import & Create Accounts</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: EDIT ENTRY -->
+<div class="mo" id="m-edit">
+  <div class="mbox">
+    <div class="mtitle">Edit Entry</div>
+    <input type="hidden" id="ed-id"/>
+    <div class="fg2">
+      <div class="field"><label>Date</label><input type="date" id="ed-dt"/></div>
+      <div class="field"><label>Hours</label><input type="number" id="ed-hr" min=".5" max="24" step=".5"/></div>
+    </div>
+    <div class="field"><label>Client</label><input type="text" id="ed-cl"/></div>
+    <div class="field"><label>Work Type</label>
+      <select id="ed-tk"><option>GST / Indirect Tax</option><option>Audit / IT</option><option>Income Tax / Direct Tax</option><option>Accounts / Bookkeeping</option><option>ROC / Company Law</option><option>Other</option></select>
+    </div>
+    <div class="field"><label>Remarks</label><textarea id="ed-rm"></textarea></div>
+    <div class="mact">
+      <button class="btn bo" onclick="cm('m-edit')">Cancel</button>
+      <button class="btn bp_" onclick="saveEdit()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: DELETE FLOW -->
+<div class="mo" id="m-del">
+  <div class="mbox">
+    <div class="mtitle">🗑 Delete Records</div>
+    <div id="del-s1">
+      <div class="del-step"><div class="step-ctr">Step 1 of 3 — Scope</div>
+        <div class="fg2" style="margin-top:9px">
+          <div class="field"><label>From Date</label><input type="date" id="del-fr"/></div>
+          <div class="field"><label>To Date</label><input type="date" id="del-to"/></div>
+        </div>
+        <p style="font-size:.78rem;color:var(--muted)">Leave blank to use currently filtered records.</p>
+      </div>
+      <div class="ared">⚠️ <strong>Export backup first.</strong> Deleted records cannot be recovered.</div>
+      <div class="mact"><button class="btn bo" onclick="cm('m-del')">Cancel</button><button class="btn bp_" onclick="delS2()">Next →</button></div>
+    </div>
+    <div id="del-s2" style="display:none">
+      <div class="del-step"><div class="step-ctr">Step 2 of 3 — Export Backup</div>
+        <p style="font-size:.83rem;margin-top:8px">Download backup now. Delete button enables only after export.</p>
+      </div>
+      <div id="del-exp-ok" class="notice" style="display:none">✅ Backup exported! You may now delete.</div>
+      <div class="mact">
+        <button class="btn bo" onclick="cm('m-del')">Cancel</button>
+        <button class="btn bsa" onclick="exportForDel()">⬇ Export Backup</button>
+        <button class="btn bd" id="del-btn" disabled onclick="delS3()" style="opacity:.4">Delete Records</button>
+      </div>
+    </div>
+    <div id="del-s3" style="display:none">
+      <div class="del-step danger"><div class="step-ctr">Step 3 of 3 — Final Confirm</div>
+        <p style="font-size:.83rem;margin-top:8px;color:var(--rust)"><strong>Permanently deleting <span id="del-cnt">?</span> records.</strong></p>
+        <p style="font-size:.8rem;margin-top:6px">Type <strong>DELETE</strong> to confirm:</p>
+        <input type="text" id="del-conf" placeholder="Type DELETE" style="width:100%;margin-top:7px;padding:7px 11px;border:1.5px solid var(--rust);border-radius:8px;font-family:'DM Sans',sans-serif"/>
+      </div>
+      <div class="mact">
+        <button class="btn bo" onclick="cm('m-del')">Cancel</button>
+        <button class="btn bd" onclick="execDelete()">⚠️ Delete Permanently</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PUBLIC LOG -->
+<div class="pub-mo" id="pub-mo">
+  <div class="pub-sh">
+    <div class="pub-hndl"></div>
+    <div style="font-family:'DM Serif Display',serif;font-size:1.15rem;margin-bottom:3px">📋 Activity Log</div>
+    <div style="font-size:.76rem;color:var(--muted);margin-bottom:16px">Last 3 days · Public view · Name + Action + Time only</div>
+    <div id="pub-body">Loading…</div>
+    <div style="margin-top:14px;text-align:center"><button class="btn bo bsm" onclick="closePubLog()">Close</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ═══════════════════════════════════════════
+     FIREBASE + APP LOGIC
+═══════════════════════════════════════════ -->
+<script type="module">
+import { initializeApp }           from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signInWithPopup,
+         GoogleAuthProvider, signOut, onAuthStateChanged }
+                                    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, doc, setDoc, getDoc, getDocs,
+         addDoc, query, where, orderBy, limit, deleteDoc, updateDoc,
+         Timestamp, onSnapshot, writeBatch, getCountFromServer }
+                                    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// ╔════════════════════════════════════╗
+// ║  🔧 PASTE YOUR FIREBASE CONFIG    ║
+// ╚════════════════════════════════════╝
+const firebaseConfig = {
+  apiKey:            "AIzaSyB_1WHXssS7CV-BC7Gpbv7oKdAxNZS0rHc",
+  authDomain:        "vks-timesheet-3ee6d.firebaseapp.com",
+  projectId:         "vks-timesheet-3ee6d",
+  storageBucket:     "vks-timesheet-3ee6d.firebasestorage.app",
+  messagingSenderId: "70438217024",
+  appId:             "1:70438217024:web:e9c7e8dad2eda0d93346a5"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+const gp   = new GoogleAuthProvider();
+
+// ── STATE ──
+let CU=null, CD=null, pinBuf='';
+let allEmps=[], allEntries=[], myEntries=[], allLogsCache=[];
+let impRows=[], delScope=null, expDone=false;
+let pendingNewSel=new Set(), lockedSel=new Set();
+
+// ── UTILS ──
+const $ = id => document.getElementById(id);
+const ss = id => { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $(id).classList.add('active'); };
+const sp = id => { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); $(id)&&$(id).classList.add('active'); };
+const toast = (m,t='success',d=3000) => { const el=$('toast'); el.textContent=m; el.className='toast show '+t; setTimeout(()=>el.classList.remove('show'),d); };
+const om = id => $(id).classList.add('open');
+window.cm = id => $(id).classList.remove('open');
+const fmt = d => d?new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'—';
+const fmtTS = ts => ts?new Date(ts.seconds*1000).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'—';
+const esc = s => encodeURIComponent(s||'');
+const usc = s => decodeURIComponent(s||'');
+const lrow = c => `<tr><td colspan="${c}" style="text-align:center;padding:26px;color:var(--muted)">Loading…</td></tr>`;
+const erow = c => `<tr><td colspan="${c}" style="text-align:center;padding:26px;color:var(--muted)">No records found.</td></tr>`;
+const wbadge = w => { const m={'GST / Indirect Tax':'bg','Audit / IT':'bb','Income Tax / Direct Tax':'br','Accounts / Bookkeeping':'bs','ROC / Company Law':'bp'}; return `<span class="badge ${m[w]||'bb'}">${w||'—'}</span>`; };
+const rbadge = r => { const m={'admin':'br','CA Article':'bp','Employee':'bs','Manager':'bg','Senior Staff':'bor'}; return `<span class="badge ${m[r]||'bm'}">${r||'—'}</span>`; };
+
+// PIN — uses sessionStorage so clears on every tab/browser close
+const pinDone  = uid => sessionStorage.getItem(`vks_pin_${uid}`) === 'yes';
+const setPinDone = uid => sessionStorage.setItem(`vks_pin_${uid}`, 'yes');
+
+const hashPIN = async pin => {
+  const enc = new TextEncoder().encode(pin+'vks2024nagpur');
+  const buf = await crypto.subtle.digest('SHA-256',enc);
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+};
+
+async function getIP(){ try{ const r=await fetch('https://api.ipify.org?format=json'); return (await r.json()).ip||'unknown'; }catch{ return 'unknown'; } }
+
+// ── WRITE LOG ──
+async function wlog({action,actorName='',actorEmail='',detail='',detailAdmin='',type='entry'}){
+  try {
+    const ip = await getIP();
+    await addDoc(collection(db,'logs'),{ action,actorName,actorEmail,detail,detailAdmin,type,ip,createdAt:Timestamp.now() });
+  } catch(e){ console.warn('Log failed',e); }
+}
+
+// ── AUTH ──
+window.loginGoogle = async () => {
+  $('l-err').textContent='';
+  try { const c=await signInWithPopup(auth,gp); await afterLogin(c.user); }
+  catch(e){ $('l-err').textContent=e.message; }
+};
+window.loginEmail = async () => {
+  const email=$('l-em').value.trim(), pass=$('l-pw').value;
+  $('l-err').textContent='';
+  if(!email||!pass){ $('l-err').textContent='Please fill all fields.'; return; }
+  try { const c=await signInWithEmailAndPassword(auth,email,pass); await afterLogin(c.user); }
+  catch(e){ $('l-err').textContent=e.code==='auth/invalid-credential'?'Invalid email or password.':e.message; }
+};
+
+async function afterLogin(user){
+  CU=user;
+  let snap=await getDoc(doc(db,'users',user.uid));
+
+  // New Google user — auto-create pending record
+  if(!snap.exists()&&user.providerData[0]?.providerId==='google.com'){
+    await setDoc(doc(db,'users',user.uid),{
+      name:user.displayName||user.email, email:user.email, photo:user.photoURL||'',
+      role:'Employee', department:'CA Articles',
+      approved:false, pinSet:false, pinHash:'', pinAttempts:0, locked:false,
+      createdAt:Timestamp.now()
+    });
+    await wlog({action:`New registration request from ${user.displayName||user.email}`,actorName:user.displayName||'',actorEmail:user.email,type:'approval',detailAdmin:`Google signup · UID:${user.uid}`});
+    snap=await getDoc(doc(db,'users',user.uid));
+  }
+
+  // New email user — check if exists, if not show error (admin must create email accounts)
+  if(!snap.exists()){
+    $('l-err').textContent='Account not found. Contact admin to create your account.';
+    await signOut(auth); return;
+  }
+
+  CD=snap.data();
+
+  // Check locked
+  if(CD.locked){ ss('sc-locked'); return; }
+
+  // Check approved
+  if(!CD.approved){
+    $('pnd-nm').textContent=CD.name||user.email;
+    $('pnd-em').textContent=user.email;
+    ss('sc-pending'); return;
+  }
+
+  // Check PIN set
+  if(!CD.pinSet){ ss('sc-setpin'); return; }
+
+  // PIN every session — sessionStorage clears on close
+  if(pinDone(user.uid)){ enterApp(); return; }
+
+  // Show PIN pad
+  pinBuf=''; updDots();
+  $('p-nm').textContent=CD.name||user.email;
+  const ph=CD.photo||user.photoURL;
+  $('p-av').innerHTML=ph?`<img src="${ph}" alt=""/>`:'👤';
+  $('p-err').textContent='';
+  $('p-lft').textContent=CD.pinAttempts>0?`${3-CD.pinAttempts} attempt(s) remaining`:'';
+  ss('sc-pin');
+}
+
+// Check pending status (refresh)
+window.checkPendingStatus = async () => {
+  if(!CU) return;
+  const snap=await getDoc(doc(db,'users',CU.uid));
+  if(!snap.exists()) return;
+  CD=snap.data();
+  if(CD.approved){ toast('Approved! Loading portal…'); setTimeout(()=>{ if(!CD.pinSet){ss('sc-setpin');}else{ss('sc-pin');} },1000); }
+  else toast('Still pending. Please wait for admin approval.','warn');
+};
+
+// ── SET PIN ──
+window.savePIN = async () => {
+  const p1=$('sp1').value, p2=$('sp2').value;
+  $('sp-err').textContent='';
+  if(!/^\d{4}$/.test(p1)){ $('sp-err').textContent='PIN must be exactly 4 digits.'; return; }
+  if(p1!==p2){ $('sp-err').textContent='PINs do not match.'; return; }
+  const h=await hashPIN(p1);
+  await updateDoc(doc(db,'users',CU.uid),{pinSet:true,pinHash:h,pinAttempts:0,locked:false});
+  CD={...CD,pinSet:true,pinHash:h};
+  setPinDone(CU.uid); enterApp();
+};
+
+// ── PIN PAD ──
+window.pp = async d => { if(pinBuf.length>=4)return; pinBuf+=d; updDots(); if(pinBuf.length===4)await checkPIN(); };
+window.pd = ()=>{ pinBuf=pinBuf.slice(0,-1); updDots(); $('p-err').textContent=''; };
+function updDots(){ for(let i=0;i<4;i++) $('d'+i).classList.toggle('filled',i<pinBuf.length); }
+
+async function checkPIN(){
+  const h=await hashPIN(pinBuf);
+  if(h===CD.pinHash){
+    await updateDoc(doc(db,'users',CU.uid),{pinAttempts:0});
+    setPinDone(CU.uid); enterApp();
+  } else {
+    const att=(CD.pinAttempts||0)+1;
+    if(att>=3){
+      await updateDoc(doc(db,'users',CU.uid),{locked:true,pinAttempts:att,lockedAt:Timestamp.now(),lockedReason:'3 wrong PIN attempts'});
+      await wlog({action:`${CD.name||CU.email} locked after 3 wrong PIN attempts`,actorName:CD.name||'',actorEmail:CU.email,type:'lock'});
+      ss('sc-locked');
+    } else {
+      await updateDoc(doc(db,'users',CU.uid),{pinAttempts:att});
+      CD.pinAttempts=att;
+      $('p-err').textContent='Incorrect PIN.';
+      $('p-lft').textContent=`${3-att} attempt(s) remaining`;
+      pinBuf=''; updDots();
+    }
+  }
+}
+
+// ── ENTER APP ──
+function enterApp(){
+  const isA=CD.role==='admin';
+  $('h-nm').textContent=CD.name||CU.email;
+  $('h-role').textContent=isA?'Admin':CD.role||'Employee';
+  const av=$('h-av'), ph=CD.photo||CU.photoURL;
+  if(ph){ av.src=ph; av.style.display='block'; }
+  buildTabs(isA); ss('sc-app');
+  if(isA){ loadAll(); loadEmps(); watchApprovals(); refreshStorage(); }
+  else { $('e-date').value=new Date().toISOString().split('T')[0]; }
+  if(isA&&location.hash==='#setup') swtab('setup',null);
+}
+
+function buildTabs(isA){
+  const tb=$('tabbar');
+  if(isA){
+    tb.innerHTML=`
+      <div class="tab active" data-p="dash" onclick="swtab('dash',this)">📊 Timesheets</div>
+      <div class="tab" data-p="appr" onclick="swtab('appr',this)">🔔 Approvals <span class="tbadge" id="appr-tot" style="display:none">0</span></div>
+      <div class="tab" data-p="emps" onclick="swtab('emps',this)">👥 Employees</div>
+      <div class="tab" data-p="logs" onclick="swtab('logs',this)">📜 Logs</div>
+    `;
+    sp('page-dash');
+  } else {
+    tb.innerHTML=`
+      <div class="tab active" data-p="log" onclick="swtab('log',this)">🕐 Log Time</div>
+      <div class="tab" data-p="my" onclick="swtab('my',this)">📋 My Timesheet</div>
+    `;
+    sp('page-log');
+  }
+}
+
+window.swtab = (name,el) => {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  else { const t=document.querySelector(`[data-p="${name}"]`); if(t)t.classList.add('active'); }
+  sp('page-'+name);
+  if(name==='dash')  loadAll();
+  if(name==='emps')  loadEmps();
+  if(name==='appr')  loadApprovals();
+  if(name==='logs')  loadAdminLogs();
+  if(name==='my')  { setDM('m-month'); loadMyEntries(); }
+};
+
+window.doLogout = async () => {
+  if(CU) sessionStorage.removeItem(`vks_pin_${CU.uid}`);
+  await signOut(auth); CU=null; CD=null; pinBuf='';
+  ss('sc-login'); $('l-em').value=''; $('l-pw').value='';
+};
+
+function setDM(id){ if(!$(id)||$(id).value)return; const n=new Date(); $(id).value=`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}`; }
+
+// ── SEARCHABLE DROPDOWN ──
+window.sdOpen = id => { $(id).classList.add('open'); };
+window.sdClose = id => { $(id).classList.remove('open'); };
+window.sdFilter = (ddId,inpId,valId) => {
+  const q=$(inpId).value.toLowerCase();
+  const dd=$(ddId);
+  const opts=[...dd.querySelectorAll('.sdopt')];
+  opts.forEach(o=>{ o.style.display=o.textContent.toLowerCase().includes(q)?'block':'none'; });
+  if(!$(inpId).value){ $(valId).value=''; }
+};
+function buildSD(ddId,inpId,valId,items){
+  const dd=$(ddId);
+  dd.innerHTML=`<div class="sdopt sel" data-v="" onclick="sdPick('${ddId}','${inpId}','${valId}','','All')">All</div>`;
+  items.forEach(it=>{
+    dd.innerHTML+=`<div class="sdopt" data-v="${it.v}" onclick="sdPick('${ddId}','${inpId}','${valId}','${it.v}','${it.l}')">${it.l}</div>`;
+  });
+}
+window.sdPick = (ddId,inpId,valId,v,l) => {
+  $(inpId).value=l==='All'?'':l;
+  $(valId).value=v;
+  sdClose(ddId);
+};
+
+// ── CUSTOM TASK ──
+window.toggleCT = () => { $('ct-wrap').style.display=$('e-task').value==='Other'?'block':'none'; };
+
+// ── SUBMIT ENTRY ──
+window.submitEntry = async () => {
+  const date=$('e-date').value, client=$('e-client').value.trim();
+  let task=$('e-task').value;
+  const hours=parseFloat($('e-hours').value), remarks=$('e-remarks').value.trim();
+  if(task==='Other') task=$('e-ctask').value.trim()||'Other';
+  if(!date||!client||!task||!hours){ toast('Fill all required fields.','error'); return; }
+  try {
+    await addDoc(collection(db,'entries'),{
+      uid:CU.uid, name:CD.name, email:CU.email, role:CD.role||'Employee',
+      department:CD.department||'', date, client, task, hours, remarks, createdAt:Timestamp.now()
+    });
+    await wlog({action:`${CD.name||CU.email} submitted a time entry`,actorName:CD.name||'',actorEmail:CU.email,type:'entry',
+      detail:`${client} · ${task} · ${hours}hrs`,detailAdmin:`Date:${date} Client:${client} Task:${task} Hours:${hours} Remarks:${remarks}`});
+    toast('Entry submitted ✓');
+    $('e-client').value=''; $('e-task').value=''; $('e-hours').value=''; $('e-remarks').value='';
+    $('ct-wrap').style.display='none';
+    $('e-date').value=new Date().toISOString().split('T')[0];
+  } catch(e){ toast(e.message,'error'); }
+};
+
+// ── MY ENTRIES ──
+window.loadMyEntries = async () => {
+  setDM('m-month'); const month=$('m-month').value, task=$('m-task').value;
+  $('my-tb').innerHTML=lrow(6);
+  try {
+    const q=query(collection(db,'entries'),where('uid','==',CU.uid),orderBy('date','desc'));
+    let es=(await getDocs(q)).docs.map(d=>({id:d.id,...d.data()}));
+    if(month) es=es.filter(e=>e.date?.startsWith(month));
+    if(task)  es=es.filter(e=>e.task===task);
+    myEntries=es;
+    const tot=es.reduce((s,e)=>s+(+e.hours||0),0);
+    $('my-stats').innerHTML=`
+      <div class="scard"><div class="slbl">Entries</div><div class="sval g">${es.length}</div></div>
+      <div class="scard"><div class="slbl">Total Hours</div><div class="sval">${tot.toFixed(1)}</div></div>
+      <div class="scard"><div class="slbl">Clients</div><div class="sval g">${new Set(es.map(e=>e.client)).size}</div></div>
+    `;
+    renderMyTable();
+  } catch(e){ $('my-tb').innerHTML=`<tr><td colspan="6" style="text-align:center;padding:26px;color:var(--rust)">${e.message}</td></tr>`; }
+};
+
+window.renderMyTable = () => {
+  const q=($('my-srch').value||'').toLowerCase();
+  const es=myEntries.filter(e=>!q||(e.client||'').toLowerCase().includes(q)||(e.task||'').toLowerCase().includes(q)||(e.remarks||'').toLowerCase().includes(q));
+  $('my-tb').innerHTML=es.length?es.map(e=>`<tr>
+    <td>${fmt(e.date)}</td><td><strong>${e.client||'—'}</strong></td><td>${wbadge(e.task)}</td>
+    <td><strong>${(+e.hours||0).toFixed(1)}</strong></td>
+    <td style="max-width:160px;color:var(--muted);font-size:.78rem">${e.remarks||'—'}</td>
+    <td style="white-space:nowrap">
+      <button class="btn bsm bo" onclick="openEdit('${e.id}','${e.date}','${esc(e.client)}','${esc(e.task)}','${e.hours}','${esc(e.remarks||'')}')">Edit</button>
+      <button class="btn bsm bd" style="margin-left:3px" onclick="delEnt('${e.id}','my')">Del</button>
+    </td></tr>`).join(''):erow(6);
+};
+
+// ── ALL ENTRIES ──
+window.loadAll = async () => {
+  const from=$('a-from').value, to=$('a-to').value;
+  const empUID=$('a-emp-v').value, role=$('a-role').value, task=$('a-task').value;
+  $('a-tb').innerHTML=lrow(8);
+  try {
+    let es=(await getDocs(query(collection(db,'entries'),orderBy('date','desc')))).docs.map(d=>({id:d.id,...d.data()}));
+    if(from) es=es.filter(e=>e.date&&e.date>=from);
+    if(to)   es=es.filter(e=>e.date&&e.date<=to);
+    if(empUID) es=es.filter(e=>e.uid===empUID);
+    if(role)   es=es.filter(e=>e.role===role);
+    if(task)   es=es.filter(e=>e.task===task);
+    allEntries=es;
+    const tot=es.reduce((s,e)=>s+(+e.hours||0),0);
+    $('a-stats').innerHTML=`
+      <div class="scard"><div class="slbl">Entries</div><div class="sval g">${es.length}</div></div>
+      <div class="scard"><div class="slbl">Total Hours</div><div class="sval">${tot.toFixed(1)}</div></div>
+      <div class="scard"><div class="slbl">Employees</div><div class="sval g">${new Set(es.map(e=>e.uid)).size}</div></div>
+      <div class="scard"><div class="slbl">Clients</div><div class="sval">${new Set(es.map(e=>e.client)).size}</div></div>
+    `;
+    renderAllTable();
+  } catch(e){ $('a-tb').innerHTML=`<tr><td colspan="8" style="text-align:center;padding:26px;color:var(--rust)">${e.message}</td></tr>`; }
+};
+
+window.renderAllTable = () => {
+  const q=($('a-srch').value||'').toLowerCase();
+  const es=allEntries.filter(e=>!q||(e.name||'').toLowerCase().includes(q)||(e.email||'').toLowerCase().includes(q)||(e.client||'').toLowerCase().includes(q)||(e.task||'').toLowerCase().includes(q)||(e.remarks||'').toLowerCase().includes(q));
+  $('a-tb').innerHTML=es.length?es.map(e=>`<tr>
+    <td>${fmt(e.date)}</td>
+    <td><strong>${e.name||'—'}</strong><br/><span style="font-size:.71rem;color:var(--muted)">${e.email||''}</span></td>
+    <td>${rbadge(e.role||'Employee')}</td>
+    <td>${e.client||'—'}</td><td>${wbadge(e.task)}</td>
+    <td><strong>${(+e.hours||0).toFixed(1)}</strong></td>
+    <td style="max-width:130px;color:var(--muted);font-size:.77rem">${e.remarks||'—'}</td>
+    <td style="white-space:nowrap">
+      <button class="btn bxsm bo" onclick="openEdit('${e.id}','${e.date}','${esc(e.client)}','${esc(e.task)}','${e.hours}','${esc(e.remarks||'')}')">Edit</button>
+      <button class="btn bxsm bd" style="margin-left:2px" onclick="delEnt('${e.id}','admin')">Del</button>
+    </td></tr>`).join(''):erow(8);
+};
+
+// ── EDIT / DELETE ──
+window.openEdit = (id,dt,cl,tk,hr,rm) => {
+  $('ed-id').value=id; $('ed-dt').value=dt;
+  $('ed-cl').value=usc(cl); $('ed-tk').value=usc(tk);
+  $('ed-hr').value=hr; $('ed-rm').value=usc(rm);
+  om('m-edit');
+};
+window.saveEdit = async () => {
+  try {
+    await updateDoc(doc(db,'entries',$('ed-id').value),{
+      date:$('ed-dt').value, client:$('ed-cl').value.trim(),
+      task:$('ed-tk').value, hours:parseFloat($('ed-hr').value), remarks:$('ed-rm').value.trim()
+    });
+    cm('m-edit'); toast('Entry updated ✓');
+    CD.role==='admin'?loadAll():loadMyEntries();
+  } catch(e){ toast(e.message,'error'); }
+};
+window.delEnt = async (id,ctx) => {
+  if(!confirm('Delete this entry?')) return;
+  try { await deleteDoc(doc(db,'entries',id)); toast('Deleted','error'); ctx==='admin'?loadAll():loadMyEntries(); }
+  catch(e){ toast(e.message,'error'); }
+};
+
+// ── EXPORT ──
+window.exportMyXL = async () => {
+  if(!myEntries.length){ toast('No data','error'); return; }
+  const rows=myEntries.map(e=>({Date:e.date,Client:e.client,'Work Type':e.task,Hours:e.hours,Remarks:e.remarks||''}));
+  doXL(rows,`VKS_My_Timesheet_${$('m-month').value||'all'}.xlsx`,'Timesheet');
+  await wlog({action:`${CD.name||CU.email} exported their timesheet`,actorName:CD.name||'',actorEmail:CU.email,type:'export',detailAdmin:`Records:${rows.length}`});
+};
+window.exportAllXL = async (forDel=false) => {
+  let es=allEntries;
+  if(!es.length){ toast('No data','error'); return null; }
+  const rows=es.map(e=>({Date:e.date,Employee:e.name||'',Email:e.email||'',Role:e.role||'',Client:e.client,'Work Type':e.task,Hours:e.hours,Remarks:e.remarks||''}));
+  const lbl=`_${$('a-from').value||'all'}_to_${$('a-to').value||'all'}`;
+  doXL(rows,`VKS_Timesheets${lbl}.xlsx`,'All Timesheets');
+  await wlog({action:`${CD.name||CU.email} exported all timesheets`,actorName:CD.name||'',actorEmail:CU.email,type:'export',detail:`${rows.length} records`,detailAdmin:`Count:${rows.length}`});
+  return es;
+};
+function doXL(rows,fname,sheet){ const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),sheet); XLSX.writeFile(wb,fname); }
+
+// ── DELETE FLOW ──
+window.openDelFlow = () => {
+  expDone=false; delScope=null;
+  $('del-s1').style.display='block'; $('del-s2').style.display='none'; $('del-s3').style.display='none';
+  $('del-fr').value=''; $('del-to').value='';
+  $('del-btn').disabled=true; $('del-btn').style.opacity='.4';
+  $('del-exp-ok').style.display='none';
+  om('m-del');
+};
+window.delS2 = () => {
+  let sc=allEntries;
+  const fr=$('del-fr').value, to=$('del-to').value;
+  if(fr) sc=sc.filter(e=>e.date&&e.date>=fr);
+  if(to) sc=sc.filter(e=>e.date&&e.date<=to);
+  if(!sc.length){ toast('No records match.','warn'); return; }
+  delScope=sc; $('del-s1').style.display='none'; $('del-s2').style.display='block';
+};
+window.exportForDel = async () => {
+  if(!delScope?.length) return;
+  const rows=delScope.map(e=>({Date:e.date,Employee:e.name||'',Email:e.email||'',Client:e.client,'Work Type':e.task,Hours:e.hours,Remarks:e.remarks||''}));
+  doXL(rows,`VKS_BACKUP_${new Date().toISOString().split('T')[0]}.xlsx`,'Backup');
+  await wlog({action:`${CD.name||CU.email} exported backup before delete`,actorName:CD.name||'',actorEmail:CU.email,type:'export',detailAdmin:`Backup records:${rows.length}`});
+  expDone=true;
+  $('del-exp-ok').style.display='block';
+  $('del-btn').disabled=false; $('del-btn').style.opacity='1';
+  toast('Backup exported ✓ Delete now enabled.','success');
+};
+window.delS3 = () => {
+  if(!expDone){ toast('Export backup first.','error'); return; }
+  $('del-s2').style.display='none'; $('del-s3').style.display='block';
+  $('del-cnt').textContent=delScope?.length||0; $('del-conf').value='';
+};
+window.execDelete = async () => {
+  if($('del-conf').value.trim()!=='DELETE'){ toast('Type DELETE to confirm.','error'); return; }
+  if(!delScope?.length) return;
+  try {
+    const b=writeBatch(db);
+    delScope.forEach(e=>b.delete(doc(db,'entries',e.id)));
+    await b.commit();
+    await wlog({action:`${CD.name||CU.email} deleted ${delScope.length} records`,actorName:CD.name||'',actorEmail:CU.email,type:'delete',detail:`${delScope.length} records deleted`,detailAdmin:`Count:${delScope.length}`});
+    cm('m-del'); toast(`${delScope.length} records deleted. Storage freed.`,'warn');
+    allEntries=[]; delScope=null; loadAll(); refreshStorage();
+  } catch(e){ toast(e.message,'error'); }
+};
+
+// ── STORAGE ──
+window.refreshStorage = async () => {
+  try {
+    const [e1,e2,e3]=await Promise.all([
+      getCountFromServer(collection(db,'entries')),
+      getCountFromServer(collection(db,'users')),
+      getCountFromServer(collection(db,'logs'))
+    ]);
+    const ec=e1.data().count, uc=e2.data().count, lc=e3.data().count;
+    const bytes=(ec*280)+(uc*200)+(lc*150);
+    const mb=(bytes/1024/1024).toFixed(3), free=1024, pct=((mb/free)*100).toFixed(4);
+    $('st-e').textContent=ec.toLocaleString();
+    $('st-u').textContent=`~${mb} MB`;
+    $('st-r').textContent=`~${(free-mb).toFixed(1)} MB`;
+    $('st-p').textContent=`${pct}%`;
+    const bar=$('st-bar'), p=parseFloat(pct);
+    bar.style.width=Math.min(p*200,100)+'%';
+    bar.className='stbar-fill'+(p>0.5?' danger':p>0.2?' warn':'');
+    $('st-note').textContent=`Entries:${ec} · Users:${uc} · Logs:${lc} · ~${mb} MB of 1,024 MB`;
+    $('st-upd').textContent=`Updated ${new Date().toLocaleTimeString('en-IN')}`;
+  } catch(e){ $('st-upd').textContent='Could not load storage'; }
+};
+
+// ── APPROVALS WATCH ──
+function watchApprovals(){
+  onSnapshot(query(collection(db,'users'),where('approved','==',false)), snap=>{
+    const n=snap.size;
+    const nc=$('appr-nc'), tot=$('appr-tot');
+    if(nc){ nc.style.display=n>0?'inline-flex':'none'; nc.textContent=n; }
+    if(tot){
+      const ln=parseInt($('appr-lc')?.textContent||0)||0;
+      const total=n+ln;
+      tot.style.display=total>0?'inline-flex':'none'; tot.textContent=total;
+    }
+  });
+  onSnapshot(query(collection(db,'users'),where('locked','==',true)), snap=>{
+    const n=snap.size;
+    const lc=$('appr-lc'), tot=$('appr-tot');
+    if(lc){ lc.style.display=n>0?'inline-flex':'none'; lc.textContent=n; }
+    if(tot){
+      const nn=parseInt($('appr-nc')?.textContent||0)||0;
+      const total=nn+n;
+      tot.style.display=total>0?'inline-flex':'none'; tot.textContent=total;
+    }
+  });
+}
+
+window.loadApprovals = async () => {
+  pendingNewSel.clear(); lockedSel.clear();
+  // New registrations
+  const nsnap=await getDocs(query(collection(db,'users'),where('approved','==',false)));
+  const newList=nsnap.docs.map(d=>({id:d.id,...d.data()}));
+  renderNewList(newList);
+  // Locked
+  const lsnap=await getDocs(query(collection(db,'users'),where('locked','==',true)));
+  const lockList=lsnap.docs.map(d=>({id:d.id,...d.data()}));
+  renderLockList(lockList);
+};
+
+function renderNewList(list){
+  const c=$('appr-nlist'), bulk=$('appr-nbulk');
+  if(!list.length){ c.innerHTML='<div class="empty"><div class="ei">✅</div><p>No pending registrations.</p></div>'; bulk.style.display='none'; return; }
+  bulk.style.display='flex';
+  c.innerHTML=list.map(u=>`
+    <div class="appr-item ${pendingNewSel.has(u.id)?'sel':''}" id="ni-${u.id}">
+      <div class="appr-cb ${pendingNewSel.has(u.id)?'chk':''}" onclick="toggleNewSel('${u.id}')">${pendingNewSel.has(u.id)?'✓':''}</div>
+      <div class="appr-info">
+        <div class="appr-nm">${u.name||'—'}</div>
+        <div class="appr-em">${u.email||'—'}</div>
+        <div class="appr-mt">${u.department||'—'} · Registered ${fmtTS(u.createdAt)}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
+        <div class="field" style="margin:0;min-width:130px">
+          <select id="role-${u.id}" style="padding:4px 8px;font-size:.75rem;border:1px solid var(--border);border-radius:6px;background:var(--white)">
+            <option ${u.role==='CA Article'?'selected':''}>CA Article</option>
+            <option ${u.role==='Employee'?'selected':''}>Employee</option>
+            <option ${u.role==='Manager'?'selected':''}>Manager</option>
+            <option ${u.role==='Senior Staff'?'selected':''}>Senior Staff</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:4px">
+          <button class="btn bsa bxsm" onclick="approveOne('${u.id}')">✓ Approve</button>
+          <button class="btn bd bxsm" onclick="rejectOne('${u.id}')">✗ Reject</button>
+        </div>
+      </div>
+    </div>`).join('');
+  updateNewBulkBar();
+}
+
+function renderLockList(list){
+  const c=$('appr-llist'), bulk=$('appr-lbulk');
+  if(!list.length){ c.innerHTML='<div class="empty"><div class="ei">✅</div><p>No locked accounts.</p></div>'; bulk.style.display='none'; return; }
+  bulk.style.display='flex';
+  c.innerHTML=list.map(u=>`
+    <div class="appr-item ${lockedSel.has(u.id)?'sel':''}" id="li-${u.id}">
+      <div class="appr-cb ${lockedSel.has(u.id)?'chk':''}" onclick="toggleLockSel('${u.id}')">${lockedSel.has(u.id)?'✓':''}</div>
+      <div class="appr-info">
+        <div class="appr-nm">${u.name||'—'}</div>
+        <div class="appr-em">${u.email||'—'} · ${u.department||'—'}</div>
+        <div class="appr-mt" style="color:var(--rust)">Locked: ${fmtTS(u.lockedAt)} · ${u.lockedReason||''}</div>
+      </div>
+      <button class="btn bsa bxsm" onclick="unlockOne('${u.id}','${u.name||u.email}')">🔓 Unlock</button>
+    </div>`).join('');
+  updateLockBulkBar();
+}
+
+// selection
+window.toggleNewSel = id => { pendingNewSel.has(id)?pendingNewSel.delete(id):pendingNewSel.add(id); loadApprovals(); };
+window.toggleLockSel= id => { lockedSel.has(id)?lockedSel.delete(id):lockedSel.add(id); loadApprovals(); };
+window.selAllNew = all => { const items=document.querySelectorAll('#appr-nlist .appr-item'); items.forEach(el=>{ const id=el.id.replace('ni-',''); all?pendingNewSel.add(id):pendingNewSel.delete(id); }); loadApprovals(); };
+window.selAllLocked= all => { const items=document.querySelectorAll('#appr-llist .appr-item'); items.forEach(el=>{ const id=el.id.replace('li-',''); all?lockedSel.add(id):lockedSel.delete(id); }); loadApprovals(); };
+function updateNewBulkBar(){ const el=$('appr-nsel'); if(el) el.textContent=`${pendingNewSel.size} selected`; }
+function updateLockBulkBar(){ const el=$('appr-lsel'); if(el) el.textContent=`${lockedSel.size} selected`; }
+
+// approve
+window.approveOne = async id => {
+  const role=$(  `role-${id}`)?.value||'Employee';
+  await updateDoc(doc(db,'users',id),{approved:true,role});
+  const u=document.querySelector(`#ni-${id} .appr-nm`)?.textContent||id;
+  await wlog({action:`Admin approved registration for ${u}`,actorName:CD.name||'Admin',actorEmail:CU.email,type:'approval',detailAdmin:`UID:${id} Role:${role}`});
+  toast(`${u} approved ✓`); loadApprovals(); loadEmps();
+};
+window.bulkApprove = async () => {
+  if(!pendingNewSel.size){ toast('Select at least one.','warn'); return; }
+  for(const id of pendingNewSel){
+    const role=$(`role-${id}`)?.value||'Employee';
+    await updateDoc(doc(db,'users',id),{approved:true,role});
+  }
+  await wlog({action:`Admin bulk approved ${pendingNewSel.size} registrations`,actorName:CD.name||'Admin',actorEmail:CU.email,type:'approval',detailAdmin:`Count:${pendingNewSel.size}`});
+  toast(`${pendingNewSel.size} accounts approved ✓`);
+  pendingNewSel.clear(); loadApprovals(); loadEmps();
+};
+
+// reject
+let rejectingIds=[];
+window.rejectOne = id => { rejectingIds=[id]; $('rej-cnt').textContent=1; $('rej-inp').value=''; $('rej-rsn').value=''; $('rej-err').textContent=''; om('m-rej'); };
+window.openBulkReject = () => {
+  if(!pendingNewSel.size){ toast('Select at least one.','warn'); return; }
+  rejectingIds=[...pendingNewSel]; $('rej-cnt').textContent=rejectingIds.length;
+  $('rej-inp').value=''; $('rej-rsn').value=''; $('rej-err').textContent=''; om('m-rej');
+};
+window.confirmReject = async () => {
+  if($('rej-inp').value.trim()!=='REJECT'){ $('rej-err').textContent='Type REJECT to confirm.'; return; }
+  const reason=$('rej-rsn').value.trim();
+  for(const id of rejectingIds){ await deleteDoc(doc(db,'users',id)); }
+  await wlog({action:`Admin rejected ${rejectingIds.length} registration(s)`,actorName:CD.name||'Admin',actorEmail:CU.email,type:'approval',detailAdmin:`Rejected UIDs:${rejectingIds.join(',')} Reason:${reason||'none'}`});
+  toast(`${rejectingIds.length} registration(s) rejected.`,'warn');
+  cm('m-rej'); pendingNewSel.clear(); rejectingIds=[]; loadApprovals(); loadEmps();
+};
+
+// unlock
+window.unlockOne = async (id,name) => {
+  await updateDoc(doc(db,'users',id),{locked:false,pinAttempts:0,lockedAt:null,lockedReason:null});
+  await wlog({action:`Admin unlocked account for ${name}`,actorName:CD.name||'Admin',actorEmail:CU.email,type:'lock',detailAdmin:`UID:${id}`});
+  toast('Account unlocked ✓'); loadApprovals(); loadEmps();
+};
+window.bulkUnlock = async () => {
+  if(!lockedSel.size){ toast('Select at least one.','warn'); return; }
+  for(const id of lockedSel) await updateDoc(doc(db,'users',id),{locked:false,pinAttempts:0,lockedAt:null,lockedReason:null});
+  await wlog({action:`Admin bulk unlocked ${lockedSel.size} accounts`,actorName:CD.name||'Admin',actorEmail:CU.email,type:'lock',detailAdmin:`Count:${lockedSel.size}`});
+  toast(`${lockedSel.size} accounts unlocked ✓`);
+  lockedSel.clear(); loadApprovals(); loadEmps();
+};
+
+// ── PIN RESET ──
+window.adminResetPIN = async () => {
+  const uid=$('rp-v').value; if(!uid){ toast('Select an employee.','error'); return; }
+  const emp=allEmps.find(e=>e.id===uid);
+  await updateDoc(doc(db,'users',uid),{pinSet:false,pinHash:'',pinAttempts:0,locked:false});
+  await wlog({action:`Admin reset PIN for ${emp?.name||uid}`,actorName:CD.name||'Admin',actorEmail:CU.email,type:'lock'});
+  toast('PIN reset ✓'); loadEmps();
+};
+
+// ── EMPLOYEES ──
+window.loadEmps = async () => {
+  const snap=await getDocs(collection(db,'users'));
+  allEmps=snap.docs.map(d=>({id:d.id,...d.data()}));
+  // populate searchable dropdowns
+  const empItems=allEmps.filter(e=>e.role!=='admin').map(e=>({v:e.id,l:e.name||e.email}));
+  buildSD('a-emp-d','a-emp-i','a-emp-v',empItems);
+  buildSD('rp-d','rp-i','rp-v',empItems);
+  renderEmps();
+};
+
+window.renderEmps = () => {
+  const q=($('emp-q').value||'').toLowerCase();
+  const rf=$('ef-role').value, df=$('ef-dept').value, sf=$('ef-stat').value;
+  let list=allEmps.filter(e=>{
+    const matchQ=!q||(e.name||'').toLowerCase().includes(q)||(e.email||'').toLowerCase().includes(q)||(e.role||'').toLowerCase().includes(q)||(e.department||'').toLowerCase().includes(q);
+    const matchR=!rf||e.role===rf;
+    const matchD=!df||e.department===df;
+    const matchS=!sf||(sf==='locked'&&e.locked)||(sf==='pending'&&!e.approved)||(sf==='active'&&e.approved&&!e.locked);
+    return matchQ&&matchR&&matchD&&matchS;
+  });
+  const tb=$('emp-tb');
+  tb.innerHTML=list.length?list.map(e=>`<tr>
+    <td><strong>${e.name||'—'}</strong></td>
+    <td style="font-size:.78rem">${e.email||'—'}</td>
+    <td>${rbadge(e.role||'Employee')}</td>
+    <td>${e.department||'—'}</td>
+    <td><span class="badge ${e.pinSet?'bs':'bg'}">${e.pinSet?'Set':'Not set'}</span></td>
+    <td>
+      ${!e.approved?`<span class="badge bg">⏳ Pending</span>`:''}
+      ${e.locked?`<span class="badge br">🔒 Locked</span>`:''}
+      ${e.approved&&!e.locked?`<span class="badge bs">Active</span>`:''}
+    </td>
+    <td style="white-space:nowrap">
+      ${e.role!=='admin'?`
+        ${e.locked?`<button class="btn bxsm bsa" onclick="unlockOne('${e.id}','${e.name||e.email}')">Unlock</button> `:''}
+        ${!e.approved?`<button class="btn bxsm bp_" onclick="approveOne('${e.id}')">Approve</button> `:''}
+        <button class="btn bxsm bo" onclick="qResetPIN('${e.id}','${e.name||e.email}')">PIN</button>
+        <button class="btn bxsm bd" style="margin-left:2px" onclick="delEmp('${e.id}','${e.name||e.email}')">Remove</button>
+      `:'<span style="font-size:.75rem;color:var(--muted)">Protected</span>'}
+    </td></tr>`).join(''):erow(7);
+};
+
+window.qResetPIN = async (uid,name) => {
+  await updateDoc(doc(db,'users',uid),{pinSet:false,pinHash:'',pinAttempts:0,locked:false});
+  await wlog({action:`Admin reset PIN for ${name}`,actorName:CD.name||'Admin',actorEmail:CU.email,type:'lock'});
+  toast('PIN reset ✓'); loadEmps();
+};
+window.openAddEmp = () => { $('ne-err').textContent=''; om('m-addemp'); };
+window.addEmp = async () => {
+  const name=$('ne-nm').value.trim(), email=$('ne-em').value.trim(), pass=$('ne-pw').value, dept=$('ne-dept').value, role=$('ne-role').value;
+  if(!name||!email||!pass){ $('ne-err').textContent='All fields required.'; return; }
+  try {
+    await createAcc({name,email,password:pass,department:dept,role});
+    await wlog({action:`${name} was added as ${role}`,actorName:CD.name||'Admin',actorEmail:CU.email,type:'user',detail:`${name} added to ${dept}`,detailAdmin:`Email:${email}`});
+    cm('m-addemp'); loadEmps();
+  } catch(e){ $('ne-err').textContent=e.message; }
+};
+async function createAcc({name,email,password,department,role='Employee'}){
+  const r=await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${auth.app.options.apiKey}`,{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email,password,returnSecureToken:true})
+  });
+  const d=await r.json(); if(d.error) throw new Error(d.error.message);
+  await setDoc(doc(db,'users',d.localId),{
+    name,email,role,department:department||'CA Articles',
+    approved:true, pinSet:false, pinHash:'', pinAttempts:0, locked:false, photo:'', createdAt:Timestamp.now()
+  });
+  toast(`${name} added ✓`);
+}
+window.delEmp = async (uid,name) => {
+  if(!confirm(`Remove ${name}?`)) return;
+  await deleteDoc(doc(db,'users',uid));
+  await wlog({action:`${name} was removed`,actorName:CD.name||'Admin',actorEmail:CU.email,type:'user',detail:`${name} removed`});
+  toast('Removed','error'); loadEmps();
+};
+
+// ── IMPORT ──
+window.openImport = () => { $('imp-prev').textContent=''; $('imp-err').textContent=''; $('imp-f').value=''; impRows=[]; om('m-import'); };
+$('imp-f').addEventListener('change', e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const rd=new FileReader();
+  rd.onload=ev=>{ const wb2=XLSX.read(ev.target.result,{type:'binary'}); const ws=wb2.Sheets[wb2.SheetNames[0]]; impRows=XLSX.utils.sheet_to_json(ws,{defval:''}); $('imp-prev').textContent=`✓ ${impRows.length} rows. Cols: ${Object.keys(impRows[0]||{}).join(', ')}`; };
+  rd.readAsBinaryString(f);
+});
+window.doImport = async () => {
+  if(!impRows.length){ $('imp-err').textContent='No data loaded.'; return; }
+  $('imp-err').textContent='Importing…'; let ok=0,fail=0;
+  for(const row of impRows){
+    const name=(row.name||row.Name||'').trim();
+    const email=(row.email||row.Email||'').toLowerCase().trim();
+    const password=String(row.password||row.Password||'Pass@1234');
+    const department=row.department||row.Department||'CA Articles';
+    const role=row.role||row.Role||'CA Article';
+    if(!email) continue;
+    try { await createAcc({name,email,password,department,role}); ok++; } catch{ fail++; }
+  }
+  if(ok>0) await wlog({action:`Admin imported ${ok} employees`,actorName:CD.name||'Admin',actorEmail:CU.email,type:'user',detail:`${ok} added`,detailAdmin:`Imported:${ok} Failed:${fail}`});
+  cm('m-import'); toast(`Done: ${ok} added, ${fail} failed`); loadEmps();
+};
+
+// ── ADMIN LOGS ──
+window.loadAdminLogs = async () => {
+  $('log-list').innerHTML='<div style="text-align:center;padding:24px;color:var(--muted)">Loading…</div>';
+  try {
+    const snap=await getDocs(query(collection(db,'logs'),orderBy('createdAt','desc'),limit(500)));
+    allLogsCache=snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderLogList();
+  } catch(e){ $('log-list').innerHTML=`<div style="color:var(--rust);padding:16px">${e.message}</div>`; }
+};
+window.renderLogList = () => {
+  const q=($('log-srch').value||'').toLowerCase();
+  const from=$('log-from').value, to=$('log-to').value, type=$('log-type').value;
+  let logs=allLogsCache;
+  if(from) logs=logs.filter(l=>l.createdAt?.seconds*1000>=new Date(from).getTime());
+  if(to)   logs=logs.filter(l=>l.createdAt?.seconds*1000<=new Date(to).getTime()+86400000);
+  if(type) logs=logs.filter(l=>l.type===type);
+  if(q)    logs=logs.filter(l=>(l.action||'').toLowerCase().includes(q)||(l.detailAdmin||'').toLowerCase().includes(q)||(l.actorName||'').toLowerCase().includes(q));
+  if(!logs.length){ $('log-list').innerHTML='<div class="empty"><div class="ei">📭</div><p>No logs found.</p></div>'; return; }
+  $('log-list').innerHTML=logs.map(l=>`
+    <div class="log-row">
+      <div class="ldot ${l.type||'entry'}"></div>
+      <div style="flex:1">
+        <div>${l.action||'—'}</div>
+        <div class="ldet">${l.detailAdmin||l.detail||''} ${l.ip&&l.ip!=='unknown'?`· IP:${l.ip}`:''}</div>
+      </div>
+      <div class="ltime">${fmtTS(l.createdAt)}</div>
+    </div>`).join('');
+};
+
+// ── PUBLIC LOG ──
+window.openPubLog = async () => { await loadPubLog(); $('pub-mo').classList.add('open'); };
+window.closePubLog = ()=>{ $('pub-mo').classList.remove('open'); };
+async function loadPubLog(){
+  $('pub-body').innerHTML='Loading…';
+  try {
+    const snap=await getDocs(query(collection(db,'logs'),orderBy('createdAt','desc'),limit(200)));
+    const now=Date.now();
+    const allowed=['entry','user','lock','export'];
+    const logs=snap.docs.map(d=>d.data()).filter(l=>allowed.includes(l.type)&&(now-(l.createdAt?.seconds*1000||0))<3*86400000);
+    if(!logs.length){ $('pub-body').innerHTML='<div class="empty"><div class="ei">📭</div><p>No activity in last 3 days.</p></div>'; return; }
+    const groups={};
+    logs.forEach(l=>{
+      const d=l.createdAt?new Date(l.createdAt.seconds*1000).toLocaleDateString('en-IN',{weekday:'long',day:'2-digit',month:'short'}):'Unknown';
+      if(!groups[d]) groups[d]=[];
+      groups[d].push(l);
+    });
+    let html='';
+    for(const [date,items] of Object.entries(groups)){
+      html+=`<div class="log-day"><div class="log-day-hd">${date}</div>`;
+      items.forEach(l=>{
+        const t=l.createdAt?new Date(l.createdAt.seconds*1000).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}):'';
+        html+=`<div class="log-row"><div class="ldot ${l.type}"></div><div style="flex:1;font-size:.81rem">${l.action||'—'}</div><div class="ltime">${t}</div></div>`;
+      });
+      html+='</div>';
+    }
+    $('pub-body').innerHTML=html;
+  } catch(e){ $('pub-body').innerHTML=`<div style="color:var(--rust);padding:16px">${e.message}</div>`; }
+}
+
+// ── INIT ──
+$('pub-mo').addEventListener('click',e=>{ if(e.target===$('pub-mo')) closePubLog(); });
+onAuthStateChanged(auth, user=>{ if(user&&!CU){ CU=user; afterLogin(user); } });
+</script>
+</body>
+</html>
