@@ -790,7 +790,10 @@ async function afterLogin(user){
   CD=snap.data();
 
   // Check locked
-  if(CD.locked){ ss('sc-locked'); return; }
+  if(CD.locked && CD.role !== 'admin'){
+  ss('sc-locked');
+  return;
+}
 
   // Check approved
   if(!CD.approved){
