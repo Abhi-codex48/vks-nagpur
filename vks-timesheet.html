@@ -770,17 +770,35 @@ async function afterLogin(user){
   let snap=await getDoc(doc(db,'users',user.uid));
 
   // New Google user — auto-create pending record
-  if(!snap.exists()&&user.providerData[0]?.providerId==='google.com'){
-    await setDoc(doc(db,'users',user.uid),{
-      name:user.displayName||user.email, email:user.email, photo:user.photoURL||'',
-      role:'Employee', department:'CA Articles',
-      approved:false, pinSet:false, pinHash:'', pinAttempts:0, locked:false,
-      createdAt:Timestamp.now()
-    });
-    await wlog({action:`New registration request from ${user.displayName||user.email}`,actorName:user.displayName||'',actorEmail:user.email,type:'approval',detailAdmin:`Google signup · UID:${user.uid}`});
-    snap=await getDoc(doc(db,'users',user.uid));
-  }
+if(!snap.exists() && user.providerData[0]?.providerId === 'google.com'){
+  const isMainAdmin = (user.email || '').toLowerCase() === 'abhi.codex48@gmail.com';
 
+  await setDoc(doc(db,'users',user.uid), {
+    name: user.displayName || user.email,
+    email: user.email,
+    photo: user.photoURL || '',
+    role: isMainAdmin ? 'admin' : 'Employee',
+    department: isMainAdmin ? 'Management' : 'CA Articles',
+    approved: isMainAdmin ? true : false,
+    pinSet: false,
+    pinHash: '',
+    pinAttempts: 0,
+    locked: false,
+    createdAt: Timestamp.now()
+  });
+
+  await wlog({
+    action: isMainAdmin
+      ? `Main admin account created for ${user.email}`
+      : `New registration request from ${user.displayName || user.email}`,
+    actorName: user.displayName || '',
+    actorEmail: user.email,
+    type: 'approval',
+    detailAdmin: `Google signup · UID:${user.uid}`
+  });
+
+  snap = await getDoc(doc(db,'users',user.uid));
+}
   // New email user — check if exists, if not show error (admin must create email accounts)
   if(!snap.exists()){
     $('l-err').textContent='Account not found. Contact admin to create your account.';
