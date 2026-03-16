@@ -1,0 +1,425 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Gallery — Vijaywargi Khabiya &amp; Saoji | Events &amp; Updates</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700&display=swap"/>
+<link rel="stylesheet" href="style.css"/>
+<style>
+.gallery-empty{text-align:center;padding:3rem 1rem;color:var(--ink4);font-size:.88rem;background:var(--surf);border-radius:var(--r);border:1px dashed var(--line);grid-column:1/-1}
+.gallery-empty span{display:block;font-size:2rem;margin-bottom:.75rem}
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.75rem}
+.gallery-item{aspect-ratio:1/1;width:100%;overflow:hidden;border-radius:var(--r);cursor:pointer;position:relative;background:var(--surf)}
+.gallery-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
+.gallery-item:hover img{transform:scale(1.05)}
+.gallery-overlay{position:absolute;inset:0;background:rgba(13,27,62,0);transition:background .3s;display:flex;align-items:flex-end}
+.gallery-item:hover .gallery-overlay{background:rgba(13,27,62,.45)}
+.gallery-caption{color:#fff;font-size:.72rem;padding:.6rem .8rem;opacity:0;transition:opacity .3s;text-transform:capitalize}
+.gallery-item:hover .gallery-caption{opacity:1}
+.lb-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.lb-overlay.open{opacity:1;pointer-events:all}
+.lb-overlay img{max-width:90vw;max-height:88vh;object-fit:contain;border-radius:8px}
+.lb-close{position:fixed;top:1.25rem;right:1.5rem;color:#fff;font-size:2rem;cursor:pointer;background:none;border:none;z-index:10000;line-height:1}
+.lb-caption{position:fixed;bottom:1.5rem;left:0;right:0;text-align:center;color:rgba(255,255,255,.6);font-size:.8rem}
+.lb-prev,.lb-next{position:fixed;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:none;color:#fff;font-size:1.75rem;width:48px;height:48px;border-radius:50%;cursor:pointer;z-index:10000;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.lb-prev{left:1.25rem}
+.lb-next{right:1.25rem}
+.lb-prev:hover,.lb-next:hover{background:rgba(255,255,255,.3)}
+.gallery-more-btn{grid-column:1/-1;text-align:center;margin-top:1rem}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="container nav-inner">
+    <a href="index.html" class="logo">
+  <img src="images/logo.jpg" alt="VKS CA" class="logo-img" loading="eager"/>
+  <div class="logo-text">
+    <span class="logo-firm">Vijaywargi Khabiya &amp; Saoji</span>        <span class="logo-tag">Chartered Accountants</span>
+  </div>
+    </a>
+    <ul class="nav-links">
+      <li class="nav-item"><a href="index.html">Home</a></li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-drop-toggle" aria-expanded="false">About <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="nav-dropdown">
+          <a href="about.html#overview"><span>Firm Overview</span><small>Our story, multi-city presence and firm philosophy.</small></a>
+          <a href="about.html#firm-vision"><span>Vision</span><small>Inclusive growth, compliance culture and expanding reach.</small></a>
+          <a href="about.html#firm-strengths"><span>Strengths</span><small>Professionalism, quality deliverables and practical advisory.</small></a>
+          <a href="about.html#firm-profile"><span>Firm Profile</span><small>Practice approach, reach and core professional strengths.</small></a>
+        </div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-drop-toggle" aria-expanded="false">Services <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="nav-dropdown">
+          <a href="services.html#audit"><span>Audit &amp; Assurance</span><small>Statutory, internal, tax and concurrent audit support.</small></a>
+          <a href="services.html#direct-tax"><span>Direct Taxation</span><small>Tax planning, assessments and litigation representation.</small></a>
+          <a href="services.html#indirect-tax"><span>Indirect Tax &amp; GST</span><small>GST advisory, compliance, refunds and disputes.</small></a>
+          <a href="services.html#legal"><span>Legal Services</span><small>Representation before tribunals and higher courts.</small></a>
+          <a href="services.html#insolvency"><span>Insolvency &amp; IBC</span><small>CIRP, NCLT matters and restructuring support.</small></a>
+          <a href="services.html"><span>See All Services In Detail</span></a>
+        </div>
+      </li>
+      <li class="nav-item"><a href="industries.html">Industries</a></li>
+      <li class="nav-item"><a href="partners.html">Team</a></li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-drop-toggle" aria-expanded="false">Insights <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="nav-dropdown">
+          <a href="publications.html#monthly-bulletins"><span>Monthly Bulletins</span><small>Monthly VKS bulletin issues in one place.</small></a>
+          <a href="publications.html#articles-alerts"><span>Articles &amp; Alerts</span><small>Insights, technical articles and regulatory updates.</small></a>
+        </div>
+      </li>
+      <li class="nav-item"><a href="careers.html">Careers</a></li>
+      <li class="nav-item"><a href="articleship.html">Articleship</a></li>
+      <li class="nav-item"><a href="gallery.html" class="nav-gallery-link active">Gallery</a></li>
+      <li class="nav-item"><a href="contact.html" class="nav-cta-btn">Contact Us</a></li>
+    </ul>
+    <button class="ham" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="drawer">
+  <a href="index.html">Home</a>
+  <div class="drawer-group">
+    <button class="drawer-toggle" aria-expanded="false">About <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+    <div class="drawer-panel"><div class="drawer-panel-inner">
+      <a href="about.html#overview">Firm Overview</a>
+      <a href="about.html#firm-vision">Vision</a>
+      <a href="about.html#firm-strengths">Strengths</a>
+      <a href="about.html#firm-profile">Firm Profile</a>
+    </div></div>
+  </div>
+  <div class="drawer-group">
+    <button class="drawer-toggle" aria-expanded="false">Services <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+    <div class="drawer-panel"><div class="drawer-panel-inner">
+      <a href="services.html#audit">Audit &amp; Assurance</a>
+      <a href="services.html#direct-tax">Direct Taxation</a>
+      <a href="services.html#indirect-tax">Indirect Tax &amp; GST</a>
+      <a href="services.html#legal">Legal Services</a>
+      <a href="services.html#insolvency">Insolvency &amp; IBC</a>
+      <a href="services.html">See All Services In Detail</a>
+    </div></div>
+  </div>
+  <a href="industries.html">Industries</a>
+  <a href="partners.html">Team</a>
+  <div class="drawer-group">
+    <button class="drawer-toggle" aria-expanded="false">Insights <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+    <div class="drawer-panel"><div class="drawer-panel-inner">
+      <a href="publications.html#monthly-bulletins">Monthly Bulletins</a>
+      <a href="publications.html#articles-alerts">Articles &amp; Alerts</a>
+    </div></div>
+  </div>
+  <a href="careers.html">Careers</a>
+  <a href="articleship.html">Articleship</a>
+  <a href="gallery.html">Gallery</a>
+  <a href="contact.html">Contact</a>
+</div>
+<!-- PAGE HEADER -->
+<div class="ph">
+  <div class="container ph-inner">
+    <div class="breadcrumb"><a href="index.html">Home</a><span>/</span>Gallery</div>
+    <span class="eyebrow">Life at VKS</span>
+    <h1>Events &amp; <em>Updates</em></h1>
+    <p style="max-width:min(520px,100%);margin-top:.75rem">Seminars, team movements, Weekend Charcha sessions and moments from the VKS family.</p>
+  </div>
+</div>
+
+<!-- SEMINARS & KNOWLEDGE SESSIONS -->
+<section class="pad" id="seminars">
+  <div class="container">
+    <div class="rv">
+      <span class="eyebrow">Client &amp; Industry Events</span>
+      <h2>Seminars &amp; <em style="color:var(--gold)">Knowledge Sessions</em></h2>
+      <div class="rule"></div>
+    </div>
+    <div class="gallery-grid" id="gallery-seminar">
+      <div class="gallery-empty"><span>📸</span>Photos will appear here automatically once uploaded to <strong>images/seminar-knowledge/</strong></div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM MOVEMENTS -->
+<section class="pad" id="team-movements" style="background:var(--surf)">
+  <div class="container">
+    <div class="rv">
+      <span class="eyebrow">Internal</span>
+      <h2>Team <em style="color:var(--gold)">Movements</em></h2>
+      <div class="rule"></div>
+    </div>
+    <div class="gallery-grid" id="gallery-team">
+      <div class="gallery-empty"><span>📸</span>Photos will appear here automatically once uploaded to <strong>images/team-movements/</strong></div>
+    </div>
+  </div>
+</section>
+
+<!-- WEEKEND CHARCHA -->
+<section class="pad" id="weekend-charcha">
+  <div class="container">
+    <div class="rv">
+      <span class="eyebrow">Learning Culture</span>
+      <h2>Weekend <em style="color:var(--gold)">Charcha</em></h2>
+      <div class="rule"></div>
+      <p style="max-width:min(520px,100%)">Snapshots from internal learning sessions, articleship presentations and technical discussions at VKS.</p>
+    </div>
+    <div class="gallery-grid" id="gallery-charcha">
+      <div class="gallery-empty"><span>📸</span>Photos will appear here automatically once uploaded to <strong>images/weekend-charcha/</strong></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-strip">
+  <div class="container"><div class="cta-inner">
+    <div class="cta-copy rv"><h2>Want to Be <em>Part of This?</em></h2><p>We're always looking for talented professionals and CA students to join the VKS family.</p></div>
+    <div class="cta-actions rv rv-d2">
+      <a href="careers.html" class="btn btn-gold">View Careers <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      <a href="contact.html" class="btn btn-ghost">Contact Us</a>
+    </div>
+  </div></div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-shell">
+      <div class="footer-spotlight">
+        <div class="footer-brand-card rv">
+          <div class="footer-kicker">Trusted Since 2014</div>
+          <div class="footer-brand">
+            <a href="index.html" class="logo" style="display:inline-flex">
+              <img src="images/logo.jpg" alt="VKS" style="object-fit:contain;flex-shrink:0"/>
+              <div class="logo-text" style="margin-left:.6rem">
+                <span class="logo-firm">Vijaywargi Khabiya &amp; Saoji</span>        <span class="logo-tag">Chartered Accountants</span>
+              </div>
+            </a>
+          </div>
+          <p class="ft-desc">A multi-disciplinary chartered accountancy firm delivering audit, tax, legal and advisory services with single-window execution for businesses across Nagpur and beyond.</p>
+          <div class="ft-dynamic-line" aria-live="polite">
+            <span class="ft-dynamic-dot"></span>
+            <span>Currently helping with</span>
+            <span class="ft-dynamic-text">Audit and assurance mandates</span>
+          </div>
+          <div class="ft-highlight-row">
+            <div class="ft-highlight"><strong data-count="12" data-suffix="+">12+</strong><span>Years of Excellence</span></div>
+            <div class="ft-highlight"><strong data-count="80" data-suffix="+">80+</strong><span>Professionals</span></div>
+            <div class="ft-highlight"><strong data-count="7">7</strong><span>Cities Served</span></div>
+          </div>
+        </div>
+        <div class="footer-contact-card rv rv-d1">
+          <h5>Start A Conversation</h5>
+          <div class="footer-action">
+            <div class="footer-action-copy">
+              <span>Main Office Line</span>
+              <a href="tel:07122522020">0712-2522020</a>
+            </div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16z"/></svg>
+          </div>
+          <div class="footer-action">
+            <div class="footer-action-copy">
+              <span>Email Us</span>
+              <a href="mailto:info@cavks.in">info@cavks.in</a>
+            </div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <p class="ft-note">3rd Floor, MG House, Ravindranath Tagore Marg, Civil Lines, Nagpur &ndash; 440001</p>
+        </div>
+      </div>
+      <div class="footer-top">
+        <div class="ft-col rv">
+          <h5>Partner Direct Lines</h5>
+          <div class="ft-partners">
+            <div class="ft-p-item"><span class="ft-p-name">CA Varun Vijaywargi</span><a href="tel:+919168175444" class="ft-p-num">+91 91681 75444</a></div>
+            <div class="ft-p-item"><span class="ft-p-name">CA Pavan Khabiya</span><a href="tel:+919168165444" class="ft-p-num">+91 91681 65444</a></div>
+            <div class="ft-p-item"><span class="ft-p-name">CA Ashish Saoji</span><a href="tel:+919325091651" class="ft-p-num">+91 93250 91651</a></div>
+          </div>
+        </div>
+        <div class="ft-col rv rv-d1">
+          <h5>Explore</h5>
+          <ul>
+            <li><a href="about.html">About The Firm</a></li>
+            <li><a href="services.html">Service Portfolio</a></li>
+            <li><a href="industries.html">Industry Expertise</a></li>
+            <li><a href="partners.html">Meet The Team</a></li>
+            <li><a href="publications.html">Insights &amp; Bulletins</a></li>
+          </ul>
+        </div>
+        <div class="ft-col rv rv-d2">
+          <h5>Core Services</h5>
+          <ul>
+            <li><a href="services.html#audit">Audit &amp; Assurance</a></li>
+            <li><a href="services.html#direct-tax">Direct Taxation</a></li>
+            <li><a href="services.html#indirect-tax">Indirect Tax &amp; GST</a></li>
+            <li><a href="services.html#legal">Legal Representation</a></li>
+            <li><a href="services.html#insolvency">Insolvency &amp; IBC</a></li>
+          </ul>
+        </div>
+        <div class="ft-col rv rv-d3">
+          <h5>Visit Or Write</h5>
+          <div class="ft-contact">
+            <div class="ft-ci"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span>3rd Floor, MG House, Ravindranath Tagore Marg, Civil Lines, Nagpur &ndash; 440001</span></div>
+            <div class="ft-ci"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg><span><a href="https://www.cavks.in" target="_blank" rel="noopener">www.cavks.in</a></span></div>
+            <div class="ft-ci"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span><a href="mailto:info@cavks.in">info@cavks.in</a></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Vijaywargi Khabiya &amp; Saoji. All rights reserved.</p>
+        <p>Chartered Accountants &middot; Nagpur &middot; Est. 2014</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<button class="stt" aria-label="Back to top">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 15l-6-6-6 6"/></svg>
+</button>
+
+<nav class="mob-nav">
+  <div class="mob-nav-inner">
+    <a href="index.html" class="mob-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>Home
+    </a>
+    <a href="services.html" class="mob-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Services
+    </a>
+    <a href="partners.html" class="mob-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Team
+    </a>
+    <a href="careers.html" class="mob-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Careers
+    </a>
+    <a href="contact.html" class="mob-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72c.128.96.341 1.903.637 2.822a2 2 0 01-.45 2.109L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.92.296 1.86.51 2.82.637A2 2 0 0122 16.92z"/></svg>Contact
+    </a>
+  </div>
+</nav>
+
+<script src="main.js"></script>
+<script>
+/* ── GALLERY STORE ── */
+const galleryStore = {};
+
+/* ── LIGHTBOX ── */
+let lbImages = [], lbIndex = 0;
+const lb = document.createElement('div');
+lb.className = 'lb-overlay';
+lb.innerHTML = '<button class="lb-close" id="lbClose">✕</button><button class="lb-prev" id="lbPrev">&#8592;</button><img id="lbImg"/><button class="lb-next" id="lbNext">&#8594;</button><div class="lb-caption" id="lbCap"></div>';
+document.body.appendChild(lb);
+
+document.getElementById('lbClose').onclick = closeLB;
+document.getElementById('lbPrev').onclick  = function(){ lbNav(-1); };
+document.getElementById('lbNext').onclick  = function(){ lbNav(1); };
+lb.addEventListener('click', function(e){ if(e.target===lb) closeLB(); });
+
+document.addEventListener('keydown', function(e){
+  if(!lb.classList.contains('open')) return;
+  if(e.key==='Escape') closeLB();
+  if(e.key==='ArrowLeft') lbNav(-1);
+  if(e.key==='ArrowRight') lbNav(1);
+});
+
+var swipeX = 0;
+lb.addEventListener('touchstart', function(e){ swipeX = e.touches[0].clientX; }, {passive:true});
+lb.addEventListener('touchend', function(e){
+  var diff = swipeX - e.changedTouches[0].clientX;
+  if(Math.abs(diff) > 45) lbNav(diff > 0 ? 1 : -1);
+});
+
+function openLB(containerId, index){
+  lbImages = galleryStore[containerId];
+  lbIndex = index;
+  showLB();
+  lb.classList.add('open');
+  document.body.classList.add('no-scroll');
+}
+function showLB(){
+  document.getElementById('lbImg').src = lbImages[lbIndex].src;
+  document.getElementById('lbCap').textContent = lbImages[lbIndex].cap;
+}
+function lbNav(dir){
+  lbIndex = (lbIndex + dir + lbImages.length) % lbImages.length;
+  showLB();
+}
+function closeLB(){
+  lb.classList.remove('open');
+  document.body.classList.remove('no-scroll');
+}
+
+/* ── FETCH & RENDER ── */
+fetch('gallery-manifest.json?v=' + Date.now())
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    loadGallery('gallery-seminar', data['seminar-knowledge'], 'images/seminar-knowledge/');
+    loadGallery('gallery-team',    data['team-movements'],   'images/team-movements/');
+    loadGallery('gallery-charcha', data['weekend-charcha'],  'images/weekend-charcha/');
+  })
+  .catch(function(){});
+
+function loadGallery(containerId, files, basePath){
+  if(!files || files.length === 0) return;
+  var grid = document.getElementById(containerId);
+  if(!grid) return;
+  grid.innerHTML = '';
+
+  var allImgs = files.map(function(file){
+    return {
+      src: basePath + file,
+      cap: file.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ')
+    };
+  });
+  galleryStore[containerId] = allImgs;
+
+  var limit = 6;
+  renderItems(containerId, allImgs, 0, Math.min(limit, allImgs.length));
+
+  if(allImgs.length > limit){
+    var wrap = document.createElement('div');
+    wrap.className = 'gallery-more-btn';
+    var btn = document.createElement('button');
+    btn.className = 'btn btn-outline';
+    btn.textContent = 'View More (' + (allImgs.length - limit) + ' more)';
+    btn.onclick = function(){
+      wrap.remove();
+      renderItems(containerId, allImgs, limit, allImgs.length);
+    };
+    wrap.appendChild(btn);
+    grid.appendChild(wrap);
+  }
+}
+
+function renderItems(containerId, allImgs, from, to){
+  var grid = document.getElementById(containerId);
+  for(var i = from; i < to; i++){
+    var img = allImgs[i];
+    var div = document.createElement('div');
+    div.className = 'gallery-item vis';
+    div.setAttribute('data-idx', i);
+    div.setAttribute('data-cid', containerId);
+    div.onclick = (function(cid, idx){
+      return function(){ openLB(cid, idx); };
+    })(containerId, i);
+    div.innerHTML = '<img src="' + img.src + '" alt="' + img.cap + '" loading="lazy"/>'
+      + '<div class="gallery-overlay"><div class="gallery-caption">' + img.cap + '</div></div>';
+    grid.appendChild(div);
+  }
+}
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

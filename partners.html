@@ -1,0 +1,490 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Our Team - Vijaywargi Khabiya &amp; Saoji | Chartered Accountants Nagpur</title>
+<meta name="description" content="Meet the founding partners and team of VKS - CA Varun Vijaywargi, CA Pavan Khabiya, CA Ashish Saoji and our wider team of 80+ professionals."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Outfit:wght@300;400;500;600;700&display=swap"/>
+<link rel="stylesheet" href="style.css"/>
+<style>
+/* Partners page - feature sections */
+.partner-feature{padding:72px 0;border-bottom:1px solid var(--line2)}
+.partner-feature:last-of-type{border:none}
+
+/* Fix: sticky side card always shows image */
+.pf-img-wrap{width:100%;aspect-ratio:3/4;overflow:hidden;border-radius:var(--r);box-shadow:var(--sh-md);margin-bottom:1rem;background:linear-gradient(135deg,var(--navy),var(--navy2))}
+.pf-img-wrap img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+.pf-info-card{background:var(--navy);border-radius:var(--r);padding:1.4rem}
+
+/* Team grid */
+.tm-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;margin-top:2rem}
+.tm-card{background:var(--white);border:1px solid var(--line2);border-radius:var(--rl);padding:1.4rem 1rem;text-align:center;transition:all var(--t)}
+.tm-card:hover{box-shadow:var(--sh-md);transform:translateY(-4px);border-color:var(--gold)}
+.tm-av{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:var(--white);margin:0 auto .85rem;letter-spacing:.04em}
+.tm-name{font-size:.84rem;font-weight:600;color:var(--ink);margin-bottom:.22rem}
+.tm-spec{font-size:.7rem;color:var(--ink4)}
+
+@media(max-width:900px){.tm-grid{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="container nav-inner">
+    <a href="index.html" class="logo">
+  <img src="images/logo.jpg" alt="VKS CA" class="logo-img" loading="eager"/>
+  <div class="logo-text">
+    <span class="logo-firm">Vijaywargi Khabiya &amp; Saoji</span>        <span class="logo-tag">Chartered Accountants</span>
+  </div>
+    </a>
+    <ul class="nav-links">
+      <li class="nav-item"><a href="index.html">Home</a></li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-drop-toggle" aria-expanded="false">About <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="nav-dropdown">
+          <a href="about.html#overview"><span>Firm Overview</span><small>Our story, multi-city presence and firm philosophy.</small></a>
+          <a href="about.html#firm-vision"><span>Vision</span><small>Inclusive growth, compliance culture and expanding reach.</small></a>
+          <a href="about.html#firm-strengths"><span>Strengths</span><small>Professionalism, quality deliverables and practical advisory.</small></a>
+          <a href="about.html#firm-profile"><span>Firm Profile</span><small>Practice approach, reach and core professional strengths.</small></a>
+        </div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-drop-toggle" aria-expanded="false">Services <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="nav-dropdown">
+          <a href="services.html#audit"><span>Audit &amp; Assurance</span><small>Statutory, internal, tax and concurrent audit support.</small></a>
+          <a href="services.html#direct-tax"><span>Direct Taxation</span><small>Tax planning, assessments and litigation representation.</small></a>
+          <a href="services.html#indirect-tax"><span>Indirect Tax &amp; GST</span><small>GST advisory, compliance, refunds and disputes.</small></a>
+          <a href="services.html#legal"><span>Legal Services</span><small>Representation before tribunals and higher courts.</small></a>
+          <a href="services.html#insolvency"><span>Insolvency &amp; IBC</span><small>CIRP, NCLT matters and restructuring support.</small></a>
+          <a href="services.html"><span>See All Services In Detail</span></a>
+        </div>
+      </li>
+      <li class="nav-item"><a href="industries.html">Industries</a></li>
+      <li class="nav-item"><a href="partners.html" class="active">Team</a></li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-drop-toggle" aria-expanded="false">Insights <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="nav-dropdown">
+          <a href="publications.html#monthly-bulletins"><span>Monthly Bulletins</span><small>Monthly VKS bulletin issues in one place.</small></a>
+          <a href="publications.html#articles-alerts"><span>Articles &amp; Alerts</span><small>Insights, technical articles and regulatory updates.</small></a>
+        </div>
+      </li>
+      <li class="nav-item"><a href="careers.html">Careers</a></li>
+      <li class="nav-item"><a href="articleship.html">Articleship</a></li>
+      <li class="nav-item"><a href="gallery.html" class="nav-gallery-link">Gallery</a></li>
+      <li class="nav-item"><a href="contact.html" class="nav-cta-btn">Contact Us</a></li>
+    </ul>
+    <button class="ham" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="drawer">
+  <a href="index.html">Home</a>
+  <div class="drawer-group">
+    <button class="drawer-toggle" aria-expanded="false">About <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+    <div class="drawer-panel"><div class="drawer-panel-inner">
+      <a href="about.html#overview">Firm Overview</a>
+      <a href="about.html#firm-vision">Vision</a>
+      <a href="about.html#firm-strengths">Strengths</a>
+      <a href="about.html#firm-profile">Firm Profile</a>
+    </div></div>
+  </div>
+  <div class="drawer-group">
+    <button class="drawer-toggle" aria-expanded="false">Services <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+    <div class="drawer-panel"><div class="drawer-panel-inner">
+      <a href="services.html#audit">Audit &amp; Assurance</a>
+      <a href="services.html#direct-tax">Direct Taxation</a>
+      <a href="services.html#indirect-tax">Indirect Tax &amp; GST</a>
+      <a href="services.html#legal">Legal Services</a>
+      <a href="services.html#insolvency">Insolvency &amp; IBC</a>
+      <a href="services.html">See All Services In Detail</a>
+    </div></div>
+  </div>
+  <a href="industries.html">Industries</a>
+  <a href="partners.html">Team</a>
+  <div class="drawer-group">
+    <button class="drawer-toggle" aria-expanded="false">Insights <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+    <div class="drawer-panel"><div class="drawer-panel-inner">
+      <a href="publications.html#monthly-bulletins">Monthly Bulletins</a>
+      <a href="publications.html#articles-alerts">Articles &amp; Alerts</a>
+    </div></div>
+  </div>
+  <a href="careers.html">Careers</a>
+  <a href="articleship.html">Articleship</a>
+  <a href="gallery.html">Gallery</a>
+  <a href="contact.html">Contact</a>
+</div>
+<!-- PAGE HEADER -->
+<div class="ph">
+  <div class="container ph-inner">
+    <div class="breadcrumb"><a href="index.html">Home</a><span>/</span>Team</div>
+    <span class="eyebrow">Our Leadership</span>
+    <h1>Founding <em>Partners</em></h1>
+    <p style="max-width:min(560px,100%);margin-top:.75rem">Experienced professionals united by 12 years of excellence, deep domain expertise and an unwavering commitment to proactive client advisory.</p>
+  </div>
+</div>
+
+<!-- CA VARUN VIJAYWARGI -->
+<section class="partner-feature" id="varun">
+  <div class="container">
+    <div class="pf-layout">
+      <div class="pf-img-col">
+        <div class="pf-sticky">
+          <div class="pf-img-wrap rv-scale">
+            <img src="images/varun.jpg" alt="CA Varun Vijaywargi" loading="lazy"/>
+          </div>
+          <div class="pf-info-card">
+            <div class="pf-badge">Founding Partner</div>
+            <a href="tel:+919168175444" class="pf-mobile-link">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16z"/></svg>
+              +91 91681 75444
+            </a>
+            <a href="https://wa.me/919168175444" class="pf-wa-link" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a2.678 2.678 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              WhatsApp
+            </a>
+            <a href="#" class="pf-linkedin" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>&nbsp;LinkedIn
+            </a>
+            <a href="mailto:varun@cavks.in" class="pf-email">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>&nbsp;varun@cavks.in
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="pf-content">
+        <span class="eyebrow rv">Founding Partner</span>
+        <h2 class="pf-name rv rv-d1">CA Varun Vijaywargi</h2>
+        <div class="pf-spec rv rv-d1">B.Com | CA · Indirect Taxes · 20 Years Experience</div>
+        <div class="rule rv rv-d2"></div>
+        <p class="pf-bio rv rv-d2">CA Varun Vijaywargi heads the Indirect Tax practice at the firm and is a fellow member of the Institute of Chartered Accountants of India with 16 years standing in the profession. He is one of the reputed indirect tax consultants in Nagpur and is known for providing innovative structuring options within the legal framework to help businesses optimize tax costs.</p>
+        <p class="pf-bio rv rv-d2">He has assisted clients in transition to the GST regime and continues to advise on tax optimization through restructuring of business models and supply chains, cross-border structuring and tax litigation. His experience also covers UAE VAT advisory, excise, service tax, central sales tax, VAT, import duty structuring, Foreign Trade Policy matters, and departmental audits and investigations. Prior to starting the firm, Varun served with ELP and JCSS.</p>
+        <div class="pf-areas rv rv-d3">
+          <h4>Areas of Practice</h4>
+          <div class="pf-tags">
+            <span class="pf-tag">Goods and Services Tax</span>
+            <span class="pf-tag">Customs</span>
+            <span class="pf-tag">Foreign Trade Policy</span>
+            <span class="pf-tag">Special Economic Zone</span>
+            <span class="pf-tag">Import Duty Structuring</span>
+            <span class="pf-tag">Departmental Audits</span>
+            <span class="pf-tag">Investigations</span>
+            <span class="pf-tag">Cross-Border Structuring</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CA PAVAN KHABIYA -->
+<section class="partner-feature" id="pavan" style="background:var(--surf)">
+  <div class="container">
+    <div class="pf-layout flip">
+      <div class="pf-img-col">
+        <div class="pf-sticky">
+          <div class="pf-img-wrap rv-scale">
+            <img src="images/pavan.jpg" alt="CA Pavan Khabiya" loading="lazy"/>
+          </div>
+          <div class="pf-info-card">
+            <div class="pf-badge">Founding Partner</div>
+            <a href="tel:+919168165444" class="pf-mobile-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16z"/></svg>+91 91681 65444</a>
+            <a href="https://wa.me/919168165444" class="pf-wa-link" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a2.678 2.678 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>WhatsApp</a>
+            <a href="#" class="pf-linkedin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>&nbsp;LinkedIn</a>
+            <a href="mailto:pavan@cavks.in" class="pf-email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>&nbsp;pavan@cavks.in</a>
+          </div>
+        </div>
+      </div>
+      <div class="pf-content">
+        <span class="eyebrow rv">Founding Partner</span>
+        <h2 class="pf-name rv rv-d1">CA Pavan Khabiya</h2>
+        <div class="pf-spec rv rv-d1">M.Com | CA · Audit &amp; Direct Taxes · 21 Years Experience</div>
+        <div class="rule rv rv-d2"></div>
+        <p class="pf-bio rv rv-d2">Pavan heads the Tax Compliance practice at VK&amp;S and oversees all audits and ongoing compliances. He qualified as a Chartered Accountant in 2003 and has extensive experience in handling tax matters across both direct and indirect taxation.</p>
+        <p class="pf-bio rv rv-d2">He specializes in consolidation of financial statements, due diligence review of accounting functions, implementation of accounting standards, development of internal control systems and special audit assignments. His experience in financial due diligence for M&amp;A gives him strong insight into business risks, growth drivers and potential deal breakers. Pavan also oversees the firm's income tax litigation practice and represents clients before adjudicating and appellate authorities up to CIT (Appeals). Prior to starting this firm, he was part of the tax team at Krishna Murari Agrawal &amp; Co.</p>
+        <div class="pf-areas rv rv-d3">
+          <h4>Areas of Practice</h4>
+          <div class="pf-tags">
+            <span class="pf-tag">Statutory Audit</span>
+            <span class="pf-tag">Internal Audit</span>
+            <span class="pf-tag">Trust Audit</span>
+            <span class="pf-tag">Tax Audit</span>
+            <span class="pf-tag">VAT Audit</span>
+            <span class="pf-tag">Income Tax</span>
+            <span class="pf-tag">GST Audit</span>
+            <span class="pf-tag">Due Diligence</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CA ASHISH SAOJI -->
+<section class="partner-feature" id="ashish">
+  <div class="container">
+    <div class="pf-layout">
+      <div class="pf-img-col">
+        <div class="pf-sticky">
+          <div class="pf-img-wrap rv-scale">
+            <img src="images/ashish.jpg" alt="CA Ashish Saoji" loading="lazy"/>
+          </div>
+          <div class="pf-info-card">
+            <div class="pf-badge">Founding Partner</div>
+            <a href="tel:+919325091651" class="pf-mobile-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16z"/></svg>+91 93250 91651</a>
+            <a href="https://wa.me/919325091651" class="pf-wa-link" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a2.678 2.678 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>WhatsApp</a>
+            <a href="#" class="pf-linkedin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>&nbsp;LinkedIn</a>
+            <a href="mailto:ashish@cavks.in" class="pf-email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>&nbsp;ashish@cavks.in</a>
+          </div>
+        </div>
+      </div>
+      <div class="pf-content">
+        <span class="eyebrow rv">Founding Partner</span>
+        <h2 class="pf-name rv rv-d1">CA Ashish Saoji</h2>
+        <div class="pf-spec rv rv-d1">B.Com | FCA · Banking, Incentives &amp; Insolvency · 23 Years Experience</div>
+        <div class="rule rv rv-d2"></div>
+        <p class="pf-bio rv rv-d2">Ashish leads the Project Financing vertical of the firm and has extensive experience in preparation of detailed project reports and proposals for credit facilities with banks. He has completed the Diploma in Information System Audit (DISA) of ICAI and holds a post-graduation degree in commerce as well as a bachelor's degree in law.</p>
+        <p class="pf-bio rv rv-d2">He specializes in advisory and financial monitoring during project implementation, optimization of finance cost including ROI, bank charges and stamp duty implications, and assistance in obtaining Eligibility Certificates and yearly Industrial Promotion Subsidy claims under the Package Scheme of Incentives. He is also a qualified Insolvency Practitioner and has assisted various debt-laden companies before the NCLT.</p>
+        <div class="pf-areas rv rv-d3">
+          <h4>Areas of Practice</h4>
+          <div class="pf-tags">
+            <span class="pf-tag">Package Scheme of Incentives</span>
+            <span class="pf-tag">Project Finance</span>
+            <span class="pf-tag">Working Capital Finance</span>
+            <span class="pf-tag">Fund &amp; Non-Fund Based Limits</span>
+            <span class="pf-tag">Bank Loan Rating</span>
+            <span class="pf-tag">Industrial Promotion Subsidy</span>
+            <span class="pf-tag">Insolvency &amp; Bankruptcy Code</span>
+            <span class="pf-tag">NCLT Matters</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OTHER PROFESSIONALS -->
+<section class="pad" style="background:var(--surf)">
+  <div class="container">
+    <div class="rv tc">
+      <span class="eyebrow" style="justify-content:center">Our People</span>
+      <h2>The <em style="color:var(--gold)">Team</em></h2>
+      <div class="rule c"></div>
+      <p style="max-width:min(520px,100%);margin:0 auto">A dedicated team of CAs, Advocates and Specialists working together across all practice areas.</p>
+    </div>
+
+    <div class="tm-grid">
+      <div class="tm-card rv rv-d1">
+        <div class="tm-av" style="background:#7b3a70">SP</div>
+        <div class="tm-name">Adv. Sejal Parashar</div>
+        <div class="tm-spec">Consultancy &amp; Advisory</div>
+      </div>
+      <div class="tm-card rv rv-d2">
+        <div class="tm-av" style="background:var(--navy)">CA</div>
+        <div class="tm-name">CA Ankita</div>
+        <div class="tm-spec">Audit &amp; Compliance</div>
+      </div>
+      <div class="tm-card rv rv-d3">
+        <div class="tm-av" style="background:var(--red)">CR</div>
+        <div class="tm-name">CA Rohan</div>
+        <div class="tm-spec">Direct Tax &amp; TDS</div>
+      </div>
+      <div class="tm-card rv rv-d1">
+        <div class="tm-av" style="background:var(--navy2)">CN</div>
+        <div class="tm-name">CA Neha</div>
+        <div class="tm-spec">GST &amp; Refunds</div>
+      </div>
+      <div class="tm-card rv rv-d2">
+        <div class="tm-av" style="background:#2a5070">CR</div>
+        <div class="tm-name">CA Ronit</div>
+        <div class="tm-spec">Statutory Audit</div>
+      </div>
+      <div class="tm-card rv rv-d3">
+        <div class="tm-av" style="background:var(--gold)">RS</div>
+        <div class="tm-name">CA Raj Singh</div>
+        <div class="tm-spec">Tax &amp; Advisory</div>
+      </div>
+      <div class="tm-card rv rv-d1">
+        <div class="tm-av" style="background:#7b3a50">CS</div>
+        <div class="tm-name">CA Supriya</div>
+        <div class="tm-spec">GST &amp; Customs</div>
+      </div>
+      <div class="tm-card rv rv-d2">
+        <div class="tm-av" style="background:var(--navy)">CA</div>
+        <div class="tm-name">CA Aman</div>
+        <div class="tm-spec">Debt &amp; Finance</div>
+      </div>
+      <div class="tm-card rv rv-d3">
+        <div class="tm-av" style="background:#3a5c3a">CP</div>
+        <div class="tm-name">CA Pooja</div>
+        <div class="tm-spec">Due Diligence</div>
+      </div>
+      <div class="tm-card rv rv-d1">
+        <div class="tm-av" style="background:var(--red)">AS</div>
+        <div class="tm-name">Adv. Shilpa</div>
+        <div class="tm-spec">GST &amp; Tax Disputes</div>
+      </div>
+    </div>
+
+    <div class="article-banner rv" style="margin-top:3rem">
+      <div class="ab-num">25+</div>
+      <div>
+        <h4>Other Professionals &amp; Associates</h4>
+        <p>A growing team of professionals across Audit, Tax, Legal and Advisory - working closely with our partners and senior team members.</p>
+      </div>
+    </div>
+   <div class="article-banner rv" style="margin-top:1.1rem">
+      <div class="ab-num">50+</div>
+      <div>
+        <h4>Articled Assistants</h4>
+        <p>Structured training as per ICAI timelines across Audit, Tax and Advisory - under direct partner mentorship.</p>
+      </div>
+    </div>
+    <p class="rv" style="text-align:center;margin-top:1.4rem;font-size:.88rem;color:var(--ink3)">
+      <strong style="color:var(--navy)">80+ Team Members</strong> total. &nbsp;<a href="careers.html" style="color:var(--red)">Join us →</a>
+    </p>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-strip">
+  <div class="container"><div class="cta-inner">
+    <div class="cta-copy rv"><h2>Want to <em>Join Our Team?</em></h2><p>Apply for Articleship or a professional role at VKS.</p></div>
+    <div class="cta-actions rv rv-d2">
+      <a href="careers.html" class="btn btn-gold">View Openings <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      <a href="contact.html" class="btn btn-ghost">Send CV</a>
+    </div>
+  </div></div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-shell">
+      <div class="footer-spotlight">
+        <div class="footer-brand-card rv">
+          <div class="footer-kicker">Trusted Since 2014</div>
+          <div class="footer-brand">
+            <a href="index.html" class="logo" style="display:inline-flex">
+              <img src="images/logo.jpg" alt="VKS" style="object-fit:contain;flex-shrink:0"/>
+              <div class="logo-text" style="margin-left:.6rem">
+                <span class="logo-firm">Vijaywargi Khabiya &amp; Saoji</span>        <span class="logo-tag">Chartered Accountants</span>
+              </div>
+            </a>
+          </div>
+          <p class="ft-desc">A multi-disciplinary chartered accountancy firm delivering audit, tax, legal and advisory services with single-window execution for businesses across Nagpur and beyond.</p>
+          <div class="ft-dynamic-line" aria-live="polite">
+            <span class="ft-dynamic-dot"></span>
+            <span>Currently helping with</span>
+            <span class="ft-dynamic-text">Audit and assurance mandates</span>
+          </div>
+          <div class="ft-highlight-row">
+            <div class="ft-highlight"><strong data-count="12" data-suffix="+">12+</strong><span>Years of Excellence</span></div>
+            <div class="ft-highlight"><strong data-count="80" data-suffix="+">80+</strong><span>Professionals</span></div>
+            <div class="ft-highlight"><strong data-count="7">7</strong><span>Cities Served</span></div>
+          </div>
+        </div>
+        <div class="footer-contact-card rv rv-d1">
+          <h5>Start A Conversation</h5>
+          <div class="footer-action">
+            <div class="footer-action-copy">
+              <span>Main Office Line</span>
+              <a href="tel:07122522020">0712-2522020</a>
+            </div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16z"/></svg>
+          </div>
+          <div class="footer-action">
+            <div class="footer-action-copy">
+              <span>Email Us</span>
+              <a href="mailto:info@cavks.in">info@cavks.in</a>
+            </div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <p class="ft-note">3rd Floor, MG House, Ravindranath Tagore Marg, Civil Lines, Nagpur &ndash; 440001</p>
+        </div>
+      </div>
+      <div class="footer-top">
+        <div class="ft-col rv">
+          <h5>Partner Direct Lines</h5>
+          <div class="ft-partners">
+            <div class="ft-p-item"><span class="ft-p-name">CA Varun Vijaywargi</span><a href="tel:+919168175444" class="ft-p-num">+91 91681 75444</a></div>
+            <div class="ft-p-item"><span class="ft-p-name">CA Pavan Khabiya</span><a href="tel:+919168165444" class="ft-p-num">+91 91681 65444</a></div>
+            <div class="ft-p-item"><span class="ft-p-name">CA Ashish Saoji</span><a href="tel:+919325091651" class="ft-p-num">+91 93250 91651</a></div>
+          </div>
+        </div>
+        <div class="ft-col rv rv-d1">
+          <h5>Explore</h5>
+          <ul>
+            <li><a href="about.html">About The Firm</a></li>
+            <li><a href="services.html">Service Portfolio</a></li>
+            <li><a href="industries.html">Industry Expertise</a></li>
+            <li><a href="partners.html">Meet The Team</a></li>
+            <li><a href="publications.html">Insights &amp; Bulletins</a></li>
+          </ul>
+        </div>
+        <div class="ft-col rv rv-d2">
+          <h5>Core Services</h5>
+          <ul>
+            <li><a href="services.html#audit">Audit &amp; Assurance</a></li>
+            <li><a href="services.html#direct-tax">Direct Taxation</a></li>
+            <li><a href="services.html#indirect-tax">Indirect Tax &amp; GST</a></li>
+            <li><a href="services.html#legal">Legal Representation</a></li>
+            <li><a href="services.html#insolvency">Insolvency &amp; IBC</a></li>
+          </ul>
+        </div>
+        <div class="ft-col rv rv-d3">
+          <h5>Visit Or Write</h5>
+          <div class="ft-contact">
+            <div class="ft-ci"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span>3rd Floor, MG House, Ravindranath Tagore Marg, Civil Lines, Nagpur &ndash; 440001</span></div>
+            <div class="ft-ci"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg><span><a href="https://www.cavks.in" target="_blank" rel="noopener">www.cavks.in</a></span></div>
+            <div class="ft-ci"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span><a href="mailto:info@cavks.in">info@cavks.in</a></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Vijaywargi Khabiya &amp; Saoji. All rights reserved.</p>
+        <p>Chartered Accountants &middot; Nagpur &middot; Est. 2014</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<button class="stt" aria-label="Back to top"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 15l-6-6-6 6"/></svg></button>
+<nav class="mob-nav">
+  <div class="mob-nav-inner">
+    <a href="index.html" class="mob-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>Home
+    </a>
+    <a href="services.html" class="mob-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Services
+    </a>
+    <a href="partners.html" class="mob-nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Team
+    </a>
+    <a href="careers.html" class="mob-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Careers
+    </a>
+    <a href="contact.html" class="mob-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72c.128.96.341 1.903.637 2.822a2 2 0 01-.45 2.109L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.92.296 1.86.51 2.82.637A2 2 0 0122 16.92z"/></svg>Contact
+    </a>
+  </div>
+</nav>
+<script src="main.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

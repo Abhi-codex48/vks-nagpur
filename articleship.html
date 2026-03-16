@@ -1,0 +1,679 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>CA Articleship at VKS — Vijaywargi Khabiya &amp; Saoji | Nagpur</title>
+<meta name="description" content="Join VKS as an Article Assistant — 2-year structured CA articleship in Nagpur. Exposure to Audit, Tax, GST, IBC, Legal and more under partner mentorship."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Outfit:wght@300;400;500;600;700&display=swap"/>
+<link rel="stylesheet" href="style.css"/>
+<style>
+.arship-hero{background:var(--navy);padding:6rem 0 4rem;position:relative;overflow:hidden}
+.arship-hero::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(196,154,26,.07) 0%,transparent 55%),linear-gradient(225deg,rgba(176,28,46,.05) 0%,transparent 50%)}
+.arship-hero-inner{display:grid;grid-template-columns:1fr auto;gap:3rem;align-items:center}
+.arship-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(196,154,26,.12);border:1px solid rgba(196,154,26,.25);padding:.35rem 1rem;border-radius:40px;font-size:.7rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:1.25rem}
+.arship-hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,4.5vw,3.6rem);font-weight:300;color:var(--white);line-height:1.1;margin-bottom:1rem}
+.arship-hero h1 em{color:var(--gold);font-style:italic;display:block}
+.arship-hero p{color:rgba(255,255,255,.55);font-size:.95rem;line-height:1.8;max-width:540px;margin-bottom:2rem}
+.arship-hero-stats{display:flex;gap:2.5rem;margin-top:2rem;flex-wrap:wrap}
+.arship-stat{text-align:center}
+.arship-stat .n{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:300;color:var(--gold);line-height:1}
+.arship-stat .l{font-size:.62rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-top:.25rem}
+.arship-hero-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:var(--r);padding:1.75rem;min-width:220px;text-align:center}
+.arship-hero-card .icon{font-size:2.5rem;margin-bottom:.75rem}
+.arship-hero-card h4{color:var(--white);font-size:.9rem;font-weight:600;margin-bottom:.4rem}
+.arship-hero-card p{color:rgba(255,255,255,.45);font-size:.78rem;line-height:1.6}
+.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:2.5rem}
+.why-card{background:var(--white);border:1px solid var(--line2);border-radius:var(--r);padding:2rem;position:relative;overflow:hidden;transition:box-shadow .2s,transform .2s}
+.why-card:hover{box-shadow:var(--sh-lg);transform:translateY(-3px)}
+.why-card-num{position:absolute;top:.75rem;right:1.25rem;font-family:'Cormorant Garamond',serif;font-size:4rem;font-weight:300;color:rgba(13,27,62,.06);line-height:1}
+.why-card-icon{font-size:1.75rem;margin-bottom:.85rem}
+.why-card h4{font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:.5rem}
+.why-card p{font-size:.84rem;color:var(--ink3);line-height:1.7}
+.offers-list{display:flex;flex-direction:column;gap:0;margin-top:2rem}
+.offer-row{display:grid;grid-template-columns:80px 1fr;gap:1.5rem;align-items:start;padding:1.75rem 0;border-bottom:1px solid var(--line2)}
+.offer-row:last-child{border:none}
+.offer-num{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;color:var(--gold);opacity:.5;line-height:1;padding-top:.1rem}
+.offer-content h4{font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:.4rem}
+.offer-content p{font-size:.85rem;color:var(--ink3);line-height:1.7}
+.offer-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.65rem}
+.offer-tag{font-size:.62rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding:.22rem .65rem;border-radius:40px;background:var(--gold-bg);color:var(--gold);border:1px solid rgba(196,154,26,.2)}
+.charcha-new{background:var(--navy);padding:5rem 0;position:relative;overflow:hidden}
+.charcha-new::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px);background-size:48px 48px}
+.charcha-new-inner{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.charcha-cal{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--rl);padding:2.5rem;text-align:center}
+.charcha-cal-day{font-family:'Cormorant Garamond',serif;font-size:5rem;font-weight:300;color:var(--gold);line-height:1}
+.charcha-cal-label{font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:.25rem}
+.charcha-cal-divider{height:1px;background:rgba(196,154,26,.2);margin:1.5rem 0}
+.charcha-cal-quote{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-style:italic;color:rgba(255,255,255,.5);line-height:1.6}
+.charcha-feats{display:flex;flex-direction:column;gap:1.25rem;margin-top:1.5rem}
+.charcha-feat-new{display:flex;gap:1rem;align-items:flex-start}
+.charcha-feat-icon-new{width:40px;height:40px;border-radius:10px;background:rgba(196,154,26,.12);border:1px solid rgba(196,154,26,.2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.charcha-feat-new h5{color:var(--white);font-size:.88rem;font-weight:600;margin-bottom:.2rem}
+.charcha-feat-new p{color:rgba(255,255,255,.45);font-size:.8rem;line-height:1.6}
+.exposure-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:2rem}
+.exp-card{background:var(--white);border:1px solid var(--line2);border-radius:var(--r);padding:1.25rem;text-align:center;transition:box-shadow .2s,transform .2s}
+.exp-card:hover{box-shadow:var(--sh-md);transform:translateY(-2px)}
+.exp-card-icon{font-size:1.75rem;margin-bottom:.6rem}
+.exp-card h5{font-size:.82rem;font-weight:700;color:var(--navy);margin-bottom:.3rem}
+.exp-card p{font-size:.72rem;color:var(--ink4);line-height:1.5}
+.culture-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2rem}
+.culture-card{border-radius:var(--r);padding:1.75rem;position:relative}
+.culture-card.navy{background:var(--navy);border:1px solid rgba(255,255,255,.08)}
+.culture-card.gold{background:linear-gradient(135deg,rgba(196,154,26,.08),rgba(196,154,26,.03));border:1px solid rgba(196,154,26,.2)}
+.culture-card.surf{background:var(--white);border:1px solid var(--line2)}
+.culture-card-icon{font-size:2rem;margin-bottom:1rem}
+.culture-card.navy h4{color:var(--white)}
+.culture-card.navy p{color:rgba(255,255,255,.5);font-size:.83rem;line-height:1.7}
+.culture-card h4{font-size:1rem;font-weight:700;margin-bottom:.5rem;color:var(--navy)}
+.culture-card p{font-size:.83rem;color:var(--ink3);line-height:1.7}
+.apply-split{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center}
+.apply-steps{display:flex;flex-direction:column;gap:0;margin-top:1.5rem}
+.apply-step{display:flex;gap:1.25rem;align-items:flex-start;padding:1.25rem 0;border-bottom:1px solid var(--line2)}
+.apply-step:last-child{border:none}
+.apply-step-num{width:36px;height:36px;border-radius:50%;background:var(--navy);color:var(--white);font-size:.78rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:.1rem}
+.apply-step-text h5{font-size:.9rem;font-weight:700;color:var(--navy);margin-bottom:.2rem}
+.apply-step-text p{font-size:.82rem;color:var(--ink3);line-height:1.6}
+.apply-cta-box{background:var(--navy);border-radius:var(--rl);padding:2.5rem;text-align:center}
+.apply-cta-box h3{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:var(--white);margin-bottom:.75rem}
+.apply-cta-box p{color:rgba(255,255,255,.5);font-size:.85rem;line-height:1.7;margin-bottom:1.75rem}
+.apply-eligibility{background:rgba(196,154,26,.1);border:1px solid rgba(196,154,26,.2);border-radius:var(--rs);padding:1rem 1.25rem;margin-bottom:1.5rem;text-align:left}
+.apply-eligibility h6{font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem}
+.apply-eligibility p{font-size:.8rem;color:rgba(255,255,255,.55);line-height:1.6}
+@media(max-width:900px){
+  .arship-hero-inner{grid-template-columns:1fr}
+  .arship-hero-card{display:none}
+  .why-grid{grid-template-columns:1fr}
+  .charcha-new-inner{grid-template-columns:1fr}
+  .charcha-cal{display:none}
+  .exposure-grid{grid-template-columns:repeat(2,1fr)}
+  .culture-grid{grid-template-columns:1fr 1fr}
+  .apply-split{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  .exposure-grid{grid-template-columns:1fr 1fr}
+  .culture-grid{grid-template-columns:1fr}
+  .arship-hero-stats{gap:1.5rem}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="container nav-inner">
+    <a href="index.html" class="logo">
+  <img src="images/logo.jpg" alt="VKS CA" class="logo-img" loading="eager"/>
+  <div class="logo-text">
+    <span class="logo-firm">Vijaywargi Khabiya &amp; Saoji</span>        <span class="logo-tag">Chartered Accountants</span>
+  </div>
+    </a>
+    <ul class="nav-links">
+      <li class="nav-item"><a href="index.html">Home</a></li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-drop-toggle" aria-expanded="false">About <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="nav-dropdown">
+          <a href="about.html#overview"><span>Firm Overview</span><small>Our story, multi-city presence and firm philosophy.</small></a>
+          <a href="about.html#firm-vision"><span>Vision</span><small>Inclusive growth, compliance culture and expanding reach.</small></a>
+          <a href="about.html#firm-strengths"><span>Strengths</span><small>Professionalism, quality deliverables and practical advisory.</small></a>
+          <a href="about.html#firm-profile"><span>Firm Profile</span><small>Practice approach, reach and core professional strengths.</small></a>
+        </div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-drop-toggle" aria-expanded="false">Services <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="nav-dropdown">
+          <a href="services.html#audit"><span>Audit &amp; Assurance</span><small>Statutory, internal, tax and concurrent audit support.</small></a>
+          <a href="services.html#direct-tax"><span>Direct Taxation</span><small>Tax planning, assessments and litigation representation.</small></a>
+          <a href="services.html#indirect-tax"><span>Indirect Tax &amp; GST</span><small>GST advisory, compliance, refunds and disputes.</small></a>
+          <a href="services.html#legal"><span>Legal Services</span><small>Representation before tribunals and higher courts.</small></a>
+          <a href="services.html#insolvency"><span>Insolvency &amp; IBC</span><small>CIRP, NCLT matters and restructuring support.</small></a>
+          <a href="services.html"><span>See All Services In Detail</span></a>
+        </div>
+      </li>
+      <li class="nav-item"><a href="industries.html">Industries</a></li>
+      <li class="nav-item"><a href="partners.html">Team</a></li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-drop-toggle" aria-expanded="false">Insights <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="nav-dropdown">
+          <a href="publications.html#monthly-bulletins"><span>Monthly Bulletins</span><small>Monthly VKS bulletin issues in one place.</small></a>
+          <a href="publications.html#articles-alerts"><span>Articles &amp; Alerts</span><small>Insights, technical articles and regulatory updates.</small></a>
+        </div>
+      </li>
+      <li class="nav-item"><a href="careers.html">Careers</a></li>
+      <li class="nav-item"><a href="articleship.html" class="active">Articleship</a></li>
+      <li class="nav-item"><a href="gallery.html" class="nav-gallery-link">Gallery</a></li>
+      <li class="nav-item"><a href="contact.html" class="nav-cta-btn">Contact Us</a></li>
+    </ul>
+    <button class="ham" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="drawer">
+  <a href="index.html">Home</a>
+  <div class="drawer-group">
+    <button class="drawer-toggle" aria-expanded="false">About <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+    <div class="drawer-panel"><div class="drawer-panel-inner">
+      <a href="about.html#overview">Firm Overview</a>
+      <a href="about.html#firm-vision">Vision</a>
+      <a href="about.html#firm-strengths">Strengths</a>
+      <a href="about.html#firm-profile">Firm Profile</a>
+    </div></div>
+  </div>
+  <div class="drawer-group">
+    <button class="drawer-toggle" aria-expanded="false">Services <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+    <div class="drawer-panel"><div class="drawer-panel-inner">
+      <a href="services.html#audit">Audit &amp; Assurance</a>
+      <a href="services.html#direct-tax">Direct Taxation</a>
+      <a href="services.html#indirect-tax">Indirect Tax &amp; GST</a>
+      <a href="services.html#legal">Legal Services</a>
+      <a href="services.html#insolvency">Insolvency &amp; IBC</a>
+      <a href="services.html">See All Services In Detail</a>
+    </div></div>
+  </div>
+  <a href="industries.html">Industries</a>
+  <a href="partners.html">Team</a>
+  <div class="drawer-group">
+    <button class="drawer-toggle" aria-expanded="false">Insights <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+    <div class="drawer-panel"><div class="drawer-panel-inner">
+      <a href="publications.html#monthly-bulletins">Monthly Bulletins</a>
+      <a href="publications.html#articles-alerts">Articles &amp; Alerts</a>
+    </div></div>
+  </div>
+  <a href="careers.html">Careers</a>
+  <a href="articleship.html">Articleship</a>
+  <a href="gallery.html">Gallery</a>
+  <a href="contact.html">Contact</a>
+</div>
+<!-- HERO -->
+<section class="arship-hero">
+  <div class="container">
+    <div class="arship-hero-inner">
+      <div class="rv">
+        <div class="arship-badge">🎓 CA Intermediate Passed · 2-Year Programme</div>
+        <h1>Start Your CA Journey<em>The Right Way.</em></h1>
+        <p>VKS is where CA Intermediate students become complete professionals. Two years of real work, real clients, real exposure — under direct partner guidance in one of Central India's most respected CA firms.</p>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap">
+          <a href="#apply" class="btn btn-gold">Apply for Articleship <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          <a href="#firm-profile" class="btn btn-ghost">Firm Profile? <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+        <div class="arship-hero-stats">
+          <div class="arship-stat"><div class="n">80+</div><div class="l">Team Members</div></div>
+          <div class="arship-stat"><div class="n">12+</div><div class="l">Industry Sectors</div></div>
+          <div class="arship-stat"><div class="n">12</div><div class="l">Years Est. 2014</div></div>
+          <div class="arship-stat"><div class="n">2 Yr</div><div class="l">ICAI Programme</div></div>
+        </div>
+      </div>
+      <div class="arship-hero-card rv">
+        <div class="icon">📋</div>
+        <h4>New ICAI Rules · 2024</h4>
+        <p>Articleship is now 2 years under revised ICAI guidelines. Make those 2 years count — at a firm that invests in you.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY VKS -->
+<section class="pad" id="firm-profile" style="background:var(--surf)">
+  <div class="container">
+    <div class="rv" style="text-align:center;margin-bottom:.5rem">
+      <span class="eyebrow" style="justify-content:center">Why Choose VKS</span>
+      <h2>Not all articleships are <em style="color:var(--gold)">equal.</em></h2>
+      <div class="rule c"></div>
+      <p style="max-width:560px;margin:0 auto;color:var(--ink3);font-size:.92rem;line-height:1.8">Most articles spend 2 years doing the same thing on repeat. At VKS you rotate across practice areas, attend tribunals, work with real clients and learn directly from partners.</p>
+    </div>
+    <div class="why-grid">
+
+      <!-- CARD 1: PARTNER MENTORSHIP — NO CHANGE -->
+      <div class="why-card rv rv-d1">
+        <div class="why-card-num">01</div>
+        <div class="why-card-icon">🎯</div>
+        <h4>Partner Mentorship — Not Just Supervision</h4>
+        <p>At VKS, founding partners are actively involved in every engagement. You don't just hear their name — you work alongside them, sit in client meetings and get direct feedback on your work.</p>
+      </div>
+
+      <!-- CARD 2: REAL CLIENTS — REVISED -->
+      <div class="why-card rv rv-d2">
+        <div class="why-card-num">02</div>
+        <div class="why-card-icon">🏢</div>
+        <h4>Real Clients. Real Complexity.</h4>
+        <p>Work on assignments spanning listed companies, private enterprises, trusts, and government bodies — each with its own regulatory and business complexity. No dummy files. Every engagement teaches you something new.</p>
+      </div>
+
+      <!-- CARD 3: ICAI SEMINARS — NEW -->
+      <div class="why-card rv rv-d3">
+        <div class="why-card-num">03</div>
+        <div class="why-card-icon">🎤</div>
+        <h4>ICAI Seminars &amp; Events</h4>
+        <p>VKS actively sponsors and participates in ICAI-organised seminars, workshops, and professional development sessions — giving you direct exposure to the broader CA community and industry thought leaders.</p>
+      </div>
+
+      <!-- CARD 4: EXPOSURE ACROSS DOMAINS — REVISED -->
+      <div class="why-card rv rv-d4">
+        <div class="why-card-num">04</div>
+        <div class="why-card-icon">🚀</div>
+        <h4>Exposure Across Many Domains</h4>
+        <p>From statutory audit to GST advisory, from FEMA compliance to corporate law — your articleship at VKS spans a wide range of professional work, building a strong and versatile foundation for your CA career.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- WHAT VKS OFFERS -->
+<section class="pad" id="what-we-offer">
+  <div class="container">
+    <div class="rv">
+      <span class="eyebrow">What You Get</span>
+      <h2>What VKS <em style="color:var(--gold)">Offers You</em></h2>
+      <div class="rule"></div>
+    </div>
+    <div class="offers-list">
+      <div class="offer-row rv rv-d1">
+        <div class="offer-num">01</div>
+        <div class="offer-content">
+          <h4>Stipend as per ICAI Norms</h4>
+          <p>All article assistants at VKS receive stipend as prescribed by ICAI for the relevant year and city category. Paid on time, every month.</p>
+        </div>
+      </div>
+      <div class="offer-row rv rv-d2">
+        <div class="offer-num">02</div>
+        <div class="offer-content">
+          <h4>Cross-Department Rotation</h4>
+          <p>You will be posted across departments during your articleship — giving you hands-on experience in every area of CA practice, not just the one you joined for.</p>
+          <div class="offer-tags">
+            <span class="offer-tag">Statutory Audits</span>
+            <span class="offer-tag">Internal Audits</span>
+            <span class="offer-tag">ITR's & Tax Audits</span>
+            <span class="offer-tag">Stock Audits</span>
+            <span class="offer-tag">Direct Tax</span>
+            <span class="offer-tag">GST</span>
+            <span class="offer-tag">IBC / NCLT</span>
+            <span class="offer-tag">Legal</span>
+            
+          </div>
+        </div>
+      </div>
+      <div class="offer-row rv rv-d3">
+        <div class="offer-num">03</div>
+        <div class="offer-content">
+          <h4>Tribunal &amp; Courtroom Exposure</h4>
+          <p>Article assistants accompany partners and seniors to ITAT hearings, GST tribunals and NCLT proceedings. You watch real litigation happen — not read about it in textbooks.</p>
+        </div>
+      </div>
+      <div class="offer-row rv rv-d1">
+        <div class="offer-num">04</div>
+        <div class="offer-content">
+          <h4>Weekend Charchas — Every Saturday</h4>
+          <p>Every Saturday, article assistants present on a topic from their current practice area — in front of the team and partners. It builds presentation skills, technical depth and professional confidence from Day 1.</p>
+        </div>
+      </div>
+      <div class="offer-row rv rv-d2">
+        <div class="offer-num">05</div>
+        <div class="offer-content">
+          <h4>Study Leave as per ICAI Rules</h4>
+          <p>Full study leave entitlement as prescribed by ICAI for CA Final examinations. We support your exam preparation — your success is our success.</p>
+        </div>
+      </div>
+      <div class="offer-row rv rv-d3">
+        <div class="offer-num">06</div>
+        <div class="offer-content">
+          <h4>Completion Certificate &amp; Reference Letter</h4>
+          <p>Upon successful completion, you receive your ICAI completion certificate, a detailed reference letter from the firm and a performance recommendation for placements.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WEEKEND CHARCHAS -->
+<section class="charcha-new">
+  <div class="container">
+    <div class="charcha-new-inner">
+      <div class="rv">
+        <span class="eyebrow" style="color:rgba(196,154,26,.8)">Every Saturday</span>
+        <h2 style="color:var(--white);font-weight:300">Weekend <em style="color:var(--gold);font-style:italic">Charchas</em></h2>
+        <div class="rule gold" style="margin-top:1rem"></div>
+        <p style="color:rgba(255,255,255,.5);margin-top:1rem;font-size:.92rem;line-height:1.85;max-width:480px">Every Saturday, our Article Assistants present on a topic from their current area of work — in front of the entire team and founding partners. It is the single most impactful part of VKS training that no other firm offers.</p>
+        <div class="charcha-feats">
+          <div class="charcha-feat-new rv rv-d1">
+            <div class="charcha-feat-icon-new">📣</div>
+            <div>
+              <h5>You Present. You Learn.</h5>
+              <p>Teaching a topic forces you to understand it deeply. Articles at VKS develop a level of technical command that most CA students only achieve post-qualification.</p>
+            </div>
+          </div>
+          <div class="charcha-feat-new rv rv-d2">
+            <div class="charcha-feat-icon-new">🎤</div>
+            <div>
+              <h5>Communication Skills</h5>
+              <p>CA exams test knowledge. Client meetings test communication. Weekend Charchas prepare you for both — presenting to a room of 80+ professionals every week builds confidence fast.</p>
+            </div>
+          </div>
+          <div class="charcha-feat-new rv rv-d3">
+            <div class="charcha-feat-icon-new">🤝</div>
+            <div>
+              <h5>Open Q&amp;A with Partners</h5>
+              <p>After every presentation, founding partners engage in open discussion. Real questions, real answers — you get insights that no classroom or textbook can give you.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="charcha-cal rv">
+        <div class="charcha-cal-day">SAT</div>
+        <div class="charcha-cal-label">Every Saturday · Morning</div>
+        <div class="charcha-cal-divider"></div>
+        <div class="charcha-cal-quote">"Teaching is the best way<br/>to truly learn something."</div>
+        <div class="charcha-cal-divider"></div>
+        <div style="display:flex;flex-direction:column;gap:.6rem;text-align:left">
+          <div style="font-size:.75rem;color:rgba(255,255,255,.4);display:flex;gap:.5rem"><span style="color:var(--gold)">→</span> GST Refund Procedures</div>
+          <div style="font-size:.75rem;color:rgba(255,255,255,.4);display:flex;gap:.5rem"><span style="color:var(--gold)">→</span> Transfer Pricing Basics</div>
+          <div style="font-size:.75rem;color:rgba(255,255,255,.4);display:flex;gap:.5rem"><span style="color:var(--gold)">→</span> IBC &amp; NCLT Proceedings</div>
+          <div style="font-size:.75rem;color:rgba(255,255,255,.4);display:flex;gap:.5rem"><span style="color:var(--gold)">→</span> Ind AS — Revenue Recognition</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIVERSE EXPOSURE — PLANT & FACTORY VISITS -->
+<section class="pad" style="background:var(--surf)">
+  <div class="container">
+    <div class="rv" style="text-align:center">
+      <span class="eyebrow" style="justify-content:center">Diverse Exposure</span>
+      <h2>Fields You Will Work <em style="color:var(--gold)">Across</em></h2>
+      <div class="rule c"></div>
+      <p style="max-width:500px;margin:0 auto;color:var(--ink3);font-size:.88rem;line-height:1.8">At VKS you work across practice areas and industry sectors — building a professional profile that stands out in interviews and exams.</p>
+    </div>
+    <div class="exposure-grid">
+      <div class="exp-card rv rv-d1">
+        <div class="exp-card-icon">📊</div>
+        <h5>Statutory Audit</h5>
+        <p>Listed companies, private limited, LLPs and PSUs</p>
+      </div>
+      <div class="exp-card rv rv-d2">
+        <div class="exp-card-icon">📋</div>
+        <h5>Direct Taxation</h5>
+        <p>ITR filing, scrutiny, assessments, ITAT appearances</p>
+      </div>
+      <div class="exp-card rv rv-d3">
+        <div class="exp-card-icon">🧾</div>
+        <h5>GST &amp; Indirect Tax</h5>
+        <p>Compliance, advisory, refunds, GST audits &amp; tribunals</p>
+      </div>
+      <div class="exp-card rv rv-d4">
+        <div class="exp-card-icon">⚖️</div>
+        <h5>IBC &amp; Insolvency</h5>
+        <p>CIRP proceedings, NCLT filings, creditor advisory</p>
+      </div>
+      <div class="exp-card rv rv-d1">
+        <div class="exp-card-icon">🏛️</div>
+        <h5>Legal &amp; Litigation</h5>
+        <p>High Court, ITAT, GST Appellate, NCLT hearings</p>
+      </div>
+      <div class="exp-card rv rv-d2">
+        <div class="exp-card-icon">🏦</div>
+        <h5>Debt Syndication</h5>
+        <p>CMA preparation, bank proposals, term loan structuring</p>
+      </div>
+      <div class="exp-card rv rv-d3">
+        <div class="exp-card-icon">🌐</div>
+        <h5>FEMA &amp; International</h5>
+        <p>FEMA compliance, transfer pricing, FCRA matters</p>
+      </div>
+      <div class="exp-card rv rv-d4">
+        <div class="exp-card-icon">🏭</div>
+        <h5>Plant &amp; Factory Visits</h5>
+        <p>On-site audit visits to manufacturing units, factories and client facilities — real fieldwork, not just desk work</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CULTURE & LIFE -->
+<section class="pad">
+  <div class="container">
+    <div class="rv" style="text-align:center">
+      <span class="eyebrow" style="justify-content:center">Life at VKS</span>
+      <h2>Professionalism &amp; <em style="color:var(--gold)">People</em></h2>
+      <div class="rule c"></div>
+      <p style="max-width:500px;margin:0 auto;color:var(--ink3);font-size:.88rem;line-height:1.8">We believe the best professionals are shaped by great culture — not just great work. At VKS, both exist.</p>
+    </div>
+    <div class="culture-grid">
+      <div class="culture-card navy rv rv-d1">
+        <div class="culture-card-icon">🎯</div>
+        <h4>High Standards</h4>
+        <p>VKS is a firm with a reputation built over 12 years. We hold high standards of work quality — and that discipline shapes articles into thorough, reliable professionals.</p>
+      </div>
+      <div class="culture-card gold rv rv-d2">
+        <div class="culture-card-icon">🎉</div>
+        <h4>Celebrations &amp; Outings</h4>
+        <p>Birthdays, festivals, Diwali functions, annual outings — VKS celebrates together. You work hard and enjoy the journey with 80+ colleagues who feel like family.</p>
+      </div>
+      <div class="culture-card surf rv rv-d3">
+        <div class="culture-card-icon">🚪</div>
+        <h4>Open Door Culture</h4>
+        <p>Partners are approachable. Seniors are supportive. If you have a doubt — ask. If you have an idea — share it. No rigid hierarchy that kills curiosity.</p>
+      </div>
+      <div class="culture-card surf rv rv-d1">
+        <div class="culture-card-icon">📚</div>
+        <h4>CA Exam Support</h4>
+        <p>Study leave as per ICAI norms, exam scheduling support, and a team that genuinely celebrates when you clear your CA Final. Your success matters to us.</p>
+      </div>
+      <div class="culture-card navy rv rv-d2">
+        <div class="culture-card-icon">🏆</div>
+        <h4>Recognition &amp; Growth</h4>
+        <p>Hard work at VKS is noticed and rewarded. Top-performing articles get opportunities, references, and active placement support from the founding partners themselves.</p>
+      </div>
+      <div class="culture-card gold rv rv-d3">
+        <div class="culture-card-icon">🌱</div>
+        <h4>You Grow. We Grow.</h4>
+        <p>VKS is a firm that's growing rapidly — new practice areas, new cities, new clients. Articles join at a time when every contribution matters and is visible.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW TO APPLY -->
+<section class="pad" id="apply" style="background:var(--surf)">
+  <div class="container">
+    <div class="rv" style="margin-bottom:2.5rem">
+      <span class="eyebrow">Join Us</span>
+      <h2>How to <em style="color:var(--gold)">Apply</em></h2>
+      <div class="rule"></div>
+    </div>
+    <div class="apply-split">
+      <div>
+        <div class="apply-steps">
+          <div class="apply-step rv rv-d1">
+            <div class="apply-step-num">1</div>
+            <div class="apply-step-text">
+              <h5>Check Eligibility</h5>
+              <p>You must have passed CA Intermediate (both groups) under the new ICAI curriculum. ICAI registration must be active and in order.</p>
+            </div>
+          </div>
+          <div class="apply-step rv rv-d2">
+            <div class="apply-step-num">2</div>
+            <div class="apply-step-text">
+              <h5>Send Your Application</h5>
+              <p>Email your CV, mark sheets and ICAI registration details to us — or use the Apply button below to reach us via the contact form.</p>
+            </div>
+          </div>
+          <div class="apply-step rv rv-d3">
+            <div class="apply-step-num">3</div>
+            <div class="apply-step-text">
+              <h5>Interview at the Firm</h5>
+              <p>Shortlisted candidates are called for a brief interaction at our Nagpur office. It's a conversation — not an interrogation. We want to know you.</p>
+            </div>
+          </div>
+          <div class="apply-step rv rv-d4">
+            <div class="apply-step-num">4</div>
+            <div class="apply-step-text">
+              <h5>Join &amp; Begin Your Journey</h5>
+              <p>Once selected, complete ICAI formalities, get your deed registered and join on your agreed date. Your VKS journey begins.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="apply-cta-box rv">
+        <h3>Ready to Apply?</h3>
+        <p>We are always open to meeting driven CA students who want more from their articleship. Send us your details and we will get back to you.</p>
+        <div class="apply-eligibility">
+          <h6>Eligibility</h6>
+          <p>CA Intermediate passed (both groups) · ICAI registration active · As per ICAI articleship rules</p>
+        </div>
+        <a href="contact.html?subject=Articleship Application" class="btn btn-gold" style="width:100%;justify-content:center;display:flex">
+          Apply for Articleship
+          <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <p style="margin-top:1rem;font-size:.75rem;color:rgba(255,255,255,.3)">Or call us at <a href="tel:07122522020" style="color:rgba(196,154,26,.7)">0712-2522020</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA STRIP -->
+<section class="cta-strip">
+  <div class="container"><div class="cta-inner">
+    <div class="cta-copy rv"><h2>Questions About <em>Articleship?</em></h2><p>Talk to us directly. We're happy to answer any questions about the programme, structure or timelines.</p></div>
+    <div class="cta-actions rv rv-d2">
+      <a href="contact.html" class="btn btn-gold">Contact Us <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      <a href="tel:07122522020" class="btn btn-ghost">📞 Call Now</a>
+    </div>
+  </div></div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-shell">
+      <div class="footer-spotlight">
+        <div class="footer-brand-card rv">
+          <div class="footer-kicker">Trusted Since 2014</div>
+          <div class="footer-brand">
+            <a href="index.html" class="logo" style="display:inline-flex">
+              <img src="images/logo.jpg" alt="VKS" style="object-fit:contain;flex-shrink:0"/>
+              <div class="logo-text" style="margin-left:.6rem">
+                <span class="logo-firm">Vijaywargi Khabiya &amp; Saoji</span>        <span class="logo-tag">Chartered Accountants</span>
+              </div>
+            </a>
+          </div>
+          <p class="ft-desc">A multi-disciplinary chartered accountancy firm delivering audit, tax, legal and advisory services with single-window execution for businesses across Nagpur and beyond.</p>
+          <div class="ft-dynamic-line" aria-live="polite">
+            <span class="ft-dynamic-dot"></span>
+            <span>Currently helping with</span>
+            <span class="ft-dynamic-text">Audit and assurance mandates</span>
+          </div>
+          <div class="ft-highlight-row">
+            <div class="ft-highlight"><strong data-count="12" data-suffix="+">12+</strong><span>Years of Excellence</span></div>
+            <div class="ft-highlight"><strong data-count="80" data-suffix="+">80+</strong><span>Professionals</span></div>
+            <div class="ft-highlight"><strong data-count="7">7</strong><span>Cities Served</span></div>
+          </div>
+        </div>
+        <div class="footer-contact-card rv rv-d1">
+          <h5>Start A Conversation</h5>
+          <div class="footer-action">
+            <div class="footer-action-copy">
+              <span>Main Office Line</span>
+              <a href="tel:07122522020">0712-2522020</a>
+            </div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16z"/></svg>
+          </div>
+          <div class="footer-action">
+            <div class="footer-action-copy">
+              <span>Email Us</span>
+              <a href="mailto:info@cavks.in">info@cavks.in</a>
+            </div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <p class="ft-note">3rd Floor, MG House, Ravindranath Tagore Marg, Civil Lines, Nagpur &ndash; 440001</p>
+        </div>
+      </div>
+      <div class="footer-top">
+        <div class="ft-col rv">
+          <h5>Partner Direct Lines</h5>
+          <div class="ft-partners">
+            <div class="ft-p-item"><span class="ft-p-name">CA Varun Vijaywargi</span><a href="tel:+919168175444" class="ft-p-num">+91 91681 75444</a></div>
+            <div class="ft-p-item"><span class="ft-p-name">CA Pavan Khabiya</span><a href="tel:+919168165444" class="ft-p-num">+91 91681 65444</a></div>
+            <div class="ft-p-item"><span class="ft-p-name">CA Ashish Saoji</span><a href="tel:+919325091651" class="ft-p-num">+91 93250 91651</a></div>
+          </div>
+        </div>
+        <div class="ft-col rv rv-d1">
+          <h5>Explore</h5>
+          <ul>
+            <li><a href="about.html">About The Firm</a></li>
+            <li><a href="services.html">Service Portfolio</a></li>
+            <li><a href="industries.html">Industry Expertise</a></li>
+            <li><a href="partners.html">Meet The Team</a></li>
+            <li><a href="publications.html">Insights &amp; Bulletins</a></li>
+          </ul>
+        </div>
+        <div class="ft-col rv rv-d2">
+          <h5>Core Services</h5>
+          <ul>
+            <li><a href="services.html#audit">Audit &amp; Assurance</a></li>
+            <li><a href="services.html#direct-tax">Direct Taxation</a></li>
+            <li><a href="services.html#indirect-tax">Indirect Tax &amp; GST</a></li>
+            <li><a href="services.html#legal">Legal Representation</a></li>
+            <li><a href="services.html#insolvency">Insolvency &amp; IBC</a></li>
+          </ul>
+        </div>
+        <div class="ft-col rv rv-d3">
+          <h5>Visit Or Write</h5>
+          <div class="ft-contact">
+            <div class="ft-ci"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span>3rd Floor, MG House, Ravindranath Tagore Marg, Civil Lines, Nagpur &ndash; 440001</span></div>
+            <div class="ft-ci"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg><span><a href="https://www.cavks.in" target="_blank" rel="noopener">www.cavks.in</a></span></div>
+            <div class="ft-ci"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span><a href="mailto:info@cavks.in">info@cavks.in</a></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Vijaywargi Khabiya &amp; Saoji. All rights reserved.</p>
+        <p>Chartered Accountants &middot; Nagpur &middot; Est. 2014</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<button class="stt" aria-label="Back to top">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 15l-6-6-6 6"/></svg>
+</button>
+
+<nav class="mob-nav">
+  <div class="mob-nav-inner">
+    <a href="index.html" class="mob-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>Home
+    </a>
+    <a href="services.html" class="mob-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Services
+    </a>
+    <a href="partners.html" class="mob-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Team
+    </a>
+    <a href="careers.html" class="mob-nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Careers
+    </a>
+    <a href="contact.html" class="mob-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72c.128.96.341 1.903.637 2.822a2 2 0 01-.45 2.109L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.92.296 1.86.51 2.82.637A2 2 0 0122 16.92z"/></svg>Contact
+    </a>
+  </div>
+</nav>
+
+<script src="main.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
