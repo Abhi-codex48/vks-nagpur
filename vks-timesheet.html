@@ -734,9 +734,8 @@ const wbadge = w => { const m={'GST / Indirect Tax':'bg','Audit / IT':'bb','Inco
 const rbadge = r => { const m={'admin':'br','CA Article':'bp','Employee':'bs','Manager':'bg','Senior Staff':'bor'}; return `<span class="badge ${m[r]||'bm'}">${r||'—'}</span>`; };
 
 // PIN — uses sessionStorage so clears on every tab/browser close
-const pinDone  = uid => sessionStorage.getItem(`vks_pin_${uid}`) === 'yes';
+const pinDone   = uid => sessionStorage.getItem(`vks_pin_${uid}`) === 'yes';
 const setPinDone = uid => sessionStorage.setItem(`vks_pin_${uid}`, 'yes');
-
 const hashPIN = async pin => {
   const enc = new TextEncoder().encode(pin+'vks2024nagpur');
   const buf = await crypto.subtle.digest('SHA-256',enc);
@@ -1563,10 +1562,52 @@ async function loadPubLog(){
     $('pub-body').innerHTML=html;
   } catch(e){ $('pub-body').innerHTML=`<div style="color:var(--rust);padding:16px">${e.message}</div>`; }
 }
+  
+// Reset PIN timer on user activity
+['click','keydown','touchstart'].forEach(evt=>{
+  document.addEventListener(evt, ()=>{
+    if(CU && pinDone(CU.uid)){
+      setPinDone(CU.uid); // refresh the 15 min timer
+    }
+  }, {passive:true});
+});
+```
+
+---
+
+## How This Works
+```
+User opens portal → Google auto-login ✅ (no re-login)
+         ↓
+PIN screen appears → enter PIN ✅
+         ↓
+User works normally → timer resets on every click/tap
+         ↓
+User goes idle 15 min → comes back → PIN asked again ✅
+         ↓
+User closes tab → reopens → PIN asked again ✅
+// ── INIT ──
+// ── GOOGLE SESSION IDLE TIMEOUT (15 min) ──
+let idleTimer=null;
+function resetIdleTimer(){
+  clearTimeout(idleTimer);
+  idleTimer=setTimeout(async()=>{
+    if(CU){
+      await signOut(auth);
+      CU=null; CD=null; pinBuf='';
+      ss('sc-login');
+      $('l-em').value=''; $('l-pw').value='';
+      toast('Session expired. Please sign in again.','warn');
+    }
+  }, 15*60*1000);
+}
+['click','keydown','touchstart','scroll'].forEach(evt=>{
+  document.addEventListener(evt, resetIdleTimer, {passive:true});
+});
 
 // ── INIT ──
 $('pub-mo').addEventListener('click',e=>{ if(e.target===$('pub-mo')) closePubLog(); });
-onAuthStateChanged(auth, user=>{ if(user&&!CU){ CU=user; afterLogin(user); } });
+onAuthStateChanged(auth, user=>{ if(user&&!CU){ CU=user; afterLogin(user); resetIdleTimer(); } });
 </script>
 </body>
 </html>
