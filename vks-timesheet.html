@@ -1300,7 +1300,18 @@ window.toggleNewSel = id => {
   if(cb){ cb.classList.toggle('chk', pendingNewSel.has(id)); cb.textContent=pendingNewSel.has(id)?'✓':''; }
 };
 window.toggleLockSel= id => { lockedSel.has(id)?lockedSel.delete(id):lockedSel.add(id); loadApprovals(); };
-window.selAllNew = all => { const items=document.querySelectorAll('#appr-nlist .appr-item'); items.forEach(el=>{ const id=el.id.replace('ni-',''); all?pendingNewSel.add(id):pendingNewSel.delete(id); }); loadApprovals(); };
+window.selAllNew = all => {
+  const items=document.querySelectorAll('#appr-nlist .appr-item[id^="ni-"]');
+  if(!items.length){ toast('No registrations to select.','warn'); return; }
+  items.forEach(el=>{
+    const id=el.id.replace('ni-','');
+    all ? pendingNewSel.add(id) : pendingNewSel.delete(id);
+    el.classList.toggle('sel', all);
+    const cb=el.querySelector('.appr-cb');
+    if(cb){ cb.classList.toggle('chk', all); cb.textContent=all?'✓':''; }
+  });
+  updateNewBulkBar();
+};
 window.selAllLocked= all => { const items=document.querySelectorAll('#appr-llist .appr-item'); items.forEach(el=>{ const id=el.id.replace('li-',''); all?lockedSel.add(id):lockedSel.delete(id); }); loadApprovals(); };
 function updateNewBulkBar(){ const el=$('appr-nsel'); if(el) el.textContent=`${pendingNewSel.size} selected`; }
 function updateLockBulkBar(){ const el=$('appr-lsel'); if(el) el.textContent=`${lockedSel.size} selected`; }
