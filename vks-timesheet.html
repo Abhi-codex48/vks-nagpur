@@ -363,6 +363,8 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
         <div class="sbar"><span>🔍</span><input type="text" id="my-srch" placeholder="Search client, work type, remarks..." oninput="renderMyTable()"/></div>
         <div class="fbar">
           <div class="ff"><label>Month</label><input type="month" id="m-month"/></div>
+<div class="ff"><label>From Date</label><input type="date" id="m-from"/></div>
+<div class="ff"><label>To Date</label><input type="date" id="m-to"/></div>
           <div class="ff"><label>Work Type</label>
             <select id="m-task">
               <option value="">All</option>
@@ -1023,14 +1025,17 @@ window.submitEntry = async () => {
   } catch(e){ toast(e.message,'error'); }
 };
 
-// ── MY ENTRIES ──
-window.loadMyEntries = async () => {
-  setDM('m-month'); const month=$('m-month').value, task=$('m-task').value;
+// ── MY ENTRIES ──window.loadMyEntries = async () => {
+  setDM('m-month');
+  const month=$('m-month').value, task=$('m-task').value;
+  const from=$('m-from').value, to=$('m-to').value;
   $('my-tb').innerHTML=lrow(6);
   try {
     const q=query(collection(db,'entries'),where('uid','==',CU.uid),orderBy('date','desc'));
     let es=(await getDocs(q)).docs.map(d=>({id:d.id,...d.data()}));
     if(month) es=es.filter(e=>e.date?.startsWith(month));
+    if(from)  es=es.filter(e=>e.date&&e.date>=from);
+    if(to)    es=es.filter(e=>e.date&&e.date<=to);
     if(task)  es=es.filter(e=>e.task===task);
     myEntries=es;
     const tot=es.reduce((s,e)=>s+(+e.hours||0),0);
@@ -1045,8 +1050,13 @@ window.loadMyEntries = async () => {
 
 window.renderMyTable = () => {
   const q=($('my-srch').value||'').toLowerCase();
-  const es=myEntries.filter(e=>!q||(e.client||'').toLowerCase().includes(q)||(e.task||'').toLowerCase().includes(q)||(e.remarks||'').toLowerCase().includes(q));
-  $('my-tb').innerHTML=es.length?es.map(e=>`<tr>
+  const es=myEntries.filter(e=>!q||
+    (e.client||'').toLowerCase().includes(q)||
+    (e.task||'').toLowerCase().includes(q)||
+    (e.remarks||'').toLowerCase().includes(q)||
+    (e.date||'').includes(q)||
+    (e.hours||'').toString().includes(q)
+  );  $('my-tb').innerHTML=es.length?es.map(e=>`<tr>
     <td>${fmt(e.date)}</td><td><strong>${e.client||'—'}</strong></td><td>${wbadge(e.task)}</td>
     <td><strong>${(+e.hours||0).toFixed(1)}</strong></td>
     <td style="max-width:160px;color:var(--muted);font-size:.78rem">${e.remarks||'—'}</td>
@@ -1299,7 +1309,14 @@ window.toggleNewSel = id => {
   if(item) item.classList.toggle('sel', pendingNewSel.has(id));
   if(cb){ cb.classList.toggle('chk', pendingNewSel.has(id)); cb.textContent=pendingNewSel.has(id)?'✓':''; }
 };
-window.toggleLockSel= id => { lockedSel.has(id)?lockedSel.delete(id):lockedSel.add(id); loadApprovals(); };
+window.toggleLockSel = id => {
+  lockedSel.has(id) ? lockedSel.delete(id) : lockedSel.add(id);
+  updateLockBulkBar();
+  const item=document.getElementById('li-'+id);
+  const cb=item?.querySelector('.appr-cb');
+  if(item) item.classList.toggle('sel', lockedSel.has(id));
+  if(cb){ cb.classList.toggle('chk', lockedSel.has(id)); cb.textContent=lockedSel.has(id)?'✓':''; }
+};
 window.selAllNew = all => {
   const items=document.querySelectorAll('#appr-nlist .appr-item[id^="ni-"]');
   if(!items.length){ toast('No registrations to select.','warn'); return; }
@@ -1312,7 +1329,18 @@ window.selAllNew = all => {
   });
   updateNewBulkBar();
 };
-window.selAllLocked= all => { const items=document.querySelectorAll('#appr-llist .appr-item'); items.forEach(el=>{ const id=el.id.replace('li-',''); all?lockedSel.add(id):lockedSel.delete(id); }); loadApprovals(); };
+window.selAllLocked = all => {
+  const items=document.querySelectorAll('#appr-llist .appr-item[id^="li-"]');
+  if(!items.length){ toast('No locked accounts to select.','warn'); return; }
+  items.forEach(el=>{
+    const id=el.id.replace('li-','');
+    all ? lockedSel.add(id) : lockedSel.delete(id);
+    el.classList.toggle('sel', all);
+    const cb=el.querySelector('.appr-cb');
+    if(cb){ cb.classList.toggle('chk', all); cb.textContent=all?'✓':''; }
+  });
+  updateLockBulkBar();
+};
 function updateNewBulkBar(){ const el=$('appr-nsel'); if(el) el.textContent=`${pendingNewSel.size} selected`; }
 function updateLockBulkBar(){ const el=$('appr-lsel'); if(el) el.textContent=`${lockedSel.size} selected`; }
 
