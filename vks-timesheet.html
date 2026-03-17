@@ -1563,30 +1563,7 @@ async function loadPubLog(){
   } catch(e){ $('pub-body').innerHTML=`<div style="color:var(--rust);padding:16px">${e.message}</div>`; }
 }
   
-// Reset PIN timer on user activity
-['click','keydown','touchstart'].forEach(evt=>{
-  document.addEventListener(evt, ()=>{
-    if(CU && pinDone(CU.uid)){
-      setPinDone(CU.uid); // refresh the 15 min timer
-    }
-  }, {passive:true});
-});
-```
 
----
-
-## How This Works
-```
-User opens portal → Google auto-login ✅ (no re-login)
-         ↓
-PIN screen appears → enter PIN ✅
-         ↓
-User works normally → timer resets on every click/tap
-         ↓
-User goes idle 15 min → comes back → PIN asked again ✅
-         ↓
-User closes tab → reopens → PIN asked again ✅
-// ── INIT ──
 // ── GOOGLE SESSION IDLE TIMEOUT (15 min) ──
 let idleTimer=null;
 function resetIdleTimer(){
