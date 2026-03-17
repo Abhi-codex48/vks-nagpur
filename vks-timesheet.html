@@ -1243,28 +1243,30 @@ window.loadApprovals = async () => {
 
 function renderNewList(list){
   const c=$('appr-nlist'), bulk=$('appr-nbulk');
-  if(!list.length){ c.innerHTML='<div class="empty"><div class="ei">✅</div><p>No pending registrations.</p></div>'; bulk.style.display='none'; return; }
+  if(!list.length){ 
+    c.innerHTML='<div class="empty"><div class="ei">✅</div><p>No pending registrations.</p></div>'; 
+    bulk.style.display='none'; 
+    return; 
+  }
   bulk.style.display='flex';
   c.innerHTML=list.map(u=>`
-    <div class="appr-item ${pendingNewSel.has(u.id)?'sel':''}" id="ni-${u.id}">
-      <div class="appr-cb ${pendingNewSel.has(u.id)?'chk':''}" onclick="toggleNewSel('${u.id}')">${pendingNewSel.has(u.id)?'✓':''}</div>
+    <div class="appr-item ${pendingNewSel.has(u.id)?'sel':''}" id="ni-${u.id}" onclick="toggleNewSel('${u.id}')">
+      <div class="appr-cb ${pendingNewSel.has(u.id)?'chk':''}">${pendingNewSel.has(u.id)?'✓':''}</div>
       <div class="appr-info">
         <div class="appr-nm">${u.name||'—'}</div>
         <div class="appr-em">${u.email||'—'}</div>
         <div class="appr-mt">${u.department||'—'} · Registered ${fmtTS(u.createdAt)}</div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
-        <div class="field" style="margin:0;min-width:130px">
-          <select id="role-${u.id}" style="padding:4px 8px;font-size:.75rem;border:1px solid var(--border);border-radius:6px;background:var(--white)">
-            <option ${u.role==='CA Article'?'selected':''}>CA Article</option>
-            <option ${u.role==='Employee'?'selected':''}>Employee</option>
-            <option ${u.role==='Manager'?'selected':''}>Manager</option>
-            <option ${u.role==='Senior Staff'?'selected':''}>Senior Staff</option>
-          </select>
-        </div>
+      <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end" onclick="event.stopPropagation()">
+        <select id="role-${u.id}" style="padding:4px 8px;font-size:.75rem;border:1px solid var(--border);border-radius:6px;background:var(--white)">
+          <option ${u.role==='CA Article'?'selected':''}>CA Article</option>
+          <option ${u.role==='Employee'?'selected':''}>Employee</option>
+          <option ${u.role==='Manager'?'selected':''}>Manager</option>
+          <option ${u.role==='Senior Staff'?'selected':''}>Senior Staff</option>
+        </select>
         <div style="display:flex;gap:4px">
-          <button class="btn bsa bxsm" onclick="approveOne('${u.id}')">✓ Approve</button>
-          <button class="btn bd bxsm" onclick="rejectOne('${u.id}')">✗ Reject</button>
+          <button class="btn bsa bxsm" onclick="event.stopPropagation();approveOne('${u.id}')">✓ Approve</button>
+          <button class="btn bd bxsm" onclick="event.stopPropagation();rejectOne('${u.id}')">✗ Reject</button>
         </div>
       </div>
     </div>`).join('');
@@ -1289,7 +1291,14 @@ function renderLockList(list){
 }
 
 // selection
-window.toggleNewSel = id => { pendingNewSel.has(id)?pendingNewSel.delete(id):pendingNewSel.add(id); loadApprovals(); };
+window.toggleNewSel = id => { 
+  pendingNewSel.has(id) ? pendingNewSel.delete(id) : pendingNewSel.add(id); 
+  updateNewBulkBar();
+  const item = document.getElementById('ni-'+id);
+  const cb = item?.querySelector('.appr-cb');
+  if(item) item.classList.toggle('sel', pendingNewSel.has(id));
+  if(cb){ cb.classList.toggle('chk', pendingNewSel.has(id)); cb.textContent=pendingNewSel.has(id)?'✓':''; }
+};
 window.toggleLockSel= id => { lockedSel.has(id)?lockedSel.delete(id):lockedSel.add(id); loadApprovals(); };
 window.selAllNew = all => { const items=document.querySelectorAll('#appr-nlist .appr-item'); items.forEach(el=>{ const id=el.id.replace('ni-',''); all?pendingNewSel.add(id):pendingNewSel.delete(id); }); loadApprovals(); };
 window.selAllLocked= all => { const items=document.querySelectorAll('#appr-llist .appr-item'); items.forEach(el=>{ const id=el.id.replace('li-',''); all?lockedSel.add(id):lockedSel.delete(id); }); loadApprovals(); };
