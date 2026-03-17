@@ -1025,7 +1025,8 @@ window.submitEntry = async () => {
   } catch(e){ toast(e.message,'error'); }
 };
 
-// ── MY ENTRIES ──window.loadMyEntries = async () => {
+// ── MY ENTRIES ──
+window.loadMyEntries = async () => {
   setDM('m-month');
   const month=$('m-month').value, task=$('m-task').value;
   const from=$('m-from').value, to=$('m-to').value;
