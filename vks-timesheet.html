@@ -860,12 +860,16 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
       <div class="field"><label>From Date</label><input type="date" id="bulk-from"/></div>
       <div class="field"><label>To Date</label><input type="date" id="bulk-to"/></div>
     </div>
-    <div class="field"><label>Include Weekends?</label>
-      <select id="bulk-weekends">
-        <option value="no">No — skip Saturdays &amp; Sundays</option>
-        <option value="yes">Yes — include all days</option>
-        <option value="sat">Include Saturdays only</option>
+    <div class="field"><label>Working Days Selection</label>
+      <select id="bulk-weekends" onchange="toggleManualDates()">
+        <option value="no-sun">All days except Sundays (Mon–Sat)</option>
+        <option value="yes">All days including Sundays</option>
+        <option value="manual">Select manually — I'll deselect leaves/holidays</option>
       </select>
+    </div>
+    <div id="manual-dates-wrap" style="display:none">
+      <div class="notice" style="margin-bottom:8px">⚠️ <strong>Deselect</strong> dates on which office was closed or you were on leave.</div>
+      <div id="manual-dates-grid" style="display:flex;flex-wrap:wrap;gap:6px;max-height:200px;overflow-y:auto;padding:4px"></div>
     </div>
     <div class="field"><label>Client Name</label>
       <div class="sdwrap">
@@ -2014,27 +2018,88 @@ window.openBulkEntry = () => {
   $('bulk-client-i').value=''; $('bulk-client').value='';
   $('bulk-task').value=''; $('bulk-hours').value=''; $('bulk-remarks').value='';
   $('bulk-preview').style.display='none'; $('bulk-err').textContent='';
-  $('bulk-remarks-count').textContent='0 words';
+  $('bulk-remarks-count').textContent='0 characters';
   $('bulk-other-wrap').style.display='none';
+  $('bulk-weekends').value='no-sun';
+  $('manual-dates-wrap').style.display='none';
   om('m-bulk');
 };
 
+window.toggleManualDates = () => {
+  const wo=$('bulk-weekends').value;
+  const wrap=$('manual-dates-wrap');
+  if(wo==='manual'){
+    wrap.style.display='block';
+    buildManualDateGrid();
+  } else {
+    wrap.style.display='none';
+  }
+};
+
+function buildManualDateGrid(){
+  const from=$('bulk-from').value, to=$('bulk-to').value;
+  if(!from||!to){ $('manual-dates-wrap').style.display='none'; toast('Select date range first.','warn'); $('bulk-weekends').value='no-sun'; return; }
+  const allDates=getBulkDates(from,to,'yes'); // get ALL dates
+  const grid=$('manual-dates-grid');
+  grid.innerHTML=allDates.map(d=>{
+    const dt=new Date(d+'T12:00:00');
+    const dow=dt.getDay();
+    const isWeekend=dow===0||dow===6;
+    const dayName=['Su','Mo','Tu','We','Th','Fr','Sa'][dow];
+    const dayNum=dt.getDate();
+    const mon=dt.toLocaleDateString('en-IN',{month:'short'});
+    return `<div class="manual-date-btn ${isWeekend?'weekend':''} selected" 
+      id="md-${d}" onclick="toggleManualDate('${d}')" 
+      style="padding:6px 10px;border-radius:8px;font-size:.75rem;cursor:pointer;border:1.5px solid var(--border);background:var(--white);text-align:center;min-width:52px;transition:all .18s">
+      <div style="font-size:.65rem;color:var(--muted)">${dayName}</div>
+      <div style="font-weight:600">${dayNum}</div>
+      <div style="font-size:.65rem;color:var(--muted)">${mon}</div>
+    </div>`;
+  }).join('');
+}
+
+window.toggleManualDate = (d) => {
+  const el=$('md-'+d);
+  if(!el) return;
+  el.classList.toggle('selected');
+  const sel=el.classList.contains('selected');
+  el.style.background=sel?'var(--white)':'#fee2e2';
+  el.style.borderColor=sel?'var(--border)':'var(--rust)';
+  el.style.opacity=sel?'1':'0.5';
+};
+
+function getDeselectedDates(){
+  const allBtns=document.querySelectorAll('[id^="md-"]');
+  const desel=[];
+  allBtns.forEach(btn=>{
+    if(!btn.classList.contains('selected')){
+      desel.push(btn.id.replace('md-',''));
+    }
+  });
+  return desel;
+}
 window.checkBulkRemarks = () => {
   const txt=$('bulk-remarks').value.trim();
   const len=txt.length;
   const cnt=$('bulk-remarks-count');
   if(cnt){ cnt.textContent=`${len}/100 characters`; cnt.style.color=len>=100?'var(--sage)':'var(--muted)'; }
 };
-function getBulkDates(from, to, weekendOpt){
+function getBulkDates(from, to, weekendOpt, deselected=[]){
   const dates=[];
-  const cur=new Date(from+'T00:00:00');
-  const end=new Date(to+'T00:00:00');
+  const cur=new Date(from+'T12:00:00'); // noon avoids UTC shift
+  const end=new Date(to+'T12:00:00');
   while(cur<=end){
-    const dow=cur.getDay(); // 0=Sun,6=Sat
+    const dow=cur.getDay();
     const isWeekend=(dow===0||dow===6);
-    const isSat=(dow===6);
-    if(!isWeekend||(weekendOpt==='yes')||(weekendOpt==='sat'&&isSat)){
-      dates.push(cur.toISOString().split('T')[0]);
+    const isSun=(dow===0);
+    // Format date manually to avoid UTC conversion bug
+    const dateStr=`${cur.getFullYear()}-${String(cur.getMonth()+1).padStart(2,'0')}-${String(cur.getDate()).padStart(2,'0')}`;
+    const skip = deselected.includes(dateStr);
+    if(!skip){
+      if(weekendOpt==='all') dates.push(dateStr);
+      else if(weekendOpt==='no-sun' && !isSun) dates.push(dateStr);
+      else if(weekendOpt==='yes' && !isWeekend) dates.push(dateStr);
+      else if(weekendOpt==='manual') dates.push(dateStr);
     }
     cur.setDate(cur.getDate()+1);
   }
@@ -2046,7 +2111,8 @@ window.previewBulk = () => {
   const wo=$('bulk-weekends').value;
   if(!from||!to){ $('bulk-err').textContent='Please select date range.'; return; }
   if(from>to){ $('bulk-err').textContent='From date must be before To date.'; return; }
-  const dates=getBulkDates(from,to,wo);
+  const desel=wo==='manual'?getDeselectedDates():[];
+  const dates=getBulkDates(from,to,wo,desel);
   $('bulk-preview').style.display='block';
   $('bulk-preview').innerHTML=`<strong>${dates.length} entries will be created:</strong><br/>${dates.map(d=>fmt(d)).join(' · ')}`;
   $('bulk-err').textContent='';
@@ -2066,8 +2132,21 @@ window.submitBulk = async () => {
   if(!task){ $('bulk-err').textContent='Select work type.'; return; }
   if(!hours){ $('bulk-err').textContent='Enter hours per day.'; return; }
   if(remarks.length<100){ $('bulk-err').textContent='Remarks must be at least 100 characters.'; return; }
-  const dates=getBulkDates(from,to,wo);
+ const desel=wo==='manual'?getDeselectedDates():[];
+  const dates=getBulkDates(from,to,wo,desel);
   if(!dates.length){ $('bulk-err').textContent='No working days in selected range.'; return; }
+```
+
+---
+
+## How Manual Mode Works After This
+```
+User selects Manual → date grid appears
+All dates shown as white tiles ✅
+Click any date → turns RED = deselected ❌
+Click again → back to white = selected ✅
+Preview → shows only selected dates
+Submit → creates entries for selected dates only
   $('bulk-err').textContent=`Creating ${dates.length} entries…`;
   try {
     const batch=writeBatch(db);
