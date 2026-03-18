@@ -375,14 +375,21 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
           Continue with Google
         </button>
         <div id="l-err" class="err" style="margin-top:12px;text-align:center"></div>
-        <div class="lc-features">
-          <div class="lc-feat">🔐 Secure PIN protection every session</div>
-          <div class="lc-feat">📊 Real-time timesheet tracking</div>
-          <div class="lc-feat">📥 Excel export anytime</div>
-        </div>
+       <div class="lc-features">
+  <div class="lc-feat">🔐 Secure PIN protection every session</div>
+  <div class="lc-feat">📊 Real-time timesheet tracking</div>
+  <div class="lc-feat">📥 Excel export anytime</div>
+</div>
+<div style="margin-top:16px;padding:12px 14px;background:#f5f0ff;border-radius:10px;border:1px solid #ede9fe">
+  <div style="font-size:.72rem;font-weight:700;color:#5b21b6;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">⭐ CA Articles — Private Repository</div>
+  <div style="font-size:.76rem;color:#6d28d9;line-height:1.6">Knowledge Bank · Study Tracker · Case Library · Daily Check · Personal Notes — all private, only for you.</div>
+</div>
         <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border);text-align:center">
-          <button class="btn bo bsm" onclick="openPubLog()" style="font-size:.74rem;color:var(--muted)">📋 View Activity Log</button>
-        </div>
+  <button class="btn bo bsm" onclick="openPubLog()" style="font-size:.74rem;color:var(--muted)">📋 View Activity Log</button>
+</div>
+<div style="margin-top:14px;text-align:center;font-size:.72rem;color:var(--muted)">
+  Made with ❤️ by <strong>Abhishek R. Sarda</strong> (Article)
+</div>
       </div>
     </div>
   </div>
@@ -499,7 +506,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
         </div>
         <div class="field">
   <label>Remarks / Notes <span style="color:var(--muted);font-weight:400;font-size:.7rem">(minimum 100 characters)</span></label>
-  <textarea id="e-remarks" placeholder="Describe work done in detail — minimum 50 words required..." oninput="checkRemarks()"></textarea>
+  <textarea id="e-remarks" placeholder="Describe work done in detail — minimum 100 characters required..." oninput="checkRemarks()"></textarea>
   <div id="remarks-count" style="font-size:.72rem;color:var(--muted);margin-top:3px;text-align:right">0 words</div>
   <div id="remarks-warn" style="display:none;font-size:.78rem;color:var(--rust);margin-top:3px">⚠️ Please type at least 100 characters in remarks.</div>
 </div>
@@ -736,7 +743,10 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
           <div class="ctitle">📚 Knowledge Bank
             <span style="font-size:.72rem;background:#ede9fe;color:#5b21b6;padding:2px 10px;border-radius:20px;font-family:'DM Sans',sans-serif;font-weight:600">Private · CA Article only</span>
           </div>
-          <p style="font-size:.83rem;color:var(--muted);margin-bottom:16px">Your personal exposure tracker — automatically built from your time entries.</p>
+       <p style="font-size:.83rem;color:var(--muted);margin-bottom:16px">Your personal exposure tracker — automatically built from your time entries.</p>
+<div style="background:#f5f0ff;border-radius:10px;padding:11px 14px;margin-bottom:14px;font-size:.8rem;color:#5b21b6;line-height:1.6;border:1px solid #ede9fe">
+  💜 This hub is built to help <strong>you</strong> grow during your articleship — track your exposure, balance your study, save learnings, and stay organised. Everything here is private and only for you.
+</div>
           <div id="kb-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:18px"></div>
           <div class="card" style="background:var(--cream);border:none">
             <div style="font-size:.78rem;font-weight:600;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">Recent Work Entries</div>
@@ -860,6 +870,15 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
     </div>
 
   </main>
+ <footer style="background:var(--ink);padding:14px 22px;text-align:center;border-top:1px solid rgba(255,255,255,.08)">
+    <div style="font-size:.72rem;color:rgba(255,255,255,.5);margin-bottom:4px">
+      Owned &amp; Managed by <strong style="color:var(--gold)">Vijaywargi Khabiya &amp; Saoji</strong> · Chartered Accountants · Nagpur
+    </div>
+    <div style="font-size:.7rem;color:rgba(255,255,255,.3)">
+      Made with ❤️ by <strong style="color:rgba(255,255,255,.5)">Abhishek R. Sarda</strong> (Article)
+    </div>
+  </footer>
+  
 </div>
 
 <!-- MODAL: REJECT -->
@@ -1076,8 +1095,8 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
       <input type="number" id="bulk-hours" min=".5" max="24" step=".5" placeholder="e.g. 8"/>
     </div>
     <div class="field">
-      <label>Remarks <span style="color:var(--muted);font-weight:400;font-size:.7rem">(min 50 words)</span></label>
-      <textarea id="bulk-remarks" placeholder="Describe work done — minimum 50 words..." oninput="checkBulkRemarks()"></textarea>
+      <label>Remarks <span style="color:var(--muted);font-weight:400;font-size:.7rem">(min 100 characters)</span></label>
+      <textarea id="bulk-remarks" placeholder="Describe work done — minimum 100 characters required..." oninput="checkBulkRemarks()"></textarea>
       <div id="bulk-remarks-count" style="font-size:.72rem;color:var(--muted);margin-top:3px;text-align:right">0 words</div>
     </div>
     <div id="bulk-preview" style="background:var(--cream);border-radius:10px;padding:11px 14px;font-size:.8rem;color:var(--ink);margin-bottom:12px;display:none"></div>
