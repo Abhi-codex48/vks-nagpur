@@ -1319,8 +1319,7 @@ window.submitEntry = async () => {
   const extraHours=$('e-extra-hours')?.value.trim()||'';
   if(task==='Other') task=$('e-ctask').value.trim()||'Other';
   if(!date||!client||!task||!hours){ toast('Fill all required fields.','error'); return; }
-  const remarkWords=remarks?remarks.split(/\s+/).filter(w=>w.length>0).length:0;
-  if(remarkWords<50){ toast('Remarks must be at least 50 words.','error'); $('e-remarks').focus(); return; }
+  if(remarks.length<100){ toast('Remarks must be at least 100 characters.','error'); $('e-remarks').focus(); return; }
   if(client==='__other__'||!client){ toast('Please specify client name.','error'); return; }
   if(hours>12 && !extraHours){ toast('Please specify details for 12+ hours work.','error'); return; }
   try {
@@ -2067,8 +2066,7 @@ window.submitBulk = async () => {
   if(!client){ $('bulk-err').textContent='Select a client.'; return; }
   if(!task){ $('bulk-err').textContent='Select work type.'; return; }
   if(!hours){ $('bulk-err').textContent='Enter hours per day.'; return; }
-  const remarkWords=remarks?remarks.split(/\s+/).filter(w=>w.length>0).length:0;
-  if(remarkWords<50){ $('bulk-err').textContent='Remarks must be at least 50 words.'; return; }
+  if(remarks.length<100){ $('bulk-err').textContent='Remarks must be at least 100 characters.'; return; }
   const dates=getBulkDates(from,to,wo);
   if(!dates.length){ $('bulk-err').textContent='No working days in selected range.'; return; }
   $('bulk-err').textContent=`Creating ${dates.length} entries…`;
