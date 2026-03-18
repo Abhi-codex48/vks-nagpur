@@ -20,7 +20,7 @@ button{cursor:pointer;font-family:'DM Sans',sans-serif}
 /* ── SCREENS ── */
 .screen{display:none;min-height:100vh}
 .screen.active{display:flex}
-#sc-pin,#sc-setpin,#sc-locked,#sc-pending{
+#sc-pin,#sc-setpin,#sc-pending{
   align-items:center;justify-content:center;padding:20px;
   background:var(--ink);
   background-image:repeating-linear-gradient(45deg,rgba(201,150,12,.04) 0,rgba(201,150,12,.04) 1px,transparent 0,transparent 50%);
@@ -1988,23 +1988,7 @@ window.loadMyEntries = async () => {
   } catch(e){ $('my-tb').innerHTML=`<tr><td colspan="6" style="text-align:center;padding:26px;color:var(--rust)">${e.message}</td></tr>`; }
 };
 
-window.renderAllTable = () => {
-  const q=($('a-srch').value||'').toLowerCase();
-  const es=allEntries.filter(e=>!q||(e.name||'').toLowerCase().includes(q)||(e.email||'').toLowerCase().includes(q)||(e.client||'').toLowerCase().includes(q)||(e.task||'').toLowerCase().includes(q)||(e.remarks||'').toLowerCase().includes(q));
-  $('a-tb').innerHTML=es.length?es.map(e=>`<tr>
-    <td>${fmt(e.date)}</td>
-    <td><strong>${e.name||'—'}</strong><br/><span style="font-size:.71rem;color:var(--muted)">${e.email||''}</span></td>
-    <td>${rbadge(e.role||'Employee')}</td>
-    <td>${e.client||'—'}</td><td>${wbadge(e.task)}</td>
-    <td><strong>${(+e.hours||0).toFixed(1)}</strong></td>
-    <td style="max-width:130px;color:var(--muted);font-size:.77rem">${e.remarks||'—'}</td>
-    <td style="white-space:nowrap">
-      <button class="btn bxsm bd del-admin-btn" data-id="${e.id}">Del</button>
-    </td></tr>`).join(''):erow(8);
-  document.querySelectorAll('.del-admin-btn').forEach(btn=>{
-    btn.onclick=()=>delEnt(btn.dataset.id,'admin');
-  });
-};
+
 
 // ── ALL ENTRIES ──
 window.loadAll = async () => { loadTodaySummary();
