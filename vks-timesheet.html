@@ -564,23 +564,45 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
 
 <!-- ENTER PIN -->
 <div id="sc-pin" class="screen">
-  <div class="auth-card">
-    <div class="pin-av" id="p-av">👤</div>
-    <div class="pin-nm" id="p-nm">—</div>
-    <div class="pin-hint">Enter your PIN to continue</div>
-    <div class="pin-dots">
-      <div class="dot" id="d0"></div><div class="dot" id="d1"></div>
-      <div class="dot" id="d2"></div><div class="dot" id="d3"></div>
+  <div class="pin-wrap">
+    <div class="pin-left">
+      <div class="pl2-inner">
+        <div class="pl2-logo">VKS</div>
+        <div class="pl2-firm">Vijaywargi Khabiya &amp; Saoji</div>
+        <div class="pl2-sep"></div>
+        <div class="pl2-clock" id="pin-clock">--:--</div>
+        <div class="pl2-date" id="pin-date">—</div>
+      </div>
     </div>
-    <div class="pin-pad">
-      <button class="pk" onclick="pp('1')">1</button><button class="pk" onclick="pp('2')">2</button><button class="pk" onclick="pp('3')">3</button>
-      <button class="pk" onclick="pp('4')">4</button><button class="pk" onclick="pp('5')">5</button><button class="pk" onclick="pp('6')">6</button>
-      <button class="pk" onclick="pp('7')">7</button><button class="pk" onclick="pp('8')">8</button><button class="pk" onclick="pp('9')">9</button>
-      <button class="pk zero" onclick="pp('0')">0</button><button class="pk del" onclick="pd()">⌫</button>
+    <div class="pin-right">
+      <div class="pin-card-new">
+        <div class="pcn-avatar" id="p-av">👤</div>
+        <div class="pcn-name" id="p-nm">—</div>
+        <div class="pcn-hint">Enter your 4-digit PIN to continue</div>
+        <div class="pcn-dots">
+          <div class="pcn-dot" id="d0"></div>
+          <div class="pcn-dot" id="d1"></div>
+          <div class="pcn-dot" id="d2"></div>
+          <div class="pcn-dot" id="d3"></div>
+        </div>
+        <div class="pcn-pad">
+          <button class="pcn-key" onclick="pp('1')">1<span class="ksub"></span></button>
+          <button class="pcn-key" onclick="pp('2')">2<span class="ksub">ABC</span></button>
+          <button class="pcn-key" onclick="pp('3')">3<span class="ksub">DEF</span></button>
+          <button class="pcn-key" onclick="pp('4')">4<span class="ksub">GHI</span></button>
+          <button class="pcn-key" onclick="pp('5')">5<span class="ksub">JKL</span></button>
+          <button class="pcn-key" onclick="pp('6')">6<span class="ksub">MNO</span></button>
+          <button class="pcn-key" onclick="pp('7')">7<span class="ksub">PQRS</span></button>
+          <button class="pcn-key" onclick="pp('8')">8<span class="ksub">TUV</span></button>
+          <button class="pcn-key" onclick="pp('9')">9<span class="ksub">WXYZ</span></button>
+          <button class="pcn-key kzero" onclick="pp('0')">0</button>
+          <button class="pcn-key kdel" onclick="pd()">⌫</button>
+        </div>
+        <div class="pcn-err" id="p-err"></div>
+        <div class="pcn-lft" id="p-lft"></div>
+        <button class="pcn-out" onclick="doLogout()">← Sign out</button>
+      </div>
     </div>
-    <div class="pin-err" id="p-err"></div>
-    <div class="pin-lft" id="p-lft"></div>
-    <div style="margin-top:13px"><button class="btn bo bsm" onclick="doLogout()">← Sign out</button></div>
   </div>
 </div>
 
@@ -2007,7 +2029,30 @@ window.loadAll = async () => { loadTodaySummary();
     renderAllTable();
   } catch(e){ $('a-tb').innerHTML=`<tr><td colspan="8" style="text-align:center;padding:26px;color:var(--rust)">${e.message}</td></tr>`; }
 };
-
+window.renderMyTable = () => {
+  const q=($('my-srch').value||'').toLowerCase();
+  const es=myEntries.filter(e=>!q||
+    (e.client||'').toLowerCase().includes(q)||
+    (e.task||'').toLowerCase().includes(q)||
+    (e.remarks||'').toLowerCase().includes(q)||
+    (e.date||'').includes(q)||
+    (e.hours||'').toString().includes(q)
+  );
+  $('my-tb').innerHTML=es.length?es.map(e=>`<tr>
+    <td>${fmt(e.date)}</td><td><strong>${e.client||'—'}</strong></td><td>${wbadge(e.task)}</td>
+    <td><strong>${(+e.hours||0).toFixed(1)}</strong></td>
+    <td style="max-width:160px;color:var(--muted);font-size:.78rem">${e.remarks||'—'}</td>
+    <td style="white-space:nowrap">
+      <button class="btn bsm bo edit-my-btn"
+        data-id="${e.id}" data-dt="${e.date}"
+        data-cl="${esc(e.client)}" data-tk="${esc(e.task)}"
+        data-hr="${e.hours}" data-rm="${esc(e.remarks||'')}">Edit</button>
+      <button class="btn bsm bd" style="margin-left:3px" onclick="delEnt('${e.id}','my')">Del</button>
+    </td></tr>`).join(''):erow(6);
+  document.querySelectorAll('.edit-my-btn').forEach(btn=>{
+    btn.onclick=()=>openEdit(btn.dataset.id,btn.dataset.dt,btn.dataset.cl,btn.dataset.tk,btn.dataset.hr,btn.dataset.rm);
+  });
+};
 window.renderAllTable = () => {
   const q=($('a-srch').value||'').toLowerCase();
   const es=allEntries.filter(e=>!q||(e.name||'').toLowerCase().includes(q)||(e.email||'').toLowerCase().includes(q)||(e.client||'').toLowerCase().includes(q)||(e.task||'').toLowerCase().includes(q)||(e.remarks||'').toLowerCase().includes(q));
@@ -3336,7 +3381,18 @@ window.showGuideTab = (tab) => {
   if(tabs[map[tab]]) tabs[map[tab]].classList.add('active');
 };
 $('guide-mo').addEventListener('click',e=>{ if(e.target===$('guide-mo')) closeGuide(); });
-
+  
+// ── PIN SCREEN CLOCK ──
+function startPinClock(){
+  function tick(){
+    const now=new Date();
+    const cl=$('pin-clock'), dl=$('pin-date');
+    if(cl) cl.textContent=now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:false});
+    if(dl) dl.textContent=now.toLocaleDateString('en-IN',{weekday:'long',day:'2-digit',month:'short',year:'numeric'}).toUpperCase();
+  }
+  tick(); setInterval(tick,1000);
+}
+startPinClock();
 // ── GOOGLE SESSION IDLE TIMEOUT (15 min) ──
 // Google session idle — 15 min
 let idleTimer=null;
