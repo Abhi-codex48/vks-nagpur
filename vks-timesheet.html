@@ -2137,11 +2137,17 @@ window.openCalendar = async (uid,name) => {
 };
 
 async function loadCalEntries(){
-  // Get all entries for this employee for current month
   const firstDay=`${calYear}-${String(calMonth+1).padStart(2,'0')}-01`;
   const lastDay=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${new Date(calYear,calMonth+1,0).getDate()}`;
-  const snap=await getDocs(query(collection(db,'entries'),where('uid','==',calUID),where('date','>=',firstDay),where('date','<=',lastDay)));
-  calEntries=snap.docs.map(d=>({id:d.id,...d.data()}));
+  try {
+    const snap=await getDocs(query(collection(db,'entries'),where('uid','==',calUID),where('date','>=',firstDay),where('date','<=',lastDay)));
+    calEntries=snap.docs.map(d=>({id:d.id,...d.data()}));
+  } catch(e){
+    // Index not ready yet — load all entries for this user as fallback
+    const snap=await getDocs(query(collection(db,'entries'),where('uid','==',calUID)));
+    calEntries=snap.docs.map(d=>({id:d.id,...d.data()})).filter(e=>e.date>=firstDay&&e.date<=lastDay);
+    console.warn('Calendar index building, using fallback:',e.message);
+  }
   renderCalendar();
 }
 
