@@ -2125,13 +2125,15 @@ async function loadTodaySummary(){
 }
 
 // ── EMPLOYEE CALENDAR ──
-let calUID='', calName='', calYear=0, calMonth=0, calEntries=[];
-
+let calUID='', calName='', calYear=0, calMonth=0, calEntries=[], calJoinDate=null;
 window.openCalendar = async (uid,name) => {
   calUID=uid; calName=name;
+  const empData=allEmps.find(e=>e.id===uid);
+  calJoinDate=empData?.createdAt?.seconds ? new Date(empData.createdAt.seconds*1000).toISOString().split('T')[0] : null;
   const now=new Date();
   calYear=now.getFullYear(); calMonth=now.getMonth();
-  $('cal-title').textContent=`${name}'s Reporting Calendar`;
+ const joinStr=empData?.createdAt?.seconds?` · Joined ${new Date(empData.createdAt.seconds*1000).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}` :'';
+$('cal-title').textContent=`${name}'s Reporting Calendar${joinStr}`;
   om('m-cal');
   await loadCalEntries();
 };
