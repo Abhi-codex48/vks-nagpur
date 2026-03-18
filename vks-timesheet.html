@@ -269,6 +269,24 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
   .lc-features{display:none}
 }
 
+.lr-ca-block{margin-top:16px;padding:16px 18px;background:linear-gradient(135deg,#1a1410 0%,#2d2016 100%);border-radius:14px;border:1px solid rgba(201,150,12,.25)}
+.lr-ca-eyebrow{font-size:.66rem;font-weight:700;color:var(--gold-l);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.lr-ca-title{font-size:.9rem;font-weight:700;color:#fff;margin-bottom:8px;line-height:1.4}
+.lr-ca-list{display:flex;flex-direction:column;gap:5px}
+.lr-ca-item{font-size:.75rem;color:rgba(232,184,75,.75);display:flex;align-items:center;gap:7px}
+.lr-ca-priv{font-size:.68rem;color:rgba(201,150,12,.4);margin-top:8px;padding-top:8px;border-top:1px solid rgba(201,150,12,.15)}
+.lr-footer{padding:16px 48px 24px;border-top:1px solid rgba(221,208,190,.4);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.lr-footer-log{font-size:.73rem;color:var(--muted);cursor:pointer}
+.lr-footer-log:hover{color:var(--gold)}
+.lr-footer-credit{font-size:.7rem;color:var(--border)}
+.lr-inner{flex:1;display:flex;flex-direction:column;justify-content:center;padding:52px 48px;position:relative;z-index:1}
+.lr-logo{width:48px;height:48px;background:var(--ink);border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;color:var(--gold);font-size:1rem;margin-bottom:28px}
+.lr-heading{font-family:'DM Serif Display',serif;font-size:2rem;color:var(--ink);margin-bottom:6px}
+.lr-sub{font-size:.83rem;color:var(--muted);margin-bottom:36px;line-height:1.6}
+.lr-feat{display:flex;align-items:center;gap:11px;padding:11px 14px;background:#fff;border-radius:10px;border:1px solid rgba(221,208,190,.5);font-size:.8rem;color:var(--muted);margin-bottom:8px}
+.lr-feat-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.lr-features{display:flex;flex-direction:column;gap:0}
+  
 /* ── CALENDAR ── */
 .cal-day{border-radius:8px;padding:6px 2px;font-size:.78rem;cursor:pointer;transition:all .18s;position:relative;min-height:34px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px}
 .cal-day.other-month{color:var(--border)}
@@ -449,58 +467,68 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
 <!-- LOGIN -->
 <div id="sc-login" class="screen active">
   <div class="login-wrap">
+    <!-- LEFT -->
     <div class="login-left">
-      <div class="login-left-inner">
-        <div class="ll-brand">VKS</div>
-        <div class="ll-full">Vijaywargi Khabiya &amp; Saoji</div>
-        <div class="ll-sub">Chartered Accountants · Nagpur</div>
-        <div class="ll-divider"></div>
-        <div class="ll-quote">
-          "Maintaining records of the work you do doesn't just help us manage —
-          it helps <em>you</em> grow, reflect, and track your own journey.
-          Every entry you make today is a milestone in your professional story."
+      <div class="ll-inner">
+        <div class="ll-eyebrow">
+          <div class="ll-eyebrow-dot"></div>
+          <div class="ll-eyebrow-txt">Internal Portal · VKS Nagpur</div>
         </div>
-        
-
+        <div class="ll-vks">VKS</div>
+        <div class="ll-name">Vijaywargi Khabiya &amp; Saoji · Chartered Accountants</div>
+        <div class="ll-divider"></div>
+        <div class="ll-quote-new">
+          "Maintaining records of the work you do doesn't just
+          help us manage — it helps <em>you</em> grow, reflect,
+          and track your own journey. Every entry you make today
+          is a milestone in your professional story."
+        </div>
       </div>
     </div>
+    <!-- RIGHT -->
     <div class="login-right">
-      <div class="login-card-new">
-        <div class="lc-icon">⏱</div>
-        <div class="lc-title">Timesheet Portal</div>
-        <div class="lc-sub">Sign in to log your work and track your progress</div>
+      <div class="lr-inner">
+        <div class="lr-logo">VKS</div>
+        <div class="lr-heading">Welcome Back</div>
+        <div class="lr-sub">Sign in with your work Gmail to access your timesheet portal.</div>
         <button class="btn-google-new" onclick="loginGoogle()">
           <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
           Continue with Google
         </button>
-        <div id="l-err" class="err" style="margin-top:12px;text-align:center"></div>
-       <div class="lc-features">
-  <div class="lc-feat">🔐 Secure PIN protection every session</div>
-  <div class="lc-feat">📊 Real-time timesheet tracking</div>
-  <div class="lc-feat">📥 Excel export anytime</div>
-</div>
-<div style="margin-top:16px;padding:14px 16px;background:linear-gradient(135deg,#1a1410 0%,#2d1f4e 100%);border-radius:12px;border:1px solid rgba(139,92,246,.3)">
-  <div style="font-size:.68rem;font-weight:700;color:#a78bfa;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">⭐ For CA Articles</div>
-  <div style="font-size:.85rem;font-weight:600;color:#fff;margin-bottom:6px;line-height:1.5">More than a reporting portal —<br/>your personal growth companion.</div>
-  <div style="font-size:.74rem;color:rgba(167,139,250,.8);line-height:1.7">
-    📚 Track your exposure across GST, Audit, IT &amp; more<br/>
-    ⚖️ Balance your study &amp; work hours<br/>
-    📂 Build your own case library<br/>
-    📝 Keep private notes &amp; reminders<br/>
-    <span style="font-size:.68rem;color:rgba(167,139,250,.5);margin-top:4px;display:block">100% private — admin has no access</span>
-  </div>
-</div>
-        <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border);text-align:center">
-  <button class="btn bo bsm" onclick="openPubLog()" style="font-size:.74rem;color:var(--muted)">📋 View Activity Log</button>
-</div>
-<div style="margin-top:14px;text-align:center;font-size:.72rem;color:var(--muted)">
-  Made with ❤️ by <strong>Abhishek R. Sarda</strong>
-</div>
+        <div id="l-err" class="err" style="margin-top:10px;text-align:center"></div>
+        <div class="lr-features">
+          <div class="lr-feat">
+            <div class="lr-feat-icon" style="background:#fef3c7">🔐</div>
+            PIN protection every session
+          </div>
+          <div class="lr-feat">
+            <div class="lr-feat-icon" style="background:#dbeafe">📊</div>
+            Real-time timesheet tracking
+          </div>
+          <div class="lr-feat">
+            <div class="lr-feat-icon" style="background:#d1fae5">📥</div>
+            Excel export anytime
+          </div>
+        </div>
+        <div class="lr-ca-block">
+          <div class="lr-ca-eyebrow">⭐ For CA Articles Only</div>
+          <div class="lr-ca-title">More than a reporting portal —<br/>your personal growth companion.</div>
+          <div class="lr-ca-list">
+            <div class="lr-ca-item">📚 Track exposure across GST, Audit, IT &amp; more</div>
+            <div class="lr-ca-item">⚖️ Balance your study &amp; work hours</div>
+            <div class="lr-ca-item">📂 Build your own private case library</div>
+            <div class="lr-ca-item">📝 Personal notes &amp; reminders board</div>
+          </div>
+          <div class="lr-ca-priv">🔒 100% private — admin has zero access</div>
+        </div>
+      </div>
+      <div class="lr-footer">
+        <span class="lr-footer-log" onclick="openPubLog()">📋 View Activity Log</span>
+        <span class="lr-footer-credit">Made with ❤️ by Abhishek R. Sarda</span>
       </div>
     </div>
   </div>
 </div>
-
 <!-- PENDING -->
 <div id="sc-pending" class="screen">
   <div class="auth-card">
@@ -1960,22 +1988,22 @@ window.loadMyEntries = async () => {
   } catch(e){ $('my-tb').innerHTML=`<tr><td colspan="6" style="text-align:center;padding:26px;color:var(--rust)">${e.message}</td></tr>`; }
 };
 
-window.renderMyTable = () => {
-  const q=($('my-srch').value||'').toLowerCase();
-  const es=myEntries.filter(e=>!q||
-    (e.client||'').toLowerCase().includes(q)||
-    (e.task||'').toLowerCase().includes(q)||
-    (e.remarks||'').toLowerCase().includes(q)||
-    (e.date||'').includes(q)||
-    (e.hours||'').toString().includes(q)
-  );  $('my-tb').innerHTML=es.length?es.map(e=>`<tr>
-    <td>${fmt(e.date)}</td><td><strong>${e.client||'—'}</strong></td><td>${wbadge(e.task)}</td>
+window.renderAllTable = () => {
+  const q=($('a-srch').value||'').toLowerCase();
+  const es=allEntries.filter(e=>!q||(e.name||'').toLowerCase().includes(q)||(e.email||'').toLowerCase().includes(q)||(e.client||'').toLowerCase().includes(q)||(e.task||'').toLowerCase().includes(q)||(e.remarks||'').toLowerCase().includes(q));
+  $('a-tb').innerHTML=es.length?es.map(e=>`<tr>
+    <td>${fmt(e.date)}</td>
+    <td><strong>${e.name||'—'}</strong><br/><span style="font-size:.71rem;color:var(--muted)">${e.email||''}</span></td>
+    <td>${rbadge(e.role||'Employee')}</td>
+    <td>${e.client||'—'}</td><td>${wbadge(e.task)}</td>
     <td><strong>${(+e.hours||0).toFixed(1)}</strong></td>
-    <td style="max-width:160px;color:var(--muted);font-size:.78rem">${e.remarks||'—'}</td>
+    <td style="max-width:130px;color:var(--muted);font-size:.77rem">${e.remarks||'—'}</td>
     <td style="white-space:nowrap">
-      <button class="btn bsm bo" onclick="openEdit('${e.id}','${e.date}','${esc(e.client)}','${esc(e.task)}','${e.hours}','${esc(e.remarks||'')}')">Edit</button>
-      <button class="btn bsm bd" style="margin-left:3px" onclick="delEnt('${e.id}','my')">Del</button>
-    </td></tr>`).join(''):erow(6);
+      <button class="btn bxsm bd del-admin-btn" data-id="${e.id}">Del</button>
+    </td></tr>`).join(''):erow(8);
+  document.querySelectorAll('.del-admin-btn').forEach(btn=>{
+    btn.onclick=()=>delEnt(btn.dataset.id,'admin');
+  });
 };
 
 // ── ALL ENTRIES ──
