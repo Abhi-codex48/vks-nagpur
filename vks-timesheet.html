@@ -232,7 +232,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
 
 /* ── LOGIN REDESIGN ── */
 .login-wrap{display:flex;width:100%;min-height:100vh}
-.login-left{flex:1;background:#0e0c09;display:flex;flex-direction:column;justify-content:space-between;padding:52px 56px;position:relative;overflow:hidden;min-height:100vh}
+.login-left{flex:0 0 38%;background:#0e0c09;display:flex;flex-direction:column;justify-content:space-between;padding:48px 44px;position:relative;overflow:hidden;min-height:100vh}
 .login-left::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 20% 50%,rgba(201,150,12,.12) 0%,transparent 70%);pointer-events:none}
 .login-left::after{content:'VKS';position:absolute;right:-60px;bottom:-80px;font-family:'DM Serif Display',serif;font-size:26rem;color:rgba(201,150,12,.04);letter-spacing:-20px;line-height:1;pointer-events:none}
 .ll-inner{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;justify-content:center;max-width:480px}
@@ -244,7 +244,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
 .ll-divider{width:48px;height:1px;background:linear-gradient(90deg,var(--gold),transparent);margin-bottom:28px;opacity:.6}
 .ll-quote-new{font-size:1rem;color:rgba(255,255,255,.7);line-height:1.9;font-style:italic;border-left:2px solid rgba(201,150,12,.5);padding-left:18px;max-width:420px}
 .ll-quote-new em{color:var(--gold-l);font-style:normal;font-weight:600}
-.login-right{width:460px;flex-shrink:0;background:linear-gradient(160deg,#fdfaf5 0%,#f7f0e6 100%);display:flex;flex-direction:column;position:relative;overflow:hidden}
+.login-right{flex:1;min-width:0;background:linear-gradient(160deg,#fdfaf5 0%,#f7f0e6 100%);display:flex;flex-direction:column;position:relative;overflow:hidden}
 .login-right::before{content:'';position:absolute;top:-120px;right:-120px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(201,150,12,.08),transparent 70%);pointer-events:none}
 .lr-inner{flex:1;display:flex;flex-direction:column;justify-content:center;padding:48px 44px;position:relative;z-index:1}
 .lr-logo{width:48px;height:48px;background:var(--ink);border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;color:var(--gold);font-size:1rem;letter-spacing:1px;margin-bottom:28px}
@@ -281,6 +281,46 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
   .lr-ca-block{display:none}
   .lr-inner{padding:24px 20px}
 }
+
+  /* ── PIN SCREEN ── */
+.pin-wrap{display:flex;width:100%;min-height:100vh}
+.pin-left{flex:1;background:#0e0c09;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;position:relative;overflow:hidden}
+.pin-left::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 30% 50%,rgba(201,150,12,.1) 0%,transparent 70%)}
+.pin-left::after{content:'VKS';position:absolute;bottom:-60px;right:-30px;font-family:'DM Serif Display',serif;font-size:20rem;color:rgba(201,150,12,.04);letter-spacing:-15px;pointer-events:none}
+.pl2-inner{position:relative;z-index:1;text-align:center;max-width:360px}
+.pl2-logo{font-family:'DM Serif Display',serif;font-size:3.5rem;color:var(--gold);letter-spacing:8px;margin-bottom:6px}
+.pl2-firm{font-size:.68rem;color:rgba(255,255,255,.3);letter-spacing:2px;text-transform:uppercase}
+.pl2-sep{width:36px;height:1px;background:rgba(201,150,12,.4);margin:28px auto}
+.pl2-clock{font-family:'DM Serif Display',serif;font-size:3rem;color:rgba(255,255,255,.85);letter-spacing:3px;margin-bottom:6px}
+.pl2-date{font-size:.72rem;color:rgba(255,255,255,.3);letter-spacing:1.5px;text-transform:uppercase}
+.pin-right{width:440px;flex-shrink:0;background:linear-gradient(160deg,#fdfaf5 0%,#f7f0e6 100%);display:flex;align-items:center;justify-content:center;padding:40px 36px}
+.pin-card-new{width:100%;max-width:340px}
+.pcn-avatar{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,rgba(201,150,12,.15),rgba(201,150,12,.05));border:2px solid rgba(201,150,12,.25);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;overflow:hidden;box-shadow:0 4px 16px rgba(201,150,12,.15)}
+.pcn-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.pcn-name{font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--ink);text-align:center;margin-bottom:4px}
+.pcn-hint{font-size:.78rem;color:var(--muted);text-align:center;margin-bottom:24px}
+.pcn-dots{display:flex;gap:14px;justify-content:center;margin-bottom:28px}
+.pcn-dot{width:14px;height:14px;border-radius:50%;border:2px solid #ddd0be;background:transparent;transition:all .2s}
+.pcn-dot.filled{background:var(--gold);border-color:var(--gold);box-shadow:0 0 10px rgba(201,150,12,.4);transform:scale(1.1)}
+.pcn-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;max-width:264px;margin:0 auto 16px}
+.pcn-key{padding:14px 10px;border:1.5px solid #e8d9c4;border-radius:14px;background:#fff;font-family:'DM Sans',sans-serif;font-size:1.15rem;font-weight:700;color:var(--ink);cursor:pointer;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:1px;box-shadow:0 2px 6px rgba(26,20,16,.05)}
+.pcn-key:hover{background:var(--cream);border-color:var(--gold);box-shadow:0 4px 12px rgba(201,150,12,.15);transform:translateY(-1px)}
+.pcn-key:active{transform:scale(.96);background:#fef3c7}
+.ksub{font-size:.48rem;color:var(--muted);letter-spacing:2px;font-weight:400}
+.pcn-key.kzero{grid-column:2}
+.pcn-key.kdel{font-size:.9rem;color:var(--muted)}
+.pcn-err{font-size:.76rem;color:var(--rust);text-align:center;min-height:18px;margin-bottom:4px}
+.pcn-lft{font-size:.71rem;color:var(--muted);text-align:center;margin-bottom:16px}
+.pcn-out{display:block;width:100%;text-align:center;font-size:.75rem;color:var(--muted);cursor:pointer;padding:8px;border-radius:8px;background:none;border:none;font-family:'DM Sans',sans-serif}
+.pcn-out:hover{color:var(--gold)}
+@media(max-width:900px){
+  .pin-wrap{flex-direction:column}
+  .pin-left{padding:28px 24px;min-height:auto;flex:none}
+  .pin-left::after{display:none}
+  .pl2-clock{font-size:2rem}
+  .pin-right{width:100%;padding:28px 20px}
+}
+  
 /* ── CALENDAR ── */
 .cal-day{border-radius:8px;padding:6px 2px;font-size:.78rem;cursor:pointer;transition:all .18s;position:relative;min-height:34px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px}
 .cal-day.other-month{color:var(--border)}
@@ -1364,8 +1404,6 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
   </div>
 </div>
 
-<!-- GUIDEBOOK FAB -->
-<button class="guide-fab" onclick="openGuide()" title="Feature Guide">📖</button>
 
 <!-- GUIDEBOOK MODAL -->
 <div class="guide-mo" id="guide-mo">
@@ -3376,11 +3414,11 @@ window.showGuideTab = (tab) => {
 };
 $('guide-mo').addEventListener('click',e=>{ if(e.target===$('guide-mo')) closeGuide(); });
   
-// ── PIN SCREEN CLOCK ──
+// ── PIN CLOCK ──
 function startPinClock(){
   function tick(){
     const now=new Date();
-    const cl=$('pin-clock'), dl=$('pin-date');
+    const cl=$('pin-clock'),dl=$('pin-date');
     if(cl) cl.textContent=now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:false});
     if(dl) dl.textContent=now.toLocaleDateString('en-IN',{weekday:'long',day:'2-digit',month:'short',year:'numeric'}).toUpperCase();
   }
