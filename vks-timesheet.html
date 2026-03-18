@@ -2021,11 +2021,10 @@ window.openBulkEntry = () => {
 
 window.checkBulkRemarks = () => {
   const txt=$('bulk-remarks').value.trim();
-  const words=txt?txt.split(/\s+/).filter(w=>w.length>0).length:0;
+  const len=txt.length;
   const cnt=$('bulk-remarks-count');
-  if(cnt){ cnt.textContent=`${words} word${words===1?'':'s'}`; cnt.style.color=words>=50?'var(--sage)':'var(--muted)'; }
+  if(cnt){ cnt.textContent=`${len}/100 characters`; cnt.style.color=len>=100?'var(--sage)':'var(--muted)'; }
 };
-
 function getBulkDates(from, to, weekendOpt){
   const dates=[];
   const cur=new Date(from+'T00:00:00');
