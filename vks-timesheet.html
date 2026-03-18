@@ -321,8 +321,8 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
 .sw-over{background:#fee2e2;color:#991b1b}
 
 /* ── GUIDEBOOK ── */
-.guide-fab{position:fixed;bottom:22px;left:22px;z-index:450;background:var(--ink);color:var(--gold);border:none;border-radius:50%;width:46px;height:46px;font-size:1.1rem;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.3);transition:all .2s;display:flex;align-items:center;justify-content:center}
-.guide-fab:hover{transform:scale(1.1);background:#2d2520}
+.guide-fab{background:rgba(201,150,12,.15);color:var(--gold-l);border:none;border-radius:20px;padding:4px 11px;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.guide-fab:hover{background:rgba(201,150,12,.3)}
 .guide-mo{display:none;position:fixed;inset:0;background:rgba(26,20,16,.7);z-index:400;align-items:center;justify-content:center;padding:16px}
 .guide-mo.open{display:flex}
 .guide-box{background:var(--paper);border-radius:18px;width:100%;max-width:680px;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,.4)}
@@ -380,9 +380,16 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
   <div class="lc-feat">📊 Real-time timesheet tracking</div>
   <div class="lc-feat">📥 Excel export anytime</div>
 </div>
-<div style="margin-top:16px;padding:12px 14px;background:#f5f0ff;border-radius:10px;border:1px solid #ede9fe">
-  <div style="font-size:.72rem;font-weight:700;color:#5b21b6;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">⭐ CA Articles — Private Repository</div>
-  <div style="font-size:.76rem;color:#6d28d9;line-height:1.6">Knowledge Bank · Study Tracker · Case Library · Daily Check · Personal Notes — all private, only for you.</div>
+<div style="margin-top:16px;padding:14px 16px;background:linear-gradient(135deg,#1a1410 0%,#2d1f4e 100%);border-radius:12px;border:1px solid rgba(139,92,246,.3)">
+  <div style="font-size:.68rem;font-weight:700;color:#a78bfa;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">⭐ For CA Articles</div>
+  <div style="font-size:.85rem;font-weight:600;color:#fff;margin-bottom:6px;line-height:1.5">More than a reporting portal —<br/>your personal growth companion.</div>
+  <div style="font-size:.74rem;color:rgba(167,139,250,.8);line-height:1.7">
+    📚 Track your exposure across GST, Audit, IT &amp; more<br/>
+    ⚖️ Balance your study &amp; work hours<br/>
+    📂 Build your own case library<br/>
+    📝 Keep private notes &amp; reminders<br/>
+    <span style="font-size:.68rem;color:rgba(167,139,250,.5);margin-top:4px;display:block">100% private — admin has no access</span>
+  </div>
 </div>
         <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border);text-align:center">
   <button class="btn bo bsm" onclick="openPubLog()" style="font-size:.74rem;color:var(--muted)">📋 View Activity Log</button>
@@ -464,11 +471,12 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
 <div id="sc-app" class="screen">
   <header>
     <div class="hbrand">VKS · Timesheet</div>
-    <div class="hright">
-      <div class="upill"><img id="h-av" src="" alt="" style="display:none"/><span id="h-nm">—</span></div>
-      <span class="rbadge" id="h-role">—</span>
-      <button class="btn bo bsm" style="color:#fff;border-color:rgba(255,255,255,.25)" onclick="doLogout()">Out</button>
-    </div>
+  <div class="hright">
+  <div class="upill"><img id="h-av" src="" alt="" style="display:none"/><span id="h-nm">—</span></div>
+  <span class="rbadge" id="h-role">—</span>
+  <button class="guide-fab" onclick="openGuide()" title="Feature Guide">📖 Guide</button>
+  <button class="btn bo bsm" style="color:#fff;border-color:rgba(255,255,255,.25)" onclick="doLogout()">Out</button>
+</div>
   </header>
   <div class="tabs" id="tabbar"></div>
   <main>
@@ -1180,7 +1188,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
 </div>
 
 <!-- GUIDEBOOK FAB -->
-<button class="guide-fab" onclick="openGuide()" title="Help & Feature Guide">?</button>
+<button class="guide-fab" onclick="openGuide()" title="Feature Guide">📖</button>
 
 <!-- GUIDEBOOK MODAL -->
 <div class="guide-mo" id="guide-mo">
