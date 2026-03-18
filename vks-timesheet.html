@@ -343,6 +343,113 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
 .g-both{background:#dbeafe;color:#1e40af}
 .g-private{background:#ede9fe;color:#5b21b6}
 .g-rule{background:var(--cream);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:8px 12px;font-size:.8rem;color:var(--ink);margin-bottom:6px;line-height:1.6}
+/* ── NEW LOCK SCREEN ── */
+
+.locked-screen-new{
+  min-height:100vh;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:28px;
+  background:linear-gradient(180deg,#fcfaf6,#f5efe6);
+}
+.locked-screen-new.active{display:flex}
+
+.locked-wrap{width:100%;max-width:1100px}
+
+.locked-shell{
+  background:#fff;
+  border-radius:24px;
+  padding:40px;
+  box-shadow:0 20px 60px rgba(0,0,0,.08);
+  border:1px solid #eee2cf;
+}
+
+.locked-brand{text-align:center;margin-bottom:30px}
+
+.locked-brand-mark{
+  font-size:3.5rem;
+  color:#c9960c;
+  font-family:serif;
+}
+
+.locked-brand-name{
+  font-size:1.6rem;
+  font-weight:600;
+}
+
+.locked-brand-sub{
+  font-size:.85rem;
+  letter-spacing:2px;
+  color:#777;
+}
+
+.locked-content{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:30px;
+  align-items:center;
+}
+
+.locked-quote{
+  font-size:1.6rem;
+  line-height:1.6;
+  color:#111;
+}
+
+.hl{color:#c9960c;font-weight:600}
+
+.locked-card-new{
+  background:#fff;
+  padding:30px;
+  border-radius:20px;
+  border:1px solid #eee2cf;
+  text-align:center;
+}
+
+.locked-title-new{
+  font-size:1.5rem;
+  font-weight:600;
+  margin-bottom:10px;
+}
+
+.locked-text-new{
+  font-size:.9rem;
+  color:#555;
+  margin-bottom:20px;
+}
+
+.btn-google-locked{
+  width:100%;
+  padding:14px;
+  background:#fff;
+  border:1px solid #ddd;
+  border-radius:12px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.btn-google-locked:hover{
+  border-color:#c9960c;
+}
+
+.locked-footer{
+  text-align:center;
+  margin-top:20px;
+  font-size:.85rem;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+  .locked-content{
+    grid-template-columns:1fr;
+  }
+  .locked-quote{
+    font-size:1.2rem;
+    text-align:center;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -361,7 +468,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
           it helps <em>you</em> grow, reflect, and track your own journey.
           Every entry you make today is a milestone in your professional story."
         </div>
-        <div class="ll-quote-attr">— VKS Team</div>
+        
 
       </div>
     </div>
@@ -458,12 +565,60 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
 </div>
 
 <!-- LOCKED -->
-<div id="sc-locked" class="screen">
-  <div class="auth-card">
-    <div class="lock-icon">🔒</div>
-    <div class="lock-title">Account Locked</div>
-    <div class="lock-msg">3 wrong PIN attempts.<br/>Admin has been notified.<br/><br/>Contact HR to unlock your account.</div>
-    <button class="btn bo bw" style="margin-top:20px" onclick="doLogout()">← Back to Login</button>
+<div id="sc-locked" class="screen locked-screen-new">
+  <div class="locked-wrap">
+    <div class="locked-shell">
+      <div class="locked-brand">
+        <div class="locked-brand-mark">VKS</div>
+        <div class="locked-brand-name">Vijaywargi Khabiya &amp; Saoji</div>
+        <div class="locked-brand-sub">Chartered Accountants</div>
+      </div>
+
+      <div class="locked-content">
+        <div class="locked-copy">
+          <div class="locked-quote-mark">“</div>
+          <div class="locked-quote">
+            Maintaining records of the work you do doesn’t just help us manage — it helps
+            <span class="hl">you</span> grow, reflect, and track <span class="hl">your</span> own journey.
+            Every entry <span class="hl">you</span> make today is a milestone in your professional story.
+          </div>
+        </div>
+
+        <div class="locked-card-new">
+          <div class="locked-icon-new">🔒</div>
+          <div class="locked-title-new">Portal Locked</div>
+          <div class="locked-text-new">
+            Your account has been temporarily locked after multiple incorrect PIN attempts.
+            Please contact HR / Admin to unlock access.
+          </div>
+
+          <div class="locked-meta">
+            <div class="locked-meta-item">
+              <span class="locked-dot red"></span>
+              <span>Status: Locked</span>
+            </div>
+            <div class="locked-meta-item">
+              <span class="locked-dot gold"></span>
+              <span>Access requires admin assistance</span>
+            </div>
+          </div>
+
+          <button class="btn-google-locked" onclick="doLogout()">
+            <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true">
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+            </svg>
+            Back to Login
+          </button>
+        </div>
+      </div>
+
+      <div class="locked-footer">
+        Made with <span>❤</span> by Abhishek R. Sarda
+      </div>
+    </div>
   </div>
 </div>
 
@@ -879,9 +1034,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
 
   </main>
  <footer style="background:var(--ink);padding:14px 22px;text-align:center;border-top:1px solid rgba(255,255,255,.08)">
-    <div style="font-size:.72rem;color:rgba(255,255,255,.5);margin-bottom:4px">
-      Owned &amp; Managed by <strong style="color:var(--gold)">Vijaywargi Khabiya &amp; Saoji</strong> · Chartered Accountants · Nagpur
-    </div>
+    
     <div style="font-size:.7rem;color:rgba(255,255,255,.3)">
       Made with ❤️ by <strong style="color:rgba(255,255,255,.5)">Abhishek R. Sarda</strong>
     </div>
