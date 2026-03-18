@@ -443,7 +443,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
   <label>Remarks / Notes <span style="color:var(--muted);font-weight:400;font-size:.7rem">(minimum 50 words)</span></label>
   <textarea id="e-remarks" placeholder="Describe work done in detail — minimum 50 words required..." oninput="checkRemarks()"></textarea>
   <div id="remarks-count" style="font-size:.72rem;color:var(--muted);margin-top:3px;text-align:right">0 words</div>
-  <div id="remarks-warn" style="display:none;font-size:.78rem;color:var(--rust);margin-top:3px">⚠️ Please write at least 50 words in remarks.</div>
+  <div id="remarks-warn" style="display:none;font-size:.78rem;color:var(--rust);margin-top:3px">⚠️ Please type at least 100 characters in remarks.</div>
 </div>
         <div class="field" id="extra-hours-wrap" style="display:none">
           <label>Details for 12+ Hours Work <span style="color:var(--rust)">*</span></label>
@@ -1256,10 +1256,10 @@ window.toggleCT = () => { $('ct-wrap').style.display=$('e-task').value==='Other'
 // ── REMARKS WORD COUNT ──
 window.checkRemarks = () => {
   const txt=$('e-remarks').value.trim();
-  const words=txt?txt.split(/\s+/).filter(w=>w.length>0).length:0;
+  const len=txt.length;
   const cnt=$('remarks-count'), warn=$('remarks-warn');
-  if(cnt){ cnt.textContent=`${words} word${words===1?'':'s'}`; cnt.style.color=words>=50?'var(--sage)':'var(--muted)'; }
-  if(warn) warn.style.display=words>0&&words<50?'block':'none';
+  if(cnt){ cnt.textContent=`${len}/100 characters`; cnt.style.color=len>=100?'var(--sage)':'var(--muted)'; }
+  if(warn) warn.style.display=len>0&&len<100?'block':'none';
 };
 
 // ── HOURS WARNING ──
