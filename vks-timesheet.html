@@ -486,6 +486,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
 
     <!-- ADMIN: ALL TIMESHEETS -->
     <div class="page" id="page-dash">
+      <div id="a-stats" style="display:none"></div>
       <!-- TODAY'S SUMMARY -->
       <div class="card" id="today-summary-card">
         <div class="ctitle">📅 Today's Reporting Summary
@@ -1398,13 +1399,7 @@ window.loadAll = async () => { loadTodaySummary();
     if(role)   es=es.filter(e=>e.role===role);
     if(task)   es=es.filter(e=>e.task===task);
     allEntries=es;
-    const tot=es.reduce((s,e)=>s+(+e.hours||0),0);
-    $('a-stats').innerHTML=`
-      <div class="scard"><div class="slbl">Entries</div><div class="sval g">${es.length}</div></div>
-      <div class="scard"><div class="slbl">Total Hours</div><div class="sval">${tot.toFixed(1)}</div></div>
-      <div class="scard"><div class="slbl">Employees</div><div class="sval g">${new Set(es.map(e=>e.uid)).size}</div></div>
-      <div class="scard"><div class="slbl">Clients</div><div class="sval">${new Set(es.map(e=>e.client)).size}</div></div>
-    `;
+    
     renderAllTable();
   } catch(e){ $('a-tb').innerHTML=`<tr><td colspan="8" style="text-align:center;padding:26px;color:var(--rust)">${e.message}</td></tr>`; }
 };
