@@ -2194,7 +2194,7 @@ function renderCalendar(){
     if(isToday) cls+=' today';
     if(bulkDates.has(dateStr)){ cls+=' bulk'; dot='<div style="font-size:.55rem;margin-top:1px">bulk</div>'; }
     else if(reportedDates.has(dateStr)){ cls+=' reported'; dot='<div style="font-size:.6rem;margin-top:1px">✓</div>'; }
-    else if(!isFuture&&!isWeekend){ cls+=' no-report'; }
+    else if(!isFuture&&!isWeekend&&calJoinDate&&dateStr>=calJoinDate){ cls+=' no-report'; }
     grid.innerHTML+=`<div class="${cls}">${d}${dot}</div>`;
   }
   // Next month padding
