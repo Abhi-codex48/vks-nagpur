@@ -14,7 +14,7 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;-webkit-text-size-adjust:100%}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;-webkit-text-size-adjust:100%;overflow-x:hidden}
 button{cursor:pointer;font-family:'DM Sans',sans-serif}
 
 /* ── SCREENS ── */
@@ -103,7 +103,7 @@ main{flex:1;padding:18px;max-width:1300px;margin:0 auto;width:100%}
 
 /* Table */
 .tw{overflow-x:auto;border-radius:10px;border:1.5px solid var(--border);-webkit-overflow-scrolling:touch}
-table{width:100%;border-collapse:collapse;font-size:.83rem;min-width:560px}
+table{width:100%;border-collapse:collapse;font-size:.83rem;min-width:460px}
 thead{background:var(--cream)}
 th{padding:9px 12px;text-align:left;font-size:.67rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:600;white-space:nowrap}
 td{padding:9px 12px;border-top:1px solid var(--border);color:var(--ink);vertical-align:middle}
@@ -220,7 +220,8 @@ tr:hover td{background:#fdf5e8}
 /* Responsive */
 @media(max-width:768px){
   main{padding:11px}.tabs{padding:0 9px}header{padding:0 11px;height:52px}
-  .hbrand{font-size:.95rem}.upill{max-width:100px}.rbadge{display:none}
+  .hbrand{font-size:.95rem}.upill{max-width:80px}.rbadge{display:none}
+  .hright{gap:5px}
   .fg2{grid-template-columns:1fr}.card{padding:14px}.mbox{padding:18px}
   .stats{grid-template-columns:1fr 1fr}.fbar{gap:7px}.fbar .ff{min-width:95px}
 }
