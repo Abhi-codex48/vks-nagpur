@@ -2135,9 +2135,6 @@ window.submitBulk = async () => {
  const desel=wo==='manual'?getDeselectedDates():[];
   const dates=getBulkDates(from,to,wo,desel);
   if(!dates.length){ $('bulk-err').textContent='No working days in selected range.'; return; }
-```
-
-
   $('bulk-err').textContent=`Creating ${dates.length} entries…`;
   try {
     const batch=writeBatch(db);
