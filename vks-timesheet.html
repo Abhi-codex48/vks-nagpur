@@ -232,8 +232,8 @@ input[type=number]{-moz-appearance:textfield}
 input[type=number]::-webkit-inner-spin-button{opacity:1}
 
 /* ── LOGIN REDESIGN ── */
-.login-wrap{display:flex;width:100%;min-height:100vh}
-.login-left{flex:1;background:#0e0c09;display:flex;flex-direction:column;justify-content:space-between;padding:48px 44px;position:relative;overflow:hidden;min-height:100vh}
+.login-wrap{display:flex;width:100%;min-height:100vh;align-items:stretch}
+.login-left{flex:1;background:#0e0c09;display:flex;flex-direction:column;justify-content:space-between;padding:48px 44px;position:relative;overflow:hidden}
 .login-left::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 20% 50%,rgba(201,150,12,.12) 0%,transparent 70%);pointer-events:none}
 .login-left::after{content:'VKS';position:absolute;right:-60px;bottom:-80px;font-family:'DM Serif Display',serif;font-size:26rem;color:rgba(201,150,12,.04);letter-spacing:-20px;line-height:1;pointer-events:none}
 .ll-inner{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;justify-content:center;max-width:480px}
@@ -269,7 +269,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
 .lr-footer-credit{font-size:.7rem;color:var(--border)}
 @media(max-width:900px){
   .login-wrap{flex-direction:column}
-  .login-left{min-height:auto;padding:36px 28px}
+ .login-left{padding:36px 28px;height:auto}
   .login-left::after{display:none}
   .ll-vks{font-size:3rem}
  .login-right{width:100%;max-height:none;overflow-y:visible}
