@@ -2137,16 +2137,7 @@ window.submitBulk = async () => {
   if(!dates.length){ $('bulk-err').textContent='No working days in selected range.'; return; }
 ```
 
----
 
-## How Manual Mode Works After This
-```
-User selects Manual → date grid appears
-All dates shown as white tiles ✅
-Click any date → turns RED = deselected ❌
-Click again → back to white = selected ✅
-Preview → shows only selected dates
-Submit → creates entries for selected dates only
   $('bulk-err').textContent=`Creating ${dates.length} entries…`;
   try {
     const batch=writeBatch(db);
