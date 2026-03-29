@@ -633,6 +633,12 @@ button {
   backdrop-filter: blur(18px);
 }
 
+.app-header .brand-mark.small {
+  background: rgba(12, 8, 5, 0.42);
+  color: #f8dfad;
+  border: 1px solid rgba(248, 223, 173, 0.12);
+}
+
 .brand-bar {
   display: flex;
   align-items: center;
@@ -655,6 +661,31 @@ button {
   align-items: center;
   justify-content: flex-end;
   gap: 10px;
+}
+
+.app-header .btn-outline {
+  color: #fff8eb;
+  border-color: rgba(248, 223, 173, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+
+.app-header .btn-outline:hover,
+.app-header .btn-outline:focus-visible {
+  background: rgba(248, 223, 173, 0.16);
+  border-color: rgba(248, 223, 173, 0.34);
+}
+
+.app-header .btn-ghost {
+  color: #ffc39c;
+  border-color: rgba(183, 86, 43, 0.34);
+  background: rgba(183, 86, 43, 0.14);
+}
+
+.app-header .btn-ghost:hover,
+.app-header .btn-ghost:focus-visible {
+  background: rgba(183, 86, 43, 0.2);
+  border-color: rgba(255, 195, 156, 0.24);
 }
 
 .notify-bell {
@@ -701,6 +732,7 @@ button {
   min-width: 220px;
   padding: 6px 10px 6px 6px;
   border-radius: 999px;
+  border: 1px solid rgba(248, 223, 173, 0.1);
   background: rgba(255, 255, 255, 0.08);
 }
 
@@ -827,7 +859,7 @@ button {
 }
 
 .grid.approvals {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
 }
 
 .span-all {
@@ -1278,6 +1310,60 @@ button.summary-card.clickable {
   border-radius: 20px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(245, 236, 223, 0.72));
   border: 1px solid var(--line);
+}
+
+.storage-progress {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 16px;
+  padding: 18px 20px;
+  border-radius: 22px;
+  border: 1px solid rgba(190, 142, 27, 0.24);
+  background: linear-gradient(180deg, rgba(250, 244, 232, 0.96), rgba(245, 236, 223, 0.78));
+}
+
+.storage-progress-head,
+.storage-progress-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.storage-progress-head strong {
+  margin: 0;
+}
+
+.storage-progress-usage {
+  font-family: "Fraunces", serif;
+  font-size: 1.4rem;
+  color: var(--ink);
+}
+
+.storage-strip {
+  width: 100%;
+  height: 16px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(23, 18, 13, 0.08);
+  box-shadow: inset 0 1px 2px rgba(23, 18, 13, 0.08);
+}
+
+.storage-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #7fb87a 0%, #c99a21 58%, #e1b33a 100%);
+  transition: width 0.26s ease;
+}
+
+.storage-fill.warn {
+  background: linear-gradient(90deg, #d38a3b 0%, #ca6437 55%, #b94734 100%);
+}
+
+.storage-fill.mid {
+  background: linear-gradient(90deg, #7fb87a 0%, #c99a21 72%, #d38a3b 100%);
 }
 
 .card-icon {
@@ -2064,16 +2150,6 @@ button.summary-card.clickable {
           <div class="panel-head">
             <div>
               <div class="panel-kicker">Admin</div>
-              <h3>Notifications</h3>
-            </div>
-          </div>
-          <div id="admin-notification-list" class="summary-grid empty-state">Loading admin notifications.</div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-head">
-            <div>
-              <div class="panel-kicker">Admin</div>
               <h3>Today's reporting summary</h3>
             </div>
             <div id="today-summary-date" class="panel-meta"></div>
@@ -2148,7 +2224,21 @@ button.summary-card.clickable {
             </table>
           </div>
         </div>
+      </section>
 
+      <section id="page-notifications" class="page">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-kicker">Admin</div>
+              <h3>Notifications</h3>
+            </div>
+          </div>
+          <div id="admin-notification-list" class="summary-grid empty-state">Loading admin notifications.</div>
+        </div>
+      </section>
+
+      <section id="page-storage" class="page">
         <div class="panel">
           <div class="panel-head">
             <div>
@@ -2156,6 +2246,7 @@ button.summary-card.clickable {
               <h3>Storage monitor</h3>
             </div>
           </div>
+          <div id="storage-progress-card" class="storage-progress"></div>
           <div id="storage-stats" class="stat-grid"></div>
         </div>
       </section>
@@ -2544,6 +2635,8 @@ button.summary-card.clickable {
       historyReady: false,
       applyingHistory: false,
       lastHistoryKey: "",
+      liveRefreshTimer: null,
+      liveRefreshBusy: false,
       modalCleanups: [],
       pinBuffer: "",
       entryDraftTasks: [],
@@ -2868,10 +2961,12 @@ button.summary-card.clickable {
     function pageIconHtml(pageId) {
       const icons = {
         "page-dashboard": "&#128197;",
-        "page-approvals": "&#128276;",
+        "page-notifications": "&#128276;",
+        "page-approvals": "&#9989;",
         "page-employees": "&#128101;",
         "page-clients": "&#129309;",
         "page-logs": "&#128221;",
+        "page-storage": "&#128190;",
         "page-log": "&#9201;",
         "page-my": "&#128203;",
         "page-cahub": "&#127891;",
@@ -2973,10 +3068,12 @@ button.summary-card.clickable {
       const tabs = isAdmin()
         ? [
             { id: "page-dashboard", label: "Timesheets" },
+            { id: "page-notifications", label: "Notifications" },
             { id: "page-approvals", label: "Approvals" },
             { id: "page-employees", label: "Employees" },
             { id: "page-clients", label: "Clients" },
-            { id: "page-logs", label: "Logs" }
+            { id: "page-logs", label: "Logs" },
+            { id: "page-storage", label: "Storage" }
           ]
         : [
             { id: "page-log", label: "Log Time" },
@@ -3162,7 +3259,48 @@ button.summary-card.clickable {
       buildTabs();
       setHubTab("kb", { historyMode: "replace" });
       switchScreen("screen-app", { historyMode: "replace" });
+      startLiveRefresh();
+      refreshAmbientState({ force: true }).catch(() => {});
       refreshCurrentPage().catch(() => {});
+    }
+
+    function stopLiveRefresh() {
+      if (state.liveRefreshTimer) {
+        window.clearInterval(state.liveRefreshTimer);
+        state.liveRefreshTimer = null;
+      }
+      state.liveRefreshBusy = false;
+    }
+
+    function startLiveRefresh() {
+      stopLiveRefresh();
+      state.liveRefreshTimer = window.setInterval(() => {
+        refreshAmbientState().catch(() => {});
+      }, 30000);
+    }
+
+    async function refreshAmbientState(options = {}) {
+      if (!state.user || !state.profile || state.currentScreen !== "screen-app" || state.liveRefreshBusy) return;
+      if (document.hidden && !options.force) return;
+      state.liveRefreshBusy = true;
+      try {
+        if (isAdmin()) {
+          await ensureLookups(true);
+          await loadLogsAndRecycleState();
+          if (state.currentPage === "page-storage") {
+            const [singles, bulks, groups] = await Promise.all([fetchAllSingles(), fetchAllBulks(), fetchAllGroups()]);
+            state.allEntries = [...singles, ...bulks, ...groups.filter((record) => record.status === "active")].sort(sortRecords);
+          }
+          renderApprovalsList();
+          renderAdminNotifications();
+          renderStorageStats();
+          renderHeaderNotificationBell();
+        } else {
+          await loadGroupApprovals();
+        }
+      } finally {
+        state.liveRefreshBusy = false;
+      }
     }
 
     async function checkPendingStatus() {
@@ -3266,6 +3404,7 @@ button.summary-card.clickable {
     }
 
     async function logout() {
+      stopLiveRefresh();
       if (state.user?.uid) clearPinDone(state.user.uid);
       await signOut(auth).catch(() => {});
       state.user = null;
@@ -4575,6 +4714,28 @@ button.summary-card.clickable {
       ) / 1024;
       const budgetMb = 1024;
       const usedPct = Math.min(100, (roughMb / budgetMb) * 100);
+      const freeMb = Math.max(0, budgetMb - roughMb);
+      const progressHost = byId("storage-progress-card");
+      if (progressHost) {
+        const tone = usedPct >= 75 ? "warn" : usedPct >= 40 ? "mid" : "";
+        const fillWidth = roughMb > 0 ? Math.max(usedPct, 0.8) : 0;
+        progressHost.innerHTML = `
+          <div class="storage-progress-head">
+            <div>
+              <strong>Estimated storage usage</strong>
+              <div class="subline">Live visual reference for document growth across users, records, logs, and recycle-bin data.</div>
+            </div>
+            <div class="storage-progress-usage">${safe(usedPct.toFixed(3))}%</div>
+          </div>
+          <div class="storage-strip" aria-hidden="true">
+            <span class="storage-fill ${tone}" style="width:${fillWidth.toFixed(3)}%"></span>
+          </div>
+          <div class="storage-progress-meta">
+            <span>${safe(roughMb.toFixed(2))} MB used from a ${safe(String(budgetMb))} MB reference budget</span>
+            <span>${safe(freeMb.toFixed(2))} MB headroom remaining</span>
+          </div>
+        `;
+      }
       renderStatCards("storage-stats", [
         { label: "Users", value: String(state.employees.length), note: "Active + pending + locked user records", icon: "&#128101;" },
         { label: "Clients", value: String(state.clientDocs.length), note: "Client master list", icon: "&#129309;" },
@@ -5204,6 +5365,10 @@ button.summary-card.clickable {
         await loadAll();
         return;
       }
+      if (state.currentPage === "page-notifications") {
+        await loadAll();
+        return;
+      }
       if (state.currentPage === "page-approvals") {
         await loadApprovals();
         return;
@@ -5218,6 +5383,10 @@ button.summary-card.clickable {
       }
       if (state.currentPage === "page-logs") {
         await loadLogsPage();
+        return;
+      }
+      if (state.currentPage === "page-storage") {
+        await loadAll();
         return;
       }
       if (state.currentPage === "page-cahub") {
@@ -7607,10 +7776,17 @@ button.summary-card.clickable {
     setInterval(updateLoginGreeting, 60000);
     bindStaticEvents();
     initBrowserHistory();
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) refreshAmbientState({ force: true }).catch(() => {});
+    });
+    window.addEventListener("focus", () => {
+      refreshAmbientState({ force: true }).catch(() => {});
+    });
 
     getRedirectResult(auth).catch(() => {});
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
+        stopLiveRefresh();
         state.user = null;
         state.profile = null;
         closeModal({ historyMode: "replace" });
