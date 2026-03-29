@@ -50,6 +50,11 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+html,
+body {
+  max-width: 100%;
+}
+
 button,
 input,
 select,
@@ -72,6 +77,32 @@ button {
 
 .screen.active {
   display: block;
+}
+
+.screen,
+.screen.active,
+.app-screen,
+.app-main,
+.page,
+.panel,
+.toolbar,
+.table-shell,
+.modal-card,
+.app-header,
+.brand-bar,
+.header-actions,
+.user-chip,
+.user-chip-copy,
+.panel-head,
+.panel-actions,
+.toolbar-actions,
+.button-row,
+.bulk-bar,
+.select-line,
+.grid > *,
+.summary-grid > *,
+.stat-grid > * {
+  min-width: 0;
 }
 
 .hero {
@@ -804,7 +835,10 @@ button {
 }
 
 .table-shell {
+  width: 100%;
+  max-width: 100%;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
   border: 1px solid var(--line);
   border-radius: 22px;
   background: var(--white);
@@ -1525,6 +1559,7 @@ button.summary-card.clickable {
   }
 
   .user-chip {
+    min-width: 0;
     width: 100%;
   }
 
@@ -1535,6 +1570,11 @@ button.summary-card.clickable {
 }
 
 @media (max-width: 640px) {
+  html,
+  body {
+    overflow-x: clip;
+  }
+
   .hero,
   .app-header {
     padding: 18px;
@@ -1567,9 +1607,27 @@ button.summary-card.clickable {
     grid-template-columns: 1fr;
   }
 
+  .summary-grid,
+  .stat-grid {
+    grid-template-columns: 1fr;
+  }
+
   .panel-head h3,
   .brand-title {
     white-space: normal;
+  }
+
+  .brand-caption,
+  .subline,
+  .note-block,
+  td,
+  th,
+  .modal-copy,
+  .field-note,
+  .lr-footer-credit,
+  .lr-footer-log {
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 
   .app-main {
@@ -1601,6 +1659,22 @@ button.summary-card.clickable {
     align-items: flex-start;
   }
 
+  .bulk-bar,
+  .select-line,
+  .calendar-head,
+  .modal-head,
+  .field-note {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .field.compact,
+  .field.compact.grow,
+  .grow {
+    min-width: 0;
+    flex-basis: 100%;
+  }
+
   .date-chip-grid,
   .member-hours-grid {
     grid-template-columns: 1fr;
@@ -1612,6 +1686,7 @@ button.summary-card.clickable {
 
   .public-log-time {
     grid-column: 2;
+    white-space: normal;
   }
 
   .toast-root {
@@ -3136,9 +3211,20 @@ button.summary-card.clickable {
 
     async function submitPin() {
       if (state.pinBuffer.length !== 4) return;
+      const freshSnap = state.user?.uid ? await getDoc(doc(db, "users", state.user.uid)).catch(() => null) : null;
+      if (freshSnap?.exists()) {
+        state.profile = { id: freshSnap.id, ...(freshSnap.data() || {}) };
+      }
+      if (!state.profile?.pinSet || !String(state.profile?.pinHash || "").trim()) {
+        state.pinBuffer = "";
+        updatePinDots();
+        byId("pin-error").textContent = "PIN is not available for this account. Set a new PIN.";
+        switchScreen("screen-set-pin", { historyMode: "replace" });
+        return;
+      }
       const hash = await hashPin(state.pinBuffer);
       const attempts = Number(state.profile?.pinAttempts || 0);
-      if (hash === state.profile?.pinHash) {
+      if (hash === String(state.profile?.pinHash || "").trim().toLowerCase()) {
         await updateDoc(doc(db, "users", state.user.uid), { pinAttempts: 0, locked: false }).catch(() => {});
         state.profile = { ...state.profile, pinAttempts: 0, locked: false };
         setPinDone(state.user.uid);
