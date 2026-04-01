@@ -859,7 +859,7 @@ button {
 }
 
 .grid.approvals {
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .span-all {
@@ -1421,6 +1421,245 @@ button.summary-card.clickable {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 12px;
+}
+
+.log-card-grid,
+.recycle-card-grid,
+.approval-card-grid,
+.audit-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+  align-items: start;
+}
+
+.compact-empty {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px dashed rgba(148, 163, 184, 0.4);
+  background: rgba(248, 250, 252, 0.78);
+}
+
+.compact-empty strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.screen.app-screen {
+  background:
+    radial-gradient(circle at 8% 0%, rgba(59, 130, 246, 0.1), transparent 28%),
+    radial-gradient(circle at 92% 4%, rgba(20, 184, 166, 0.1), transparent 22%),
+    linear-gradient(180deg, #f4f7fb 0%, #eef3f8 100%);
+}
+
+.screen.app-screen .panel-kicker {
+  color: #2563eb;
+}
+
+.screen.app-screen .app-header {
+  background: linear-gradient(135deg, #151b26 0%, #1e2937 56%, #253244 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.screen.app-screen .brand-caption {
+  color: rgba(226, 232, 240, 0.72);
+}
+
+.screen.app-screen .tabbar,
+.screen.app-screen .subtabbar {
+  background: rgba(250, 252, 255, 0.88);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+  backdrop-filter: blur(18px);
+}
+
+.screen.app-screen .tabbar button,
+.screen.app-screen .subtab {
+  color: #64748b;
+}
+
+.screen.app-screen .tabbar button.active,
+.screen.app-screen .subtab.active {
+  color: #0f172a;
+  border-bottom-color: #2563eb;
+}
+
+.screen.app-screen .app-main {
+  width: min(1480px, calc(100% - 28px));
+}
+
+.screen.app-screen .panel {
+  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid rgba(203, 213, 225, 0.76);
+  box-shadow: 0 20px 42px rgba(15, 23, 42, 0.08);
+}
+
+.screen.app-screen .toolbar {
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.98), rgba(241, 245, 249, 0.94));
+  border: 1px solid rgba(203, 213, 225, 0.82);
+}
+
+.screen.app-screen .table-shell {
+  border-color: rgba(203, 213, 225, 0.82);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.screen.app-screen .btn-primary {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  box-shadow: 0 16px 28px rgba(37, 99, 235, 0.24);
+}
+
+.screen.app-screen .btn-outline {
+  color: #1e293b;
+  border-color: rgba(148, 163, 184, 0.42);
+  background: rgba(255, 255, 255, 0.84);
+}
+
+.screen.app-screen .btn-outline:hover,
+.screen.app-screen .btn-outline:focus-visible {
+  background: #eff6ff;
+  border-color: rgba(59, 130, 246, 0.34);
+}
+
+.screen.app-screen .btn-ghost {
+  color: #b45309;
+  border-color: rgba(245, 158, 11, 0.24);
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.screen.app-screen .btn-ghost:hover,
+.screen.app-screen .btn-ghost:focus-visible {
+  background: rgba(245, 158, 11, 0.14);
+  border-color: rgba(217, 119, 6, 0.26);
+}
+
+.screen.app-screen .app-header .btn-outline {
+  color: #f8fafc;
+  border-color: rgba(226, 232, 240, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.screen.app-screen .app-header .btn-outline:hover,
+.screen.app-screen .app-header .btn-outline:focus-visible {
+  background: rgba(148, 163, 184, 0.18);
+  border-color: rgba(226, 232, 240, 0.28);
+}
+
+.screen.app-screen .app-header .btn-ghost {
+  color: #fdba74;
+  border-color: rgba(249, 115, 22, 0.25);
+  background: rgba(249, 115, 22, 0.12);
+}
+
+.screen.app-screen .app-header .btn-ghost:hover,
+.screen.app-screen .app-header .btn-ghost:focus-visible {
+  background: rgba(249, 115, 22, 0.18);
+}
+
+.screen.app-screen .notify-bell.has-unread {
+  border-color: rgba(96, 165, 250, 0.4);
+  background: rgba(59, 130, 246, 0.2);
+}
+
+.screen.app-screen .notify-bell-count {
+  background: #2563eb;
+}
+
+.screen.app-screen .card-icon {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.14), rgba(20, 184, 166, 0.14));
+  color: #1e293b;
+  box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.12);
+}
+
+.screen.app-screen .summary-card.clickable:hover,
+.screen.app-screen .summary-card.clickable:focus-visible,
+.screen.app-screen .approval-card.selectable:hover,
+.screen.app-screen .approval-card.selectable:focus-within,
+.screen.app-screen .recycle-card.selectable:hover,
+.screen.app-screen .recycle-card.selectable:focus-within {
+  border-color: rgba(59, 130, 246, 0.34);
+  box-shadow: 0 14px 26px rgba(37, 99, 235, 0.1);
+}
+
+.screen.app-screen .selected-card {
+  border-color: rgba(59, 130, 246, 0.62) !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.screen.app-screen .stat-grid {
+  grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+}
+
+.screen.app-screen .summary-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.screen.app-screen .stat-card,
+.screen.app-screen .summary-card,
+.screen.app-screen .approval-card,
+.screen.app-screen .log-card,
+.screen.app-screen .recycle-card,
+.screen.app-screen .hub-card,
+.screen.app-screen .list-card {
+  padding: 14px 15px;
+  border-radius: 18px;
+  border-color: rgba(203, 213, 225, 0.76);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 251, 255, 0.92));
+}
+
+.screen.app-screen .stat-card strong {
+  font-size: 1.7rem;
+}
+
+.screen.app-screen .log-card {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+}
+
+.screen.app-screen .log-card strong,
+.screen.app-screen .recycle-card strong,
+.screen.app-screen .approval-card strong {
+  margin-bottom: 0;
+  line-height: 1.35;
+}
+
+.screen.app-screen #logs-list,
+.screen.app-screen #my-audit-list {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  align-items: start;
+}
+
+.screen.app-screen .bulk-bar {
+  padding: 12px 14px;
+  border-color: rgba(59, 130, 246, 0.14);
+  background: linear-gradient(180deg, rgba(239, 246, 255, 0.98), rgba(241, 245, 249, 0.92));
+}
+
+.screen.app-screen .storage-progress {
+  border-color: rgba(59, 130, 246, 0.16);
+  background: linear-gradient(180deg, rgba(239, 246, 255, 0.98), rgba(244, 247, 251, 0.94));
+}
+
+.screen.app-screen .storage-strip {
+  background: rgba(148, 163, 184, 0.18);
+}
+
+.screen.app-screen .type-pill.single {
+  color: #3153ad;
+  background: #e8efff;
+}
+
+.screen.app-screen .type-pill.bulk {
+  color: #0f766e;
+  background: #dff8f3;
+}
+
+.screen.app-screen .type-pill.group {
+  color: #7c3aed;
+  background: #eee7ff;
 }
 
 .summary-card strong,
@@ -2226,18 +2465,6 @@ button.summary-card.clickable {
         </div>
       </section>
 
-      <section id="page-notifications" class="page">
-        <div class="panel">
-          <div class="panel-head">
-            <div>
-              <div class="panel-kicker">Admin</div>
-              <h3>Notifications</h3>
-            </div>
-          </div>
-          <div id="admin-notification-list" class="summary-grid empty-state">Loading admin notifications.</div>
-        </div>
-      </section>
-
       <section id="page-storage" class="page">
         <div class="panel">
           <div class="panel-head">
@@ -2961,7 +3188,6 @@ button.summary-card.clickable {
     function pageIconHtml(pageId) {
       const icons = {
         "page-dashboard": "&#128197;",
-        "page-notifications": "&#128276;",
         "page-approvals": "&#9989;",
         "page-employees": "&#128101;",
         "page-clients": "&#129309;",
@@ -2979,8 +3205,9 @@ button.summary-card.clickable {
       if (isAdmin()) {
         const pendingUsers = state.employees.filter((user) => user.approved === false);
         const lockedUsers = state.employees.filter((user) => user.locked === true);
+        const recycleCount = state.recycleDocs.length;
         return {
-          total: pendingUsers.length + lockedUsers.length,
+          total: pendingUsers.length + lockedUsers.length + recycleCount,
           items: [
             {
               icon: "&#128100;",
@@ -2996,9 +3223,15 @@ button.summary-card.clickable {
             },
             {
               icon: "&#128465;",
-              title: `${state.recycleDocs.length} recycle item(s)`,
-              note: state.recycleDocs.length ? "Deleted records are waiting for restore or purge." : "Recycle bin is currently clear.",
+              title: `${recycleCount} recycle item(s)`,
+              note: recycleCount ? "Deleted records are waiting for restore or purge." : "Recycle bin is currently clear.",
               page: "page-logs"
+            },
+            {
+              icon: "&#128065;",
+              title: "Pending group reports stay hidden",
+              note: "Admin tables and admin/public logs only show group entries after they finalize.",
+              page: ""
             }
           ]
         };
@@ -3051,13 +3284,21 @@ button.summary-card.clickable {
         "Quick action items for this account.",
         `
           <div class="summary-grid">
-            ${summary.items.map((item) => `
-              <button class="summary-card clickable" type="button" data-page="${item.page}">
-                <span class="card-icon" aria-hidden="true">${item.icon}</span>
-                <strong>${safe(item.title)}</strong>
-                <small>${safe(item.note)}</small>
-              </button>
-            `).join("")}
+            ${summary.items.map((item) => item.page
+              ? `
+                  <button class="summary-card clickable" type="button" data-page="${item.page}">
+                    <span class="card-icon" aria-hidden="true">${item.icon}</span>
+                    <strong>${safe(item.title)}</strong>
+                    <small>${safe(item.note)}</small>
+                  </button>
+                `
+              : `
+                  <div class="summary-card">
+                    <span class="card-icon" aria-hidden="true">${item.icon}</span>
+                    <strong>${safe(item.title)}</strong>
+                    <small>${safe(item.note)}</small>
+                  </div>
+                `).join("")}
           </div>
         `
       );
@@ -3068,7 +3309,6 @@ button.summary-card.clickable {
       const tabs = isAdmin()
         ? [
             { id: "page-dashboard", label: "Timesheets" },
-            { id: "page-notifications", label: "Notifications" },
             { id: "page-approvals", label: "Approvals" },
             { id: "page-employees", label: "Employees" },
             { id: "page-clients", label: "Clients" },
@@ -3292,7 +3532,6 @@ button.summary-card.clickable {
             state.allEntries = [...singles, ...bulks, ...groups.filter((record) => record.status === "active")].sort(sortRecords);
           }
           renderApprovalsList();
-          renderAdminNotifications();
           renderStorageStats();
           renderHeaderNotificationBell();
         } else {
@@ -4690,7 +4929,7 @@ button.summary-card.clickable {
       const host = byId("my-audit-list");
       if (!host) return;
       host.innerHTML = state.myAudit.length
-        ? state.myAudit
+        ? `<div class="audit-card-grid">${state.myAudit
             .map(
               (item) => `
                 <div class="log-card">
@@ -4700,8 +4939,16 @@ button.summary-card.clickable {
                 </div>
               `
             )
-            .join("")
-        : "No activity recorded yet.";
+            .join("")}</div>`
+        : `
+            <div class="compact-empty">
+              <span class="card-icon" aria-hidden="true">&#128221;</span>
+              <div>
+                <strong>No activity recorded yet</strong>
+                <small>Your exports, submissions, approvals, and delete actions appear here.</small>
+              </div>
+            </div>
+          `;
     }
 
     function renderStorageStats() {
@@ -4743,36 +4990,6 @@ button.summary-card.clickable {
         { label: "Recycle bin", value: String(state.recycleDocs.length), note: "Deleted parent records waiting for restore or purge", icon: "&#128465;" },
         { label: "Est. footprint", value: `${roughMb.toFixed(2)} MB`, note: `${usedPct.toFixed(3)}% of a 1,024 MB text-data budget`, icon: "&#128190;" }
       ]);
-    }
-
-    function renderAdminNotifications() {
-      const host = byId("admin-notification-list");
-      if (!host) return;
-      const pendingUsers = state.employees.filter((user) => user.approved === false);
-      const lockedUsers = state.employees.filter((user) => user.locked === true);
-      const recycleCount = state.recycleDocs.length;
-      host.innerHTML = `
-        <button class="summary-card clickable" type="button" data-page="page-approvals">
-          <span class="card-icon" aria-hidden="true">&#128100;</span>
-          <strong>${safe(String(pendingUsers.length))} new registration(s)</strong>
-          <small>${pendingUsers.length ? `Latest: ${safe(pendingUsers[0]?.name || pendingUsers[0]?.email || "-")}` : "No pending registrations right now."}</small>
-        </button>
-        <button class="summary-card clickable" type="button" data-page="page-approvals">
-          <span class="card-icon" aria-hidden="true">&#128274;</span>
-          <strong>${safe(String(lockedUsers.length))} locked account(s)</strong>
-          <small>${lockedUsers.length ? `Needs unlock or PIN reset: ${safe(lockedUsers[0]?.name || lockedUsers[0]?.email || "-")}` : "No locked accounts right now."}</small>
-        </button>
-        <button class="summary-card clickable" type="button" data-page="page-logs">
-          <span class="card-icon" aria-hidden="true">&#128465;</span>
-          <strong>${safe(String(recycleCount))} recycle item(s)</strong>
-          <small>${recycleCount ? "Deleted parent records are waiting for restore or purge." : "Recycle bin is currently clear."}</small>
-        </button>
-        <div class="summary-card">
-          <span class="card-icon" aria-hidden="true">&#128065;</span>
-          <strong>Pending group reports stay hidden</strong>
-          <small>Admin tables and admin/public logs only show group entries after they finalize. Pending member approvals do not surface in admin views.</small>
-        </div>
-      `;
     }
 
     function renderUserNotifications() {
@@ -5009,7 +5226,6 @@ button.summary-card.clickable {
       renderAllTable();
       renderTodaySummary();
       renderStorageStats();
-      renderAdminNotifications();
       renderHeaderNotificationBell();
     }
 
@@ -5041,7 +5257,7 @@ button.summary-card.clickable {
                 <button class="btn btn-ghost small" type="button" data-action="open-reject-selected">Reject selected</button>
               </div>
             </div>
-            ${pendingUsers.map((user) => {
+            <div class="approval-card-grid">${pendingUsers.map((user) => {
               const selected = state.selectedPendingUsers.has(user.id);
               const role = normalizeRoleValue(state.pendingRoleDrafts[user.id] || user.role || "CA Article");
               return `
@@ -5066,9 +5282,17 @@ button.summary-card.clickable {
                   </div>
                 </div>
               `;
-            }).join("")}
+            }).join("")}</div>
           `
-        : "No pending registrations.";
+        : `
+            <div class="compact-empty">
+              <span class="card-icon" aria-hidden="true">&#128100;</span>
+              <div>
+                <strong>No pending registrations</strong>
+                <small>New Google sign-ins that need approval will appear here.</small>
+              </div>
+            </div>
+          `;
 
       lockedHost.innerHTML = lockedUsers.length
         ? `
@@ -5083,7 +5307,7 @@ button.summary-card.clickable {
                 <button class="btn btn-outline small" type="button" data-action="unlock-selected-users">Unlock selected</button>
               </div>
             </div>
-            ${lockedUsers.map((user) => {
+            <div class="approval-card-grid">${lockedUsers.map((user) => {
               const selected = state.selectedLockedUsers.has(user.id);
               return `
                 <div class="approval-card selectable ${selected ? "selected-card" : ""}" data-select-kind="locked-user" data-id="${user.id}">
@@ -5100,9 +5324,17 @@ button.summary-card.clickable {
                   </div>
                 </div>
               `;
-            }).join("")}
+            }).join("")}</div>
           `
-        : "No locked accounts.";
+        : `
+            <div class="compact-empty">
+              <span class="card-icon" aria-hidden="true">&#128274;</span>
+              <div>
+                <strong>No locked accounts</strong>
+                <small>Accounts that hit the PIN attempt limit will be shown here.</small>
+              </div>
+            </div>
+          `;
     }
 
     async function loadApprovals() {
@@ -5171,8 +5403,16 @@ button.summary-card.clickable {
       const host = byId("logs-list");
       if (host) {
         host.innerHTML = logs.length
-          ? logs.map((item) => `<div class="log-card"><strong>${safe(item.action || "-")}</strong><div class="subline">${safe(item.actorName || item.actorEmail || "-")}</div>${item.detail ? `<div class="subline">${safe(item.detail)}</div>` : ""}${item.detailAdmin ? `<div class="subline">${safe(item.detailAdmin)}</div>` : ""}<small>${safe(nowTimestampText(item.createdAt))}</small></div>`).join("")
-          : "No logs found.";
+          ? `<div class="log-card-grid">${logs.map((item) => `<div class="log-card"><strong>${safe(item.action || "-")}</strong><div class="subline">${safe(item.actorName || item.actorEmail || "-")}</div>${item.detail ? `<div class="subline">${safe(item.detail)}</div>` : ""}${item.detailAdmin ? `<div class="subline">${safe(item.detailAdmin)}</div>` : ""}<small>${safe(nowTimestampText(item.createdAt))}</small></div>`).join("")}</div>`
+          : `
+              <div class="compact-empty">
+                <span class="card-icon" aria-hidden="true">&#128221;</span>
+                <div>
+                  <strong>No logs found</strong>
+                  <small>Audit activity will appear here after filters match stored events.</small>
+                </div>
+              </div>
+            `;
       }
 
       const recycleHost = byId("recycle-bin-list");
@@ -5192,7 +5432,7 @@ button.summary-card.clickable {
                   <button class="btn btn-ghost small" type="button" data-action="purge-selected-recycle">Purge selected</button>
                 </div>
               </div>
-              ${state.recycleDocs.map((item) => {
+              <div class="recycle-card-grid">${state.recycleDocs.map((item) => {
                 const selected = state.selectedRecycle.has(item.id);
                 return `
                   <div class="recycle-card selectable ${selected ? "selected-card" : ""}" data-select-kind="recycle-item" data-id="${item.id}">
@@ -5206,9 +5446,17 @@ button.summary-card.clickable {
                     <div class="actions"><button class="btn btn-outline small" type="button" data-action="restore-recycle" data-id="${item.id}">Restore</button><button class="btn btn-ghost small" type="button" data-action="purge-recycle" data-id="${item.id}">Purge</button></div>
                   </div>
                 `;
-              }).join("")}
+              }).join("")}</div>
             `
-          : "Deleted records will appear here.";
+          : `
+              <div class="compact-empty">
+                <span class="card-icon" aria-hidden="true">&#128465;</span>
+                <div>
+                  <strong>Recycle bin is clear</strong>
+                  <small>Deleted parent records will appear here for restore or purge.</small>
+                </div>
+              </div>
+            `;
       }
     }
 
@@ -5235,8 +5483,16 @@ button.summary-card.clickable {
       const host = byId("group-approval-list");
       if (!host) return;
       host.innerHTML = state.groupApprovals.length
-        ? state.groupApprovals.map((record) => `<div class="approval-card"><strong>${safe(clientLabel(record))}</strong><div class="subline">${safe(displayDate(record))}</div><div class="subline">Reporter: ${safe(record.creatorName || record.name || "-")}</div><div class="subline">Members: ${safe(memberNames(record).join(", "))}</div><div class="actions"><button class="btn btn-outline small" type="button" data-action="respond-group" data-id="${record.id}" data-response="approve">Approve</button><button class="btn btn-ghost small" type="button" data-action="respond-group" data-id="${record.id}" data-response="reject">Reject</button><button class="btn btn-outline small" type="button" data-action="view-trail" data-collection="group_entries" data-id="${record.id}">Trail</button></div></div>`).join("")
-        : "No pending group approvals.";
+        ? `<div class="approval-card-grid">${state.groupApprovals.map((record) => `<div class="approval-card"><strong>${safe(clientLabel(record))}</strong><div class="subline">${safe(displayDate(record))}</div><div class="subline">Reporter: ${safe(record.creatorName || record.name || "-")}</div><div class="subline">Members: ${safe(memberNames(record).join(", "))}</div><div class="actions"><button class="btn btn-outline small" type="button" data-action="respond-group" data-id="${record.id}" data-response="approve">Approve</button><button class="btn btn-ghost small" type="button" data-action="respond-group" data-id="${record.id}" data-response="reject">Reject</button><button class="btn btn-outline small" type="button" data-action="view-trail" data-collection="group_entries" data-id="${record.id}">Trail</button></div></div>`).join("")}</div>`
+        : `
+            <div class="compact-empty">
+              <span class="card-icon" aria-hidden="true">&#128101;</span>
+              <div>
+                <strong>No pending group approvals</strong>
+                <small>Teammate approval requests will appear here when group reports need your action.</small>
+              </div>
+            </div>
+          `;
     }
 
     async function loadGroupApprovals() {
@@ -5362,10 +5618,6 @@ button.summary-card.clickable {
         return;
       }
       if (state.currentPage === "page-dashboard") {
-        await loadAll();
-        return;
-      }
-      if (state.currentPage === "page-notifications") {
         await loadAll();
         return;
       }
@@ -7146,16 +7398,49 @@ button.summary-card.clickable {
       const isArticleView = isArticle();
       openModal(
         "Portal Guide",
-        "Quick reference for access, reporting rules, edits, security, and admin controls.",
+        "Working guide for access, reporting rules, edits, approvals, search, export, and admin controls.",
         `
-          <div class="stack-list">
-            <div class="hub-card"><strong>Access flow</strong><small>Google sign-in comes first, then admin approval, then a 4-digit PIN on every fresh session. Browser Back now moves inside the portal flow instead of immediately dropping the single-file site.</small></div>
-            <div class="hub-card"><strong>PIN and lock rules</strong><small>Non-admin accounts lock after 3 wrong PIN attempts. Admin can unlock the account or reset the PIN from Approvals, Employees, or the PIN reset panel.</small></div>
-            <div class="hub-card"><strong>Reporting rules</strong><small>Single entry is for one date only. Bulk entry is for more than one day only. Group reporting supports single-day and bulk-days modes, always with one shared client and user-wise hours plus remarks.</small></div>
-            <div class="hub-card"><strong>Timesheet and edits</strong><small>Single, bulk, and finalized group records appear in the timesheet. You can edit your own single and bulk entries. In group entries, the reporter edits shared details while each member can edit only their own section. Admin cannot edit entries.</small></div>
-            <div class="hub-card"><strong>Recycle and audit</strong><small>Deletes move records to Recycle Bin first. Admin can restore or purge them. Trails and logs record submissions, edits, approvals, unlocks, PIN resets, imports, exports, and recycle actions.</small></div>
-            <div class="hub-card"><strong>CA Hub</strong><small>${isArticleView ? "Knowledge Bank reads from your timesheet records automatically. Study, case library, productivity, and notes stay private to you and are managed in their own hub sections." : "CA Hub stays hidden unless your approved role is CA Article. When available, its Knowledge Bank reads from timesheet records while the private hub sections remain user-only."}</small></div>
-            <div class="hub-card"><strong>Admin flow</strong><small>${isAdminView ? "Admin tabs cover timesheets, approvals, employees, clients, and logs. Admin can approve roles, reject registrations, unlock accounts, reset PINs, manage clients and employees, review recycle bin items, and export records, but cannot edit employee entries." : "Admin-only areas stay hidden for non-admin users."}</small></div>
+          <div class="detail-grid">
+            <div class="hub-card">
+              <strong>1. Sign-in and session flow</strong>
+              <small>Use Google sign-in first. New users wait for admin approval. After approval, each fresh browser session asks for a 4-digit PIN before entering the portal.</small>
+            </div>
+            <div class="hub-card">
+              <strong>2. PIN, lock, and reset</strong>
+              <small>Non-admin users lock after 3 wrong PIN attempts. Admin can unlock the account or reset the PIN from Approvals, Employees, or the Reset employee PIN panel.</small>
+            </div>
+            <div class="hub-card">
+              <strong>3. Single, bulk, and group reporting</strong>
+              <small>Single entry is for one date only. Bulk entry is for more than one day only. Group reporting supports single-day and bulk-days modes with one shared client and user-wise hours plus remarks.</small>
+            </div>
+            <div class="hub-card">
+              <strong>4. Group approval logic</strong>
+              <small>Pending group reports stay visible only to the involved users until approvals complete. Admin tables and public/admin logs see group entries only after finalization.</small>
+            </div>
+            <div class="hub-card">
+              <strong>5. Timesheet edits and delete control</strong>
+              <small>Your timesheet shows your own single entries, bulk entries, and visible group entries. You can edit your own single/bulk entries. In group entries, the reporter edits shared fields while each member edits only their own section. Admin cannot edit entries.</small>
+            </div>
+            <div class="hub-card">
+              <strong>6. Drafts, search, and exports</strong>
+              <small>Draft buttons save unfinished entry forms on the current device/browser only. Search, filters, and Excel export work from My Timesheet, All Timesheets, Employees, Clients, and Logs where available.</small>
+            </div>
+            <div class="hub-card">
+              <strong>7. Recycle bin and trails</strong>
+              <small>Deletes move records to Recycle Bin first. Admin can restore or purge them. Entry trails and audit logs record submissions, edits, approvals, unlocks, PIN resets, imports, exports, and recycle actions.</small>
+            </div>
+            <div class="hub-card">
+              <strong>8. Notifications and quick actions</strong>
+              <small>The header bell is the central notification point. It shows pending approvals, locked accounts, recycle activity, and user-specific approval reminders with quick links to the correct section.</small>
+            </div>
+            <div class="hub-card">
+              <strong>9. CA Hub</strong>
+              <small>${isArticleView ? "Knowledge Bank reads from your timesheet records automatically. Study and Work, Case Library, Productivity, and Notes stay private to you inside My Hub." : "CA Hub appears only for approved CA Article accounts. When enabled, Knowledge Bank reads from timesheet records while the private hub sections remain user-only."}</small>
+            </div>
+            <div class="hub-card">
+              <strong>10. Admin control map</strong>
+              <small>${isAdminView ? "Timesheets handles reporting summary and all records. Approvals handles new registrations, locked users, and PIN reset. Employees and Clients manage master data. Logs covers activity history and recycle control. Storage shows record growth and estimated footprint." : "Admin-only areas stay hidden for non-admin users."}</small>
+            </div>
           </div>
         `
       );
