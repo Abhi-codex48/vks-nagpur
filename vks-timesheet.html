@@ -1597,16 +1597,22 @@ button.summary-card.clickable {
   color: rgba(249, 225, 214, 0.74);
 }
 
-.screen.app-screen .header-refresh-meta {
-  display: inline-flex;
-  align-items: center;
-  min-height: 40px;
-  padding: 0 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(246, 221, 200, 0.16);
-  background: rgba(255, 245, 240, 0.06);
-  color: rgba(255, 233, 224, 0.84);
-  font-size: 0.78rem;
+.screen.app-screen #refresh-tab {
+  display: grid;
+  justify-items: start;
+  gap: 2px;
+  min-height: 44px;
+  padding-block: 8px;
+}
+
+.screen.app-screen .refresh-btn-label {
+  line-height: 1.1;
+}
+
+.screen.app-screen .refresh-btn-meta {
+  font-size: 0.66rem;
+  line-height: 1.1;
+  color: rgba(255, 233, 224, 0.78);
   font-weight: 700;
 }
 
@@ -1673,7 +1679,7 @@ button.summary-card.clickable {
   border: 1px solid rgba(203, 213, 225, 0.76);
   border-radius: 8px;
   box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
-  padding: 18px;
+  padding: 16px;
   animation: appShellRise 0.24s ease both;
 }
 
@@ -1699,11 +1705,12 @@ button.summary-card.clickable {
 }
 
 .screen.app-screen .toolbar {
-  background: linear-gradient(180deg, rgba(248, 250, 252, 0.98), rgba(241, 245, 249, 0.94));
+  background: linear-gradient(180deg, rgba(255, 252, 248, 1), rgba(252, 248, 243, 1));
   border: 1px solid rgba(203, 213, 225, 0.82);
   border-radius: 6px;
-  padding: 14px;
-  margin-bottom: 14px;
+  padding: 12px;
+  margin-bottom: 10px;
+  isolation: isolate;
 }
 
 .screen.app-screen .table-shell {
@@ -2008,7 +2015,8 @@ button.summary-card.clickable {
 }
 
 .screen.app-screen .panel-head {
-  margin-bottom: 12px;
+  align-items: center;
+  margin-bottom: 8px;
 }
 
 .screen.app-screen .activity-log-label {
@@ -2032,7 +2040,7 @@ button.summary-card.clickable {
 
 .screen.app-screen #page-employees .toolbar {
   border-radius: 14px;
-  background: linear-gradient(180deg, rgba(255, 250, 242, 0.98), rgba(248, 250, 252, 0.94));
+  background: linear-gradient(180deg, rgba(255, 251, 246, 1), rgba(253, 247, 241, 1));
 }
 
 .screen.app-screen #page-employees .field input,
@@ -2076,6 +2084,14 @@ button.summary-card.clickable {
 .screen.app-screen #page-clients .toolbar,
 .screen.app-screen #page-logs .toolbar {
   box-shadow: 0 10px 20px rgba(15, 23, 42, 0.05);
+  background: linear-gradient(180deg, rgba(255, 252, 248, 1), rgba(252, 248, 243, 1));
+}
+
+.screen.app-screen .toolbar + .table-shell,
+.screen.app-screen .filter-summary + .table-shell,
+.screen.app-screen .toolbar + .stack-list,
+.screen.app-screen .filter-summary + .stack-list {
+  margin-top: 8px;
 }
 
 .filter-summary {
@@ -2405,15 +2421,28 @@ button.summary-card.clickable {
 }
 
 .screen.app-screen thead th {
-  background: #f8fafc;
-  color: #475569;
+  background: linear-gradient(180deg, rgba(255, 248, 243, 0.98), rgba(248, 239, 231, 0.94));
+  color: #8a4333;
   border-bottom: 1px solid rgba(203, 213, 225, 0.82);
+  font-weight: 800;
 }
 
 .screen.app-screen th,
 .screen.app-screen td {
   padding: 12px 14px;
   border-bottom-color: rgba(226, 232, 240, 0.9);
+}
+
+.screen.app-screen .field span,
+.screen.app-screen .field-note,
+.screen.app-screen .detail-box .label,
+.screen.app-screen .subline {
+  color: #6b4d43;
+}
+
+.screen.app-screen .field span,
+.screen.app-screen .detail-box .label {
+  font-weight: 700;
 }
 
 .screen.app-screen tbody tr:hover td {
@@ -2978,8 +3007,10 @@ button.summary-card.clickable {
           <span class="notify-bell-icon" aria-hidden="true">&#128276;</span>
           <span id="header-notify-count" class="notify-bell-count" hidden>0</span>
         </button>
-        <button id="refresh-tab" class="btn btn-outline small" type="button">Refresh</button>
-        <div id="header-refresh-meta" class="header-refresh-meta">Last refresh: -</div>
+        <button id="refresh-tab" class="btn btn-outline small" type="button">
+          <span class="refresh-btn-label">Refresh</span>
+          <span id="refresh-tab-meta" class="refresh-btn-meta">Last sync: -</span>
+        </button>
         <button id="open-guide" class="btn btn-outline small" type="button">Guide</button>
         <button id="logout-button" class="btn btn-ghost small" type="button">Log out</button>
       </div>
@@ -3117,7 +3148,6 @@ button.summary-card.clickable {
             </label>
             <div class="toolbar-actions">
               <button id="my-today" class="btn btn-outline small" type="button">Today</button>
-              <button id="my-apply" class="btn btn-outline small" type="button">Apply</button>
               <button id="my-clear" class="btn btn-outline small" type="button">Clear filters</button>
               <button id="my-delete-selected" class="btn btn-ghost small" type="button">Delete selected</button>
             </div>
@@ -3211,7 +3241,6 @@ button.summary-card.clickable {
             </label>
             <div class="toolbar-actions">
               <button id="all-today" class="btn btn-outline small" type="button">Today</button>
-              <button id="all-apply" class="btn btn-outline small" type="button">Apply</button>
               <button id="all-clear" class="btn btn-outline small" type="button">Clear filters</button>
             </div>
           </div>
@@ -3336,7 +3365,6 @@ button.summary-card.clickable {
               </select>
             </label>
             <div class="toolbar-actions">
-              <button id="employee-apply" class="btn btn-outline small" type="button">Apply</button>
               <button id="employee-clear" class="btn btn-outline small" type="button">Clear filters</button>
             </div>
           </div>
@@ -3436,7 +3464,6 @@ button.summary-card.clickable {
             </label>
             <div class="toolbar-actions">
               <button id="log-today" class="btn btn-outline small" type="button">Today</button>
-              <button id="log-apply" class="btn btn-outline small" type="button">Apply</button>
               <button id="log-clear" class="btn btn-outline small" type="button">Clear filters</button>
             </div>
           </div>
@@ -5599,6 +5626,168 @@ button.summary-card.clickable {
       });
     }
 
+    function monthFilterLabel(value) {
+      if (!value || !/^\d{4}-\d{2}$/.test(value)) return value;
+      const [year, month] = value.split("-").map(Number);
+      const date = new Date(year, Math.max(0, month - 1), 1);
+      return Number.isFinite(date.getTime())
+        ? date.toLocaleDateString("en-IN", { month: "short", year: "numeric" })
+        : value;
+    }
+
+    function filterChip(label, value) {
+      return `<span class="filter-chip"><strong>${safe(label)}:</strong> ${safe(value)}</span>`;
+    }
+
+    function setFilterSummary(hostId, chips) {
+      const host = byId(hostId);
+      if (!host) return;
+      if (!chips.length) {
+        host.hidden = true;
+        host.innerHTML = "";
+        return;
+      }
+      host.hidden = false;
+      host.innerHTML = chips.join("");
+    }
+
+    function renderMyFilterSummary() {
+      const chips = [];
+      const q = String(byId("my-search")?.value || "").trim();
+      const month = byId("my-month")?.value || "";
+      const from = byId("my-from")?.value || "";
+      const to = byId("my-to")?.value || "";
+      const task = byId("my-task-filter")?.value || "";
+      if (q) chips.push(filterChip("Search", q));
+      if (month) chips.push(filterChip("Month", monthFilterLabel(month)));
+      if (from) chips.push(filterChip("From", formatDate(from)));
+      if (to) chips.push(filterChip("To", formatDate(to)));
+      if (task) chips.push(filterChip("Work type", task));
+      setFilterSummary("my-filter-summary", chips);
+    }
+
+    function renderAllFilterSummary() {
+      const chips = [];
+      const q = String(byId("all-search")?.value || "").trim();
+      const from = byId("all-from")?.value || "";
+      const to = byId("all-to")?.value || "";
+      const userText = String(byId("all-user-search")?.value || "").trim();
+      const role = byId("all-role-filter")?.value || "";
+      const task = byId("all-task-filter")?.value || "";
+      if (q) chips.push(filterChip("Search", q));
+      if (from) chips.push(filterChip("From", formatDate(from)));
+      if (to) chips.push(filterChip("To", formatDate(to)));
+      if (userText) chips.push(filterChip("Employee / Article", userText));
+      if (role) chips.push(filterChip("Role", role));
+      if (task) chips.push(filterChip("Work type", task));
+      setFilterSummary("all-filter-summary", chips);
+    }
+
+    function renderEmployeeFilterSummary() {
+      const chips = [];
+      const q = String(byId("employee-search")?.value || "").trim();
+      const role = byId("employee-role-filter")?.value || "";
+      const dept = byId("employee-department-filter")?.value || "";
+      const status = byId("employee-status-filter")?.value || "";
+      if (q) chips.push(filterChip("Search", q));
+      if (role) chips.push(filterChip("Role", role));
+      if (dept) chips.push(filterChip("Department", dept));
+      if (status) chips.push(filterChip("Status", status));
+      setFilterSummary("employee-filter-summary", chips);
+    }
+
+    function renderClientFilterSummary() {
+      const chips = [];
+      const q = String(byId("client-search")?.value || "").trim();
+      if (q) chips.push(filterChip("Search", q));
+      setFilterSummary("client-filter-summary", chips);
+    }
+
+    function renderLogFilterSummary() {
+      const chips = [];
+      const q = String(byId("log-search")?.value || "").trim();
+      const from = byId("log-from")?.value || "";
+      const to = byId("log-to")?.value || "";
+      const type = byId("log-type-filter")?.value || "";
+      if (q) chips.push(filterChip("Search", q));
+      if (from) chips.push(filterChip("From", formatDate(from)));
+      if (to) chips.push(filterChip("To", formatDate(to)));
+      if (type) chips.push(filterChip("Type", logTypeMeta(type).label));
+      setFilterSummary("log-filter-summary", chips);
+    }
+
+    function setFieldValue(id, value) {
+      const el = byId(id);
+      if (el) el.value = value;
+    }
+
+    function updateRefreshButtonMeta(text) {
+      const host = byId("refresh-tab-meta");
+      if (!host) return;
+      host.textContent = text || `Last sync: ${timeOnlyText(Date.now()) || "-"}`;
+    }
+
+    function applyMyTodayFilters() {
+      setFieldValue("my-month", "");
+      setFieldValue("my-from", todayStr());
+      setFieldValue("my-to", todayStr());
+      renderMyTable();
+    }
+
+    function clearMyFilters() {
+      setFieldValue("my-search", "");
+      setFieldValue("my-month", "");
+      setFieldValue("my-from", "");
+      setFieldValue("my-to", "");
+      setFieldValue("my-task-filter", "");
+      renderMyTable();
+    }
+
+    function applyAllTodayFilters() {
+      setFieldValue("all-from", todayStr());
+      setFieldValue("all-to", todayStr());
+      renderAllTable();
+    }
+
+    function clearAllFilters() {
+      setFieldValue("all-search", "");
+      setFieldValue("all-from", "");
+      setFieldValue("all-to", "");
+      setFieldValue("all-user-search", "");
+      setFieldValue("all-user-id", "");
+      setFieldValue("all-role-filter", "");
+      setFieldValue("all-task-filter", "");
+      clearSuggestions("all-user-options");
+      renderAllTable();
+    }
+
+    function clearEmployeeFilters() {
+      setFieldValue("employee-search", "");
+      setFieldValue("employee-role-filter", "");
+      setFieldValue("employee-department-filter", "");
+      setFieldValue("employee-status-filter", "");
+      renderEmployeesTable();
+    }
+
+    function clearClientFilters() {
+      setFieldValue("client-search", "");
+      renderClientsTable();
+    }
+
+    function applyLogTodayFilters() {
+      setFieldValue("log-from", todayStr());
+      setFieldValue("log-to", todayStr());
+      renderLogsPage();
+    }
+
+    function clearLogFilters() {
+      setFieldValue("log-search", "");
+      setFieldValue("log-from", "");
+      setFieldValue("log-to", "");
+      setFieldValue("log-type-filter", "");
+      renderLogsPage();
+    }
+
     function getSelectedMyRecords() {
       return (state.myEntries || []).filter((record) => state.selectedMy.has(recordKey(record)) && canDeleteRecord(record));
     }
@@ -5758,6 +5947,7 @@ button.summary-card.clickable {
       const rows = getFilteredMyRecords();
 
       renderMyStats(rows);
+      renderMyFilterSummary();
       const body = byId("my-table-body");
       if (!body) return;
 
@@ -6090,6 +6280,7 @@ button.summary-card.clickable {
     function renderAllTable() {
       const rows = getFilteredAllRecords();
 
+      renderAllFilterSummary();
       const body = byId("all-table-body");
       if (!body) return;
 
@@ -6246,6 +6437,7 @@ button.summary-card.clickable {
     function renderEmployeesTable() {
       const rows = getFilteredEmployees();
 
+      renderEmployeeFilterSummary();
       const body = byId("employees-table-body");
       if (!body) return;
       body.innerHTML = rows.length
@@ -6287,6 +6479,7 @@ button.summary-card.clickable {
 
     function renderClientsTable() {
       const rows = getFilteredClients();
+      renderClientFilterSummary();
       const body = byId("clients-table-body");
       if (!body) return;
       body.innerHTML = rows.length
@@ -6313,6 +6506,7 @@ button.summary-card.clickable {
       const logs = getFilteredLogs();
       const recycleAllSelected = hasAllSelected(state.selectedRecycle, state.recycleDocs.map((item) => item.id));
 
+      renderLogFilterSummary();
       const host = byId("logs-list");
       if (host) {
         host.innerHTML = logs.length
@@ -6555,39 +6749,48 @@ button.summary-card.clickable {
       if (state.currentPage === "page-log") {
         await ensureLookups(true);
         await loadGroupApprovals();
+        updateRefreshButtonMeta();
         return;
       }
       if (state.currentPage === "page-my") {
         await loadMyEntries();
         await loadMyAudit();
+        updateRefreshButtonMeta();
         return;
       }
       if (state.currentPage === "page-dashboard") {
         await loadAll();
+        updateRefreshButtonMeta();
         return;
       }
       if (state.currentPage === "page-approvals") {
         await loadApprovals();
+        updateRefreshButtonMeta();
         return;
       }
       if (state.currentPage === "page-employees") {
         await loadEmployeesPage();
+        updateRefreshButtonMeta();
         return;
       }
       if (state.currentPage === "page-clients") {
         await loadClientsPage();
+        updateRefreshButtonMeta();
         return;
       }
       if (state.currentPage === "page-logs") {
         await loadLogsPage();
+        updateRefreshButtonMeta();
         return;
       }
       if (state.currentPage === "page-storage") {
         await loadAll();
+        updateRefreshButtonMeta();
         return;
       }
       if (state.currentPage === "page-cahub") {
         await loadHubData();
+        updateRefreshButtonMeta();
       }
     }
 
@@ -8441,10 +8644,10 @@ button.summary-card.clickable {
                   <span class="guide-card-icon">&#128269;</span>
                   <h4>Search, Filters, and Export</h4>
                 </div>
-                <p>Use page filters before exporting. Export should match the filtered list you are currently looking at.</p>
+                <p>Filters update automatically as you type or select. Export should match the filtered list you are currently looking at.</p>
                 <div class="guide-step-list">
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Search fast:</strong> My Timesheet, All Timesheets, Employees / Articles, Clients, and Logs all have search/filter controls.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Apply filters:</strong> date range, role, status, work type, and type filters reduce noise.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Use quick actions:</strong> Today and Clear filters help you jump or reset instantly.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Export:</strong> use Excel export after confirming the list on screen is the list you want.</span></div>
                 </div>
               </article>
@@ -8572,8 +8775,15 @@ button.summary-card.clickable {
       bind("locked-logout", "click", logout);
       bind("logout-button", "click", logout);
       bind("refresh-tab", "click", async () => {
-        await refreshCurrentPage();
-        toast("Section refreshed.", "success");
+        const button = byId("refresh-tab");
+        if (button) button.disabled = true;
+        updateRefreshButtonMeta("Refreshing...");
+        try {
+          await refreshCurrentPage();
+          toast("Section refreshed.", "success");
+        } finally {
+          if (button) button.disabled = false;
+        }
       });
       bind("header-notify", "click", openHeaderNotifications);
       bind("open-guide", "click", openGuide);
@@ -8640,10 +8850,14 @@ button.summary-card.clickable {
       bindFilters(["client-search"], renderClientsTable);
       bindFilters(["log-search", "log-from", "log-to", "log-type-filter"], renderLogsPage);
 
-      bind("my-apply", "click", renderMyTable);
-      bind("all-apply", "click", renderAllTable);
-      bind("employee-apply", "click", renderEmployeesTable);
-      bind("log-apply", "click", renderLogsPage);
+      bind("my-today", "click", applyMyTodayFilters);
+      bind("my-clear", "click", clearMyFilters);
+      bind("all-today", "click", applyAllTodayFilters);
+      bind("all-clear", "click", clearAllFilters);
+      bind("employee-clear", "click", clearEmployeeFilters);
+      bind("client-clear", "click", clearClientFilters);
+      bind("log-today", "click", applyLogTodayFilters);
+      bind("log-clear", "click", clearLogFilters);
 
       bind("my-select-all", "change", () => {
         const checked = !!byId("my-select-all")?.checked;
