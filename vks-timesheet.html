@@ -1433,6 +1433,42 @@ button.summary-card.clickable {
   align-items: start;
 }
 
+.activity-log-list {
+  display: grid;
+  gap: 12px;
+}
+
+.activity-log-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(220px, 0.9fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.activity-log-main,
+.activity-log-side {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.activity-log-main strong {
+  line-height: 1.35;
+}
+
+.activity-log-side {
+  justify-items: end;
+  text-align: right;
+}
+
+.activity-log-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
 .compact-empty {
   display: flex;
   gap: 12px;
@@ -1453,6 +1489,17 @@ button.summary-card.clickable {
     radial-gradient(circle at 8% 0%, rgba(59, 130, 246, 0.1), transparent 28%),
     radial-gradient(circle at 92% 4%, rgba(20, 184, 166, 0.1), transparent 22%),
     linear-gradient(180deg, #f4f7fb 0%, #eef3f8 100%);
+}
+
+@keyframes appShellRise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .screen.app-screen .panel-kicker {
@@ -1478,6 +1525,15 @@ button.summary-card.clickable {
 .screen.app-screen .tabbar button,
 .screen.app-screen .subtab {
   color: #64748b;
+  border-radius: 0;
+  transition: color 0.18s ease, background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+.screen.app-screen .tabbar button:hover,
+.screen.app-screen .subtab:hover {
+  color: #1e293b;
+  background: rgba(37, 99, 235, 0.05);
+  transform: translateY(-1px);
 }
 
 .screen.app-screen .tabbar button.active,
@@ -1491,24 +1547,68 @@ button.summary-card.clickable {
 }
 
 .screen.app-screen .panel {
+  position: relative;
+  overflow: hidden;
   background: rgba(255, 255, 255, 0.84);
   border: 1px solid rgba(203, 213, 225, 0.76);
-  box-shadow: 0 20px 42px rgba(15, 23, 42, 0.08);
+  border-radius: 8px;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+  animation: appShellRise 0.24s ease both;
+}
+
+.screen.app-screen .page.active > .grid > .panel:nth-child(2),
+.screen.app-screen .page.active > .panel:nth-child(2) {
+  animation-delay: 0.04s;
+}
+
+.screen.app-screen .page.active > .grid > .panel:nth-child(3),
+.screen.app-screen .page.active > .panel:nth-child(3) {
+  animation-delay: 0.08s;
+}
+
+.screen.app-screen .panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #2563eb 0%, #14b8a6 100%);
+  opacity: 0.92;
 }
 
 .screen.app-screen .toolbar {
   background: linear-gradient(180deg, rgba(248, 250, 252, 0.98), rgba(241, 245, 249, 0.94));
   border: 1px solid rgba(203, 213, 225, 0.82);
+  border-radius: 6px;
 }
 
 .screen.app-screen .table-shell {
   border-color: rgba(203, 213, 225, 0.82);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  border-radius: 6px;
 }
 
 .screen.app-screen .btn-primary {
   background: linear-gradient(135deg, #2563eb, #1d4ed8);
   box-shadow: 0 16px 28px rgba(37, 99, 235, 0.24);
+}
+
+.screen.app-screen .btn {
+  border-radius: 6px;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+}
+
+.screen.app-screen .btn.small {
+  border-radius: 6px;
+}
+
+.screen.app-screen .btn:hover {
+  transform: translateY(-1px);
+}
+
+.screen.app-screen .btn:active {
+  transform: translateY(1px) scale(0.985);
 }
 
 .screen.app-screen .btn-outline {
@@ -1571,6 +1671,7 @@ button.summary-card.clickable {
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.14), rgba(20, 184, 166, 0.14));
   color: #1e293b;
   box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.12);
+  border-radius: 6px;
 }
 
 .screen.app-screen .summary-card.clickable:hover,
@@ -1603,8 +1704,8 @@ button.summary-card.clickable {
 .screen.app-screen .recycle-card,
 .screen.app-screen .hub-card,
 .screen.app-screen .list-card {
-  padding: 14px 15px;
-  border-radius: 18px;
+  padding: 13px 14px;
+  border-radius: 6px;
   border-color: rgba(203, 213, 225, 0.76);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 251, 255, 0.92));
 }
@@ -1626,6 +1727,10 @@ button.summary-card.clickable {
   line-height: 1.35;
 }
 
+.screen.app-screen .activity-log-card {
+  grid-template-columns: minmax(0, 1.8fr) minmax(240px, 0.85fr);
+}
+
 .screen.app-screen #logs-list,
 .screen.app-screen #my-audit-list {
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -1636,15 +1741,18 @@ button.summary-card.clickable {
   padding: 12px 14px;
   border-color: rgba(59, 130, 246, 0.14);
   background: linear-gradient(180deg, rgba(239, 246, 255, 0.98), rgba(241, 245, 249, 0.92));
+  border-radius: 6px;
 }
 
 .screen.app-screen .storage-progress {
   border-color: rgba(59, 130, 246, 0.16);
   background: linear-gradient(180deg, rgba(239, 246, 255, 0.98), rgba(244, 247, 251, 0.94));
+  border-radius: 6px;
 }
 
 .screen.app-screen .storage-strip {
   background: rgba(148, 163, 184, 0.18);
+  border-radius: 999px;
 }
 
 .screen.app-screen .type-pill.single {
@@ -1660,6 +1768,44 @@ button.summary-card.clickable {
 .screen.app-screen .type-pill.group {
   color: #7c3aed;
   background: #eee7ff;
+}
+
+.screen.app-screen .chip,
+.screen.app-screen .type-pill,
+.screen.app-screen .select-pill {
+  border-radius: 6px;
+}
+
+.screen.app-screen .field input,
+.screen.app-screen .field select,
+.screen.app-screen .field textarea,
+.screen.app-screen .suggestion-list,
+.screen.app-screen .suggestion-item,
+.screen.app-screen .modal-card,
+.screen.app-screen .modal-close,
+.screen.app-screen .compact-empty,
+.screen.app-screen .calendar-label,
+.screen.app-screen .calendar-day,
+.screen.app-screen .member-hour-card,
+.screen.app-screen .note-block,
+.screen.app-screen .date-chip {
+  border-radius: 6px;
+}
+
+.screen.app-screen thead th {
+  background: #f8fafc;
+  color: #475569;
+  border-bottom: 1px solid rgba(203, 213, 225, 0.82);
+}
+
+.screen.app-screen th,
+.screen.app-screen td {
+  padding: 12px 14px;
+  border-bottom-color: rgba(226, 232, 240, 0.9);
+}
+
+.screen.app-screen tbody tr:hover td {
+  background: rgba(239, 246, 255, 0.66);
 }
 
 .summary-card strong,
@@ -2003,6 +2149,15 @@ button.summary-card.clickable {
   .date-chip-grid,
   .member-hours-grid {
     grid-template-columns: 1fr;
+  }
+
+  .activity-log-card {
+    grid-template-columns: 1fr;
+  }
+
+  .activity-log-side {
+    justify-items: start;
+    text-align: left;
   }
 
   .public-log-row {
@@ -3226,12 +3381,6 @@ button.summary-card.clickable {
               title: `${recycleCount} recycle item(s)`,
               note: recycleCount ? "Deleted records are waiting for restore or purge." : "Recycle bin is currently clear.",
               page: "page-logs"
-            },
-            {
-              icon: "&#128065;",
-              title: "Pending group reports stay hidden",
-              note: "Admin tables and admin/public logs only show group entries after they finalize.",
-              page: ""
             }
           ]
         };
@@ -5403,7 +5552,25 @@ button.summary-card.clickable {
       const host = byId("logs-list");
       if (host) {
         host.innerHTML = logs.length
-          ? `<div class="log-card-grid">${logs.map((item) => `<div class="log-card"><strong>${safe(item.action || "-")}</strong><div class="subline">${safe(item.actorName || item.actorEmail || "-")}</div>${item.detail ? `<div class="subline">${safe(item.detail)}</div>` : ""}${item.detailAdmin ? `<div class="subline">${safe(item.detailAdmin)}</div>` : ""}<small>${safe(nowTimestampText(item.createdAt))}</small></div>`).join("")}</div>`
+          ? `<div class="activity-log-list">${logs.map((item) => `
+              <div class="log-card activity-log-card">
+                <div class="activity-log-main">
+                  <strong>${safe(item.action || "-")}</strong>
+                  ${item.detail ? `<div class="subline">${safe(item.detail)}</div>` : ""}
+                  ${item.detailAdmin ? `<div class="subline">${safe(item.detailAdmin)}</div>` : ""}
+                </div>
+                <div class="activity-log-side">
+                  <div>
+                    <div class="activity-log-label">Actor</div>
+                    <div class="subline">${safe(item.actorName || item.actorEmail || "-")}</div>
+                  </div>
+                  <div>
+                    <div class="activity-log-label">Time</div>
+                    <small>${safe(nowTimestampText(item.createdAt))}</small>
+                  </div>
+                </div>
+              </div>
+            `).join("")}</div>`
           : `
               <div class="compact-empty">
                 <span class="card-icon" aria-hidden="true">&#128221;</span>
