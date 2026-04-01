@@ -1583,12 +1583,31 @@ button.summary-card.clickable {
 }
 
 .screen.app-screen .app-header {
-  background: linear-gradient(135deg, #151b26 0%, #1e2937 56%, #253244 100%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(135deg, #2b1618 0%, #432328 54%, #5a3039 100%);
+  border-bottom: 1px solid rgba(255, 235, 228, 0.12);
+}
+
+.screen.app-screen .app-header .brand-mark.small {
+  background: rgba(24, 10, 11, 0.36);
+  color: #f6ddc8;
+  border-color: rgba(246, 221, 200, 0.16);
 }
 
 .screen.app-screen .brand-caption {
-  color: rgba(226, 232, 240, 0.72);
+  color: rgba(249, 225, 214, 0.74);
+}
+
+.screen.app-screen .header-refresh-meta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(246, 221, 200, 0.16);
+  background: rgba(255, 245, 240, 0.06);
+  color: rgba(255, 233, 224, 0.84);
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 
 .screen.app-screen .tabbar,
@@ -1644,7 +1663,7 @@ button.summary-card.clickable {
 }
 
 .screen.app-screen .page.active {
-  gap: 16px;
+  gap: 14px;
 }
 
 .screen.app-screen .panel {
@@ -1715,6 +1734,19 @@ button.summary-card.clickable {
   transform: translateY(1px) scale(0.985);
 }
 
+.screen.app-screen .btn:focus-visible,
+.screen.app-screen .tabbar button:focus-visible,
+.screen.app-screen .subtab:focus-visible,
+.screen.app-screen .field input:focus-visible,
+.screen.app-screen .field select:focus-visible,
+.screen.app-screen .field textarea:focus-visible,
+.screen.app-screen .suggestion-item:focus-visible,
+.screen.app-screen .calendar-day:focus-visible,
+.screen.app-screen .date-chip:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.18), 0 0 0 1px rgba(15, 118, 110, 0.42);
+}
+
 .screen.app-screen .btn-outline {
   color: #1e293b;
   border-color: rgba(148, 163, 184, 0.42);
@@ -1758,26 +1790,26 @@ button.summary-card.clickable {
 }
 
 .screen.app-screen .app-header .btn-outline {
-  color: #f8fafc;
-  border-color: rgba(226, 232, 240, 0.18);
-  background: rgba(255, 255, 255, 0.08);
+  color: #fff7f1;
+  border-color: rgba(246, 221, 200, 0.22);
+  background: rgba(255, 245, 240, 0.07);
 }
 
 .screen.app-screen .app-header .btn-outline:hover,
 .screen.app-screen .app-header .btn-outline:focus-visible {
-  background: rgba(148, 163, 184, 0.18);
-  border-color: rgba(226, 232, 240, 0.28);
+  background: rgba(248, 226, 214, 0.18);
+  border-color: rgba(248, 226, 214, 0.32);
 }
 
 .screen.app-screen .app-header .btn-ghost {
-  color: #fdba74;
-  border-color: rgba(249, 115, 22, 0.25);
-  background: rgba(249, 115, 22, 0.12);
+  color: #ffd2b4;
+  border-color: rgba(196, 94, 56, 0.34);
+  background: rgba(196, 94, 56, 0.16);
 }
 
 .screen.app-screen .app-header .btn-ghost:hover,
 .screen.app-screen .app-header .btn-ghost:focus-visible {
-  background: rgba(249, 115, 22, 0.18);
+  background: rgba(196, 94, 56, 0.24);
 }
 
 .screen.app-screen .user-chip {
@@ -1847,10 +1879,15 @@ button.summary-card.clickable {
 
 .screen.app-screen .summary-grid {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
 }
 
 .screen.app-screen .grid.approvals {
   grid-template-columns: 1fr;
+}
+
+.screen.app-screen .grid {
+  gap: 14px;
 }
 
 .screen.app-screen .approval-card-grid,
@@ -1903,6 +1940,16 @@ button.summary-card.clickable {
 
 .screen.app-screen .activity-log-list {
   gap: 10px;
+}
+
+.screen.app-screen .approval-card,
+.screen.app-screen .recycle-card,
+.screen.app-screen .summary-card,
+.screen.app-screen .hub-card,
+.screen.app-screen .list-card {
+  display: grid;
+  gap: 10px;
+  align-content: start;
 }
 
 .screen.app-screen .bulk-bar {
@@ -1961,7 +2008,7 @@ button.summary-card.clickable {
 }
 
 .screen.app-screen .panel-head {
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .screen.app-screen .activity-log-label {
@@ -1970,6 +2017,391 @@ button.summary-card.clickable {
 
 .screen.app-screen .activity-log-side {
   gap: 12px;
+}
+
+.screen.app-screen #page-employees .panel-actions .btn,
+.screen.app-screen #page-employees .toolbar-actions .btn,
+.screen.app-screen #page-employees .actions .btn {
+  border-radius: 999px;
+}
+
+.screen.app-screen #page-employees .panel-actions .btn {
+  min-height: 44px;
+  padding-inline: 18px;
+}
+
+.screen.app-screen #page-employees .toolbar {
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255, 250, 242, 0.98), rgba(248, 250, 252, 0.94));
+}
+
+.screen.app-screen #page-employees .field input,
+.screen.app-screen #page-employees .field select {
+  border-radius: 14px;
+}
+
+.screen.app-screen #page-employees .table-shell {
+  border-radius: 14px;
+}
+
+.screen.app-screen #page-employees .actions {
+  gap: 10px;
+}
+
+.screen.app-screen #page-approvals .approval-card {
+  gap: 12px;
+}
+
+.screen.app-screen #page-approvals .approval-card .field {
+  margin-top: 2px;
+}
+
+.screen.app-screen #page-approvals .approval-card .actions {
+  gap: 10px;
+  padding-top: 2px;
+}
+
+.screen.app-screen #page-dashboard .toolbar,
+.screen.app-screen #page-employees .toolbar,
+.screen.app-screen #page-clients .toolbar,
+.screen.app-screen #page-logs .toolbar,
+.screen.app-screen #page-approvals .bulk-bar {
+  position: sticky;
+  top: 126px;
+  z-index: 6;
+}
+
+.screen.app-screen #page-dashboard .toolbar,
+.screen.app-screen #page-employees .toolbar,
+.screen.app-screen #page-clients .toolbar,
+.screen.app-screen #page-logs .toolbar {
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.05);
+}
+
+.filter-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin: 2px 0 12px;
+  min-height: 0;
+}
+
+.filter-summary[hidden] {
+  display: none;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 118, 110, 0.16);
+  background: rgba(240, 253, 250, 0.72);
+  color: #0f4f4a;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.filter-chip-label {
+  color: #64748b;
+  font-weight: 700;
+}
+
+.summary-card strong,
+.list-card strong,
+.approval-card strong,
+.log-card strong,
+.hub-card strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.approval-summary-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.summary-status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.summary-status-pill.pending {
+  background: rgba(245, 158, 11, 0.14);
+  color: #b45309;
+}
+
+.summary-status-pill.approved {
+  background: rgba(16, 185, 129, 0.12);
+  color: #0f766e;
+}
+
+.summary-status-pill.rejected {
+  background: rgba(239, 68, 68, 0.12);
+  color: #b91c1c;
+}
+
+.guide-shell {
+  display: grid;
+  gap: 16px;
+}
+
+.guide-hero {
+  display: grid;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 118, 110, 0.14);
+  background: linear-gradient(135deg, rgba(240, 253, 250, 0.96), rgba(255, 251, 235, 0.98));
+}
+
+.guide-hero-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.guide-hero-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(15, 118, 110, 0.1);
+}
+
+.guide-path {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.guide-path-step,
+.guide-role-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.guide-path-step {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(203, 213, 225, 0.72);
+  color: #334155;
+}
+
+.guide-arrow {
+  color: #b45309;
+  font-weight: 900;
+}
+
+.guide-role-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.guide-role-pill.admin {
+  background: rgba(245, 158, 11, 0.14);
+  color: #b45309;
+}
+
+.guide-role-pill.user {
+  background: rgba(20, 184, 166, 0.12);
+  color: #0f766e;
+}
+
+.guide-role-pill.article {
+  background: rgba(124, 58, 237, 0.12);
+  color: #7c3aed;
+}
+
+.guide-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.guide-card {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(203, 213, 225, 0.72);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.94));
+}
+
+.guide-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.guide-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.14), rgba(20, 184, 166, 0.12));
+  font-size: 1rem;
+}
+
+.guide-card h4 {
+  margin: 0;
+  font-size: 0.98rem;
+  color: #0f172a;
+}
+
+.guide-card p {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.84rem;
+  line-height: 1.65;
+}
+
+.guide-step-list {
+  display: grid;
+  gap: 8px;
+}
+
+.guide-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: #475569;
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.guide-step strong {
+  color: #0f172a;
+}
+
+.guide-step-icon {
+  flex: 0 0 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+}
+
+.guide-card.wide {
+  grid-column: span 2;
+}
+
+@media (max-width: 760px) {
+  .guide-card.wide {
+    grid-column: auto;
+  }
+}
+
+.note-type-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.note-type-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.note-type-pill.note {
+  background: rgba(59, 130, 246, 0.1);
+  color: #2563eb;
+}
+
+.note-type-pill.task {
+  background: rgba(16, 185, 129, 0.12);
+  color: #0f766e;
+}
+
+.note-type-pill.reminder {
+  background: rgba(245, 158, 11, 0.14);
+  color: #b45309;
+}
+
+.note-type-pill.important {
+  background: rgba(239, 68, 68, 0.12);
+  color: #b91c1c;
+}
+
+.employee-table-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.employee-table-pill.role {
+  background: rgba(245, 158, 11, 0.12);
+  color: #9a5a00;
+}
+
+.employee-table-pill.role.article {
+  background: rgba(168, 85, 247, 0.12);
+  color: #7c3aed;
+}
+
+.employee-table-pill.role.admin {
+  background: rgba(100, 116, 139, 0.12);
+  color: #334155;
+}
+
+.employee-table-pill.status.active {
+  background: rgba(16, 185, 129, 0.12);
+  color: #0f766e;
+}
+
+.employee-table-pill.status.pending {
+  background: rgba(245, 158, 11, 0.14);
+  color: #b45309;
+}
+
+.employee-table-pill.status.locked {
+  background: rgba(239, 68, 68, 0.12);
+  color: #b91c1c;
+}
+
+.employee-table-pill.pin.ready {
+  background: rgba(20, 184, 166, 0.12);
+  color: #0f766e;
+}
+
+.employee-table-pill.pin.reset {
+  background: rgba(15, 23, 42, 0.08);
+  color: #475569;
 }
 
 .screen.app-screen thead th {
@@ -2547,6 +2979,7 @@ button.summary-card.clickable {
           <span id="header-notify-count" class="notify-bell-count" hidden>0</span>
         </button>
         <button id="refresh-tab" class="btn btn-outline small" type="button">Refresh</button>
+        <div id="header-refresh-meta" class="header-refresh-meta">Last refresh: -</div>
         <button id="open-guide" class="btn btn-outline small" type="button">Guide</button>
         <button id="logout-button" class="btn btn-ghost small" type="button">Log out</button>
       </div>
@@ -2683,10 +3116,13 @@ button.summary-card.clickable {
               </select>
             </label>
             <div class="toolbar-actions">
+              <button id="my-today" class="btn btn-outline small" type="button">Today</button>
               <button id="my-apply" class="btn btn-outline small" type="button">Apply</button>
+              <button id="my-clear" class="btn btn-outline small" type="button">Clear filters</button>
               <button id="my-delete-selected" class="btn btn-ghost small" type="button">Delete selected</button>
             </div>
           </div>
+          <div id="my-filter-summary" class="filter-summary" hidden></div>
 
           <div class="table-shell">
             <table>
@@ -2774,9 +3210,12 @@ button.summary-card.clickable {
               </select>
             </label>
             <div class="toolbar-actions">
+              <button id="all-today" class="btn btn-outline small" type="button">Today</button>
               <button id="all-apply" class="btn btn-outline small" type="button">Apply</button>
+              <button id="all-clear" class="btn btn-outline small" type="button">Clear filters</button>
             </div>
           </div>
+          <div id="all-filter-summary" class="filter-summary" hidden></div>
 
           <div class="table-shell">
             <table>
@@ -2898,8 +3337,10 @@ button.summary-card.clickable {
             </label>
             <div class="toolbar-actions">
               <button id="employee-apply" class="btn btn-outline small" type="button">Apply</button>
+              <button id="employee-clear" class="btn btn-outline small" type="button">Clear filters</button>
             </div>
           </div>
+          <div id="employee-filter-summary" class="filter-summary" hidden></div>
 
           <div class="table-shell">
             <table>
@@ -2938,7 +3379,11 @@ button.summary-card.clickable {
               <span>Search</span>
               <input id="client-search" type="text" placeholder="Search clients">
             </label>
+            <div class="toolbar-actions">
+              <button id="client-clear" class="btn btn-outline small" type="button">Clear filters</button>
+            </div>
           </div>
+          <div id="client-filter-summary" class="filter-summary" hidden></div>
 
           <div class="table-shell">
             <table>
@@ -2990,9 +3435,12 @@ button.summary-card.clickable {
               </select>
             </label>
             <div class="toolbar-actions">
+              <button id="log-today" class="btn btn-outline small" type="button">Today</button>
               <button id="log-apply" class="btn btn-outline small" type="button">Apply</button>
+              <button id="log-clear" class="btn btn-outline small" type="button">Clear filters</button>
             </div>
           </div>
+          <div id="log-filter-summary" class="filter-summary" hidden></div>
           <div id="logs-list" class="stack-list empty-state">No logs found.</div>
         </div>
 
@@ -3092,10 +3540,10 @@ button.summary-card.clickable {
               <label class="field">
                 <span>Type</span>
                 <select id="note-type">
-                  <option value="note">Note</option>
-                  <option value="task">Task</option>
-                  <option value="reminder">Reminder</option>
-                  <option value="important">Important</option>
+                  <option value="note">📝 Note</option>
+                  <option value="task">✅ Task</option>
+                  <option value="reminder">⏰ Reminder</option>
+                  <option value="important">❗ Important</option>
                 </select>
               </label>
               <div class="button-row">
@@ -4170,6 +4618,7 @@ button.summary-card.clickable {
       text = text.replace(/\bUIDs?:\s*[A-Za-z0-9_,\s-]{8,}\b/gi, "");
       text = text.replace(/\b[a-z_]+__+[A-Za-z0-9_-]+\b/gi, "");
       text = text.replace(/\b[a-z_]+:[A-Za-z0-9_-]{10,}\b/gi, "");
+      text = text.replace(/\b[A-Za-z0-9_-]{16,}\b/g, "");
       text = text.replace(/\b[A-Za-z0-9_-]{24,}\b/g, "");
       text = text.replace(/\s*\|\s*/g, " | ");
       text = text.replace(/\s{2,}/g, " ");
@@ -4191,6 +4640,31 @@ button.summary-card.clickable {
       if (raw === "export") return { label: "Export", className: "export" };
       if (raw === "delete" || raw === "admin_delete") return { label: "Delete", className: raw === "admin_delete" ? "admin" : "delete" };
       return { label: "Entry", className: "entry" };
+    }
+
+    function noteTypeMeta(type) {
+      const raw = String(type || "note").toLowerCase();
+      if (raw === "task") return { label: "Task", icon: "✅", className: "task" };
+      if (raw === "reminder") return { label: "Reminder", icon: "⏰", className: "reminder" };
+      if (raw === "important") return { label: "Important", icon: "❗", className: "important" };
+      return { label: "Note", icon: "📝", className: "note" };
+    }
+
+    function noteTypeUiMeta(type) {
+      const raw = String(type || "note").toLowerCase();
+      if (raw === "task") return { label: "Task", icon: "\u2705", className: "task" };
+      if (raw === "reminder") return { label: "Reminder", icon: "\u23F0", className: "reminder" };
+      if (raw === "important") return { label: "Important", icon: "\u2757", className: "important" };
+      return { label: "Note", icon: "\uD83D\uDCDD", className: "note" };
+    }
+
+    function syncNoteTypeOptions() {
+      const noteType = byId("note-type");
+      if (!noteType) return;
+      Array.from(noteType.options).forEach((option) => {
+        const meta = noteTypeUiMeta(option.value);
+        option.textContent = `${meta.icon} ${meta.label}`;
+      });
     }
 
     function timeOnlyText(value) {
@@ -5777,17 +6251,29 @@ button.summary-card.clickable {
       body.innerHTML = rows.length
         ? rows
             .map(
-              (user) => `
+              (user) => {
+                const role = String(user.role || "-");
+                const status = user.approved === false ? "Pending" : user.locked ? "Locked" : "Active";
+                const pinState = user.pinSet ? "Set" : "Reset required";
+                const roleClass = String(role).toLowerCase() === "admin"
+                  ? "admin"
+                  : String(role) === "CA Article"
+                    ? "article"
+                    : "";
+                const statusClass = String(status).toLowerCase();
+                const pinClass = user.pinSet ? "ready" : "reset";
+                return `
                 <tr>
                   <td>${safe(user.name || "-")}</td>
                   <td>${safe(user.email || "-")}</td>
-                  <td>${safe(user.role || "-")}</td>
+                  <td><span class="employee-table-pill role ${safe(roleClass)}">${safe(role)}</span></td>
                   <td>${safe(user.department || "-")}</td>
-                  <td>${safe(user.approved === false ? "Pending" : user.locked ? "Locked" : "Active")}</td>
-                  <td>${safe(user.pinSet ? "Set" : "Reset required")}</td>
+                  <td><span class="employee-table-pill status ${safe(statusClass)}">${safe(status)}</span></td>
+                  <td><span class="employee-table-pill pin ${safe(pinClass)}">${safe(pinState)}</span></td>
                   <td><div class="actions">${user.approved === false ? `<button class="btn btn-outline small" type="button" data-action="approve-user" data-id="${user.id}" data-role="${safe(normalizeRoleValue(user.role || "CA Article"))}">Approve</button><button class="btn btn-ghost small" type="button" data-action="open-reject-user" data-id="${user.id}">Reject</button>` : ""}${user.locked ? `<button class="btn btn-outline small" type="button" data-action="unlock-user" data-id="${user.id}">Unlock</button>` : ""}${String(user.role || "").toLowerCase() !== "admin" ? `<button class="btn btn-outline small" type="button" data-action="admin-reset-pin" data-id="${user.id}">Reset PIN</button><button class="btn btn-ghost small" type="button" data-action="open-remove-user" data-id="${user.id}">Remove</button>` : `<span class="subline">Protected</span>`}</div></td>
                 </tr>
-              `
+              `;
+              }
             )
             .join("")
         : `<tr><td colspan="7" class="muted">No employees / articles found.</td></tr>`;
@@ -6036,12 +6522,16 @@ button.summary-card.clickable {
       const host = byId("notes-list");
       if (!host) return;
       host.innerHTML = state.hub.notes.length
-        ? state.hub.notes.map((item) => `<div class="hub-card"><strong>${safe(String(item.type || "note").toUpperCase())}</strong><div class="note-block">${safe(item.body || "")}</div><div class="actions"><button class="btn btn-ghost small" type="button" data-action="delete-private" data-collection="cahub_notes" data-id="${item.id}">Delete</button></div></div>`).join("")
+        ? state.hub.notes.map((item) => {
+            const meta = noteTypeUiMeta(item.type);
+            return `<div class="hub-card"><div class="note-type-row"><span class="note-type-pill ${safe(meta.className)}"><span>${safe(meta.icon)}</span><span>${safe(meta.label)}</span></span><div class="subline">${safe(nowTimestampText(item.updatedAt || item.createdAt))}</div></div><div class="note-block">${safe(item.body || "")}</div><div class="actions"><button class="btn btn-ghost small" type="button" data-action="delete-private" data-collection="cahub_notes" data-id="${item.id}">Delete</button></div></div>`;
+          }).join("")
         : "No notes yet.";
     }
 
     async function loadHubData() {
       if (!isArticle()) return;
+      syncNoteTypeOptions();
       await loadMyEntries();
       const [study, cases, productivity, notes] = await Promise.all([
         fetchPrivateCollection("cahub_study"),
@@ -7853,49 +8343,151 @@ button.summary-card.clickable {
       const isArticleView = isArticle();
       openModal(
         "Portal Guide",
-        "Working guide for access, reporting rules, edits, approvals, search, export, and admin controls.",
+        "Quick visual guide for login, reporting, approvals, edits, filters, drafts, and private hub tools.",
         `
-          <div class="detail-grid">
-            <div class="hub-card">
-              <strong>1. Sign-in and session flow</strong>
-              <small>Use Google sign-in first. New users wait for admin approval. After approval, each fresh browser session asks for a 4-digit PIN before entering the portal.</small>
-            </div>
-            <div class="hub-card">
-              <strong>2. PIN, lock, and reset</strong>
-              <small>Non-admin users lock after 3 wrong PIN attempts. Admin can unlock the account or reset the PIN from Approvals, Employees / Articles, or the Reset employee / article PIN panel.</small>
-            </div>
-            <div class="hub-card">
-              <strong>3. Single, bulk, and group reporting</strong>
-              <small>Single entry is for one date only. Bulk entry is for more than one day only. Group reporting supports single-day and bulk-days modes with one shared client and user-wise hours plus remarks.</small>
-            </div>
-            <div class="hub-card">
-              <strong>4. Group approval logic</strong>
-              <small>Pending group reports stay visible only to the involved users until approvals complete. Admin tables and public/admin logs see group entries only after finalization.</small>
-            </div>
-            <div class="hub-card">
-              <strong>5. Timesheet edits and delete control</strong>
-              <small>Your timesheet shows your own single entries, bulk entries, and visible group entries. You can edit your own single/bulk entries. In group entries, the reporter edits shared fields while each member edits only their own section. Admin cannot edit entries.</small>
-            </div>
-            <div class="hub-card">
-              <strong>6. Drafts, search, and exports</strong>
-              <small>Draft buttons save unfinished entry forms on the current device/browser only. Search, filters, and Excel export work from My Timesheet, All Timesheets, Employees &amp; Articles, Clients, and Logs where available.</small>
-            </div>
-            <div class="hub-card">
-              <strong>7. Recycle bin and trails</strong>
-              <small>Deletes move records to Recycle Bin first. Admin can restore or purge them. Entry trails and audit logs record submissions, edits, approvals, unlocks, PIN resets, imports, exports, and recycle actions.</small>
-            </div>
-            <div class="hub-card">
-              <strong>8. Notifications and quick actions</strong>
-              <small>The header bell is the central notification point. It shows pending approvals, locked accounts, recycle activity, and user-specific approval reminders with quick links to the correct section.</small>
-            </div>
-            <div class="hub-card">
-              <strong>9. CA Hub</strong>
-              <small>${isArticleView ? "Knowledge Bank reads from your timesheet records automatically. Study and Work, Case Library, Productivity, and Notes stay private to you inside My Hub." : "CA Hub appears only for approved CA Article accounts. When enabled, Knowledge Bank reads from timesheet records while the private hub sections remain user-only."}</small>
-            </div>
-            <div class="hub-card">
-              <strong>10. Admin control map</strong>
-              <small>${isAdminView ? "Timesheets handles reporting summary and all records. Approvals handles new registrations, locked users, and PIN reset. Employees &amp; Articles plus Clients manage master data. Logs covers activity history and recycle control. Storage shows record growth and estimated footprint." : "Admin-only areas stay hidden for non-admin users."}</small>
-            </div>
+          <div class="guide-shell">
+            <section class="guide-hero">
+              <div class="guide-hero-title">
+                <span class="guide-hero-icon">&#128161;</span>
+                <span>Use the portal in this order</span>
+              </div>
+              <p>Sign in, clear the PIN step, report correctly, review your own timesheet, and use the bell whenever something is waiting on you.</p>
+              <div class="guide-path">
+                <span class="guide-path-step">&#128275; Google sign-in</span>
+                <span class="guide-arrow">&rarr;</span>
+                <span class="guide-path-step">&#9989; Approval</span>
+                <span class="guide-arrow">&rarr;</span>
+                <span class="guide-path-step">&#128274; PIN</span>
+                <span class="guide-arrow">&rarr;</span>
+                <span class="guide-path-step">&#128221; Submit work</span>
+                <span class="guide-arrow">&rarr;</span>
+                <span class="guide-path-step">&#128269; Review / export</span>
+              </div>
+              <div class="guide-role-strip">
+                <span class="guide-role-pill user">&#128100; Employee / Professional</span>
+                <span class="guide-role-pill article">&#128218; CA Article</span>
+                <span class="guide-role-pill admin">&#9881;&#65039; Admin</span>
+              </div>
+            </section>
+
+            <section class="guide-grid">
+              <article class="guide-card">
+                <div class="guide-card-head">
+                  <span class="guide-card-icon">&#128274;</span>
+                  <h4>Access and PIN</h4>
+                </div>
+                <p>First-time users wait for approval. Every fresh browser session asks for the 4-digit PIN before entering the portal.</p>
+                <div class="guide-step-list">
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>New user:</strong> sign in with Google and wait for admin approval.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Approved user:</strong> set the PIN once, then use it on each fresh browser session.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Security:</strong> 3 wrong PIN attempts lock the account until admin unlocks or resets it.</span></div>
+                </div>
+              </article>
+
+              <article class="guide-card">
+                <div class="guide-card-head">
+                  <span class="guide-card-icon">&#128221;</span>
+                  <h4>Single, Bulk, and Group</h4>
+                </div>
+                <p>Use the reporting mode that matches the work. This keeps the timesheet clean and avoids correction work later.</p>
+                <div class="guide-step-list">
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Single entry:</strong> one date only.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Bulk entry:</strong> more than one day, only for your own work.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Group reporting:</strong> one shared client, shared work type(s), and separate hours/remarks for each member.</span></div>
+                </div>
+              </article>
+
+              <article class="guide-card">
+                <div class="guide-card-head">
+                  <span class="guide-card-icon">&#128197;</span>
+                  <h4>Date and Draft Rules</h4>
+                </div>
+                <p>The portal blocks future dates everywhere. Drafts are for unfinished work on the current browser/device only.</p>
+                <div class="guide-step-list">
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>No future dates:</strong> reporting, filters, and edit panels all follow this rule.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Save for later:</strong> use draft buttons if the form is not ready yet.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Submit only when final:</strong> local draft data is not sent until you actually submit.</span></div>
+                </div>
+              </article>
+
+              <article class="guide-card">
+                <div class="guide-card-head">
+                  <span class="guide-card-icon">&#128101;</span>
+                  <h4>Group Approval Flow</h4>
+                </div>
+                <p>Group reports stay with the involved users first. They move into admin-side reporting only after the approval chain finishes.</p>
+                <div class="guide-step-list">
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Reporter:</strong> submits the shared client, dates, work type(s), and member-wise hours.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Members:</strong> approve or reject their participation from their own side.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Visibility:</strong> admin and public activity only see the group record after finalization.</span></div>
+                </div>
+              </article>
+
+              <article class="guide-card">
+                <div class="guide-card-head">
+                  <span class="guide-card-icon">&#9998;&#65039;</span>
+                  <h4>My Timesheet and Edits</h4>
+                </div>
+                <p>Your timesheet is user-specific. It is the place to review, search, export, edit, or delete your own visible records.</p>
+                <div class="guide-step-list">
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Visible here:</strong> your single entries, your bulk entries, and your visible group entries.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Edit rule:</strong> you can edit your own single/bulk entries. In group entries, the reporter edits shared fields and members edit only their own section.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Delete rule:</strong> delete moves the record to recycle first, and trails stay recorded.</span></div>
+                </div>
+              </article>
+
+              <article class="guide-card">
+                <div class="guide-card-head">
+                  <span class="guide-card-icon">&#128269;</span>
+                  <h4>Search, Filters, and Export</h4>
+                </div>
+                <p>Use page filters before exporting. Export should match the filtered list you are currently looking at.</p>
+                <div class="guide-step-list">
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Search fast:</strong> My Timesheet, All Timesheets, Employees / Articles, Clients, and Logs all have search/filter controls.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Apply filters:</strong> date range, role, status, work type, and type filters reduce noise.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Export:</strong> use Excel export after confirming the list on screen is the list you want.</span></div>
+                </div>
+              </article>
+
+              <article class="guide-card">
+                <div class="guide-card-head">
+                  <span class="guide-card-icon">&#128276;</span>
+                  <h4>Bell and Quick Actions</h4>
+                </div>
+                <p>The bell is the fastest place to see what needs action instead of manually checking every page.</p>
+                <div class="guide-step-list">
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Users:</strong> check group reminders and items waiting on you.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Admin:</strong> check pending registrations, locked accounts, and recycle activity.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Refresh:</strong> key panels auto-update, but Refresh is still the fastest manual sync when needed.</span></div>
+                </div>
+              </article>
+
+              <article class="guide-card">
+                <div class="guide-card-head">
+                  <span class="guide-card-icon">&#128218;</span>
+                  <h4>My Hub / CA Hub</h4>
+                </div>
+                <p>${isArticleView ? "Your article tools stay private inside My Hub. Only you can see your study, cases, productivity, and notes." : "CA Hub appears only for approved CA Article accounts. When enabled, it adds a private work-and-study area."}</p>
+                <div class="guide-step-list">
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Knowledge Bank:</strong> reads from your timesheet records automatically.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Private sections:</strong> Study and Work, Case Library, Productivity, and Notes are user-only.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Notes Board:</strong> save items as Note, Task, Reminder, or Important.</span></div>
+                </div>
+              </article>
+
+              <article class="guide-card wide">
+                <div class="guide-card-head">
+                  <span class="guide-card-icon">&#9881;&#65039;</span>
+                  <h4>${isAdminView ? "Admin Control Map" : "Important Rules to Remember"}</h4>
+                </div>
+                <p>${isAdminView ? "Admin pages are split by purpose so reporting, approvals, master data, activity, and storage stay separate." : "These are the main operating rules that matter in daily use."}</p>
+                <div class="guide-step-list">
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>${isAdminView ? "Timesheets:" : "Admin cannot edit entries:"}</strong> ${isAdminView ? "daily summary, all records, filters, exports, and trails." : "admin can review, recycle, restore, and audit, but not change your record content."}</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>${isAdminView ? "Approvals:" : "Public log stays limited:"}</strong> ${isAdminView ? "new registrations, lock handling, and PIN reset control." : "it shows only safe activity with action and time, not private admin work."}</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>${isAdminView ? "Employees / Articles, Clients, Logs, Storage:" : "Shared device rule:"}</strong> ${isAdminView ? "master data, activity history, recycle control, and growth monitoring." : "always log out when you leave a shared device."}</span></div>
+                </div>
+              </article>
+            </section>
           </div>
         `
       );
