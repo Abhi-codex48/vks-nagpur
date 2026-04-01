@@ -786,9 +786,30 @@ button {
   gap: 8px;
 }
 
+.tab-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .tab-icon {
   font-size: 1rem;
   opacity: 0.88;
+}
+
+.tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgba(217, 119, 6, 0.14);
+  color: #b45309;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
 }
 
 .tabbar button.active,
@@ -1456,6 +1477,61 @@ button.summary-card.clickable {
   line-height: 1.35;
 }
 
+.activity-log-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.log-type-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 72px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.log-type-badge.entry {
+  background: rgba(20, 184, 166, 0.12);
+  color: #0f766e;
+}
+
+.log-type-badge.approval {
+  background: rgba(245, 158, 11, 0.14);
+  color: #b45309;
+}
+
+.log-type-badge.user {
+  background: rgba(100, 116, 139, 0.12);
+  color: #334155;
+}
+
+.log-type-badge.lock {
+  background: rgba(239, 68, 68, 0.12);
+  color: #b91c1c;
+}
+
+.log-type-badge.export {
+  background: rgba(99, 102, 241, 0.12);
+  color: #4338ca;
+}
+
+.log-type-badge.delete {
+  background: rgba(249, 115, 22, 0.14);
+  color: #c2410c;
+}
+
+.log-type-badge.admin {
+  background: rgba(100, 116, 139, 0.14);
+  color: #334155;
+}
+
 .activity-log-side {
   justify-items: end;
   text-align: right;
@@ -1486,9 +1562,9 @@ button.summary-card.clickable {
 
 .screen.app-screen {
   background:
-    radial-gradient(circle at 8% 0%, rgba(59, 130, 246, 0.1), transparent 28%),
+    radial-gradient(circle at 8% 0%, rgba(245, 158, 11, 0.09), transparent 28%),
     radial-gradient(circle at 92% 4%, rgba(20, 184, 166, 0.1), transparent 22%),
-    linear-gradient(180deg, #f4f7fb 0%, #eef3f8 100%);
+    linear-gradient(180deg, #f7f8fb 0%, #eef2f6 100%);
 }
 
 @keyframes appShellRise {
@@ -1503,7 +1579,7 @@ button.summary-card.clickable {
 }
 
 .screen.app-screen .panel-kicker {
-  color: #2563eb;
+  color: #b7791f;
 }
 
 .screen.app-screen .app-header {
@@ -1522,6 +1598,14 @@ button.summary-card.clickable {
   backdrop-filter: blur(18px);
 }
 
+.screen.app-screen .subtabbar {
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(203, 213, 225, 0.7);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.96), rgba(241, 245, 249, 0.88));
+}
+
 .screen.app-screen .tabbar button,
 .screen.app-screen .subtab {
   color: #64748b;
@@ -1529,21 +1613,38 @@ button.summary-card.clickable {
   transition: color 0.18s ease, background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
 }
 
+.screen.app-screen .subtab {
+  border: 1px solid transparent;
+  border-bottom: 0;
+  border-radius: 6px;
+  padding: 10px 14px;
+}
+
 .screen.app-screen .tabbar button:hover,
 .screen.app-screen .subtab:hover {
   color: #1e293b;
-  background: rgba(37, 99, 235, 0.05);
+  background: rgba(15, 118, 110, 0.06);
   transform: translateY(-1px);
 }
 
 .screen.app-screen .tabbar button.active,
 .screen.app-screen .subtab.active {
   color: #0f172a;
-  border-bottom-color: #2563eb;
+  border-bottom-color: #0f766e;
+}
+
+.screen.app-screen .subtab.active {
+  background: linear-gradient(135deg, rgba(15, 118, 110, 0.12), rgba(245, 158, 11, 0.1));
+  border-color: rgba(15, 118, 110, 0.16);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
 }
 
 .screen.app-screen .app-main {
   width: min(1480px, calc(100% - 28px));
+}
+
+.screen.app-screen .page.active {
+  gap: 16px;
 }
 
 .screen.app-screen .panel {
@@ -1553,6 +1654,7 @@ button.summary-card.clickable {
   border: 1px solid rgba(203, 213, 225, 0.76);
   border-radius: 8px;
   box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+  padding: 18px;
   animation: appShellRise 0.24s ease both;
 }
 
@@ -1573,7 +1675,7 @@ button.summary-card.clickable {
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, #2563eb 0%, #14b8a6 100%);
+  background: linear-gradient(90deg, #d97706 0%, #0f766e 100%);
   opacity: 0.92;
 }
 
@@ -1581,6 +1683,8 @@ button.summary-card.clickable {
   background: linear-gradient(180deg, rgba(248, 250, 252, 0.98), rgba(241, 245, 249, 0.94));
   border: 1px solid rgba(203, 213, 225, 0.82);
   border-radius: 6px;
+  padding: 14px;
+  margin-bottom: 14px;
 }
 
 .screen.app-screen .table-shell {
@@ -1590,8 +1694,8 @@ button.summary-card.clickable {
 }
 
 .screen.app-screen .btn-primary {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  box-shadow: 0 16px 28px rgba(37, 99, 235, 0.24);
+  background: linear-gradient(135deg, #0f766e, #115e59);
+  box-shadow: 0 16px 28px rgba(15, 118, 110, 0.24);
 }
 
 .screen.app-screen .btn {
@@ -1619,8 +1723,8 @@ button.summary-card.clickable {
 
 .screen.app-screen .btn-outline:hover,
 .screen.app-screen .btn-outline:focus-visible {
-  background: #eff6ff;
-  border-color: rgba(59, 130, 246, 0.34);
+  background: rgba(240, 253, 250, 0.92);
+  border-color: rgba(15, 118, 110, 0.34);
 }
 
 .screen.app-screen .btn-ghost {
@@ -1633,6 +1737,24 @@ button.summary-card.clickable {
 .screen.app-screen .btn-ghost:focus-visible {
   background: rgba(245, 158, 11, 0.14);
   border-color: rgba(217, 119, 6, 0.26);
+}
+
+.screen.app-screen #hub-productivity .btn-outline[data-productivity="yes"] {
+  border-color: rgba(16, 185, 129, 0.22);
+  background: rgba(16, 185, 129, 0.07);
+  color: #0f766e;
+}
+
+.screen.app-screen #hub-productivity .btn-outline[data-productivity="okay"] {
+  border-color: rgba(245, 158, 11, 0.24);
+  background: rgba(245, 158, 11, 0.08);
+  color: #b45309;
+}
+
+.screen.app-screen #hub-productivity .btn-outline[data-productivity="no"] {
+  border-color: rgba(239, 68, 68, 0.22);
+  background: rgba(239, 68, 68, 0.08);
+  color: #b91c1c;
 }
 
 .screen.app-screen .app-header .btn-outline {
@@ -1659,18 +1781,28 @@ button.summary-card.clickable {
 }
 
 .screen.app-screen .notify-bell.has-unread {
-  border-color: rgba(96, 165, 250, 0.4);
-  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(217, 119, 6, 0.4);
+  background: rgba(217, 119, 6, 0.14);
 }
 
 .screen.app-screen .notify-bell-count {
-  background: #2563eb;
+  background: #d97706;
+}
+
+.screen.app-screen .tab-badge {
+  background: rgba(217, 119, 6, 0.16);
+  color: #b45309;
+}
+
+.screen.app-screen .tabbar button.active .tab-badge {
+  background: rgba(15, 118, 110, 0.14);
+  color: #0f766e;
 }
 
 .screen.app-screen .card-icon {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.14), rgba(20, 184, 166, 0.14));
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.14), rgba(20, 184, 166, 0.14));
   color: #1e293b;
-  box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(15, 118, 110, 0.12);
   border-radius: 6px;
 }
 
@@ -1680,13 +1812,13 @@ button.summary-card.clickable {
 .screen.app-screen .approval-card.selectable:focus-within,
 .screen.app-screen .recycle-card.selectable:hover,
 .screen.app-screen .recycle-card.selectable:focus-within {
-  border-color: rgba(59, 130, 246, 0.34);
-  box-shadow: 0 14px 26px rgba(37, 99, 235, 0.1);
+  border-color: rgba(15, 118, 110, 0.34);
+  box-shadow: 0 14px 26px rgba(15, 118, 110, 0.1);
 }
 
 .screen.app-screen .selected-card {
-  border-color: rgba(59, 130, 246, 0.62) !important;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+  border-color: rgba(15, 118, 110, 0.58) !important;
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
 }
 
 .screen.app-screen .stat-grid {
@@ -1695,6 +1827,17 @@ button.summary-card.clickable {
 
 .screen.app-screen .summary-grid {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.screen.app-screen .grid.approvals {
+  grid-template-columns: 1fr;
+}
+
+.screen.app-screen .approval-card-grid,
+.screen.app-screen .recycle-card-grid,
+.screen.app-screen .audit-card-grid {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 10px;
 }
 
 .screen.app-screen .stat-card,
@@ -1728,7 +1871,8 @@ button.summary-card.clickable {
 }
 
 .screen.app-screen .activity-log-card {
-  grid-template-columns: minmax(0, 1.8fr) minmax(240px, 0.85fr);
+  grid-template-columns: minmax(0, 2.2fr) minmax(220px, 0.72fr);
+  gap: 14px;
 }
 
 .screen.app-screen #logs-list,
@@ -1737,16 +1881,20 @@ button.summary-card.clickable {
   align-items: start;
 }
 
+.screen.app-screen .activity-log-list {
+  gap: 10px;
+}
+
 .screen.app-screen .bulk-bar {
   padding: 12px 14px;
-  border-color: rgba(59, 130, 246, 0.14);
-  background: linear-gradient(180deg, rgba(239, 246, 255, 0.98), rgba(241, 245, 249, 0.92));
+  border-color: rgba(217, 119, 6, 0.14);
+  background: linear-gradient(180deg, rgba(255, 251, 235, 0.98), rgba(248, 250, 252, 0.94));
   border-radius: 6px;
 }
 
 .screen.app-screen .storage-progress {
-  border-color: rgba(59, 130, 246, 0.16);
-  background: linear-gradient(180deg, rgba(239, 246, 255, 0.98), rgba(244, 247, 251, 0.94));
+  border-color: rgba(15, 118, 110, 0.14);
+  background: linear-gradient(180deg, rgba(240, 253, 250, 0.98), rgba(248, 250, 252, 0.94));
   border-radius: 6px;
 }
 
@@ -1756,8 +1904,8 @@ button.summary-card.clickable {
 }
 
 .screen.app-screen .type-pill.single {
-  color: #3153ad;
-  background: #e8efff;
+  color: #92400e;
+  background: #fff4d8;
 }
 
 .screen.app-screen .type-pill.bulk {
@@ -1792,6 +1940,18 @@ button.summary-card.clickable {
   border-radius: 6px;
 }
 
+.screen.app-screen .panel-head {
+  margin-bottom: 14px;
+}
+
+.screen.app-screen .activity-log-label {
+  color: #64748b;
+}
+
+.screen.app-screen .activity-log-side {
+  gap: 12px;
+}
+
 .screen.app-screen thead th {
   background: #f8fafc;
   color: #475569;
@@ -1805,7 +1965,7 @@ button.summary-card.clickable {
 }
 
 .screen.app-screen tbody tr:hover td {
-  background: rgba(239, 246, 255, 0.66);
+  background: rgba(20, 184, 166, 0.06);
 }
 
 .summary-card strong,
@@ -2379,7 +2539,7 @@ button.summary-card.clickable {
         <div class="panel">
           <div class="panel-head">
             <div>
-              <div class="panel-kicker">Employee</div>
+              <div class="panel-kicker">Employee / Article</div>
               <h3>Log time</h3>
             </div>
             <div class="panel-actions">
@@ -2447,7 +2607,7 @@ button.summary-card.clickable {
         <div id="user-notification-panel" class="panel">
           <div class="panel-head">
             <div>
-              <div class="panel-kicker">Employee</div>
+              <div class="panel-kicker">Employee / Article</div>
               <h3>Notifications</h3>
             </div>
           </div>
@@ -2457,7 +2617,7 @@ button.summary-card.clickable {
         <div id="group-approval-panel" class="panel">
           <div class="panel-head">
             <div>
-              <div class="panel-kicker">Employee</div>
+              <div class="panel-kicker">Employee / Article</div>
               <h3>Pending group approvals</h3>
             </div>
           </div>
@@ -2469,7 +2629,7 @@ button.summary-card.clickable {
         <div class="panel">
           <div class="panel-head">
             <div>
-              <div class="panel-kicker">Employee</div>
+              <div class="panel-kicker">Employee / Article</div>
               <h3>My timesheet</h3>
             </div>
             <div class="panel-actions">
@@ -2531,7 +2691,7 @@ button.summary-card.clickable {
         <div class="panel">
           <div class="panel-head">
             <div>
-              <div class="panel-kicker">Employee</div>
+              <div class="panel-kicker">Employee / Article</div>
               <h3>My activity log</h3>
             </div>
           </div>
@@ -2565,7 +2725,7 @@ button.summary-card.clickable {
           <div class="toolbar">
             <label class="field compact">
               <span>Search</span>
-              <input id="all-search" type="text" placeholder="Employee, client, remarks">
+              <input id="all-search" type="text" placeholder="Employee / Article, client, remarks">
             </label>
             <label class="field compact">
               <span>From</span>
@@ -2576,8 +2736,8 @@ button.summary-card.clickable {
               <input id="all-to" type="date">
             </label>
             <label class="field compact">
-              <span>Employee</span>
-              <input id="all-user-search" type="text" autocomplete="off" placeholder="All employees">
+              <span>Employee / Article</span>
+              <input id="all-user-search" type="text" autocomplete="off" placeholder="All employees / articles">
               <input id="all-user-id" type="hidden">
               <div id="all-user-options" class="suggestions"></div>
             </label>
@@ -2604,7 +2764,7 @@ button.summary-card.clickable {
                 <tr>
                   <th>Date</th>
                   <th>Type</th>
-                  <th>Employee</th>
+                  <th>Employee / Article</th>
                   <th>Role</th>
                   <th>Client</th>
                   <th>Work type</th>
@@ -2660,13 +2820,13 @@ button.summary-card.clickable {
           <div class="panel-head">
             <div>
               <div class="panel-kicker">Admin</div>
-              <h3>Reset employee PIN</h3>
+              <h3>Reset employee / article PIN</h3>
             </div>
           </div>
           <div class="toolbar">
             <label class="field compact grow">
-              <span>Employee</span>
-              <input id="pin-reset-search" type="text" autocomplete="off" placeholder="Search employee">
+              <span>Employee / Article</span>
+              <input id="pin-reset-search" type="text" autocomplete="off" placeholder="Search employee / article">
               <input id="pin-reset-user-id" type="hidden">
               <div id="pin-reset-options" class="suggestions"></div>
             </label>
@@ -2682,11 +2842,11 @@ button.summary-card.clickable {
           <div class="panel-head">
             <div>
               <div class="panel-kicker">Admin</div>
-              <h3>Employees and articles</h3>
+              <h3>Employees / articles</h3>
             </div>
             <div class="panel-actions">
               <button id="import-employee-button" class="btn btn-outline" type="button">Import Excel</button>
-              <button id="add-employee-button" class="btn btn-primary" type="button">Add employee</button>
+              <button id="add-employee-button" class="btn btn-primary" type="button">Add employee / article</button>
             </div>
           </div>
 
@@ -3002,6 +3162,7 @@ button.summary-card.clickable {
       "Accounts Team",
       "Senior Staff"
     ];
+    const FORCED_ADMIN_EMAIL = "admin.cavks@gmail.com";
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -3215,6 +3376,7 @@ button.summary-card.clickable {
     }
 
     function profileName() {
+      if (isAdmin()) return "Admin";
       return state.profile?.name || state.user?.displayName || state.user?.email || "-";
     }
 
@@ -3223,9 +3385,21 @@ button.summary-card.clickable {
     }
 
     function roleLabel() {
-      const raw = String(state.profile?.role || "Employee");
+      const raw = String(state.profile?.role || "Employee / Professional");
       if (raw.toLowerCase() === "admin") return "Admin";
       return raw;
+    }
+
+    function setHasAll(selectionSet, ids, enabled) {
+      (ids || []).forEach((id) => {
+        if (!id) return;
+        if (enabled) selectionSet.add(id);
+        else selectionSet.delete(id);
+      });
+    }
+
+    function hasAllSelected(selectionSet, ids) {
+      return !!(ids || []).length && (ids || []).every((id) => selectionSet.has(id));
     }
 
     function sessionPinKey(uid) {
@@ -3407,6 +3581,33 @@ button.summary-card.clickable {
       };
     }
 
+    function pageBadgeCount(pageId) {
+      if (!state.profile) return 0;
+      if (isAdmin()) {
+        if (pageId === "page-approvals") {
+          return state.employees.filter((user) => user.approved === false || user.locked === true).length;
+        }
+        if (pageId === "page-logs") {
+          return state.recycleDocs.length;
+        }
+        return 0;
+      }
+      if (pageId === "page-log") {
+        return (state.groupApprovals?.length || 0) + (state.groupPendingCreated?.length || 0);
+      }
+      return 0;
+    }
+
+    function renderTabSignals() {
+      all("#tabbar button[data-page]").forEach((button) => {
+        const badge = button.querySelector(".tab-badge");
+        if (!badge) return;
+        const count = pageBadgeCount(button.dataset.page || "");
+        badge.hidden = count <= 0;
+        badge.textContent = count > 99 ? "99+" : String(count);
+      });
+    }
+
     function renderHeaderNotificationBell() {
       const bell = byId("header-notify");
       const count = byId("header-notify-count");
@@ -3424,6 +3625,7 @@ button.summary-card.clickable {
       bell.setAttribute("aria-label", `Notifications (${summary.total})`);
       count.textContent = summary.total > 99 ? "99+" : String(summary.total);
       count.hidden = summary.total <= 0;
+      renderTabSignals();
     }
 
     function openHeaderNotifications() {
@@ -3459,7 +3661,7 @@ button.summary-card.clickable {
         ? [
             { id: "page-dashboard", label: "Timesheets" },
             { id: "page-approvals", label: "Approvals" },
-            { id: "page-employees", label: "Employees" },
+            { id: "page-employees", label: "Employees / Articles" },
             { id: "page-clients", label: "Clients" },
             { id: "page-logs", label: "Logs" },
             { id: "page-storage", label: "Storage" }
@@ -3475,9 +3677,10 @@ button.summary-card.clickable {
       }
 
       tabbar.innerHTML = tabs
-        .map((tab, index) => `<button type="button" data-page="${tab.id}" class="${index === 0 ? "active" : ""}"><span class="tab-inner"><span class="tab-icon" aria-hidden="true">${pageIconHtml(tab.id)}</span><span>${tab.label}</span></span></button>`)
+        .map((tab, index) => `<button type="button" data-page="${tab.id}" class="${index === 0 ? "active" : ""}"><span class="tab-inner"><span class="tab-icon" aria-hidden="true">${pageIconHtml(tab.id)}</span><span class="tab-label">${tab.label}</span><span class="tab-badge" hidden>0</span></span></button>`)
         .join("");
 
+      renderTabSignals();
       setActivePage(tabs[0]?.id || "page-log", { historyMode: "replace" });
     }
 
@@ -3552,7 +3755,7 @@ button.summary-card.clickable {
       let snap = await getDoc(doc(db, "users", user.uid));
       if (!snap.exists()) {
         const preRegistered = await getDocs(query(collection(db, "users"), where("email", "==", user.email)));
-        const isMainAdmin = String(user.email || "").trim().toLowerCase() === "abhi.codex48@gmail.com";
+        const isMainAdmin = String(user.email || "").trim().toLowerCase() === FORCED_ADMIN_EMAIL;
 
         if (!preRegistered.empty) {
           const base = preRegistered.docs[0].data();
@@ -3562,7 +3765,7 @@ button.summary-card.clickable {
               ...base,
               uid: user.uid,
               email: user.email,
-              name: base.name || user.displayName || user.email,
+              name: isMainAdmin ? "Admin" : (base.name || user.displayName || user.email),
               photo: user.photoURL || base.photo || "",
               googleLinked: true,
               migratedFromUserDocId: preRegistered.docs[0].id
@@ -3572,7 +3775,7 @@ button.summary-card.clickable {
         } else {
           await setDoc(doc(db, "users", user.uid), {
             uid: user.uid,
-            name: user.displayName || user.email,
+            name: isMainAdmin ? "Admin" : (user.displayName || user.email),
             email: user.email,
             photo: user.photoURL || "",
             role: isMainAdmin ? "admin" : "CA Article",
@@ -3602,8 +3805,9 @@ button.summary-card.clickable {
 
       state.profile = { id: snap.id, ...(snap.data() || {}) };
 
-      if (String(user.email || "").trim().toLowerCase() === "abhi.codex48@gmail.com") {
+      if (String(user.email || "").trim().toLowerCase() === FORCED_ADMIN_EMAIL) {
         await updateDoc(doc(db, "users", user.uid), {
+          name: "Admin",
           role: "admin",
           approved: true,
           department: "Management",
@@ -3926,6 +4130,49 @@ button.summary-card.clickable {
       });
     }
 
+    function relativeTimeText(value) {
+      const ms = tsMs(value);
+      if (!ms) return "";
+      const diffMinutes = Math.max(0, Math.round((Date.now() - ms) / 60000));
+      if (diffMinutes < 1) return "Just now";
+      if (diffMinutes < 60) return `${diffMinutes} min ago`;
+      const diffHours = Math.round(diffMinutes / 60);
+      if (diffHours < 24) return `${diffHours} hr ago`;
+      const diffDays = Math.round(diffHours / 24);
+      if (diffDays < 7) return `${diffDays} day${diffDays === 1 ? "" : "s"} ago`;
+      return "";
+    }
+
+    function cleanLogText(value) {
+      let text = String(value || "").trim();
+      if (!text) return "";
+      text = text.replace(/Google signup\s*\|\s*UID:\s*[A-Za-z0-9_-]+/gi, "");
+      text = text.replace(/\bUIDs?:\s*[A-Za-z0-9_,\s-]{8,}\b/gi, "");
+      text = text.replace(/\b[a-z_]+__+[A-Za-z0-9_-]+\b/gi, "");
+      text = text.replace(/\b[a-z_]+:[A-Za-z0-9_-]{10,}\b/gi, "");
+      text = text.replace(/\b[A-Za-z0-9_-]{24,}\b/g, "");
+      text = text.replace(/\s*\|\s*/g, " | ");
+      text = text.replace(/\s{2,}/g, " ");
+      text = text.replace(/^\|\s*|\s*\|$/g, "");
+      if (/^Recycle bin purge$/i.test(text)) text = "Permanently removed from recycle bin";
+      if (/^Google signup$/i.test(text)) text = "Google sign-up request";
+      return text.trim();
+    }
+
+    function visibleLogLines(item) {
+      return uniq([cleanLogText(item?.detail), cleanLogText(item?.detailAdmin)]).filter(Boolean);
+    }
+
+    function logTypeMeta(type) {
+      const raw = String(type || "").toLowerCase();
+      if (raw === "approval") return { label: "Approval", className: "approval" };
+      if (raw === "lock") return { label: "Security", className: "lock" };
+      if (raw === "user") return { label: "User", className: "user" };
+      if (raw === "export") return { label: "Export", className: "export" };
+      if (raw === "delete" || raw === "admin_delete") return { label: "Delete", className: raw === "admin_delete" ? "admin" : "delete" };
+      return { label: "Entry", className: "entry" };
+    }
+
     function timeOnlyText(value) {
       const ms = tsMs(value);
       if (!ms) return "";
@@ -3937,6 +4184,14 @@ button.summary-card.clickable {
 
     function hideFromAdminAndPublicLogs(item) {
       return /submitted group entry/i.test(String(item?.action || ""));
+    }
+
+    function isPublicSafeLog(item) {
+      const type = String(item?.type || "").toLowerCase();
+      const action = String(item?.action || "").toLowerCase();
+      if (hideFromAdminAndPublicLogs(item)) return false;
+      if (type !== "entry") return false;
+      return !/(deleted|purged|restored|edited)/i.test(action);
     }
 
     function allDatesBetween(from, to, includeSunday = false) {
@@ -5303,7 +5558,7 @@ button.summary-card.clickable {
     function openAdminCalendar(uid) {
       const user = state.employees.find((item) => item.id === uid) || lookupUser(uid);
       if (!uid || !user) {
-        toast("Employee calendar is not available for this row.", "warn");
+        toast("Employee / article calendar is not available for this row.", "warn");
         return;
       }
       const now = new Date();
@@ -5316,7 +5571,7 @@ button.summary-card.clickable {
         joinDate
       };
       openModal(
-        "Employee Reporting Calendar",
+        "Employee / Article Reporting Calendar",
         joinDate ? `Joined on ${formatDate(joinDate)}. Green = reported, gold = bulk, red = no report.` : "Green = reported, gold = bulk, red = no report.",
         `
           <div class="calendar-shell">
@@ -5385,23 +5640,26 @@ button.summary-card.clickable {
 
       const pendingUsers = state.employees.filter((user) => user.approved === false);
       const lockedUsers = state.employees.filter((user) => user.locked === true);
+      const pendingIdsList = pendingUsers.map((user) => user.id);
+      const lockedIdsList = lockedUsers.map((user) => user.id);
+      const pendingAllSelected = hasAllSelected(state.selectedPendingUsers, pendingIdsList);
+      const lockedAllSelected = hasAllSelected(state.selectedLockedUsers, lockedIdsList);
       const pendingIds = new Set(pendingUsers.map((user) => user.id));
       Object.keys(state.pendingRoleDrafts || {}).forEach((id) => {
         if (!pendingIds.has(id)) delete state.pendingRoleDrafts[id];
       });
-      syncSelectionSet(state.selectedPendingUsers, pendingUsers.map((user) => user.id));
-      syncSelectionSet(state.selectedLockedUsers, lockedUsers.map((user) => user.id));
+      syncSelectionSet(state.selectedPendingUsers, pendingIdsList);
+      syncSelectionSet(state.selectedLockedUsers, lockedIdsList);
 
       pendingHost.innerHTML = pendingUsers.length
         ? `
             <div class="bulk-bar">
               <div class="select-line">
                 <strong>${safe(String(state.selectedPendingUsers.size))} selected</strong>
-                <span class="subline">Pending registrations</span>
+                <span class="subline">${safe(String(pendingUsers.length))} pending registration(s)</span>
               </div>
               <div class="actions">
-                <button class="btn btn-outline small" type="button" data-action="select-all-pending">Select all</button>
-                <button class="btn btn-ghost small" type="button" data-action="clear-pending-selection">Clear</button>
+                <button class="btn btn-outline small" type="button" data-action="select-all-pending">${pendingAllSelected ? "Deselect all" : "Select all"}</button>
                 <button class="btn btn-outline small" type="button" data-action="approve-selected-pending">Approve selected</button>
                 <button class="btn btn-ghost small" type="button" data-action="open-reject-selected">Reject selected</button>
               </div>
@@ -5448,11 +5706,10 @@ button.summary-card.clickable {
             <div class="bulk-bar">
               <div class="select-line">
                 <strong>${safe(String(state.selectedLockedUsers.size))} selected</strong>
-                <span class="subline">Locked accounts</span>
+                <span class="subline">${safe(String(lockedUsers.length))} locked account(s)</span>
               </div>
               <div class="actions">
-                <button class="btn btn-outline small" type="button" data-action="select-all-locked">Select all</button>
-                <button class="btn btn-ghost small" type="button" data-action="clear-locked-selection">Clear</button>
+                <button class="btn btn-outline small" type="button" data-action="select-all-locked">${lockedAllSelected ? "Deselect all" : "Select all"}</button>
                 <button class="btn btn-outline small" type="button" data-action="unlock-selected-users">Unlock selected</button>
               </div>
             </div>
@@ -5513,7 +5770,7 @@ button.summary-card.clickable {
               `
             )
             .join("")
-        : `<tr><td colspan="7" class="muted">No employees found.</td></tr>`;
+        : `<tr><td colspan="7" class="muted">No employees / articles found.</td></tr>`;
     }
 
     async function loadEmployeesPage() {
@@ -5548,29 +5805,41 @@ button.summary-card.clickable {
 
     function renderLogsPage() {
       const logs = getFilteredLogs();
+      const recycleAllSelected = hasAllSelected(state.selectedRecycle, state.recycleDocs.map((item) => item.id));
 
       const host = byId("logs-list");
       if (host) {
         host.innerHTML = logs.length
-          ? `<div class="activity-log-list">${logs.map((item) => `
+          ? `<div class="activity-log-list">${logs.map((item) => {
+              const detailLines = visibleLogLines(item);
+              const actorName = item.actorName || item.actorEmail || "-";
+              const actorEmail = item.actorEmail && item.actorEmail !== actorName ? item.actorEmail : "";
+              const typeMeta = logTypeMeta(item.type);
+              const relative = relativeTimeText(item.createdAt);
+              return `
               <div class="log-card activity-log-card">
                 <div class="activity-log-main">
-                  <strong>${safe(item.action || "-")}</strong>
-                  ${item.detail ? `<div class="subline">${safe(item.detail)}</div>` : ""}
-                  ${item.detailAdmin ? `<div class="subline">${safe(item.detailAdmin)}</div>` : ""}
+                  <div class="activity-log-head">
+                    <span class="log-type-badge ${safe(typeMeta.className)}">${safe(typeMeta.label)}</span>
+                    <strong>${safe(item.action || "-")}</strong>
+                  </div>
+                  ${detailLines.map((line) => `<div class="subline">${safe(line)}</div>`).join("")}
                 </div>
                 <div class="activity-log-side">
                   <div>
-                    <div class="activity-log-label">Actor</div>
-                    <div class="subline">${safe(item.actorName || item.actorEmail || "-")}</div>
+                    <div class="activity-log-label">Action Performed By</div>
+                    <div class="subline">${safe(actorName)}</div>
+                    ${actorEmail ? `<div class="subline">${safe(actorEmail)}</div>` : ""}
                   </div>
                   <div>
                     <div class="activity-log-label">Time</div>
                     <small>${safe(nowTimestampText(item.createdAt))}</small>
+                    ${relative ? `<div class="subline">${safe(relative)}</div>` : ""}
                   </div>
                 </div>
               </div>
-            `).join("")}</div>`
+            `;
+            }).join("")}</div>`
           : `
               <div class="compact-empty">
                 <span class="card-icon" aria-hidden="true">&#128221;</span>
@@ -5590,11 +5859,10 @@ button.summary-card.clickable {
               <div class="bulk-bar">
                 <div class="select-line">
                   <strong>${safe(String(state.selectedRecycle.size))} selected</strong>
-                  <span class="subline">Recycle bin records</span>
+                  <span class="subline">${safe(String(state.recycleDocs.length))} recycle record(s)</span>
                 </div>
                 <div class="actions">
-                  <button class="btn btn-outline small" type="button" data-action="select-all-recycle">Select all</button>
-                  <button class="btn btn-ghost small" type="button" data-action="clear-recycle-selection">Clear</button>
+                  <button class="btn btn-outline small" type="button" data-action="select-all-recycle">${recycleAllSelected ? "Deselect all" : "Select all"}</button>
                   <button class="btn btn-outline small" type="button" data-action="restore-selected-recycle">Restore selected</button>
                   <button class="btn btn-ghost small" type="button" data-action="purge-selected-recycle">Purge selected</button>
                 </div>
@@ -6430,7 +6698,7 @@ button.summary-card.clickable {
               <label class="mode-chip"><input type="radio" name="group-mode" value="range"> Bulk Days</label>
             </div>
             <div id="group-mode-fields" class="field-stack"></div>
-            <label class="field"><span>Add Users</span><input id="group-user-input" type="text" autocomplete="off" placeholder="Search employee"><div id="group-user-suggestions" class="suggestions"></div></label>
+            <label class="field"><span>Add Users</span><input id="group-user-input" type="text" autocomplete="off" placeholder="Search employee / article"><div id="group-user-suggestions" class="suggestions"></div></label>
             <div id="group-user-chips" class="chip-row"></div>
             <label class="field"><span>Client</span><input id="group-client-input" type="text" autocomplete="off" placeholder="Search one shared client"><div id="group-client-suggestions" class="suggestions"></div></label>
             <div id="group-client-chip" class="chip-row"></div>
@@ -7042,7 +7310,7 @@ button.summary-card.clickable {
         return;
       }
       openModal(
-        "Remove Employee",
+        "Remove Employee / Article",
         "This removes the user record. Existing timesheet data remains unless deleted separately.",
         `
           <div class="field-stack">
@@ -7056,7 +7324,7 @@ button.summary-card.clickable {
             </label>
             <div class="button-row">
               <button class="btn btn-ghost" id="remove-user-cancel" type="button">Cancel</button>
-              <button class="btn btn-primary" id="remove-user-submit" type="button">Remove Employee</button>
+              <button class="btn btn-primary" id="remove-user-submit" type="button">Remove Employee / Article</button>
             </div>
           </div>
         `
@@ -7077,7 +7345,7 @@ button.summary-card.clickable {
           detailAdmin: id
         });
         closeModal();
-        toast("Employee removed.", "warn");
+        toast("Employee / article removed.", "warn");
         await loadApprovals();
         await loadEmployeesPage();
       });
@@ -7135,7 +7403,7 @@ button.summary-card.clickable {
 
     function openAddEmployeeModal() {
       openModal(
-        "Add Employee",
+        "Add Employee / Article",
         "Pre-register an employee or article so Google sign-in can attach to the correct email.",
         `
           <form id="employee-create-form" class="field-stack">
@@ -7177,7 +7445,7 @@ button.summary-card.clickable {
           detailAdmin: department
         });
         closeModal();
-        toast("Employee created.", "success");
+        toast("Employee / article created.", "success");
         await loadEmployeesPage();
       });
     }
@@ -7185,7 +7453,7 @@ button.summary-card.clickable {
     function openImportEmployeeModal() {
       let parsedRows = [];
       openModal(
-        "Import Employees",
+        "Import Employees / Articles",
         "Required columns: name and email. Optional columns: department and role. Imported rows are approved for Google sign-in.",
         `
           <div class="field-stack">
@@ -7197,7 +7465,7 @@ button.summary-card.clickable {
             <div id="employee-import-error" class="message error" role="alert"></div>
             <div class="button-row">
               <button class="btn btn-ghost" id="employee-import-cancel" type="button">Cancel</button>
-              <button class="btn btn-primary" id="employee-import-submit" type="button">Import Employees</button>
+              <button class="btn btn-primary" id="employee-import-submit" type="button">Import Employees / Articles</button>
             </div>
           </div>
         `
@@ -7281,10 +7549,10 @@ button.summary-card.clickable {
           actorEmail: profileEmail(),
           type: "user",
           detail: `${added} added | ${updated} updated | ${skipped} skipped`,
-          detailAdmin: "Employee Excel import"
+          detailAdmin: "Employee / article Excel import"
         });
         closeModal();
-        toast(`Employees imported. Added: ${added}, updated: ${updated}, skipped: ${skipped}.`, "success");
+        toast(`Employees / articles imported. Added: ${added}, updated: ${updated}, skipped: ${skipped}.`, "success");
         await loadEmployeesPage();
       });
     }
@@ -7574,7 +7842,7 @@ button.summary-card.clickable {
             </div>
             <div class="hub-card">
               <strong>2. PIN, lock, and reset</strong>
-              <small>Non-admin users lock after 3 wrong PIN attempts. Admin can unlock the account or reset the PIN from Approvals, Employees, or the Reset employee PIN panel.</small>
+              <small>Non-admin users lock after 3 wrong PIN attempts. Admin can unlock the account or reset the PIN from Approvals, Employees / Articles, or the Reset employee / article PIN panel.</small>
             </div>
             <div class="hub-card">
               <strong>3. Single, bulk, and group reporting</strong>
@@ -7590,7 +7858,7 @@ button.summary-card.clickable {
             </div>
             <div class="hub-card">
               <strong>6. Drafts, search, and exports</strong>
-              <small>Draft buttons save unfinished entry forms on the current device/browser only. Search, filters, and Excel export work from My Timesheet, All Timesheets, Employees, Clients, and Logs where available.</small>
+              <small>Draft buttons save unfinished entry forms on the current device/browser only. Search, filters, and Excel export work from My Timesheet, All Timesheets, Employees &amp; Articles, Clients, and Logs where available.</small>
             </div>
             <div class="hub-card">
               <strong>7. Recycle bin and trails</strong>
@@ -7606,7 +7874,7 @@ button.summary-card.clickable {
             </div>
             <div class="hub-card">
               <strong>10. Admin control map</strong>
-              <small>${isAdminView ? "Timesheets handles reporting summary and all records. Approvals handles new registrations, locked users, and PIN reset. Employees and Clients manage master data. Logs covers activity history and recycle control. Storage shows record growth and estimated footprint." : "Admin-only areas stay hidden for non-admin users."}</small>
+              <small>${isAdminView ? "Timesheets handles reporting summary and all records. Approvals handles new registrations, locked users, and PIN reset. Employees &amp; Articles plus Clients manage master data. Logs covers activity history and recycle control. Storage shows record growth and estimated footprint." : "Admin-only areas stay hidden for non-admin users."}</small>
             </div>
           </div>
         `
@@ -7616,7 +7884,7 @@ button.summary-card.clickable {
     async function openPublicLog() {
       openModal(
         "Activity Log",
-        "Last 48 hours. Public view shows action and time only.",
+        "Last 48 hours. Public view shows safe entry activity with action and time only.",
         `<div id="public-log-body" class="public-log-wrap empty-state">Loading activity log.</div>`
       );
 
@@ -7626,10 +7894,9 @@ button.summary-card.clickable {
       try {
         const snap = await getDocs(query(collection(db, "logs"), orderBy("createdAt", "desc"), limit(200)));
         const now = Date.now();
-        const allowed = new Set(["entry", "user", "lock", "export"]);
         const logs = snap.docs
           .map((item) => ({ id: item.id, ...(item.data() || {}) }))
-          .filter((item) => allowed.has(String(item.type || "")) && !hideFromAdminAndPublicLogs(item) && (now - tsMs(item.createdAt)) <= (48 * 60 * 60 * 1000));
+          .filter((item) => isPublicSafeLog(item) && (now - tsMs(item.createdAt)) <= (48 * 60 * 60 * 1000));
 
         const grouped = logs.reduce((bucket, item) => {
           const dayKey = new Date(tsMs(item.createdAt)).toLocaleDateString("en-IN", {
@@ -7809,7 +8076,7 @@ button.summary-card.clickable {
         const rows = getFilteredAllRecords().map((record) => ({
           Date: displayDate(record),
           Type: String(record.entryKind || "single").toUpperCase(),
-          Employee: record.creatorName || record.name || "-",
+          "Employee / Article": record.creatorName || record.name || "-",
           Email: record.creatorEmail || record.email || "-",
           Role: record.creatorRole || record.role || "-",
           Client: clientLabel(record),
@@ -8007,7 +8274,8 @@ button.summary-card.clickable {
         }
 
         if (actionEl.dataset.action === "select-all-pending") {
-          state.employees.filter((user) => user.approved === false).forEach((user) => state.selectedPendingUsers.add(user.id));
+          const pendingIds = state.employees.filter((user) => user.approved === false).map((user) => user.id);
+          setHasAll(state.selectedPendingUsers, pendingIds, !hasAllSelected(state.selectedPendingUsers, pendingIds));
           renderApprovalsList();
           return;
         }
@@ -8039,7 +8307,8 @@ button.summary-card.clickable {
         }
 
         if (actionEl.dataset.action === "select-all-locked") {
-          state.employees.filter((user) => user.locked === true).forEach((user) => state.selectedLockedUsers.add(user.id));
+          const lockedIds = state.employees.filter((user) => user.locked === true).map((user) => user.id);
+          setHasAll(state.selectedLockedUsers, lockedIds, !hasAllSelected(state.selectedLockedUsers, lockedIds));
           renderApprovalsList();
           return;
         }
@@ -8107,7 +8376,8 @@ button.summary-card.clickable {
         }
 
         if (actionEl.dataset.action === "select-all-recycle") {
-          state.recycleDocs.forEach((item) => state.selectedRecycle.add(item.id));
+          const recycleIds = state.recycleDocs.map((item) => item.id);
+          setHasAll(state.selectedRecycle, recycleIds, !hasAllSelected(state.selectedRecycle, recycleIds));
           renderLogsPage();
           return;
         }
