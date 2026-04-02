@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>VKS Timesheet</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2069,6 +2072,7 @@ button.summary-card.clickable {
   padding-top: 2px;
 }
 
+.screen.app-screen #page-my .toolbar,
 .screen.app-screen #page-dashboard .toolbar,
 .screen.app-screen #page-employees .toolbar,
 .screen.app-screen #page-clients .toolbar,
@@ -2079,6 +2083,7 @@ button.summary-card.clickable {
   z-index: auto;
 }
 
+.screen.app-screen #page-my .toolbar,
 .screen.app-screen #page-dashboard .toolbar,
 .screen.app-screen #page-employees .toolbar,
 .screen.app-screen #page-clients .toolbar,
@@ -2123,6 +2128,83 @@ button.summary-card.clickable {
 .filter-chip-label {
   color: #64748b;
   font-weight: 700;
+}
+
+.danger-flow {
+  display: grid;
+  gap: 14px;
+}
+
+.danger-step-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.danger-step-pill {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid rgba(203, 213, 225, 0.82);
+  background: rgba(248, 250, 252, 0.95);
+  border-radius: 10px;
+}
+
+.danger-step-pill small {
+  color: #64748b;
+}
+
+.danger-step-pill.active {
+  border-color: rgba(180, 83, 9, 0.42);
+  background: rgba(255, 247, 237, 0.98);
+}
+
+.danger-step-pill.done {
+  border-color: rgba(15, 118, 110, 0.32);
+  background: rgba(240, 253, 250, 0.96);
+}
+
+.danger-step-pill strong {
+  margin: 0;
+}
+
+.danger-scope-list {
+  display: grid;
+  gap: 8px;
+}
+
+.danger-scope-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(203, 213, 225, 0.82);
+  border-radius: 8px;
+  background: rgba(248, 250, 252, 0.86);
+}
+
+.danger-scope-item span:first-child {
+  color: #64748b;
+  font-weight: 700;
+}
+
+.danger-scope-item span:last-child {
+  color: #0f172a;
+  font-weight: 700;
+  text-align: right;
+}
+
+.danger-confirm-box {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(217, 119, 6, 0.22);
+  background: linear-gradient(180deg, rgba(255, 251, 235, 0.98), rgba(255, 247, 237, 0.92));
+}
+
+@media (max-width: 760px) {
+  .danger-step-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 .summary-card strong,
@@ -3205,6 +3287,7 @@ button.summary-card.clickable {
             </div>
             <div class="panel-actions">
               <button id="all-export" class="btn btn-outline" type="button">Export Excel</button>
+              <button id="all-delete-visible" class="btn btn-ghost" type="button">Delete visible entries</button>
             </div>
           </div>
 
@@ -3658,6 +3741,7 @@ button.summary-card.clickable {
       "Senior Staff"
     ];
     const FORCED_ADMIN_EMAIL = "admin.cavks@gmail.com";
+    const RECYCLE_RETENTION_MS = 7 * 24 * 60 * 60 * 1000;
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -5341,11 +5425,13 @@ button.summary-card.clickable {
       }
     }
 
-    async function recycleRecord(record, reason, context = "my") {
+    async function recycleRecord(record, reason, context = "my", meta = {}) {
       const rawSnap = await getDoc(doc(db, record.collection, record.id));
       if (!rawSnap.exists()) throw new Error("Record not found.");
       const raw = withOwnershipAliases(rawSnap.data() || {});
       const recycleId = `${record.collection}__${record.id}`;
+      const deletedAtMs = Date.now();
+      const purgeAfterMs = Number(meta.purgeAfterMs || (deletedAtMs + RECYCLE_RETENTION_MS));
       const payload = {
         sourceCollection: record.collection,
         sourceId: record.id,
@@ -5361,26 +5447,59 @@ button.summary-card.clickable {
         ownerUid: raw.ownerUid || raw.uid || "",
         reportedByUid: raw.reportedByUid || raw.uid || "",
         ownerEmail: record.email || record.creatorEmail || "",
-        deletedAt: Timestamp.now(),
+        deletedAt: Timestamp.fromMillis(deletedAtMs),
         deletedByUid: state.user?.uid || "",
         deletedByName: profileName(),
         deletedByEmail: profileEmail(),
+        purgeAfterMs,
+        batchId: meta.batchId || "",
+        scopeSummary: meta.scopeSummary || "",
+        backupFileName: meta.backupFileName || "",
+        deleteFlow: meta.deleteFlow || (context === "admin" ? "admin_single" : "user_single"),
         reason,
         sourceData: raw
       };
 
       await setDoc(doc(db, "deleted_entries", recycleId), payload);
       await deleteDoc(doc(db, record.collection, record.id));
-      await addTrail(record, "Deleted", `Reason: ${reason}`);
-      await writeLog({
-        action: `${profileName()} deleted ${record.entryKind || "entry"}`,
-        actorName: profileName(),
-        actorEmail: profileEmail(),
-        type: context === "admin" ? "admin_delete" : "delete",
-        detail: `${clientLabel(record)} | ${displayDate(record)} | ${reason}`,
-        detailAdmin: `${record.collection}:${record.id}`
+      await addTrail(record, "Deleted", meta.trailDetail || `Reason: ${reason}`);
+      if (!meta.skipLog) {
+        await writeLog({
+          action: `${profileName()} deleted ${record.entryKind || "entry"}`,
+          actorName: profileName(),
+          actorEmail: profileEmail(),
+          type: context === "admin" ? "admin_delete" : "delete",
+          detail: `${clientLabel(record)} | ${displayDate(record)} | ${reason}`,
+          detailAdmin: `${record.collection}:${record.id}`
+        });
+      }
+      if (!meta.skipAudit) {
+        await writeUserAudit(context === "admin" ? "Admin deleted entry" : "Deleted entry", `${displayDate(record)} | ${reason}`);
+      }
+    }
+
+    function recycleExpiryMs(item) {
+      const explicit = Number(item?.purgeAfterMs || 0);
+      if (explicit > 0) return explicit;
+      const deletedMs = tsMs(item?.deletedAt);
+      return deletedMs ? (deletedMs + RECYCLE_RETENTION_MS) : 0;
+    }
+
+    async function purgeExpiredRecycleDocs(items) {
+      if (!isAdmin() || !Array.isArray(items) || !items.length) return items || [];
+      const now = Date.now();
+      const expired = items.filter((item) => {
+        const expiry = recycleExpiryMs(item);
+        return expiry > 0 && expiry <= now;
       });
-      await writeUserAudit(context === "admin" ? "Admin deleted entry" : "Deleted entry", `${displayDate(record)} | ${reason}`);
+      if (!expired.length) return items;
+      const results = await Promise.allSettled(expired.map((item) => deleteDoc(doc(db, "deleted_entries", item.id))));
+      const failedIds = new Set(
+        expired
+          .filter((_item, index) => results[index]?.status === "rejected")
+          .map((item) => item.id)
+      );
+      return items.filter((item) => !expired.some((expiredItem) => expiredItem.id === item.id) || failedIds.has(item.id));
     }
 
     async function restoreDeletedRecord(recycleId) {
@@ -5413,19 +5532,40 @@ button.summary-card.clickable {
       toast("Record purged.", "warn");
     }
 
-    async function exportRowsToExcel(rows, fileName, sheetName) {
+    function buildAllExportRows(records) {
+      return (records || []).map((record) => ({
+        Date: displayDate(record),
+        Type: String(record.entryKind || "single").toUpperCase(),
+        "Employee / Article": record.creatorName || record.name || "-",
+        Email: record.creatorEmail || record.email || "-",
+        Role: record.creatorRole || record.role || "-",
+        Client: clientLabel(record),
+        Members: record.entryKind === "group" ? memberNames(record).join(", ") : "",
+        WorkType: normalizeTaskList(record).join(" | "),
+        Hours: record.entryKind === "group" ? visibleMemberIds(record).map((uid) => `${lookupUser(uid)?.name || uid}: ${userEntryForGroup(record, uid).totalHours || 0}`).join(" | ") : singleOrBulkHoursLabel(record),
+        Days: recordDates(record).length || 1,
+        Remarks: record.remarks || (record.entryKind === "group" ? visibleMemberIds(record).map((uid) => `${lookupUser(uid)?.name || uid}: ${userEntryForGroup(record, uid).remarks || ""}`).join(" | ") : "")
+      }));
+    }
+
+    function downloadRowsToExcel(rows, fileName, sheetName) {
       if (!Array.isArray(rows) || !rows.length) {
         toast("No rows to export.", "warn");
-        return;
+        return false;
       }
       if (typeof XLSX === "undefined") {
         toast("Excel export library is not available.", "error");
-        return;
+        return false;
       }
       const workbook = XLSX.utils.book_new();
       const worksheet = XLSX.utils.json_to_sheet(rows);
       XLSX.utils.book_append_sheet(workbook, worksheet, sheetName || "Sheet1");
       XLSX.writeFile(workbook, fileName);
+      return true;
+    }
+
+    async function exportRowsToExcel(rows, fileName, sheetName) {
+      if (!downloadRowsToExcel(rows, fileName, sheetName)) return;
       await writeUserAudit("Exported Excel", `${fileName} | ${rows.length} row(s)`);
       await writeLog({
         action: `${profileName()} exported Excel`,
@@ -5667,20 +5807,7 @@ button.summary-card.clickable {
     }
 
     function renderAllFilterSummary() {
-      const chips = [];
-      const q = String(byId("all-search")?.value || "").trim();
-      const from = byId("all-from")?.value || "";
-      const to = byId("all-to")?.value || "";
-      const userText = String(byId("all-user-search")?.value || "").trim();
-      const role = byId("all-role-filter")?.value || "";
-      const task = byId("all-task-filter")?.value || "";
-      if (q) chips.push(filterChip("Search", q));
-      if (from) chips.push(filterChip("From", formatDate(from)));
-      if (to) chips.push(filterChip("To", formatDate(to)));
-      if (userText) chips.push(filterChip("Employee / Article", userText));
-      if (role) chips.push(filterChip("Role", role));
-      if (task) chips.push(filterChip("Work type", task));
-      setFilterSummary("all-filter-summary", chips);
+      setFilterSummary("all-filter-summary", allFilterScopeItems().map((item) => filterChip(item.label, item.value)));
     }
 
     function renderEmployeeFilterSummary() {
@@ -5719,6 +5846,33 @@ button.summary-card.clickable {
     function setFieldValue(id, value) {
       const el = byId(id);
       if (el) el.value = value;
+    }
+
+    function allFilterScopeItems() {
+      const items = [];
+      const q = String(byId("all-search")?.value || "").trim();
+      const from = byId("all-from")?.value || "";
+      const to = byId("all-to")?.value || "";
+      const userText = String(byId("all-user-search")?.value || "").trim();
+      const role = byId("all-role-filter")?.value || "";
+      const task = byId("all-task-filter")?.value || "";
+      if (q) items.push({ label: "Search", value: q });
+      if (from) items.push({ label: "From", value: formatDate(from) });
+      if (to) items.push({ label: "To", value: formatDate(to) });
+      if (userText) items.push({ label: "Employee / Article", value: userText });
+      if (role) items.push({ label: "Role", value: role });
+      if (task) items.push({ label: "Work type", value: task });
+      return items;
+    }
+
+    function allFilterScopeText() {
+      const items = allFilterScopeItems();
+      return items.length ? items.map((item) => `${item.label}: ${item.value}`).join(" | ") : "No filters applied";
+    }
+
+    function makeActionBatchId(prefix = "batch") {
+      if (crypto?.randomUUID) return `${prefix}-${crypto.randomUUID()}`;
+      return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
     }
 
     function updateRefreshButtonMeta(text) {
@@ -6239,12 +6393,20 @@ button.summary-card.clickable {
       renderAdminCalendar();
     }
 
-    function openAdminCalendar(uid) {
+    async function refreshAdminCalendarRecords() {
+      await finalizePendingGroupEntries(false);
+      const [singles, bulks, groups] = await Promise.all([fetchAllSingles(), fetchAllBulks(), fetchAllGroups()]);
+      state.allEntries = [...singles, ...bulks, ...groups.filter((record) => record.status === "active")].sort(sortRecords);
+    }
+
+    async function openAdminCalendar(uid) {
+      await ensureLookups(true);
       const user = state.employees.find((item) => item.id === uid) || lookupUser(uid);
       if (!uid || !user) {
         toast("Employee / article calendar is not available for this row.", "warn");
         return;
       }
+      await refreshAdminCalendarRecords();
       const now = new Date();
       const joinDate = tsMs(user.createdAt) ? new Date(tsMs(user.createdAt)).toISOString().slice(0, 10) : "";
       state.calendar = {
@@ -6262,10 +6424,11 @@ button.summary-card.clickable {
             <div class="calendar-head">
               <button class="btn btn-outline small" id="calendar-prev" type="button">Previous</button>
               <strong id="admin-calendar-title"></strong>
+              <button class="btn btn-outline small" id="calendar-refresh" type="button">Refresh</button>
               <button class="btn btn-outline small" id="calendar-next" type="button">Next</button>
             </div>
             <div class="selection-summary">
-              <span>Click summary rows to open this calendar</span>
+              <span>Available from Today's Summary and Employees / Articles</span>
               <span>Only workdays after join date are marked as missing</span>
             </div>
             <div id="admin-calendar-grid" class="calendar-grid"></div>
@@ -6273,6 +6436,11 @@ button.summary-card.clickable {
         `
       );
       byId("calendar-prev")?.addEventListener("click", () => shiftAdminCalendar(-1));
+      byId("calendar-refresh")?.addEventListener("click", async () => {
+        await refreshAdminCalendarRecords();
+        renderAdminCalendar();
+        toast("Calendar refreshed.", "success");
+      });
       byId("calendar-next")?.addEventListener("click", () => shiftAdminCalendar(1));
       renderAdminCalendar();
     }
@@ -6281,6 +6449,8 @@ button.summary-card.clickable {
       const rows = getFilteredAllRecords();
 
       renderAllFilterSummary();
+      const bulkDeleteButton = byId("all-delete-visible");
+      if (bulkDeleteButton) bulkDeleteButton.disabled = rows.length === 0;
       const body = byId("all-table-body");
       if (!body) return;
 
@@ -6454,6 +6624,7 @@ button.summary-card.clickable {
                     : "";
                 const statusClass = String(status).toLowerCase();
                 const pinClass = user.pinSet ? "ready" : "reset";
+                const showCalendar = String(user.role || "").toLowerCase() !== "admin";
                 return `
                 <tr>
                   <td>${safe(user.name || "-")}</td>
@@ -6462,7 +6633,7 @@ button.summary-card.clickable {
                   <td>${safe(user.department || "-")}</td>
                   <td><span class="employee-table-pill status ${safe(statusClass)}">${safe(status)}</span></td>
                   <td><span class="employee-table-pill pin ${safe(pinClass)}">${safe(pinState)}</span></td>
-                  <td><div class="actions">${user.approved === false ? `<button class="btn btn-outline small" type="button" data-action="approve-user" data-id="${user.id}" data-role="${safe(normalizeRoleValue(user.role || "CA Article"))}">Approve</button><button class="btn btn-ghost small" type="button" data-action="open-reject-user" data-id="${user.id}">Reject</button>` : ""}${user.locked ? `<button class="btn btn-outline small" type="button" data-action="unlock-user" data-id="${user.id}">Unlock</button>` : ""}${String(user.role || "").toLowerCase() !== "admin" ? `<button class="btn btn-outline small" type="button" data-action="admin-reset-pin" data-id="${user.id}">Reset PIN</button><button class="btn btn-ghost small" type="button" data-action="open-remove-user" data-id="${user.id}">Remove</button>` : `<span class="subline">Protected</span>`}</div></td>
+                  <td><div class="actions">${user.approved === false ? `<button class="btn btn-outline small" type="button" data-action="approve-user" data-id="${user.id}" data-role="${safe(normalizeRoleValue(user.role || "CA Article"))}">Approve</button><button class="btn btn-ghost small" type="button" data-action="open-reject-user" data-id="${user.id}">Reject</button>` : ""}${user.locked ? `<button class="btn btn-outline small" type="button" data-action="unlock-user" data-id="${user.id}">Unlock</button>` : ""}${showCalendar ? `<button class="btn btn-outline small" type="button" data-action="open-admin-calendar" data-id="${user.id}">Calendar</button>` : ""}${String(user.role || "").toLowerCase() !== "admin" ? `<button class="btn btn-outline small" type="button" data-action="admin-reset-pin" data-id="${user.id}">Reset PIN</button><button class="btn btn-ghost small" type="button" data-action="open-remove-user" data-id="${user.id}">Remove</button>` : `<span class="subline">Protected</span>`}</div></td>
                 </tr>
               `;
               }
@@ -6599,7 +6770,8 @@ button.summary-card.clickable {
       try {
         const [logSnap, recycleSnap] = await Promise.all([getDocs(collection(db, "logs")), getDocs(collection(db, "deleted_entries"))]);
         state.logs = logSnap.docs.map((item) => ({ id: item.id, ...(item.data() || {}) })).sort((a, b) => tsMs(b.createdAt) - tsMs(a.createdAt));
-        state.recycleDocs = recycleSnap.docs.map((item) => ({ id: item.id, ...(item.data() || {}) })).sort((a, b) => tsMs(b.deletedAt) - tsMs(a.deletedAt));
+        const recycleDocs = recycleSnap.docs.map((item) => ({ id: item.id, ...(item.data() || {}) }));
+        state.recycleDocs = (await purgeExpiredRecycleDocs(recycleDocs)).sort((a, b) => tsMs(b.deletedAt) - tsMs(a.deletedAt));
       } catch (_error) {
         state.logs = [];
         state.recycleDocs = [];
@@ -6746,6 +6918,9 @@ button.summary-card.clickable {
 
     async function refreshCurrentPage() {
       if (!state.user || !state.profile) return;
+      if (isAdmin() && !["page-dashboard", "page-logs", "page-storage"].includes(state.currentPage)) {
+        await loadLogsAndRecycleState();
+      }
       if (state.currentPage === "page-log") {
         await ensureLookups(true);
         await loadGroupApprovals();
@@ -6942,6 +7117,249 @@ button.summary-card.clickable {
         toast("Selected entries moved to Recycle Bin.", "warn");
         await refreshCurrentPage();
       });
+    }
+
+    function openAdminBulkDeleteModal() {
+      const records = getFilteredAllRecords();
+      if (!records.length) {
+        toast("No visible records are available for bulk delete.", "warn");
+        return;
+      }
+
+      const scopeItems = allFilterScopeItems();
+      const scopeSummary = allFilterScopeText();
+      const stateLocal = {
+        step: 1,
+        backupDone: false,
+        backupFileName: "",
+        reason: "",
+        confirmText: "",
+        batchId: makeActionBatchId("bulk-delete"),
+        running: false
+      };
+
+      openModal(
+        "Delete Visible Entries",
+        "Admin-only 4-step delete flow. Only the currently visible All Timesheets records will be moved to Recycle Bin.",
+        `
+          <div id="bulk-delete-flow" class="danger-flow">
+            <div class="danger-step-row">
+              <div class="danger-step-pill" data-step-pill="1"></div>
+              <div class="danger-step-pill" data-step-pill="2"></div>
+              <div class="danger-step-pill" data-step-pill="3"></div>
+              <div class="danger-step-pill" data-step-pill="4"></div>
+            </div>
+            <div id="bulk-delete-step-body"></div>
+            <div id="bulk-delete-step-actions" class="button-row"></div>
+          </div>
+        `
+      );
+
+      const modalRoot = byId("modal-root");
+      const body = byId("bulk-delete-step-body");
+      const actions = byId("bulk-delete-step-actions");
+      if (!modalRoot || !body || !actions) return;
+
+      const renderStepPills = () => {
+        const steps = [
+          { step: 1, title: "Scope", copy: "Visible records + active filters" },
+          { step: 2, title: "Backup", copy: "Compulsory download before delete" },
+          { step: 3, title: "Reason", copy: "Required audit reason" },
+          { step: 4, title: "Confirm", copy: "Type DELETE to finish" }
+        ];
+        steps.forEach((item) => {
+          const pill = modalRoot.querySelector(`[data-step-pill="${item.step}"]`);
+          if (!pill) return;
+          pill.className = `danger-step-pill ${stateLocal.step === item.step ? "active" : ""} ${stateLocal.step > item.step ? "done" : ""}`.trim();
+          pill.innerHTML = `<strong>${item.step}. ${safe(item.title)}</strong><small>${safe(item.copy)}</small>`;
+        });
+      };
+
+      const renderStep = () => {
+        renderStepPills();
+        const previewLines = records.slice(0, 3).map((record) => `${displayDate(record)} | ${record.creatorName || record.name || "-"} | ${clientLabel(record)}`);
+        if (stateLocal.step === 1) {
+          body.innerHTML = `
+            <div class="field-stack">
+              <div class="hub-card">
+                <strong>${safe(String(records.length))} visible record(s) locked for this delete run</strong>
+                <div class="subline">Scope is captured when this wizard opens. Only these currently visible rows will be affected.</div>
+              </div>
+              <div class="danger-scope-list">
+                <div class="danger-scope-item"><span>Visible rows</span><span>${safe(String(records.length))}</span></div>
+                ${scopeItems.length
+                  ? scopeItems.map((item) => `<div class="danger-scope-item"><span>${safe(item.label)}</span><span>${safe(item.value)}</span></div>`).join("")
+                  : `<div class="danger-scope-item"><span>Filters</span><span>No filters applied</span></div>`}
+              </div>
+              <div class="hub-card">
+                <strong>Preview</strong>
+                <div class="subline">${safe(previewLines.join(" | "))}${records.length > previewLines.length ? ` | +${records.length - previewLines.length} more` : ""}</div>
+              </div>
+            </div>
+          `;
+          actions.innerHTML = `
+            <button class="btn btn-ghost" type="button" data-action="bulk-delete-cancel">Cancel</button>
+            <button class="btn btn-primary" type="button" data-action="bulk-delete-next">Continue to backup</button>
+          `;
+        } else if (stateLocal.step === 2) {
+          body.innerHTML = `
+            <div class="field-stack">
+              <div class="danger-confirm-box">
+                <strong>Compulsory backup</strong>
+                <div class="subline">Download the exact currently visible rows before bulk delete is allowed.</div>
+              </div>
+              <div class="hub-card">
+                <strong>${stateLocal.backupDone ? "Backup completed" : "Backup pending"}</strong>
+                <div class="subline">${stateLocal.backupDone ? safe(stateLocal.backupFileName) : "Click the backup button below to generate the Excel file."}</div>
+              </div>
+            </div>
+          `;
+          actions.innerHTML = `
+            <button class="btn btn-ghost" type="button" data-action="bulk-delete-back">Back</button>
+            <button class="btn btn-outline" type="button" data-action="bulk-delete-backup">${stateLocal.backupDone ? "Download again" : "Download backup"}</button>
+            <button class="btn btn-primary" type="button" data-action="bulk-delete-next" ${stateLocal.backupDone ? "" : "disabled"}>Continue to reason</button>
+          `;
+        } else if (stateLocal.step === 3) {
+          body.innerHTML = `
+            <div class="field-stack">
+              <label class="field">
+                <span>Reason for bulk delete</span>
+                <textarea id="bulk-delete-reason" rows="5" placeholder="Explain why these visible records are being deleted.">${safe(stateLocal.reason)}</textarea>
+              </label>
+              <div class="danger-confirm-box">
+                <strong>This reason is stored in recycle metadata and the admin log.</strong>
+              </div>
+            </div>
+          `;
+          actions.innerHTML = `
+            <button class="btn btn-ghost" type="button" data-action="bulk-delete-back">Back</button>
+            <button class="btn btn-primary" type="button" data-action="bulk-delete-next" ${stateLocal.reason.trim() ? "" : "disabled"}>Continue to final confirm</button>
+          `;
+        } else {
+          body.innerHTML = `
+            <div class="field-stack">
+              <div class="danger-confirm-box">
+                <strong>Final confirmation</strong>
+                <div class="subline">This deletes ${safe(String(records.length))} visible record(s), moves them to Recycle Bin, and marks them for purge after 7 days.</div>
+              </div>
+              <div class="hub-card">
+                <strong>Backup file</strong>
+                <div class="subline">${safe(stateLocal.backupFileName || "-")}</div>
+                <div class="subline">Scope: ${safe(scopeSummary)}</div>
+              </div>
+              <label class="field">
+                <span>Type DELETE</span>
+                <input id="bulk-delete-confirm-text" type="text" value="${safe(stateLocal.confirmText)}" placeholder="DELETE">
+              </label>
+            </div>
+          `;
+          actions.innerHTML = `
+            <button class="btn btn-ghost" type="button" data-action="bulk-delete-back" ${stateLocal.running ? "disabled" : ""}>Back</button>
+            <button class="btn btn-primary" type="button" data-action="bulk-delete-confirm" ${(stateLocal.confirmText === "DELETE" && !stateLocal.running) ? "" : "disabled"}>${stateLocal.running ? "Deleting..." : "Move visible entries to Recycle Bin"}</button>
+          `;
+        }
+      };
+
+      const clickHandler = async (event) => {
+        const actionEl = event.target.closest("[data-action]");
+        if (!actionEl || modalRoot.hidden || !modalRoot.contains(actionEl)) return;
+        if (actionEl.dataset.action === "bulk-delete-cancel") {
+          closeModal();
+          return;
+        }
+        if (actionEl.dataset.action === "bulk-delete-back") {
+          stateLocal.step = Math.max(1, stateLocal.step - 1);
+          renderStep();
+          return;
+        }
+        if (actionEl.dataset.action === "bulk-delete-next") {
+          if (stateLocal.step === 2 && !stateLocal.backupDone) {
+            toast("Download the backup first.", "warn");
+            return;
+          }
+          if (stateLocal.step === 3 && !stateLocal.reason.trim()) {
+            toast("Reason is required.", "warn");
+            return;
+          }
+          stateLocal.step = Math.min(4, stateLocal.step + 1);
+          renderStep();
+          return;
+        }
+        if (actionEl.dataset.action === "bulk-delete-backup") {
+          const rows = buildAllExportRows(records);
+          const fileName = `all-timesheets-backup-${stateLocal.batchId}.xlsx`;
+          const ok = downloadRowsToExcel(rows, fileName, "All Timesheets Backup");
+          if (!ok) return;
+          stateLocal.backupDone = true;
+          stateLocal.backupFileName = fileName;
+          toast("Backup downloaded.", "success");
+          renderStep();
+          return;
+        }
+        if (actionEl.dataset.action === "bulk-delete-confirm") {
+          if (stateLocal.running) return;
+          if (!stateLocal.backupDone) return toast("Backup step is required.", "warn");
+          if (!stateLocal.reason.trim()) return toast("Reason is required.", "warn");
+          if (stateLocal.confirmText !== "DELETE") return toast('Type DELETE to confirm.', "warn");
+          stateLocal.running = true;
+          renderStep();
+          let successCount = 0;
+          let failureCount = 0;
+          for (const record of records) {
+            try {
+              await recycleRecord(record, stateLocal.reason.trim(), "admin", {
+                batchId: stateLocal.batchId,
+                scopeSummary,
+                backupFileName: stateLocal.backupFileName,
+                deleteFlow: "admin_bulk",
+                skipAudit: true,
+                skipLog: true,
+                trailDetail: `Reason: ${stateLocal.reason.trim()} | Bulk delete batch: ${stateLocal.batchId}`
+              });
+              successCount += 1;
+            } catch (_error) {
+              failureCount += 1;
+            }
+          }
+          await writeLog({
+            action: `${profileName()} bulk deleted visible entries`,
+            actorName: profileName(),
+            actorEmail: profileEmail(),
+            type: "admin_delete",
+            detail: `${successCount} of ${records.length} visible record(s) moved to Recycle Bin | Reason: ${stateLocal.reason.trim()}`,
+            detailAdmin: `Batch: ${stateLocal.batchId} | Backup: ${stateLocal.backupFileName} | Scope: ${scopeSummary}${failureCount ? ` | Failed: ${failureCount}` : ""}`
+          });
+          await writeUserAudit("Bulk deleted visible entries", `${successCount}/${records.length} | ${stateLocal.batchId} | ${stateLocal.reason.trim()}`);
+          closeModal();
+          toast(
+            failureCount
+              ? `${successCount} record(s) moved to Recycle Bin. ${failureCount} failed and should be reviewed.`
+              : "Visible entries moved to Recycle Bin.",
+            failureCount ? "warn" : "success"
+          );
+          await refreshCurrentPage();
+        }
+      };
+
+      const inputHandler = (event) => {
+        if (!modalRoot.contains(event.target)) return;
+        if (event.target.id === "bulk-delete-reason") {
+          stateLocal.reason = String(event.target.value || "");
+          const next = modalRoot.querySelector('[data-action="bulk-delete-next"]');
+          if (next) next.disabled = !stateLocal.reason.trim();
+        }
+        if (event.target.id === "bulk-delete-confirm-text") {
+          stateLocal.confirmText = String(event.target.value || "").trim();
+          const confirmButton = modalRoot.querySelector('[data-action="bulk-delete-confirm"]');
+          if (confirmButton) confirmButton.disabled = !(stateLocal.confirmText === "DELETE" && !stateLocal.running);
+        }
+      };
+
+      modalRoot.addEventListener("click", clickHandler);
+      modalRoot.addEventListener("input", inputHandler);
+      state.modalCleanups.push(() => modalRoot.removeEventListener("click", clickHandler));
+      state.modalCleanups.push(() => modalRoot.removeEventListener("input", inputHandler));
+      renderStep();
     }
 
     function openEditRecordModal(record) {
@@ -8899,21 +9317,10 @@ button.summary-card.clickable {
       });
 
       bind("all-export", "click", async () => {
-        const rows = getFilteredAllRecords().map((record) => ({
-          Date: displayDate(record),
-          Type: String(record.entryKind || "single").toUpperCase(),
-          "Employee / Article": record.creatorName || record.name || "-",
-          Email: record.creatorEmail || record.email || "-",
-          Role: record.creatorRole || record.role || "-",
-          Client: clientLabel(record),
-          Members: record.entryKind === "group" ? memberNames(record).join(", ") : "",
-          WorkType: normalizeTaskList(record).join(" | "),
-          Hours: record.entryKind === "group" ? visibleMemberIds(record).map((uid) => `${lookupUser(uid)?.name || uid}: ${userEntryForGroup(record, uid).totalHours || 0}`).join(" | ") : singleOrBulkHoursLabel(record),
-          Days: recordDates(record).length || 1,
-          Remarks: record.remarks || (record.entryKind === "group" ? visibleMemberIds(record).map((uid) => `${lookupUser(uid)?.name || uid}: ${userEntryForGroup(record, uid).remarks || ""}`).join(" | ") : "")
-        }));
+        const rows = buildAllExportRows(getFilteredAllRecords());
         await exportRowsToExcel(rows, `all-timesheets-${todayStr()}.xlsx`, "All Timesheets");
       });
+      bind("all-delete-visible", "click", openAdminBulkDeleteModal);
 
       bind("pin-reset-submit", "click", async () => {
         await ensureLookups();
@@ -9065,7 +9472,7 @@ button.summary-card.clickable {
         }
 
         if (actionEl.dataset.action === "open-admin-calendar") {
-          openAdminCalendar(actionEl.dataset.id);
+          await openAdminCalendar(actionEl.dataset.id);
           return;
         }
 
