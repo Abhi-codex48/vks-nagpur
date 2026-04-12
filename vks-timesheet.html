@@ -421,6 +421,75 @@ button {
   transform: none;
 }
 
+.btn.is-loading {
+  pointer-events: none;
+}
+
+.btn-spinner {
+  width: 15px;
+  height: 15px;
+  display: inline-block;
+  flex: 0 0 15px;
+  border: 2px solid rgba(255, 255, 255, 0.28);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: btnSpin 0.8s linear infinite;
+}
+
+.btn-outline .btn-spinner,
+.btn-ghost .btn-spinner {
+  border-color: rgba(15, 23, 42, 0.18);
+  border-top-color: currentColor;
+}
+
+@keyframes btnSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.action-status {
+  margin-top: 12px;
+}
+
+.action-status[hidden] {
+  display: none !important;
+}
+
+.busy-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(15, 23, 42, 0.18);
+  backdrop-filter: blur(4px);
+}
+
+.busy-overlay-card {
+  min-width: min(92vw, 320px);
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  padding: 20px 24px;
+  border-radius: 14px;
+  border: 1px solid rgba(203, 213, 225, 0.82);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.16);
+  text-align: center;
+}
+
+.busy-overlay-spinner {
+  width: 26px;
+  height: 26px;
+  border: 3px solid rgba(15, 118, 110, 0.16);
+  border-top-color: #0f766e;
+  border-radius: 50%;
+  animation: btnSpin 0.8s linear infinite;
+}
+
 .btn-primary {
   color: var(--white);
   background: linear-gradient(135deg, #c18d18, #a97710);
@@ -2922,6 +2991,13 @@ button.summary-card.clickable {
 <body>
   <div id="toast-root" class="toast-root" aria-live="polite" aria-atomic="true"></div>
   <div id="modal-root" class="modal-root" hidden></div>
+  <div id="busy-overlay" class="busy-overlay" hidden>
+    <div class="busy-overlay-card">
+      <span class="busy-overlay-spinner" aria-hidden="true"></span>
+      <strong id="busy-overlay-title">Working...</strong>
+      <div id="busy-overlay-copy" class="subline">Please wait.</div>
+    </div>
+  </div>
 
   <section id="screen-login" class="screen active">
     <div class="login-wrap">
@@ -3161,6 +3237,7 @@ button.summary-card.clickable {
             </label>
 
             <div id="single-entry-error" class="message error" role="alert"></div>
+            <div id="entry-last-saved" class="message success action-status" role="status" hidden></div>
             <div class="hub-card">
               <strong>Save For Later</strong>
               <div class="subline">This draft is saved on this local browser/device only. It is not sent to the database and is not visible to admin unless you submit it.</div>
@@ -3169,7 +3246,7 @@ button.summary-card.clickable {
               <button id="single-save-draft" class="btn btn-outline" type="button">Save For Later</button>
               <button id="single-load-draft" class="btn btn-outline" type="button">Load Draft</button>
               <button id="single-delete-draft" class="btn btn-ghost" type="button">Delete Saved Draft</button>
-              <button class="btn btn-primary" type="submit">Submit single entry</button>
+              <button id="single-submit" class="btn btn-primary" type="submit">Submit single entry</button>
             </div>
           </form>
         </div>
@@ -3763,6 +3840,9 @@ button.summary-card.clickable {
       lastHistoryKey: "",
       liveRefreshTimer: null,
       liveRefreshBusy: false,
+      singleSubmitBusy: false,
+      myEntriesLoaded: false,
+      myEntriesLoadedAt: 0,
       modalCleanups: [],
       pinBuffer: "",
       entryDraftTasks: [],
@@ -3810,6 +3890,116 @@ button.summary-card.clickable {
       el.textContent = message;
       root.appendChild(el);
       setTimeout(() => el.remove(), 3200);
+    }
+
+    function setBusyOverlay(active, title = "Working...", copy = "Please wait.") {
+      const root = byId("busy-overlay");
+      if (!root) return;
+      root.hidden = !active;
+      const titleHost = byId("busy-overlay-title");
+      const copyHost = byId("busy-overlay-copy");
+      if (titleHost) titleHost.textContent = title || "Working...";
+      if (copyHost) copyHost.textContent = copy || "Please wait.";
+    }
+
+    function setEntryLastSaved(message = "") {
+      const host = byId("entry-last-saved");
+      if (!host) return;
+      host.hidden = !message;
+      host.textContent = message || "";
+    }
+
+    function normalizeCompareText(value) {
+      return String(value || "").trim().toLowerCase().replace(/\s+/g, " ");
+    }
+
+    function normalizeListKey(list) {
+      return uniq((list || []).map((item) => normalizeCompareText(item)).filter(Boolean)).sort().join("|");
+    }
+
+    function normalizeHoursValue(value) {
+      return Number(Number(value || 0).toFixed(2));
+    }
+
+    function simpleHash(value) {
+      const text = String(value || "");
+      let hash = 0;
+      for (let i = 0; i < text.length; i += 1) {
+        hash = ((hash << 5) - hash) + text.charCodeAt(i);
+        hash |= 0;
+      }
+      return Math.abs(hash).toString(36);
+    }
+
+    function submitLockKey(kind, signature) {
+      return `vks-submit:${state.user?.uid || "anon"}:${kind}:${simpleHash(signature)}`;
+    }
+
+    function claimSubmitAttempt(kind, signature) {
+      const key = submitLockKey(kind, signature);
+      const now = Date.now();
+      try {
+        const raw = sessionStorage.getItem(key);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && Number(parsed.expiresAt || 0) > now) {
+            return { ok: false, key, status: parsed.status || "pending" };
+          }
+        }
+        sessionStorage.setItem(key, JSON.stringify({
+          status: "pending",
+          expiresAt: now + 45000
+        }));
+      } catch (_error) {
+        // no-op
+      }
+      return { ok: true, key, status: "pending" };
+    }
+
+    function completeSubmitAttempt(key) {
+      if (!key) return;
+      try {
+        sessionStorage.setItem(key, JSON.stringify({
+          status: "success",
+          expiresAt: Date.now() + 120000
+        }));
+      } catch (_error) {
+        // no-op
+      }
+    }
+
+    function releaseSubmitAttempt(key) {
+      if (!key) return;
+      try {
+        sessionStorage.removeItem(key);
+      } catch (_error) {
+        // no-op
+      }
+    }
+
+    function duplicateBlockMessage(status) {
+      return status === "success"
+        ? "This same submission was just saved. Check My Timesheet before sending it again."
+        : "This submission is already in progress. Please wait.";
+    }
+
+    function setButtonBusy(button, isBusy, loadingText) {
+      if (!button) return;
+      if (!button.dataset.defaultLabel) button.dataset.defaultLabel = button.textContent.trim() || "";
+      button.disabled = !!isBusy;
+      button.classList.toggle("is-loading", !!isBusy);
+      button.setAttribute("aria-busy", isBusy ? "true" : "false");
+      button.innerHTML = isBusy
+        ? `<span class="btn-spinner" aria-hidden="true"></span><span>${safe(loadingText || "Working...")}</span>`
+        : `<span>${safe(button.dataset.defaultLabel)}</span>`;
+    }
+
+    function setSingleSubmitBusy(isBusy) {
+      state.singleSubmitBusy = !!isBusy;
+      const button = byId("single-submit");
+      if (!button) return;
+      if (!button.dataset.defaultLabel) button.dataset.defaultLabel = "Submit single entry";
+      setButtonBusy(button, !!isBusy, "Submitting...");
     }
 
     function switchScreen(id, options = {}) {
@@ -4584,7 +4774,11 @@ button.summary-card.clickable {
       await signOut(auth).catch(() => {});
       state.user = null;
       state.profile = null;
+      state.myEntries = [];
+      state.myEntriesLoaded = false;
+      state.myEntriesLoadedAt = 0;
       state.pinBuffer = "";
+      setEntryLastSaved("");
       byId("login-error").textContent = "";
       switchScreen("screen-login", { historyMode: "replace" });
     }
@@ -5319,8 +5513,179 @@ button.summary-card.clickable {
       return normalizeAnyRecord(snap, collectionName);
     }
 
+    async function getMyEntriesSnapshot(forceRefresh = false) {
+      if (state.myEntriesLoaded && !forceRefresh && (Date.now() - Number(state.myEntriesLoadedAt || 0)) < 60000) return [...state.myEntries];
+      await finalizePendingGroupEntries(false);
+      const [singles, bulks, groups] = await Promise.all([
+        fetchSinglesByUid(state.user?.uid || ""),
+        fetchBulksByUid(state.user?.uid || ""),
+        fetchGroupsByUid(state.user?.uid || "")
+      ]);
+      const entries = [
+        ...singles,
+        ...bulks,
+        ...groups.filter((record) => (record.status === "active" && visibleMemberIds(record).includes(state.user?.uid || "")) || (record.status === "pending" && memberIdList(record).includes(state.user?.uid || "")))
+      ].sort(sortRecords);
+      state.myEntries = entries;
+      state.myEntriesLoaded = true;
+      state.myEntriesLoadedAt = Date.now();
+      return [...entries];
+    }
+
+    async function getEntriesSnapshotForUid(uid) {
+      if (!uid) return [];
+      const [singles, bulks, groups] = await Promise.all([
+        fetchSinglesByUid(uid),
+        fetchBulksByUid(uid),
+        fetchGroupsByUid(uid)
+      ]);
+      return [
+        ...singles,
+        ...bulks,
+        ...groups.filter((record) => (record.status === "active" && visibleMemberIds(record).includes(uid)) || (record.status === "pending" && memberIdList(record).includes(uid)))
+      ].sort(sortRecords);
+    }
+
+    function signatureForSingle(values) {
+      return JSON.stringify({
+        date: values.date || "",
+        client: normalizeCompareText(values.client),
+        tasks: normalizeListKey(values.tasks),
+        hours: normalizeHoursValue(values.hours),
+        remarks: normalizeCompareText(values.remarks)
+      });
+    }
+
+    function signatureForBulk(values) {
+      return JSON.stringify({
+        from: values.from || "",
+        to: values.to || "",
+        dates: uniq(values.dates || []).sort().join("|"),
+        clients: normalizeListKey(values.clients),
+        tasks: normalizeListKey(values.tasks),
+        hours: normalizeHoursValue(values.hours),
+        remarks: normalizeCompareText(values.remarks)
+      });
+    }
+
+    function signatureForGroup(values) {
+      const memberParts = Object.entries(values.memberEntries || {})
+        .sort(([a], [b]) => String(a).localeCompare(String(b)))
+        .map(([id, entry]) => [
+          id,
+          normalizeCompareText(entry?.remarks),
+          Object.entries(entry?.dailyHours || {}).sort(([a], [b]) => String(a).localeCompare(String(b))).map(([date, hours]) => `${date}:${normalizeHoursValue(hours)}`).join("|")
+        ].join("::"));
+      return JSON.stringify({
+        mode: values.mode || "single",
+        from: values.from || "",
+        to: values.to || "",
+        dates: uniq(values.dates || []).sort().join("|"),
+        client: normalizeCompareText(values.client),
+        tasks: normalizeListKey(values.tasks),
+        members: uniq(values.memberIds || []).sort().join("|"),
+        memberEntries: memberParts.join("||")
+      });
+    }
+
+    function recordOverlapDates(record, uid) {
+      if (!record) return [];
+      if (record.entryKind === "group") {
+        const entry = userEntryForGroup(record, uid || state.user?.uid || "");
+        const hoursMap = entry?.dailyHours || {};
+        return Object.keys(hoursMap).filter(Boolean);
+      }
+      return recordDates(record);
+    }
+
+    async function findExactSingleDuplicate(values) {
+      const entries = await getMyEntriesSnapshot();
+      const target = signatureForSingle(values);
+      return entries.find((record) => record.entryKind === "single" && signatureForSingle({
+        date: record.date,
+        client: clientLabel(record),
+        tasks: normalizeTaskList(record),
+        hours: record.hours,
+        remarks: record.remarks
+      }) === target) || null;
+    }
+
+    async function findExactBulkDuplicate(values) {
+      const entries = await getMyEntriesSnapshot();
+      const target = signatureForBulk(values);
+      return entries.find((record) => record.entryKind === "bulk" && signatureForBulk({
+        from: record.bulkFrom,
+        to: record.bulkTo,
+        dates: recordDates(record),
+        clients: normalizeClientList(record),
+        tasks: normalizeTaskList(record),
+        hours: record.hours,
+        remarks: record.remarks
+      }) === target) || null;
+    }
+
+    async function findExactGroupDuplicate(values) {
+      const entries = await getMyEntriesSnapshot();
+      const target = signatureForGroup(values);
+      return entries.find((record) => record.entryKind === "group" && record.creatorUid === (state.user?.uid || "") && signatureForGroup({
+        mode: record.groupMode || "single",
+        from: record.bulkFrom || "",
+        to: record.bulkTo || "",
+        dates: recordDates(record),
+        client: clientLabel(record),
+        tasks: normalizeTaskList(record),
+        memberIds: memberIdList(record),
+        memberEntries: record.memberEntries || {}
+      }) === target) || null;
+    }
+
+    async function detectBulkOverlap(values) {
+      const entries = await getMyEntriesSnapshot();
+      const wanted = new Set(values.dates || []);
+      const overlaps = [];
+      entries.forEach((record) => {
+        if (record.entryKind === "group" && record.status !== "active" && record.status !== "pending") return;
+        const matchingDates = recordOverlapDates(record, state.user?.uid || "").filter((date) => wanted.has(date));
+        if (matchingDates.length) {
+          overlaps.push(`${displayDate(record)} | ${clientLabel(record)}`);
+        }
+      });
+      return uniq(overlaps).slice(0, 5);
+    }
+
+    async function detectGroupOverlap(values) {
+      const memberIds = uniq(values.memberIds || []).filter(Boolean);
+      const wanted = new Set(values.dates || []);
+      const overlaps = [];
+      const buckets = await Promise.all(memberIds.map(async (uid) => ({ uid, entries: await getEntriesSnapshotForUid(uid) })));
+      buckets.forEach(({ uid, entries }) => {
+        const user = lookupUser(uid) || values.memberNames?.find?.((item) => item?.id === uid) || {};
+        entries.forEach((record) => {
+          const matchingDates = recordOverlapDates(record, uid).filter((date) => wanted.has(date));
+          if (matchingDates.length) {
+            overlaps.push(`${user.name || user.email || uid} | ${displayDate(record)} | ${clientLabel(record)}`);
+          }
+        });
+      });
+      return uniq(overlaps).slice(0, 8);
+    }
+
     function recordKey(record) {
       return `${record.collection}:${record.id}`;
+    }
+
+    function upsertMyEntryCache(record) {
+      if (!record?.id) return;
+      const next = [...(state.myEntries || [])];
+      const index = next.findIndex((item) => recordKey(item) === recordKey(record));
+      if (index >= 0) {
+        next[index] = record;
+      } else {
+        next.push(record);
+      }
+      state.myEntries = next.sort(sortRecords);
+      state.myEntriesLoaded = true;
+      state.myEntriesLoadedAt = Date.now();
     }
 
     async function writeUserAudit(action, detail) {
@@ -6148,17 +6513,7 @@ button.summary-card.clickable {
     }
 
     async function loadMyEntries() {
-      await finalizePendingGroupEntries(false);
-      const [singles, bulks, groups] = await Promise.all([
-        fetchSinglesByUid(state.user?.uid || ""),
-        fetchBulksByUid(state.user?.uid || ""),
-        fetchGroupsByUid(state.user?.uid || "")
-      ]);
-      state.myEntries = [
-        ...singles,
-        ...bulks,
-        ...groups.filter((record) => (record.status === "active" && visibleMemberIds(record).includes(state.user?.uid || "")) || (record.status === "pending" && memberIdList(record).includes(state.user?.uid || "")))
-      ].sort(sortRecords);
+      state.myEntries = await getMyEntriesSnapshot(true);
       state.selectedMy = new Set(getSelectedMyRecords().map((record) => recordKey(record)));
       renderMyTable();
     }
@@ -6975,59 +7330,119 @@ button.summary-card.clickable {
 
     async function submitSingleEntry(event) {
       event.preventDefault();
-      const date = byId("entry-date")?.value || "";
-      const hours = Number(byId("entry-hours")?.value || 0);
-      const remarks = String(byId("entry-remarks")?.value || "").trim();
-      const chosenClient = String(byId("entry-client")?.value || "").trim();
-      const typedClient = String(byId("entry-client-search")?.value || "").trim();
-      const otherClient = String(byId("entry-client-other")?.value || "").trim();
-      const client = otherClient || chosenClient || typedClient;
+      if (state.singleSubmitBusy) return;
       const error = byId("single-entry-error");
       if (error) error.textContent = "";
+      setSingleSubmitBusy(true);
+      let submitted = false;
+      let submitClaim = null;
+      try {
+        const date = byId("entry-date")?.value || "";
+        const hours = Number(byId("entry-hours")?.value || 0);
+        const remarks = String(byId("entry-remarks")?.value || "").trim();
+        const chosenClient = String(byId("entry-client")?.value || "").trim();
+        const typedClient = String(byId("entry-client-search")?.value || "").trim();
+        const otherClient = String(byId("entry-client-other")?.value || "").trim();
+        const client = otherClient || chosenClient || typedClient;
 
-      if (!date || date > todayStr()) return error && (error.textContent = "Select a valid date.");
-      if (!(hours > 0)) return error && (error.textContent = "Enter valid hours.");
-      if (!client) return error && (error.textContent = "Select or type a client name.");
-      if (!state.entryDraftTasks.length) return error && (error.textContent = "Select at least one work type.");
-      if (remarks.length < 100) return error && (error.textContent = "Remarks must be at least 100 characters.");
+        if (!date || date > todayStr()) {
+          if (error) error.textContent = "Select a valid date.";
+          return;
+        }
+        if (!(hours > 0)) {
+          if (error) error.textContent = "Enter valid hours.";
+          return;
+        }
+        if (!client) {
+          if (error) error.textContent = "Select or type a client name.";
+          return;
+        }
+        if (!state.entryDraftTasks.length) {
+          if (error) error.textContent = "Select at least one work type.";
+          return;
+        }
+        if (remarks.length < 100) {
+          if (error) error.textContent = "Remarks must be at least 100 characters.";
+          return;
+        }
 
-      const payload = withOwnershipAliases({
-        name: profileName(),
-        email: profileEmail(),
-        role: state.profile?.role || "Employee / Professional",
-        department: state.profile?.department || "",
-        date,
-        client,
-        clients: [client],
-        taskList: [...state.entryDraftTasks],
-        task: state.entryDraftTasks.join(", "),
-        hours: Number(hours.toFixed(2)),
-        remarks,
-        createdAt: Timestamp.now(),
-        updatedAt: Timestamp.now()
-      });
+        const duplicateValues = {
+          date,
+          client,
+          tasks: [...state.entryDraftTasks],
+          hours,
+          remarks
+        };
+        const duplicateRecord = await findExactSingleDuplicate(duplicateValues);
+        if (duplicateRecord && !window.confirm(`A very similar single entry already exists for ${displayDate(duplicateRecord)} and ${clientLabel(duplicateRecord)}.\n\nSubmit anyway?`)) {
+          if (error) error.textContent = "Similar entry already exists. Review My Timesheet before submitting again.";
+          return;
+        }
 
-      const ref = await addDoc(collection(db, "entries"), payload);
-      const record = normalizeSingleDoc({ id: ref.id, ...payload });
-      await addTrail(record, "Submitted", "Single entry created");
-      await writeLog({
-        action: `${profileName()} submitted a time entry`,
-        actorName: profileName(),
-        actorEmail: profileEmail(),
-        type: "entry",
-        detail: `${client} | ${state.entryDraftTasks.join(", ")} | ${hours}h`,
-        detailAdmin: `${date} | ${client}`
-      });
-      await writeUserAudit("Submitted entry", `${displayDate(record)} | ${client}`);
-      deleteLocalDraft("single");
+        const submitSignature = signatureForSingle(duplicateValues);
+        submitClaim = claimSubmitAttempt("single", submitSignature);
+        if (!submitClaim.ok) {
+          if (error) error.textContent = duplicateBlockMessage(submitClaim.status);
+          toast(duplicateBlockMessage(submitClaim.status), "warn");
+          return;
+        }
 
-      byId("single-entry-form")?.reset();
-      byId("entry-date").value = todayStr();
-      state.entryDraftTasks = [];
-      renderEntryTaskChips();
-      updateEntryRemarkCount();
-      toast("Entry submitted.", "success");
-      await refreshCurrentPage();
+        const payload = withOwnershipAliases({
+          name: profileName(),
+          email: profileEmail(),
+          role: state.profile?.role || "Employee / Professional",
+          department: state.profile?.department || "",
+          date,
+          client,
+          clients: [client],
+          taskList: [...state.entryDraftTasks],
+          task: state.entryDraftTasks.join(", "),
+          hours: Number(hours.toFixed(2)),
+          remarks,
+          clientSubmitHash: simpleHash(submitSignature),
+          clientSubmitAtMs: Date.now(),
+          createdAt: Timestamp.now(),
+          updatedAt: Timestamp.now()
+        });
+
+        const ref = await addDoc(collection(db, "entries"), payload);
+        const record = normalizeSingleDoc({ id: ref.id, ...payload });
+        await addTrail(record, "Submitted", "Single entry created");
+        await writeLog({
+          action: `${profileName()} submitted a time entry`,
+          actorName: profileName(),
+          actorEmail: profileEmail(),
+          type: "entry",
+          detail: `${client} | ${state.entryDraftTasks.join(", ")} | ${hours}h`,
+          detailAdmin: `${date} | ${client}`
+        });
+        await writeUserAudit("Submitted entry", `${displayDate(record)} | ${client}`);
+        deleteLocalDraft("single");
+        upsertMyEntryCache(record);
+
+        byId("single-entry-form")?.reset();
+        byId("entry-date").value = todayStr();
+        state.entryDraftTasks = [];
+        renderEntryTaskChips();
+        updateEntryRemarkCount();
+        submitted = true;
+        completeSubmitAttempt(submitClaim?.key);
+        setEntryLastSaved(`Last saved: Single entry for ${formatDate(date)} at ${timeOnlyText(Date.now())}`);
+        toast("Entry submitted.", "success");
+        try {
+          await refreshCurrentPage();
+        } catch (_refreshError) {
+          toast("Entry was submitted, but the page could not refresh. Use Refresh once.", "warn");
+        }
+      } catch (_error) {
+        if (!submitted) {
+          releaseSubmitAttempt(submitClaim?.key);
+          if (error && !error.textContent) error.textContent = "Could not submit the entry right now. Please try again.";
+          toast("Could not submit the entry right now.", "error");
+        }
+      } finally {
+        setSingleSubmitBusy(false);
+      }
     }
 
     function openTrailModal(collectionName, id) {
@@ -7307,41 +7722,46 @@ button.summary-card.clickable {
           if (stateLocal.confirmText !== "DELETE") return toast('Type DELETE to confirm.', "warn");
           stateLocal.running = true;
           renderStep();
-          let successCount = 0;
-          let failureCount = 0;
-          for (const record of records) {
-            try {
-              await recycleRecord(record, stateLocal.reason.trim(), "admin", {
-                batchId: stateLocal.batchId,
-                scopeSummary,
-                backupFileName: stateLocal.backupFileName,
-                deleteFlow: "admin_bulk",
-                skipAudit: true,
-                skipLog: true,
-                trailDetail: `Reason: ${stateLocal.reason.trim()} | Bulk delete batch: ${stateLocal.batchId}`
-              });
-              successCount += 1;
-            } catch (_error) {
-              failureCount += 1;
+          setBusyOverlay(true, "Moving entries to Recycle Bin...", "Please wait while the visible records are processed.");
+          try {
+            let successCount = 0;
+            let failureCount = 0;
+            for (const record of records) {
+              try {
+                await recycleRecord(record, stateLocal.reason.trim(), "admin", {
+                  batchId: stateLocal.batchId,
+                  scopeSummary,
+                  backupFileName: stateLocal.backupFileName,
+                  deleteFlow: "admin_bulk",
+                  skipAudit: true,
+                  skipLog: true,
+                  trailDetail: `Reason: ${stateLocal.reason.trim()} | Bulk delete batch: ${stateLocal.batchId}`
+                });
+                successCount += 1;
+              } catch (_error) {
+                failureCount += 1;
+              }
             }
+            await writeLog({
+              action: `${profileName()} bulk deleted visible entries`,
+              actorName: profileName(),
+              actorEmail: profileEmail(),
+              type: "admin_delete",
+              detail: `${successCount} of ${records.length} visible record(s) moved to Recycle Bin | Reason: ${stateLocal.reason.trim()}`,
+              detailAdmin: `Batch: ${stateLocal.batchId} | Backup: ${stateLocal.backupFileName} | Scope: ${scopeSummary}${failureCount ? ` | Failed: ${failureCount}` : ""}`
+            });
+            await writeUserAudit("Bulk deleted visible entries", `${successCount}/${records.length} | ${stateLocal.batchId} | ${stateLocal.reason.trim()}`);
+            closeModal();
+            toast(
+              failureCount
+                ? `${successCount} record(s) moved to Recycle Bin. ${failureCount} failed and should be reviewed.`
+                : "Visible entries moved to Recycle Bin.",
+              failureCount ? "warn" : "success"
+            );
+            await refreshCurrentPage();
+          } finally {
+            setBusyOverlay(false);
           }
-          await writeLog({
-            action: `${profileName()} bulk deleted visible entries`,
-            actorName: profileName(),
-            actorEmail: profileEmail(),
-            type: "admin_delete",
-            detail: `${successCount} of ${records.length} visible record(s) moved to Recycle Bin | Reason: ${stateLocal.reason.trim()}`,
-            detailAdmin: `Batch: ${stateLocal.batchId} | Backup: ${stateLocal.backupFileName} | Scope: ${scopeSummary}${failureCount ? ` | Failed: ${failureCount}` : ""}`
-          });
-          await writeUserAudit("Bulk deleted visible entries", `${successCount}/${records.length} | ${stateLocal.batchId} | ${stateLocal.reason.trim()}`);
-          closeModal();
-          toast(
-            failureCount
-              ? `${successCount} record(s) moved to Recycle Bin. ${failureCount} failed and should be reviewed.`
-              : "Visible entries moved to Recycle Bin.",
-            failureCount ? "warn" : "success"
-          );
-          await refreshCurrentPage();
         }
       };
 
@@ -7448,7 +7868,14 @@ button.summary-card.clickable {
           `
         );
         byId("edit-cancel")?.addEventListener("click", closeModal);
+        let saving = false;
         byId("edit-save")?.addEventListener("click", async () => {
+          if (saving) return;
+          saving = true;
+          setButtonBusy(byId("edit-save"), true, "Saving...");
+          const cancelButton = byId("edit-cancel");
+          if (cancelButton) cancelButton.disabled = true;
+          try {
           let client = sharedClient;
           let tasks = [...sharedTasks];
           if (canEditShared) {
@@ -7499,6 +7926,15 @@ button.summary-card.clickable {
             lastEditedByUid: state.user?.uid || "",
             lastEditedBy: profileName()
           });
+          upsertMyEntryCache({
+            ...record,
+            client,
+            clients: [client],
+            taskList: tasks,
+            task: tasks.join(", "),
+            memberEntries,
+            updatedAt: Timestamp.now()
+          });
           await addTrail(record, "Edited", canEditShared ? "Group entry updated" : "Member section updated");
           await writeLog({
             action: `${profileName()} edited group entry`,
@@ -7511,6 +7947,11 @@ button.summary-card.clickable {
           closeModal();
           toast("Group entry updated.", "success");
           await refreshCurrentPage();
+          } finally {
+            saving = false;
+            setButtonBusy(byId("edit-save"), false);
+            if (cancelButton) cancelButton.disabled = false;
+          }
         });
         return;
       }
@@ -7532,7 +7973,14 @@ button.summary-card.clickable {
         `
       );
       byId("edit-cancel")?.addEventListener("click", closeModal);
+      let saving = false;
       byId("edit-save")?.addEventListener("click", async () => {
+        if (saving) return;
+        saving = true;
+        setButtonBusy(byId("edit-save"), true, "Saving...");
+        const cancelButton = byId("edit-cancel");
+        if (cancelButton) cancelButton.disabled = true;
+        try {
         const tasks = uniq(String(byId("edit-tasks")?.value || "").split("|").map((item) => item.trim()).filter(Boolean));
         const clients = uniq(String(byId("edit-clients")?.value || "").split(",").map((item) => item.trim()).filter(Boolean));
         const remarks = String(byId("edit-remarks")?.value || "").trim();
@@ -7545,6 +7993,7 @@ button.summary-card.clickable {
         if (record.entryKind === "single") {
           const date = byId("edit-date")?.value || "";
           if (!date || date > todayStr()) return toast("Select a valid date.", "warn");
+          const updatedAt = Timestamp.now();
           await updateDoc(doc(db, "entries", record.id), {
             date,
             client: clients[0],
@@ -7553,15 +8002,27 @@ button.summary-card.clickable {
             task: tasks.join(", "),
             hours: Number(hours.toFixed(2)),
             remarks,
-            updatedAt: Timestamp.now(),
+            updatedAt,
             lastEditedByUid: state.user?.uid || "",
             lastEditedBy: profileName()
+          });
+          upsertMyEntryCache({
+            ...record,
+            date,
+            client: clients[0],
+            clients,
+            taskList: tasks,
+            task: tasks.join(", "),
+            hours: Number(hours.toFixed(2)),
+            remarks,
+            updatedAt
           });
         } else {
           const dailyHours = {};
           dates.forEach((date) => {
             dailyHours[date] = Number(hours.toFixed(2));
           });
+          const updatedAt = Timestamp.now();
           await updateDoc(doc(db, "bulk_entries", record.id), {
             client: clients[0],
             clients,
@@ -7571,20 +8032,37 @@ button.summary-card.clickable {
             dailyHours,
             totalHours: Number(totalHoursFromMap(dailyHours).toFixed(2)),
             remarks,
-            updatedAt: Timestamp.now(),
+            updatedAt,
             lastEditedByUid: state.user?.uid || "",
             lastEditedBy: profileName()
+          });
+          upsertMyEntryCache({
+            ...record,
+            client: clients[0],
+            clients,
+            taskList: tasks,
+            task: tasks.join(", "),
+            hours: Number(hours.toFixed(2)),
+            dailyHours,
+            totalHours: Number(totalHoursFromMap(dailyHours).toFixed(2)),
+            remarks,
+            updatedAt
           });
         }
         await addTrail(record, "Edited", "Record updated");
         closeModal();
         toast("Entry updated.", "success");
         await refreshCurrentPage();
+        } finally {
+          saving = false;
+          setButtonBusy(byId("edit-save"), false);
+          if (cancelButton) cancelButton.disabled = false;
+        }
       });
     }
 
     function openBulkEntryModal() {
-      const modalState = { clients: [], tasks: [], manualExcluded: new Set(), activeDates: [] };
+      const modalState = { clients: [], tasks: [], manualExcluded: new Set(), activeDates: [], submitting: false };
       openModal(
         "Bulk / Range Entry",
         "Bulk entry is only for more than one day. Use single entry for a one-day report.",
@@ -7705,6 +8183,15 @@ button.summary-card.clickable {
         toast(hadDraft ? "Saved bulk-entry draft deleted from this device." : "No saved bulk-entry draft found on this device.", "warn");
       };
 
+      const setBulkSubmitting = (isBusy) => {
+        modalState.submitting = !!isBusy;
+        setButtonBusy(byId("bulk-save"), !!isBusy, "Submitting...");
+        ["bulk-cancel", "bulk-save-draft", "bulk-load-draft", "bulk-delete-draft"].forEach((id) => {
+          const button = byId(id);
+          if (button) button.disabled = !!isBusy;
+        });
+      };
+
       byId("bulk-client-input")?.addEventListener("input", renderBulkClientSuggestions);
       byId("bulk-client-input")?.addEventListener("focus", renderBulkClientSuggestions);
       setSuggestionInput("bulk-client-input", "bulk-client-suggestions");
@@ -7722,60 +8209,103 @@ button.summary-card.clickable {
       byId("bulk-delete-draft")?.addEventListener("click", deleteBulkDraft);
       byId("bulk-cancel")?.addEventListener("click", closeModal);
       byId("bulk-save")?.addEventListener("click", async () => {
-        const from = byId("bulk-from")?.value || "";
-        const to = byId("bulk-to")?.value || "";
-        const includeSunday = byId("bulk-mode")?.value === "yes";
-        const remarks = String(byId("bulk-remarks")?.value || "").trim();
-        const hours = Number(byId("bulk-hours")?.value || 0);
-        const typedClient = String(byId("bulk-client-input")?.value || "").trim();
-        if (typedClient && !modalState.clients.includes(typedClient)) modalState.clients.push(typedClient);
-        if (!from || !to || from > to) return toast("Select a valid date range.", "warn");
-        if (from === to) return toast("Bulk entry is only for more than one day. Use single entry for one date.", "warn");
-        if (to > todayStr()) return toast("Future dates are not allowed.", "warn");
-        if (!modalState.clients.length) return toast("Add at least one client.", "warn");
-        if (!modalState.tasks.length) return toast("Add at least one work type.", "warn");
-        if (!(hours > 0)) return toast("Enter valid hours.", "warn");
-        if (remarks.length < 100) return toast("Remarks must be at least 100 characters.", "warn");
+        if (modalState.submitting) return;
+        setBulkSubmitting(true);
+        let submitted = false;
+        let submitClaim = null;
+        try {
+          const from = byId("bulk-from")?.value || "";
+          const to = byId("bulk-to")?.value || "";
+          const includeSunday = byId("bulk-mode")?.value === "yes";
+          const remarks = String(byId("bulk-remarks")?.value || "").trim();
+          const hours = Number(byId("bulk-hours")?.value || 0);
+          const typedClient = String(byId("bulk-client-input")?.value || "").trim();
+          if (typedClient && !modalState.clients.includes(typedClient)) modalState.clients.push(typedClient);
+          if (!from || !to || from > to) return toast("Select a valid date range.", "warn");
+          if (from === to) return toast("Bulk entry is only for more than one day. Use single entry for one date.", "warn");
+          if (to > todayStr()) return toast("Future dates are not allowed.", "warn");
+          if (!modalState.clients.length) return toast("Add at least one client.", "warn");
+          if (!modalState.tasks.length) return toast("Add at least one work type.", "warn");
+          if (!(hours > 0)) return toast("Enter valid hours.", "warn");
+          if (remarks.length < 100) return toast("Remarks must be at least 100 characters.", "warn");
 
-        syncBulkDates();
-        const dates = [...modalState.activeDates];
-        if (dates.length < 2) return toast("Bulk entry must still cover more than one day after exclusions.", "warn");
-        const dailyHours = {};
-        dates.forEach((date) => {
-          dailyHours[date] = Number(hours.toFixed(2));
-        });
-        const payload = withOwnershipAliases({
-          name: profileName(),
-          email: profileEmail(),
-          role: state.profile?.role || "Employee / Professional",
-          department: state.profile?.department || "",
-          dates,
-          daysCount: dates.length,
-          bulkFrom: from,
-          bulkTo: to,
-          clients: [...modalState.clients],
-          client: modalState.clients[0],
-          taskList: [...modalState.tasks],
-          task: modalState.tasks.join(", "),
-          weekendOpt: includeSunday ? "yes" : "no-sun",
-          manualExcludedDates: [...modalState.manualExcluded],
-          dailyHours,
-          totalHours: Number(totalHoursFromMap(dailyHours).toFixed(2)),
-          hours: Number(hours.toFixed(2)),
-          remarks,
-          entryType: "bulk",
-          createdAt: Timestamp.now(),
-          updatedAt: Timestamp.now()
-        });
-        const ref = await addDoc(collection(db, "bulk_entries"), payload);
-        const record = normalizeBulkDoc({ id: ref.id, ...payload });
-        await addTrail(record, "Submitted", "Bulk entry created");
-        await writeLog({ action: `${profileName()} submitted bulk entry`, actorName: profileName(), actorEmail: profileEmail(), type: "entry", detail: `${from} to ${to} | ${modalState.clients.join(", ")}` });
-        await writeUserAudit("Submitted bulk entry", `${displayDate(record)} | ${modalState.clients.join(", ")}`);
-        deleteLocalDraft("bulk");
-        closeModal();
-        toast("Bulk entry submitted.", "success");
-        await refreshCurrentPage();
+          syncBulkDates();
+          const dates = [...modalState.activeDates];
+          if (dates.length < 2) return toast("Bulk entry must still cover more than one day after exclusions.", "warn");
+          const integrityValues = {
+            from,
+            to,
+            dates,
+            clients: [...modalState.clients],
+            tasks: [...modalState.tasks],
+            hours,
+            remarks
+          };
+          const duplicateRecord = await findExactBulkDuplicate(integrityValues);
+          if (duplicateRecord && !window.confirm(`A very similar bulk entry already exists for ${displayDate(duplicateRecord)}.\n\nSubmit anyway?`)) {
+            return toast("Similar bulk entry already exists. Review My Timesheet before submitting again.", "warn");
+          }
+          const overlaps = await detectBulkOverlap({ dates });
+          if (overlaps.length && !window.confirm(`Some selected dates already have reporting in your timesheet.\n\n${overlaps.join("\n")}\n\nSubmit anyway?`)) {
+            return toast("Bulk entry paused. Review the overlapping dates first.", "warn");
+          }
+          const submitSignature = signatureForBulk(integrityValues);
+          submitClaim = claimSubmitAttempt("bulk", submitSignature);
+          if (!submitClaim.ok) return toast(duplicateBlockMessage(submitClaim.status), "warn");
+          const dailyHours = {};
+          dates.forEach((date) => {
+            dailyHours[date] = Number(hours.toFixed(2));
+          });
+          const payload = withOwnershipAliases({
+            name: profileName(),
+            email: profileEmail(),
+            role: state.profile?.role || "Employee / Professional",
+            department: state.profile?.department || "",
+            dates,
+            daysCount: dates.length,
+            bulkFrom: from,
+            bulkTo: to,
+            clients: [...modalState.clients],
+            client: modalState.clients[0],
+            taskList: [...modalState.tasks],
+            task: modalState.tasks.join(", "),
+            weekendOpt: includeSunday ? "yes" : "no-sun",
+            manualExcludedDates: [...modalState.manualExcluded],
+            dailyHours,
+            totalHours: Number(totalHoursFromMap(dailyHours).toFixed(2)),
+            hours: Number(hours.toFixed(2)),
+            remarks,
+            clientSubmitHash: simpleHash(submitSignature),
+            clientSubmitAtMs: Date.now(),
+            entryType: "bulk",
+            createdAt: Timestamp.now(),
+            updatedAt: Timestamp.now()
+          });
+          const ref = await addDoc(collection(db, "bulk_entries"), payload);
+          const record = normalizeBulkDoc({ id: ref.id, ...payload });
+          await addTrail(record, "Submitted", "Bulk entry created");
+          await writeLog({ action: `${profileName()} submitted bulk entry`, actorName: profileName(), actorEmail: profileEmail(), type: "entry", detail: `${from} to ${to} | ${modalState.clients.join(", ")}` });
+          await writeUserAudit("Submitted bulk entry", `${displayDate(record)} | ${modalState.clients.join(", ")}`);
+          deleteLocalDraft("bulk");
+          upsertMyEntryCache(record);
+          submitted = true;
+          completeSubmitAttempt(submitClaim?.key);
+          setEntryLastSaved(`Last saved: Bulk entry for ${displayDate(record)} at ${timeOnlyText(Date.now())}`);
+          closeModal();
+          toast("Bulk entry submitted.", "success");
+          try {
+            await refreshCurrentPage();
+          } catch (_refreshError) {
+            toast("Bulk entry was submitted, but the page could not refresh. Use Refresh once.", "warn");
+          }
+        } catch (_error) {
+          if (!submitted) {
+            releaseSubmitAttempt(submitClaim?.key);
+            toast("Could not submit the bulk entry right now.", "error");
+          }
+        } finally {
+          setBulkSubmitting(false);
+        }
       });
 
       const modalRoot = byId("modal-root");
@@ -7821,7 +8351,8 @@ button.summary-card.clickable {
         selectedTasks: [],
         selectedClient: "",
         memberDrafts: {},
-        manualExcluded: new Set()
+        manualExcluded: new Set(),
+        submitting: false
       };
       openModal(
         "Group Reporting",
@@ -8040,6 +8571,15 @@ button.summary-card.clickable {
         toast(hadDraft ? "Saved group-report draft deleted from this device." : "No saved group-report draft found on this device.", "warn");
       };
 
+      const setGroupSubmitting = (isBusy) => {
+        modalState.submitting = !!isBusy;
+        setButtonBusy(byId("group-save"), !!isBusy, "Submitting...");
+        ["group-cancel", "group-save-draft", "group-load-draft", "group-delete-draft"].forEach((id) => {
+          const button = byId(id);
+          if (button) button.disabled = !!isBusy;
+        });
+      };
+
       const renderGroupUserSuggestions = async () => {
         await ensureLookups();
         const input = byId("group-user-input");
@@ -8083,95 +8623,141 @@ button.summary-card.clickable {
       byId("group-delete-draft")?.addEventListener("click", deleteGroupDraft);
       byId("group-cancel")?.addEventListener("click", closeModal);
       byId("group-save")?.addEventListener("click", async () => {
-        const typedClient = String(byId("group-client-input")?.value || "").trim();
-        if (typedClient) modalState.selectedClient = typedClient;
-        if (!modalState.selectedUsers.length) return toast("Add at least one other user.", "warn");
-        if (!modalState.selectedClient) return toast("Select one shared client.", "warn");
-        if (!modalState.selectedTasks.length) return toast("Add at least one work type.", "warn");
+        if (modalState.submitting) return;
+        setGroupSubmitting(true);
+        let submitted = false;
+        let submitClaim = null;
+        try {
+          const typedClient = String(byId("group-client-input")?.value || "").trim();
+          if (typedClient) modalState.selectedClient = typedClient;
+          if (!modalState.selectedUsers.length) return toast("Add at least one other user.", "warn");
+          if (!modalState.selectedClient) return toast("Select one shared client.", "warn");
+          if (!modalState.selectedTasks.length) return toast("Add at least one work type.", "warn");
 
-        const today = todayStr();
-        let dates = [];
-        let from = "";
-        let to = "";
-        let includeSunday = false;
-        if (modalState.mode === "single") {
-          const date = byId("group-date")?.value || "";
-          if (!date || date > today) return toast("Select a valid date.", "warn");
-          dates = [date];
-          from = date;
-          to = date;
-        } else {
-          from = byId("group-from")?.value || "";
-          to = byId("group-to")?.value || "";
-          includeSunday = byId("group-weekend")?.value === "yes";
-          if (!from || !to || from > to) return toast("Select a valid date range.", "warn");
-          if (from === to) return toast("Bulk-days group reporting is only for more than one day.", "warn");
-          if (to > today) return toast("Future dates are not allowed.", "warn");
-          dates = currentGroupDates();
-          if (dates.length < 2) return toast("Group bulk-days entry must still cover more than one day after exclusions.", "warn");
-        }
-
-        syncMemberDrafts();
-        const members = allGroupMembers();
-        const memberEntries = {};
-        for (const member of members) {
-          const draft = modalState.memberDrafts[member.id] || { dailyHours: {}, remarks: "" };
-          const remarks = String(draft.remarks || "").trim();
-          if (remarks.length < 100) return toast(`Remarks for ${member.name} must be at least 100 characters.`, "warn");
-          const dailyHours = {};
-          for (const date of dates) {
-            const hours = Number(draft.dailyHours?.[date] || 0);
-            if (!(hours > 0)) return toast(`Enter hours for ${member.name} on ${formatDate(date)}.`, "warn");
-            dailyHours[date] = Number(hours.toFixed(2));
+          const today = todayStr();
+          let dates = [];
+          let from = "";
+          let to = "";
+          let includeSunday = false;
+          if (modalState.mode === "single") {
+            const date = byId("group-date")?.value || "";
+            if (!date || date > today) return toast("Select a valid date.", "warn");
+            dates = [date];
+            from = date;
+            to = date;
+          } else {
+            from = byId("group-from")?.value || "";
+            to = byId("group-to")?.value || "";
+            includeSunday = byId("group-weekend")?.value === "yes";
+            if (!from || !to || from > to) return toast("Select a valid date range.", "warn");
+            if (from === to) return toast("Bulk-days group reporting is only for more than one day.", "warn");
+            if (to > today) return toast("Future dates are not allowed.", "warn");
+            dates = currentGroupDates();
+            if (dates.length < 2) return toast("Group bulk-days entry must still cover more than one day after exclusions.", "warn");
           }
-          memberEntries[member.id] = {
-            name: member.name,
-            email: member.email || "",
-            remarks,
-            dailyHours,
-            totalHours: Number(totalHoursFromMap(dailyHours).toFixed(2))
-          };
-        }
 
-        const payload = withOwnershipAliases({
-          creatorUid: state.user?.uid || "",
-          creatorName: profileName(),
-          creatorEmail: profileEmail(),
-          creatorRole: state.profile?.role || "Employee / Professional",
-          name: profileName(),
-          email: profileEmail(),
-          role: state.profile?.role || "Employee / Professional",
-          memberIds: members.map((member) => member.id),
-          memberNames: members,
-          memberEntries,
-          pendingUserIds: modalState.selectedUsers.map((user) => user.id),
-          approvedUserIds: [],
-          rejectedUserIds: [],
-          visibleMemberIds: members.map((member) => member.id),
-          dates,
-          daysCount: dates.length,
-          bulkFrom: from,
-          bulkTo: to,
-          clients: [modalState.selectedClient],
-          client: modalState.selectedClient,
-          taskList: [...modalState.selectedTasks],
-          task: modalState.selectedTasks.join(", "),
-          groupMode: modalState.mode,
-          weekendOpt: includeSunday ? "yes" : "no-sun",
-          manualExcludedDates: modalState.mode === "range" ? [...modalState.manualExcluded] : [],
-          status: "pending",
-          expiresAtMs: Date.now() + (30 * 60 * 1000),
-          createdAt: Timestamp.now(),
-          updatedAt: Timestamp.now()
-        });
-        const ref = await addDoc(collection(db, "group_entries"), payload);
-        const record = normalizeGroupDoc({ id: ref.id, ...payload });
-        await addTrail(record, "Submitted", modalState.mode === "range" ? "Bulk-days group entry created and sent for approvals" : "Group entry created and sent for approvals");
-        await writeUserAudit("Submitted group entry", `${displayDate(record)} | ${modalState.selectedClient}`);
-        deleteLocalDraft("group");
-        closeModal();
-        toast("Group entry sent for approval.", "success");
-        await refreshCurrentPage();
+          syncMemberDrafts();
+          const members = allGroupMembers();
+          const memberEntries = {};
+          for (const member of members) {
+            const draft = modalState.memberDrafts[member.id] || { dailyHours: {}, remarks: "" };
+            const remarks = String(draft.remarks || "").trim();
+            if (remarks.length < 100) return toast(`Remarks for ${member.name} must be at least 100 characters.`, "warn");
+            const dailyHours = {};
+            for (const date of dates) {
+              const hours = Number(draft.dailyHours?.[date] || 0);
+              if (!(hours > 0)) return toast(`Enter hours for ${member.name} on ${formatDate(date)}.`, "warn");
+              dailyHours[date] = Number(hours.toFixed(2));
+            }
+            memberEntries[member.id] = {
+              name: member.name,
+              email: member.email || "",
+              remarks,
+              dailyHours,
+              totalHours: Number(totalHoursFromMap(dailyHours).toFixed(2))
+            };
+          }
+
+          const integrityValues = {
+            mode: modalState.mode,
+            from,
+            to,
+            dates,
+            client: modalState.selectedClient,
+            tasks: [...modalState.selectedTasks],
+            memberIds: members.map((member) => member.id),
+            memberNames: members,
+            memberEntries
+          };
+          const duplicateRecord = await findExactGroupDuplicate(integrityValues);
+          if (duplicateRecord && !window.confirm(`A very similar group report already exists for ${displayDate(duplicateRecord)} and ${clientLabel(duplicateRecord)}.\n\nSubmit anyway?`)) {
+            return toast("Similar group entry already exists. Review pending or active group reports first.", "warn");
+          }
+          const overlaps = await detectGroupOverlap(integrityValues);
+          if (overlaps.length && !window.confirm(`Some selected dates already have reporting for one or more group members.\n\n${overlaps.join("\n")}\n\nSubmit anyway?`)) {
+            return toast("Group entry paused. Review the overlapping dates first.", "warn");
+          }
+          const submitSignature = signatureForGroup(integrityValues);
+          submitClaim = claimSubmitAttempt("group", submitSignature);
+          if (!submitClaim.ok) return toast(duplicateBlockMessage(submitClaim.status), "warn");
+
+          const payload = withOwnershipAliases({
+            creatorUid: state.user?.uid || "",
+            creatorName: profileName(),
+            creatorEmail: profileEmail(),
+            creatorRole: state.profile?.role || "Employee / Professional",
+            name: profileName(),
+            email: profileEmail(),
+            role: state.profile?.role || "Employee / Professional",
+            memberIds: members.map((member) => member.id),
+            memberNames: members,
+            memberEntries,
+            pendingUserIds: modalState.selectedUsers.map((user) => user.id),
+            approvedUserIds: [],
+            rejectedUserIds: [],
+            visibleMemberIds: members.map((member) => member.id),
+            dates,
+            daysCount: dates.length,
+            bulkFrom: from,
+            bulkTo: to,
+            clients: [modalState.selectedClient],
+            client: modalState.selectedClient,
+            taskList: [...modalState.selectedTasks],
+            task: modalState.selectedTasks.join(", "),
+            groupMode: modalState.mode,
+            weekendOpt: includeSunday ? "yes" : "no-sun",
+            manualExcludedDates: modalState.mode === "range" ? [...modalState.manualExcluded] : [],
+            clientSubmitHash: simpleHash(submitSignature),
+            clientSubmitAtMs: Date.now(),
+            status: "pending",
+            expiresAtMs: Date.now() + (30 * 60 * 1000),
+            createdAt: Timestamp.now(),
+            updatedAt: Timestamp.now()
+          });
+          const ref = await addDoc(collection(db, "group_entries"), payload);
+          const record = normalizeGroupDoc({ id: ref.id, ...payload });
+          await addTrail(record, "Submitted", modalState.mode === "range" ? "Bulk-days group entry created and sent for approvals" : "Group entry created and sent for approvals");
+          await writeUserAudit("Submitted group entry", `${displayDate(record)} | ${modalState.selectedClient}`);
+          deleteLocalDraft("group");
+          upsertMyEntryCache(record);
+          submitted = true;
+          completeSubmitAttempt(submitClaim?.key);
+          setEntryLastSaved(`Last saved: Group entry for ${displayDate(record)} at ${timeOnlyText(Date.now())}`);
+          closeModal();
+          toast("Group entry sent for approval.", "success");
+          try {
+            await refreshCurrentPage();
+          } catch (_refreshError) {
+            toast("Group entry was submitted, but the page could not refresh. Use Refresh once.", "warn");
+          }
+        } catch (_error) {
+          if (!submitted) {
+            releaseSubmitAttempt(submitClaim?.key);
+            toast("Could not submit the group entry right now.", "error");
+          }
+        } finally {
+          setGroupSubmitting(false);
+        }
       });
 
       renderGroupBits();
@@ -8335,29 +8921,41 @@ button.summary-card.clickable {
         `
       );
       byId("reject-cancel")?.addEventListener("click", closeModal);
+      let rejecting = false;
       byId("reject-confirm")?.addEventListener("click", async () => {
+        if (rejecting) return;
         if (String(byId("reject-confirm-text")?.value || "").trim() !== "REJECT") {
           toast("Type REJECT to confirm.", "warn");
           return;
         }
+        rejecting = true;
+        setButtonBusy(byId("reject-confirm"), true, "Rejecting...");
+        const cancelButton = byId("reject-cancel");
+        if (cancelButton) cancelButton.disabled = true;
         const reason = String(byId("reject-reason")?.value || "").trim();
-        for (const id of uniqueIds) {
-          await deleteDoc(doc(db, "users", id));
+        try {
+          for (const id of uniqueIds) {
+            await deleteDoc(doc(db, "users", id));
+          }
+          await writeLog({
+            action: `${profileName()} rejected registration(s)`,
+            actorName: profileName(),
+            actorEmail: profileEmail(),
+            type: "approval",
+            detail: `${uniqueIds.length} registration(s) rejected`,
+            detailAdmin: `UIDs: ${uniqueIds.join(", ")}${reason ? ` | Reason: ${reason}` : ""}`
+          });
+          uniqueIds.forEach((id) => delete state.pendingRoleDrafts[id]);
+          state.selectedPendingUsers.clear();
+          closeModal();
+          toast("Registration(s) rejected.", "warn");
+          await loadApprovals();
+          await loadEmployeesPage();
+        } finally {
+          rejecting = false;
+          setButtonBusy(byId("reject-confirm"), false);
+          if (cancelButton) cancelButton.disabled = false;
         }
-        await writeLog({
-          action: `${profileName()} rejected registration(s)`,
-          actorName: profileName(),
-          actorEmail: profileEmail(),
-          type: "approval",
-          detail: `${uniqueIds.length} registration(s) rejected`,
-          detailAdmin: `UIDs: ${uniqueIds.join(", ")}${reason ? ` | Reason: ${reason}` : ""}`
-        });
-        uniqueIds.forEach((id) => delete state.pendingRoleDrafts[id]);
-        state.selectedPendingUsers.clear();
-        closeModal();
-        toast("Registration(s) rejected.", "warn");
-        await loadApprovals();
-        await loadEmployeesPage();
       });
     }
 
@@ -8465,36 +9063,53 @@ button.summary-card.clickable {
         `
       );
       byId("remove-user-cancel")?.addEventListener("click", closeModal);
+      let removing = false;
       byId("remove-user-submit")?.addEventListener("click", async () => {
+        if (removing) return;
         if (String(byId("remove-user-confirm")?.value || "").trim() !== "REMOVE") {
           toast("Type REMOVE to confirm.", "warn");
           return;
         }
-        await deleteDoc(doc(db, "users", id));
-        await writeLog({
-          action: `${profileName()} removed a user`,
-          actorName: profileName(),
-          actorEmail: profileEmail(),
-          type: "user",
-          detail: `${user.name || user.email || id}`,
-          detailAdmin: id
-        });
-        closeModal();
-        toast("Employee / article removed.", "warn");
-        await loadApprovals();
-        await loadEmployeesPage();
+        removing = true;
+        setButtonBusy(byId("remove-user-submit"), true, "Removing...");
+        const cancelButton = byId("remove-user-cancel");
+        if (cancelButton) cancelButton.disabled = true;
+        try {
+          await deleteDoc(doc(db, "users", id));
+          await writeLog({
+            action: `${profileName()} removed a user`,
+            actorName: profileName(),
+            actorEmail: profileEmail(),
+            type: "user",
+            detail: `${user.name || user.email || id}`,
+            detailAdmin: id
+          });
+          closeModal();
+          toast("Employee / article removed.", "warn");
+          await loadApprovals();
+          await loadEmployeesPage();
+        } finally {
+          removing = false;
+          setButtonBusy(byId("remove-user-submit"), false);
+          if (cancelButton) cancelButton.disabled = false;
+        }
       });
     }
 
     async function restoreSelectedRecycleItems() {
       const ids = [...state.selectedRecycle];
       if (!ids.length) return toast("Select at least one recycle-bin item.", "warn");
-      for (const id of ids) {
-        await restoreDeletedRecord(id);
+      setBusyOverlay(true, "Restoring recycle-bin items...", "Please wait while the selected records are restored.");
+      try {
+        for (const id of ids) {
+          await restoreDeletedRecord(id);
+        }
+        state.selectedRecycle.clear();
+        toast("Selected recycle-bin items restored.", "success");
+        await loadLogsPage();
+      } finally {
+        setBusyOverlay(false);
       }
-      state.selectedRecycle.clear();
-      toast("Selected recycle-bin items restored.", "success");
-      await loadLogsPage();
     }
 
     function openBulkPurgeRecycleModal() {
@@ -8521,18 +9136,32 @@ button.summary-card.clickable {
         `
       );
       byId("purge-recycle-cancel")?.addEventListener("click", closeModal);
+      let purging = false;
       byId("purge-recycle-submit")?.addEventListener("click", async () => {
+        if (purging) return;
         if (String(byId("purge-recycle-confirm")?.value || "").trim() !== "PURGE") {
           toast("Type PURGE to confirm.", "warn");
           return;
         }
-        for (const id of ids) {
-          await purgeDeletedRecord(id);
+        purging = true;
+        setButtonBusy(byId("purge-recycle-submit"), true, "Purging...");
+        const cancelButton = byId("purge-recycle-cancel");
+        if (cancelButton) cancelButton.disabled = true;
+        setBusyOverlay(true, "Purging recycle-bin items...", "This permanently removes the selected records.");
+        try {
+          for (const id of ids) {
+            await purgeDeletedRecord(id);
+          }
+          state.selectedRecycle.clear();
+          closeModal();
+          toast("Selected recycle-bin items purged.", "warn");
+          await loadLogsPage();
+        } finally {
+          purging = false;
+          setButtonBusy(byId("purge-recycle-submit"), false);
+          if (cancelButton) cancelButton.disabled = false;
+          setBusyOverlay(false);
         }
-        state.selectedRecycle.clear();
-        closeModal();
-        toast("Selected recycle-bin items purged.", "warn");
-        await loadLogsPage();
       });
     }
 
@@ -8546,13 +9175,20 @@ button.summary-card.clickable {
             <label class="field"><span>Email</span><input id="employee-create-email" type="email" placeholder="work email"></label>
             <label class="field"><span>Role</span><select id="employee-create-role">${ROLE_OPTIONS.filter((role) => role !== "Admin").map((role) => `<option value="${safe(role)}">${safe(role)}</option>`).join("")}</select></label>
             <label class="field"><span>Department</span><select id="employee-create-department">${DEPARTMENT_OPTIONS.map((item) => `<option value="${safe(item)}">${safe(item)}</option>`).join("")}</select></label>
-            <div class="button-row"><button class="btn btn-ghost" id="employee-create-cancel" type="button">Cancel</button><button class="btn btn-primary" type="submit">Create</button></div>
+            <div class="button-row"><button class="btn btn-ghost" id="employee-create-cancel" type="button">Cancel</button><button id="employee-create-submit" class="btn btn-primary" type="submit">Create</button></div>
           </form>
         `
       );
       byId("employee-create-cancel")?.addEventListener("click", closeModal);
+      let creating = false;
       byId("employee-create-form")?.addEventListener("submit", async (event) => {
         event.preventDefault();
+        if (creating) return;
+        creating = true;
+        setButtonBusy(byId("employee-create-submit"), true, "Creating...");
+        const cancelButton = byId("employee-create-cancel");
+        if (cancelButton) cancelButton.disabled = true;
+        try {
         const name = String(byId("employee-create-name")?.value || "").trim();
         const email = String(byId("employee-create-email")?.value || "").trim().toLowerCase();
         const role = byId("employee-create-role")?.value || "CA Article";
@@ -8582,6 +9218,11 @@ button.summary-card.clickable {
         closeModal();
         toast("Employee / article created.", "success");
         await loadEmployeesPage();
+        } finally {
+          creating = false;
+          setButtonBusy(byId("employee-create-submit"), false);
+          if (cancelButton) cancelButton.disabled = false;
+        }
       });
     }
 
@@ -8625,13 +9266,21 @@ button.summary-card.clickable {
         }
       });
 
+      let importing = false;
       byId("employee-import-submit")?.addEventListener("click", async () => {
+        if (importing) return;
         const error = byId("employee-import-error");
         if (error) error.textContent = "";
         if (!parsedRows.length) {
           if (error) error.textContent = "No data loaded.";
           return;
         }
+        importing = true;
+        setButtonBusy(byId("employee-import-submit"), true, "Importing...");
+        const cancelButton = byId("employee-import-cancel");
+        if (cancelButton) cancelButton.disabled = true;
+        setBusyOverlay(true, "Importing employees / articles...", "Please wait while the file is processed.");
+        try {
         await ensureLookups(true);
         const existingByEmail = new Map(state.employees.map((user) => [String(user.email || "").trim().toLowerCase(), user]));
         let added = 0;
@@ -8689,6 +9338,12 @@ button.summary-card.clickable {
         closeModal();
         toast(`Employees / articles imported. Added: ${added}, updated: ${updated}, skipped: ${skipped}.`, "success");
         await loadEmployeesPage();
+        } finally {
+          importing = false;
+          setButtonBusy(byId("employee-import-submit"), false);
+          if (cancelButton) cancelButton.disabled = false;
+          setBusyOverlay(false);
+        }
       });
     }
 
@@ -8699,13 +9354,20 @@ button.summary-card.clickable {
         `
           <form id="client-form" class="field-stack">
             <label class="field"><span>Client Name</span><input id="client-form-name" type="text" value="${safe(clientDoc?.name || "")}" placeholder="Client name"></label>
-            <div class="button-row"><button class="btn btn-ghost" id="client-form-cancel" type="button">Cancel</button><button class="btn btn-primary" type="submit">${clientDoc ? "Save" : "Add"} Client</button></div>
+            <div class="button-row"><button class="btn btn-ghost" id="client-form-cancel" type="button">Cancel</button><button id="client-form-submit" class="btn btn-primary" type="submit">${clientDoc ? "Save" : "Add"} Client</button></div>
           </form>
         `
       );
       byId("client-form-cancel")?.addEventListener("click", closeModal);
+      let saving = false;
       byId("client-form")?.addEventListener("submit", async (event) => {
         event.preventDefault();
+        if (saving) return;
+        saving = true;
+        setButtonBusy(byId("client-form-submit"), true, clientDoc ? "Saving..." : "Adding...");
+        const cancelButton = byId("client-form-cancel");
+        if (cancelButton) cancelButton.disabled = true;
+        try {
         const name = String(byId("client-form-name")?.value || "").trim();
         if (!name) return toast("Client name is required.", "warn");
         if (clientDoc) {
@@ -8724,6 +9386,11 @@ button.summary-card.clickable {
         closeModal();
         toast(clientDoc ? "Client updated." : "Client added.", "success");
         await loadClientsPage();
+        } finally {
+          saving = false;
+          setButtonBusy(byId("client-form-submit"), false);
+          if (cancelButton) cancelButton.disabled = false;
+        }
       });
     }
 
@@ -8775,13 +9442,21 @@ button.summary-card.clickable {
         }
       });
 
+      let importing = false;
       byId("client-import-submit")?.addEventListener("click", async () => {
+        if (importing) return;
         const error = byId("client-import-error");
         if (error) error.textContent = "";
         if (!parsedNames.length) {
           if (error) error.textContent = "No data loaded.";
           return;
         }
+        importing = true;
+        setButtonBusy(byId("client-import-submit"), true, "Importing...");
+        const cancelButton = byId("client-import-cancel");
+        if (cancelButton) cancelButton.disabled = true;
+        setBusyOverlay(true, "Importing clients...", "Please wait while the file is processed.");
+        try {
         await ensureLookups(true);
         const existing = new Set(state.clientDocs.map((client) => String(client.name || "").trim().toLowerCase()));
         let added = 0;
@@ -8812,6 +9487,12 @@ button.summary-card.clickable {
         closeModal();
         toast(`Clients imported. Added: ${added}, skipped: ${skipped}.`, "success");
         await loadClientsPage();
+        } finally {
+          importing = false;
+          setButtonBusy(byId("client-import-submit"), false);
+          if (cancelButton) cancelButton.disabled = false;
+          setBusyOverlay(false);
+        }
       });
     }
 
