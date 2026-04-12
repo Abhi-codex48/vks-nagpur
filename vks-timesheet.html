@@ -609,6 +609,46 @@ button {
   flex-wrap: wrap;
   line-height: 1.5;
 }
+.hrmin-wrap {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--white);
+  overflow: hidden;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.hrmin-wrap:focus-within {
+  border-color: rgba(190,142,27,0.7);
+  box-shadow: 0 0 0 4px rgba(190,142,27,0.12);
+}
+.hrmin-wrap input[type="number"] {
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: transparent;
+  width: 64px;
+  padding: 13px 6px 13px 14px;
+  text-align: right;
+  appearance: textfield;
+  -moz-appearance: textfield;
+  outline: none;
+}
+.hrmin-wrap input[type="number"]::-webkit-inner-spin-button,
+.hrmin-wrap input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.hrmin-unit {
+  padding: 13px 14px 13px 2px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.hrmin-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--line);
+  flex-shrink: 0;
+}
 
 .pin-card {
   text-align: center;
@@ -1257,14 +1297,42 @@ button.summary-card.clickable {
 
 .calendar-shell {
   display: grid;
-  gap: 14px;
+  gap: 16px;
 }
 
 .calendar-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 14px 16px;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(241, 245, 249, 0.92));
+}
+
+.calendar-title-block {
+  display: grid;
+  gap: 4px;
+  min-width: 220px;
+  flex: 1 1 240px;
+}
+
+.calendar-title-block strong {
+  font-size: 1.02rem;
+  color: #1f2937;
+}
+
+.calendar-nav-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.calendar-nav-actions .btn {
+  min-width: 0;
 }
 
 .calendar-grid {
@@ -1291,48 +1359,139 @@ button.summary-card.clickable {
 }
 
 .calendar-day {
-  min-height: 72px;
-  padding: 10px 8px;
-  border: 1px solid var(--line);
-  background: var(--white);
+  min-height: 86px;
+  padding: 12px 8px;
+  border: 1px solid #d9e2ec;
+  background: linear-gradient(180deg, #ffffff, #f8fafc);
   display: grid;
   align-content: start;
   justify-items: center;
-  gap: 4px;
+  gap: 6px;
   font-size: 0.82rem;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.calendar-day strong {
+  font-size: 1rem;
+  color: #243142;
+}
+
+.calendar-day:not(.other):not(.future):not(.prejoin):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
 }
 
 .calendar-day.weekend {
-  background: rgba(244, 236, 223, 0.75);
+  background: linear-gradient(180deg, #f8fafc, #eef2f7);
+  border-color: #d8dee8;
 }
 
 .calendar-day.reported {
-  background: rgba(75, 106, 74, 0.14);
-  border-color: rgba(75, 106, 74, 0.35);
+  background: linear-gradient(180deg, #ecfdf5, #d1fae5);
+  border-color: #22c55e;
 }
 
 .calendar-day.bulk {
-  background: rgba(190, 142, 27, 0.16);
-  border-color: rgba(190, 142, 27, 0.38);
+  background: linear-gradient(180deg, #fff7ed, #fed7aa);
+  border-color: #f59e0b;
 }
 
 .calendar-day.no-report {
-  background: rgba(183, 86, 43, 0.12);
-  border-color: rgba(183, 86, 43, 0.28);
+  background: linear-gradient(180deg, #fff1f2, #fecdd3);
+  border-color: #ef4444;
 }
 
 .calendar-day.today {
-  box-shadow: inset 0 0 0 2px var(--ink);
+  box-shadow: inset 0 0 0 2px #0f766e, 0 8px 18px rgba(15, 118, 110, 0.14);
+  border-color: #0f766e;
 }
 
 .calendar-day.future,
 .calendar-day.other {
-  opacity: 0.46;
+  opacity: 0.58;
+  background: #f8fafc;
+  border-style: dashed;
+}
+
+.calendar-day.prejoin {
+  opacity: 0.5;
+  background: #f8fafc;
+  border-style: dashed;
 }
 
 .calendar-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 999px;
   font-size: 0.68rem;
-  color: var(--muted);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #475569;
+  background: rgba(226, 232, 240, 0.9);
+}
+
+.calendar-dot.reported {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.calendar-dot.bulk {
+  background: #ffedd5;
+  color: #b45309;
+}
+
+.calendar-dot.no-report {
+  background: #ffe4e6;
+  color: #be123c;
+}
+
+.calendar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.calendar-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #475569;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.calendar-legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+}
+
+.calendar-legend-swatch.reported {
+  background: #22c55e;
+  border-color: #15803d;
+}
+
+.calendar-legend-swatch.bulk {
+  background: #f59e0b;
+  border-color: #b45309;
+}
+
+.calendar-legend-swatch.no-report {
+  background: #ef4444;
+  border-color: #b91c1c;
+}
+
+.calendar-legend-swatch.weekend {
+  background: #cbd5e1;
+  border-color: #94a3b8;
 }
 
 .type-pill.single {
@@ -2935,6 +3094,15 @@ button.summary-card.clickable {
     align-items: stretch;
   }
 
+  .calendar-nav-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .calendar-nav-actions .btn {
+    flex: 1 1 120px;
+  }
+
   .field.compact,
   .field.compact.grow,
   .grow {
@@ -3202,7 +3370,14 @@ button.summary-card.clickable {
               </label>
               <label class="field">
                 <span>Hours worked</span>
-                <input id="entry-hours" type="number" min="0.5" max="24" step="0.5" placeholder="3.5">
+                <div class="hrmin-wrap">
+                  <input id="entry-hours-h" type="number" min="0" max="23" placeholder="0" aria-label="Hours">
+                  <span class="hrmin-unit">hr</span>
+                  <span class="hrmin-divider"></span>
+                  <input id="entry-hours-m" type="number" min="0" max="59" placeholder="0" aria-label="Minutes">
+                  <span class="hrmin-unit">min</span>
+                </div>
+                <input id="entry-hours" type="hidden" value="">
               </label>
             </div>
 
@@ -3789,6 +3964,7 @@ button.summary-card.clickable {
       query,
       orderBy,
       limit,
+      startAfter,
       where,
       Timestamp
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -3919,6 +4095,42 @@ button.summary-card.clickable {
 
     function normalizeHoursValue(value) {
       return Number(Number(value || 0).toFixed(2));
+    }
+
+    function hrmToDecimal(h, m) {
+      const hours = Math.max(0, Math.min(23, parseInt(h, 10) || 0));
+      const mins  = Math.max(0, Math.min(59, parseInt(m, 10) || 0));
+      return Number((hours + mins / 60).toFixed(2));
+    }
+
+    function syncHrmHidden(hId, mId, hiddenId, root) {
+      const r = root || document;
+      const h = r.querySelector ? r.querySelector("#" + hId) : byId(hId);
+      const m = r.querySelector ? r.querySelector("#" + mId) : byId(mId);
+      const hidden = r.querySelector ? r.querySelector("#" + hiddenId) : byId(hiddenId);
+      if (!h || !m || !hidden) return;
+      const val = hrmToDecimal(h.value, m.value);
+      hidden.value = val > 0 ? String(val) : "";
+    }
+
+    function bindHrmPair(hId, mId, hiddenId, root) {
+      const sync = () => syncHrmHidden(hId, mId, hiddenId, root);
+      const r = root || document;
+      const h = r.querySelector ? r.querySelector("#" + hId) : byId(hId);
+      const m = r.querySelector ? r.querySelector("#" + mId) : byId(mId);
+      h?.addEventListener("input", sync);
+      m?.addEventListener("input", sync);
+      h?.addEventListener("change", sync);
+      m?.addEventListener("change", sync);
+    }
+
+    function fillHrmFromDecimal(hId, mId, decimalVal, root) {
+      const val = Number(decimalVal) || 0;
+      const r = root || document;
+      const hEl = r.querySelector ? r.querySelector("#" + hId) : byId(hId);
+      const mEl = r.querySelector ? r.querySelector("#" + mId) : byId(mId);
+      if (hEl) hEl.value = Math.floor(val) > 0 ? String(Math.floor(val)) : "";
+      if (mEl) mEl.value = Math.round((val % 1) * 60) > 0 ? String(Math.round((val % 1) * 60)) : "";
     }
 
     function simpleHash(value) {
@@ -4243,6 +4455,7 @@ button.summary-card.clickable {
       if (!draft || typeof draft !== "object") return;
       if (byId("entry-date")) byId("entry-date").value = String(draft.date || todayStr());
       if (byId("entry-hours")) byId("entry-hours").value = String(draft.hours || "");
+      fillHrmFromDecimal("entry-hours-h", "entry-hours-m", draft.hours || 0);
       if (byId("entry-client-search")) byId("entry-client-search").value = String(draft.clientSearch || "");
       if (byId("entry-client")) byId("entry-client").value = String(draft.clientHidden || "");
       if (byId("entry-client-other")) byId("entry-client-other").value = String(draft.clientOther || "");
@@ -6710,25 +6923,33 @@ button.summary-card.clickable {
         const isFuture = date > today;
         const afterJoin = !joinDate || date >= joinDate;
         const status = statuses[date] || "";
+        const missingWorkday = !status && !isFuture && !isWeekend && afterJoin;
+        const stateClass = status === "bulk"
+          ? "bulk"
+          : status === "reported"
+            ? "reported"
+            : missingWorkday
+              ? "no-report"
+              : "";
         const classes = [
           "calendar-day",
           isWeekend ? "weekend" : "",
           isToday ? "today" : "",
           isFuture ? "future" : "",
-          status,
-          !afterJoin ? "future" : ""
+          stateClass,
+          !afterJoin ? "prejoin" : ""
         ].filter(Boolean).join(" ");
         const note = status === "bulk"
           ? "Bulk"
           : status === "reported"
             ? "Reported"
-            : (!isFuture && !isWeekend && afterJoin)
+            : missingWorkday
               ? "No report"
               : "";
         cells.push(`
           <div class="${classes}">
             <strong>${day}</strong>
-            ${note ? `<div class="calendar-dot">${safe(note)}</div>` : ""}
+            ${note ? `<div class="calendar-dot ${stateClass}">${safe(note)}</div>` : ""}
           </div>
         `);
       }
@@ -6777,14 +6998,25 @@ button.summary-card.clickable {
       };
       openModal(
         "Employee / Article Reporting Calendar",
-        joinDate ? `Joined on ${formatDate(joinDate)}. Green = reported, gold = bulk, red = no report.` : "Green = reported, gold = bulk, red = no report.",
+        joinDate ? `Joined on ${formatDate(joinDate)}. Daily reporting history is color-coded below.` : "Daily reporting history is color-coded below.",
         `
           <div class="calendar-shell">
             <div class="calendar-head">
-              <button class="btn btn-outline small" id="calendar-prev" type="button">Previous</button>
-              <strong id="admin-calendar-title"></strong>
-              <button class="btn btn-outline small" id="calendar-refresh" type="button">Refresh</button>
-              <button class="btn btn-outline small" id="calendar-next" type="button">Next</button>
+              <div class="calendar-title-block">
+                <strong id="admin-calendar-title"></strong>
+                <div class="subline">${joinDate ? `Joined on ${formatDate(joinDate)}.` : "Review daily reporting history month by month."}</div>
+              </div>
+              <div class="calendar-nav-actions">
+                <button class="btn btn-outline small" id="calendar-prev" type="button">Previous</button>
+                <button class="btn btn-outline small" id="calendar-refresh" type="button">Refresh</button>
+                <button class="btn btn-outline small" id="calendar-next" type="button">Next</button>
+              </div>
+            </div>
+            <div class="calendar-legend">
+              <span class="calendar-legend-item"><span class="calendar-legend-swatch reported" aria-hidden="true"></span>Reported</span>
+              <span class="calendar-legend-item"><span class="calendar-legend-swatch bulk" aria-hidden="true"></span>Bulk report</span>
+              <span class="calendar-legend-item"><span class="calendar-legend-swatch no-report" aria-hidden="true"></span>No report</span>
+              <span class="calendar-legend-item"><span class="calendar-legend-swatch weekend" aria-hidden="true"></span>Weekend / inactive day</span>
             </div>
             <div class="selection-summary">
               <span>Available from Today's Summary and Employees / Articles</span>
@@ -7423,6 +7655,9 @@ button.summary-card.clickable {
         byId("single-entry-form")?.reset();
         byId("entry-date").value = todayStr();
         state.entryDraftTasks = [];
+        if (byId("entry-hours-h")) byId("entry-hours-h").value = "";
+        if (byId("entry-hours-m")) byId("entry-hours-m").value = "";
+        if (byId("entry-hours")) byId("entry-hours").value = "";
         renderEntryTaskChips();
         updateEntryRemarkCount();
         submitted = true;
@@ -7963,16 +8198,18 @@ button.summary-card.clickable {
         "Update the existing record and save it back to the same Firestore document.",
         `
           <div class="field-stack">
-            ${record.entryKind === "single" ? `<div class="grid two"><label class="field"><span>Date</span><input id="edit-date" type="date" value="${safe(dates[0] || "")}"></label><label class="field"><span>Hours</span><input id="edit-hours" type="number" min="0.5" max="24" step="0.5" value="${safe(String(record.hours || ""))}"></label></div>` : `<div class="hub-card"><strong>${safe(displayDate(record))}</strong><div class="subline">Edit covered dates using the same parent record.</div></div>`}
+            ${record.entryKind === "single" ? `<div class="grid two"><label class="field"><span>Date</span><input id="edit-date" type="date" value="${safe(dates[0] || "")}"></label><label class="field"><span>Hours worked</span><div class="hrmin-wrap"><input id="edit-hours-h" type="number" min="0" max="23" placeholder="0" value="${Math.floor(Number(record.hours||0))}"><span class="hrmin-unit">hr</span><span class="hrmin-divider"></span><input id="edit-hours-m" type="number" min="0" max="59" placeholder="0" value="${Math.round((Number(record.hours||0)%1)*60)}"><span class="hrmin-unit">min</span></div><input id="edit-hours" type="hidden" value="${safe(String(record.hours || ""))}"></label></div>` : `<div class="hub-card"><strong>${safe(displayDate(record))}</strong><div class="subline">Edit covered dates using the same parent record.</div></div>`}
             <label class="field"><span>Client${record.entryKind === "bulk" ? "(s)" : ""}</span><input id="edit-clients" type="text" value="${safe(initialClients.join(", "))}"></label>
             <label class="field"><span>Work types</span><input id="edit-tasks" type="text" value="${safe(initialTasks.join(" | "))}"></label>
             <label class="field"><span>Remarks</span><textarea id="edit-remarks" rows="5">${safe(record.remarks || "")}</textarea></label>
-            ${record.entryKind === "bulk" ? `<label class="field"><span>Hours Per Day</span><input id="edit-hours" type="number" min="0.5" max="24" step="0.5" value="${safe(String(record.hours || avgHoursFromMap(record.dailyHours || {}, dates) || ""))}"></label>` : ""}
+            ${record.entryKind === "bulk" ? `<label class="field"><span>Hours Per Day</span><div class="hrmin-wrap"><input id="edit-hours-h" type="number" min="0" max="23" placeholder="0" value="${Math.floor(Number(record.hours||avgHoursFromMap(record.dailyHours||{},dates)||0))}"><span class="hrmin-unit">hr</span><span class="hrmin-divider"></span><input id="edit-hours-m" type="number" min="0" max="59" placeholder="0" value="${Math.round((Number(record.hours||avgHoursFromMap(record.dailyHours||{},dates)||0)%1)*60)}"><span class="hrmin-unit">min</span></div><input id="edit-hours" type="hidden" value="${safe(String(record.hours || avgHoursFromMap(record.dailyHours || {}, dates) || ""))}"></label>` : ""}
             <div class="button-row"><button class="btn btn-ghost" id="edit-cancel" type="button">Cancel</button><button class="btn btn-primary" id="edit-save" type="button">Save</button></div>
           </div>
         `
       );
       byId("edit-cancel")?.addEventListener("click", closeModal);
+      bindHrmPair("edit-hours-h", "edit-hours-m", "edit-hours");
+      syncHrmHidden("edit-hours-h", "edit-hours-m", "edit-hours");
       let saving = false;
       byId("edit-save")?.addEventListener("click", async () => {
         if (saving) return;
@@ -8082,7 +8319,7 @@ button.summary-card.clickable {
               <div id="bulk-date-summary" class="selection-summary"></div>
               <div id="bulk-date-grid"></div>
             </div>
-            <label class="field"><span>Hours Per Day</span><input id="bulk-hours" type="number" min="0.5" max="24" step="0.5" placeholder="3.5"></label>
+            <label class="field"><span>Hours Per Day</span><div class="hrmin-wrap"><input id="bulk-hours-h" type="number" min="0" max="23" placeholder="0" aria-label="Hours"><span class="hrmin-unit">hr</span><span class="hrmin-divider"></span><input id="bulk-hours-m" type="number" min="0" max="59" placeholder="0" aria-label="Minutes"><span class="hrmin-unit">min</span></div><input id="bulk-hours" type="hidden" value=""></label>
             <label class="field"><span>Remarks</span><textarea id="bulk-remarks" rows="5" placeholder="Minimum 100 characters"></textarea></label>
             <div class="hub-card">
               <strong>Save For Later</strong>
@@ -8097,6 +8334,7 @@ button.summary-card.clickable {
           </div>
         `
       );
+      bindHrmPair("bulk-hours-h", "bulk-hours-m", "bulk-hours");
 
       const renderBulkChips = () => {
         byId("bulk-client-chips").innerHTML = modalState.clients.map((client) => `<span class="chip">${safe(client)}<button type="button" data-action="remove-bulk-client" data-value="${encodeURIComponent(client)}">x</button></span>`).join("");
@@ -8165,6 +8403,7 @@ button.summary-card.clickable {
         if (byId("bulk-mode")) byId("bulk-mode").value = String(draft.weekendMode || "no-sun");
         if (byId("bulk-client-input")) byId("bulk-client-input").value = String(draft.clientInput || "");
         if (byId("bulk-hours")) byId("bulk-hours").value = String(draft.hours || "");
+        fillHrmFromDecimal("bulk-hours-h", "bulk-hours-m", draft.hours || 0);
         if (byId("bulk-remarks")) byId("bulk-remarks").value = String(draft.remarks || "");
         modalState.clients = uniq(Array.isArray(draft.clients) ? draft.clients.map((item) => String(item || "").trim()).filter(Boolean) : []);
         modalState.tasks = uniq(Array.isArray(draft.tasks) ? draft.tasks.map((item) => String(item || "").trim()).filter(Boolean) : []);
@@ -9711,6 +9950,7 @@ button.summary-card.clickable {
                 <p>The portal blocks future dates everywhere. Drafts are for unfinished work on the current browser/device only.</p>
                 <div class="guide-step-list">
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>No future dates:</strong> reporting, filters, and edit panels all follow this rule.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Time entry:</strong> enter hours and minutes separately — type 6 in the hr box and 30 in the min box. The system converts automatically. No decimals needed.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Save for later:</strong> use draft buttons if the form is not ready yet.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Submit only when final:</strong> local draft data is not sent until you actually submit.</span></div>
                 </div>
@@ -9752,6 +9992,7 @@ button.summary-card.clickable {
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Search fast:</strong> My Timesheet, All Timesheets, Employees / Articles, Clients, and Logs all have search/filter controls.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Use quick actions:</strong> Today and Clear filters help you jump or reset instantly.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Export:</strong> use Excel export after confirming the list on screen is the list you want.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Client search:</strong> click the search box and suggestions appear. Use mouse click or keyboard arrow + Enter to pick a client from the list.</span></div>
                 </div>
               </article>
 
@@ -9799,6 +10040,38 @@ button.summary-card.clickable {
       );
     }
 
+    async function fetchRecentPublicLogs(hoursWindow = 48) {
+      const now = Date.now();
+      const cutoffMs = now - (hoursWindow * 60 * 60 * 1000);
+      const pageSize = 200;
+      const maxScan = 1200;
+      const results = [];
+      let scanned = 0;
+      let lastDoc = null;
+
+      while (scanned < maxScan) {
+        const parts = [collection(db, "logs"), orderBy("createdAt", "desc")];
+        if (lastDoc) parts.push(startAfter(lastDoc));
+        parts.push(limit(pageSize));
+        const snap = await getDocs(query(...parts));
+        if (snap.empty) break;
+
+        scanned += snap.docs.length;
+        lastDoc = snap.docs[snap.docs.length - 1];
+
+        const items = snap.docs.map((item) => ({ id: item.id, ...(item.data() || {}) }));
+        items.forEach((item) => {
+          const createdMs = tsMs(item.createdAt);
+          if (createdMs >= cutoffMs && isPublicSafeLog(item)) results.push(item);
+        });
+
+        const lastCreatedMs = tsMs(items[items.length - 1]?.createdAt);
+        if (!lastCreatedMs || lastCreatedMs < cutoffMs) break;
+      }
+
+      return results.sort((a, b) => tsMs(b.createdAt) - tsMs(a.createdAt));
+    }
+
     async function openPublicLog() {
       openModal(
         "Activity Log",
@@ -9810,11 +10083,7 @@ button.summary-card.clickable {
       if (!host) return;
 
       try {
-        const snap = await getDocs(query(collection(db, "logs"), orderBy("createdAt", "desc"), limit(200)));
-        const now = Date.now();
-        const logs = snap.docs
-          .map((item) => ({ id: item.id, ...(item.data() || {}) }))
-          .filter((item) => isPublicSafeLog(item) && (now - tsMs(item.createdAt)) <= (48 * 60 * 60 * 1000));
+        const logs = await fetchRecentPublicLogs(48);
 
         const grouped = logs.reduce((bucket, item) => {
           const dayKey = new Date(tsMs(item.createdAt)).toLocaleDateString("en-IN", {
@@ -9865,7 +10134,7 @@ button.summary-card.clickable {
       };
       const bindSuggestionClear = (inputId, hostId) => {
         bind(inputId, "blur", () => {
-          window.setTimeout(() => clearSuggestions(hostId), 150);
+          window.setTimeout(() => clearSuggestions(hostId), 250);
         });
       };
 
@@ -9895,6 +10164,7 @@ button.summary-card.clickable {
       bind("pin-delete", "click", deletePinDigit);
 
       bind("single-entry-form", "submit", submitSingleEntry);
+      bindHrmPair("entry-hours-h", "entry-hours-m", "entry-hours");
       bind("single-save-draft", "click", () => {
         const ok = saveLocalDraft("single", collectSingleDraft());
         toast(ok ? "Single-entry draft saved on this device." : "Could not save the draft on this device.", ok ? "success" : "error");
@@ -10032,6 +10302,9 @@ button.summary-card.clickable {
         button.addEventListener("click", () => addPinDigit(button.dataset.pin));
       });
 
+      document.addEventListener("mousedown", (e) => {
+        if (e.target.closest(".suggestion-list")) e.preventDefault();
+      });
       document.addEventListener("click", async (event) => {
         const pageButton = event.target.closest("[data-page]");
         const hubButton = event.target.closest("[data-hub]");
