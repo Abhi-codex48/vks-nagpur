@@ -1669,6 +1669,150 @@ button.summary-card.clickable {
   padding: 16px;
 }
 
+.hub-form-slab {
+  padding: 18px;
+  border: 1px solid rgba(15, 118, 110, 0.14);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(240,249,255,0.72));
+}
+
+.hub-toolbar {
+  margin-top: 8px;
+  margin-bottom: 14px;
+}
+
+.hub-card,
+.hub-form-slab {
+  box-shadow: 0 16px 30px rgba(15, 23, 42, 0.05);
+}
+
+.hub-card strong {
+  display: block;
+}
+
+.hub-card .subline + .subline {
+  margin-top: 6px;
+}
+
+.hub-dashboard-note {
+  display: grid;
+  gap: 8px;
+}
+
+.hub-dashboard-meta,
+.hub-tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.hub-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(248, 250, 252, 0.92);
+  color: #475569;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.hub-tag.work {
+  background: rgba(191, 219, 254, 0.28);
+  color: #1d4ed8;
+}
+
+.hub-tag.study {
+  background: rgba(220, 252, 231, 0.72);
+  color: #166534;
+}
+
+.hub-tag.warn {
+  background: rgba(255, 237, 213, 0.78);
+  color: #b45309;
+}
+
+.hub-tag.note {
+  background: rgba(224, 231, 255, 0.7);
+  color: #4338ca;
+}
+
+.hub-highlight-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.hub-highlight-card {
+  padding: 16px;
+  border: 1px solid rgba(15, 118, 110, 0.14);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(236,253,245,0.85), rgba(255,255,255,0.98));
+}
+
+.hub-progress-rail {
+  width: 100%;
+  height: 12px;
+  margin-top: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(226, 232, 240, 0.9);
+}
+
+.hub-progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #0f766e, #14b8a6);
+}
+
+.hub-progress-fill.study {
+  background: linear-gradient(90deg, #15803d, #22c55e);
+}
+
+.hub-progress-fill.warn {
+  background: linear-gradient(90deg, #d97706, #f59e0b);
+}
+
+.hub-record-card {
+  display: grid;
+  gap: 10px;
+  min-height: 100%;
+}
+
+.hub-record-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.hub-record-body {
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.hub-record-body strong {
+  color: var(--ink);
+}
+
+.hub-record-title {
+  display: grid;
+  gap: 4px;
+}
+
+.hub-mini-metric {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #0f766e;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -3426,7 +3570,7 @@ button.summary-card.clickable {
           </form>
         </div>
 
-        <div id="user-notification-panel" class="panel">
+        <div id="user-notification-panel" class="panel" hidden>
           <div class="panel-head">
             <div>
               <div class="panel-kicker">Employee / Article</div>
@@ -3455,6 +3599,7 @@ button.summary-card.clickable {
               <h3>My timesheet</h3>
             </div>
             <div class="panel-actions">
+              <button id="my-calendar" class="btn btn-outline" type="button">Calendar</button>
               <button id="my-export" class="btn btn-outline" type="button">Export Excel</button>
             </div>
           </div>
@@ -3831,91 +3976,186 @@ button.summary-card.clickable {
           </div>
 
           <div class="subtabbar" id="hub-tabs">
-            <button class="subtab active" data-hub="kb" type="button">Knowledge bank</button>
+            <button class="subtab active" data-hub="dashboard" type="button">Dashboard</button>
             <button class="subtab" data-hub="study" type="button">Study and work</button>
+            <button class="subtab" data-hub="kb" type="button">Knowledge bank</button>
             <button class="subtab" data-hub="cases" type="button">Case library</button>
-            <button class="subtab" data-hub="productivity" type="button">Productivity</button>
             <button class="subtab" data-hub="notes" type="button">Notes board</button>
+            <button class="subtab" data-hub="productivity" type="button">Productivity</button>
           </div>
 
-          <section id="hub-kb" class="hub-panel active">
-            <p class="section-note">Built from your own time entries only.</p>
+          <section id="hub-dashboard" class="hub-panel active">
+            <p class="section-note">Private work-study cockpit with today focus, subject progress, revision memory, and personal reminders.</p>
+            <div id="hub-dashboard-stats" class="stat-grid"></div>
+            <div class="grid two">
+              <div id="hub-dashboard-focus" class="hub-card empty-state">Loading dashboard.</div>
+              <div id="hub-dashboard-recent" class="hub-card empty-state">Loading latest activity.</div>
+            </div>
+            <div id="hub-dashboard-panels" class="summary-grid"></div>
+          </section>
+
+          <section id="hub-kb" class="hub-panel">
+            <p class="section-note">Built from your own timesheet records only. Search by client, work type, or any keyword from your remarks.</p>
+            <div class="toolbar hub-toolbar">
+              <label class="field compact grow">
+                <span>Search</span>
+                <input id="kb-search" type="text" placeholder="Client, work type, remark keyword">
+              </label>
+              <label class="field compact">
+                <span>Work type</span>
+                <select id="kb-task-filter"></select>
+              </label>
+              <div class="toolbar-actions">
+                <button id="kb-clear" class="btn btn-outline small" type="button">Clear filters</button>
+              </div>
+            </div>
             <div id="hub-kb-stats" class="stat-grid"></div>
-            <div id="hub-kb-recent" class="stack-list empty-state">No timesheet data yet.</div>
+            <div id="hub-kb-recent" class="summary-grid empty-state">No timesheet data yet.</div>
           </section>
 
           <section id="hub-study" class="hub-panel">
-            <form id="study-form" class="grid three">
+            <div id="study-today-summary" class="summary-grid"></div>
+            <form id="study-form" class="field-stack hub-form-slab">
+              <div class="grid three">
+                <label class="field">
+                  <span>Date</span>
+                  <input id="study-date" type="date">
+                </label>
+                <label class="field">
+                  <span>Study hours</span>
+                  <input id="study-hours" type="number" min="0.25" max="16" step="0.25" placeholder="2.5">
+                </label>
+                <label class="field">
+                  <span>Subject</span>
+                  <select id="study-subject"></select>
+                </label>
+              </div>
               <label class="field">
-                <span>Date</span>
-                <input id="study-date" type="date">
+                <span>What did you study today?</span>
+                <textarea id="study-note" rows="4" placeholder="Key topics, sections, questions, or revision notes"></textarea>
               </label>
-              <label class="field">
-                <span>Study hours</span>
-                <input id="study-hours" type="number" min="0.5" max="16" step="0.5">
-              </label>
-              <label class="field">
-                <span>Subject</span>
-                <input id="study-subject" type="text" placeholder="Optional subject">
-              </label>
-              <div class="button-row span-all">
+              <div class="button-row">
                 <button class="btn btn-primary" type="submit">Save study log</button>
               </div>
             </form>
+            <div id="study-subject-stats" class="stat-grid"></div>
+            <div class="toolbar hub-toolbar">
+              <label class="field compact">
+                <span>Search</span>
+                <input id="study-search" type="text" placeholder="Subject or study note">
+              </label>
+              <label class="field compact">
+                <span>Subject</span>
+                <select id="study-filter-subject"></select>
+              </label>
+              <label class="field compact">
+                <span>Month</span>
+                <input id="study-filter-month" type="month">
+              </label>
+              <div class="toolbar-actions">
+                <button id="study-clear" class="btn btn-outline small" type="button">Clear filters</button>
+              </div>
+            </div>
             <div id="study-weekly" class="stat-grid"></div>
             <div id="study-list" class="stack-list empty-state">No study entries yet.</div>
           </section>
 
           <section id="hub-cases" class="hub-panel">
-            <form id="case-form" class="field-stack">
+            <form id="case-form" class="field-stack hub-form-slab">
+              <div class="grid two">
+                <label class="field">
+                  <span>Case title</span>
+                  <input id="case-title" type="text" placeholder="Short case title">
+                </label>
+                <label class="field">
+                  <span>Area / subject</span>
+                  <select id="case-category"></select>
+                </label>
+              </div>
               <label class="field">
-                <span>Case title</span>
-                <input id="case-title" type="text" placeholder="Short case title">
+                <span>Issue / Question</span>
+                <textarea id="case-issue" rows="3" placeholder="What was the issue, doubt, or fact pattern?"></textarea>
               </label>
               <label class="field">
-                <span>Category</span>
-                <select id="case-category"></select>
+                <span>Finding / Conclusion</span>
+                <textarea id="case-note" rows="4" placeholder="Approach, conclusion, or final learning"></textarea>
               </label>
               <label class="field">
-                <span>Case note</span>
-                <textarea id="case-note" rows="5" placeholder="Facts, issue, approach, or conclusion"></textarea>
+                <span>Reference / Section / Act</span>
+                <input id="case-reference" type="text" placeholder="Optional reference, section, circular, or standard">
               </label>
               <div class="button-row">
                 <button class="btn btn-primary" type="submit">Add case</button>
               </div>
             </form>
+            <div class="toolbar hub-toolbar">
+              <label class="field compact grow">
+                <span>Search</span>
+                <input id="case-search" type="text" placeholder="Title, issue, conclusion, or reference">
+              </label>
+              <label class="field compact">
+                <span>Area</span>
+                <select id="case-filter"></select>
+              </label>
+              <div class="toolbar-actions">
+                <button id="case-clear" class="btn btn-outline small" type="button">Clear filters</button>
+              </div>
+            </div>
             <div id="case-list" class="stack-list empty-state">No cases saved yet.</div>
           </section>
 
           <section id="hub-productivity" class="hub-panel">
-            <div class="button-row">
-              <button class="btn btn-outline" data-productivity="yes" type="button">Productive</button>
-              <button class="btn btn-outline" data-productivity="okay" type="button">Average</button>
-              <button class="btn btn-outline" data-productivity="no" type="button">Not productive</button>
+            <div class="hub-card">
+              <strong>How productive was today?</strong>
+              <div class="subline">Mark one daily mood. Your recent trend and streak update automatically.</div>
+              <div class="button-row">
+                <button class="btn btn-outline" data-productivity="yes" type="button">Productive</button>
+                <button class="btn btn-outline" data-productivity="okay" type="button">Average</button>
+                <button class="btn btn-outline" data-productivity="no" type="button">Not productive</button>
+              </div>
             </div>
             <div id="productivity-weekly" class="stat-grid"></div>
             <div id="productivity-list" class="stack-list empty-state">No productivity records yet.</div>
           </section>
 
           <section id="hub-notes" class="hub-panel">
-            <form id="note-form" class="field-stack">
+            <form id="note-form" class="field-stack hub-form-slab">
+              <div class="grid two">
+                <label class="field">
+                  <span>Title</span>
+                  <input id="note-title" type="text" placeholder="Optional short heading">
+                </label>
+                <label class="field">
+                  <span>Type</span>
+                  <select id="note-type">
+                    <option value="note">Note</option>
+                    <option value="task">Task</option>
+                    <option value="reminder">Reminder</option>
+                    <option value="important">Important</option>
+                  </select>
+                </label>
+              </div>
               <label class="field">
                 <span>Note</span>
-                <textarea id="note-body" rows="4" placeholder="Add a reminder, note, or task"></textarea>
-              </label>
-              <label class="field">
-                <span>Type</span>
-                <select id="note-type">
-                  <option value="note">📝 Note</option>
-                  <option value="task">✅ Task</option>
-                  <option value="reminder">⏰ Reminder</option>
-                  <option value="important">❗ Important</option>
-                </select>
+                <textarea id="note-body" rows="4" placeholder="Add a reminder, note, task, or important item"></textarea>
               </label>
               <div class="button-row">
                 <button class="btn btn-primary" type="submit">Save note</button>
               </div>
             </form>
+            <div class="toolbar hub-toolbar">
+              <label class="field compact grow">
+                <span>Search</span>
+                <input id="note-search" type="text" placeholder="Search note title or body">
+              </label>
+              <label class="field compact">
+                <span>Type</span>
+                <select id="note-filter"></select>
+              </label>
+              <div class="toolbar-actions">
+                <button id="note-clear" class="btn btn-outline small" type="button">Clear filters</button>
+              </div>
+            </div>
             <div id="notes-list" class="stack-list empty-state">No notes yet.</div>
           </section>
         </div>
@@ -3988,6 +4228,15 @@ button.summary-card.clickable {
       "Others / Special Assignment"
     ];
 
+    const STUDY_SUBJECT_OPTIONS = [
+      "Financial Reporting",
+      "Advanced Financial Management",
+      "Advanced Auditing & Ethics",
+      "Direct Taxes",
+      "Indirect Taxes",
+      "IBS Course"
+    ];
+
     const ROLE_OPTIONS = ["Admin", "Employee / Professional", "CA Article"];
     const DEPARTMENT_OPTIONS = [
       "Management",
@@ -4010,7 +4259,7 @@ button.summary-card.clickable {
       profile: null,
       currentScreen: "screen-login",
       currentPage: "",
-      currentHub: "kb",
+      currentHub: "dashboard",
       historyReady: false,
       applyingHistory: false,
       lastHistoryKey: "",
@@ -4046,7 +4295,9 @@ button.summary-card.clickable {
         name: "",
         year: 0,
         month: 0,
-        joinDate: ""
+        joinDate: "",
+        records: [],
+        mode: "admin"
       },
       hub: {
         study: [],
@@ -4345,7 +4596,7 @@ button.summary-card.clickable {
             setActivePage(route.page, { historyMode: "replace" });
           }
           if (route.page === "page-cahub") {
-            setHubTab(route.hub || "kb", { historyMode: "replace" });
+            setHubTab(route.hub || "dashboard", { historyMode: "replace" });
           }
           if (!route.modalOpen) {
             closeModal({ historyMode: "replace" });
@@ -4836,7 +5087,7 @@ button.summary-card.clickable {
     function enterPortal() {
       resetHeader();
       buildTabs();
-      setHubTab("kb", { historyMode: "replace" });
+      setHubTab("dashboard", { historyMode: "replace" });
       switchScreen("screen-app", { historyMode: "replace" });
       startLiveRefresh();
       refreshAmbientState({ force: true }).catch(() => {});
@@ -5020,17 +5271,38 @@ button.summary-card.clickable {
 
     function populateStaticChoices() {
       const taskMarkup = TASK_OPTIONS.map((task) => `<option value="${task}">${task}</option>`).join("");
-      ["entry-task-picker", "my-task-filter", "all-task-filter", "case-category"].forEach((id) => {
+      ["entry-task-picker", "my-task-filter", "all-task-filter", "kb-task-filter"].forEach((id) => {
         const element = byId(id);
         if (!element) return;
         if (id === "entry-task-picker") {
           element.innerHTML = `<option value="">Add work type</option>${taskMarkup}`;
-        } else if (id === "case-category") {
-          element.innerHTML = `<option value="">Select category</option>${taskMarkup}`;
         } else {
           element.innerHTML = `<option value="">All</option>${taskMarkup}`;
         }
       });
+
+      const subjectMarkup = STUDY_SUBJECT_OPTIONS.map((subject) => `<option value="${subject}">${subject}</option>`).join("");
+      const subjectSelects = {
+        "study-subject": `<option value="">Select subject</option>${subjectMarkup}`,
+        "study-filter-subject": `<option value="">All subjects</option>${subjectMarkup}`,
+        "case-category": `<option value="">Select area</option>${subjectMarkup}`,
+        "case-filter": `<option value="">All areas</option>${subjectMarkup}`
+      };
+      Object.entries(subjectSelects).forEach(([id, markup]) => {
+        const element = byId(id);
+        if (element) element.innerHTML = markup;
+      });
+
+      const noteFilter = byId("note-filter");
+      if (noteFilter) {
+        noteFilter.innerHTML = `
+          <option value="">All types</option>
+          <option value="note">Note</option>
+          <option value="task">Task</option>
+          <option value="reminder">Reminder</option>
+          <option value="important">Important</option>
+        `;
+      }
 
       const roleMarkup = ROLE_OPTIONS.map((role) => `<option value="${role === "Admin" ? "admin" : role}">${role}</option>`).join("");
       ["all-role-filter", "employee-role-filter"].forEach((id) => {
@@ -6883,10 +7155,12 @@ button.summary-card.clickable {
     function calendarStatusMap(uid, year, month) {
       const { first, last } = monthKeyParts(year, month);
       const map = {};
-      (state.allEntries || []).forEach((record) => {
-        const owned = record.entryKind === "group" ? visibleMemberIds(record).includes(uid) : ownerFields(record).includes(uid);
+      const usingScopedRecords = Array.isArray(state.calendar.records) && state.calendar.records.length > 0;
+      const sourceRecords = usingScopedRecords ? state.calendar.records : (state.allEntries || []);
+      sourceRecords.forEach((record) => {
+        const owned = usingScopedRecords ? true : (record.entryKind === "group" ? visibleMemberIds(record).includes(uid) : ownerFields(record).includes(uid));
         if (!owned) return;
-        if (record.entryKind === "group" && record.status !== "active") return;
+        if (record.entryKind === "group" && record.status !== "active" && !usingScopedRecords) return;
         recordDates(record).forEach((date) => {
           if (date < first || date > last) return;
           const nextValue = record.entryKind === "bulk" ? "bulk" : "reported";
@@ -6973,10 +7247,20 @@ button.summary-card.clickable {
       renderAdminCalendar();
     }
 
-    async function refreshAdminCalendarRecords() {
-      await finalizePendingGroupEntries(false);
-      const [singles, bulks, groups] = await Promise.all([fetchAllSingles(), fetchAllBulks(), fetchAllGroups()]);
-      state.allEntries = [...singles, ...bulks, ...groups.filter((record) => record.status === "active")].sort(sortRecords);
+    async function refreshCalendarRecords() {
+      const uid = state.calendar.uid || state.user?.uid || "";
+      if (!uid) {
+        state.calendar.records = [];
+        return [];
+      }
+      const entries = state.calendar.mode === "self"
+        ? await getMyEntriesSnapshot(true)
+        : await getEntriesSnapshotForUid(uid);
+      state.calendar.records = (entries || []).filter((record) => {
+        if (state.calendar.mode === "self") return true;
+        return record.entryKind !== "group" || record.status === "active";
+      }).sort(sortRecords);
+      return [...state.calendar.records];
     }
 
     async function openAdminCalendar(uid) {
@@ -6986,7 +7270,6 @@ button.summary-card.clickable {
         toast("Employee / article calendar is not available for this row.", "warn");
         return;
       }
-      await refreshAdminCalendarRecords();
       const now = new Date();
       const joinDate = tsMs(user.createdAt) ? new Date(tsMs(user.createdAt)).toISOString().slice(0, 10) : "";
       state.calendar = {
@@ -6994,8 +7277,11 @@ button.summary-card.clickable {
         name: user.name || user.email || uid,
         year: now.getFullYear(),
         month: now.getMonth(),
-        joinDate
+        joinDate,
+        records: [],
+        mode: "admin"
       };
+      await refreshCalendarRecords();
       openModal(
         "Employee / Article Reporting Calendar",
         joinDate ? `Joined on ${formatDate(joinDate)}. Daily reporting history is color-coded below.` : "Daily reporting history is color-coded below.",
@@ -7028,7 +7314,60 @@ button.summary-card.clickable {
       );
       byId("calendar-prev")?.addEventListener("click", () => shiftAdminCalendar(-1));
       byId("calendar-refresh")?.addEventListener("click", async () => {
-        await refreshAdminCalendarRecords();
+        await refreshCalendarRecords();
+        renderAdminCalendar();
+        toast("Calendar refreshed.", "success");
+      });
+      byId("calendar-next")?.addEventListener("click", () => shiftAdminCalendar(1));
+      renderAdminCalendar();
+    }
+
+    async function openOwnCalendar() {
+      if (!state.user?.uid || !state.profile) {
+        toast("Your reporting calendar is not available right now.", "warn");
+        return;
+      }
+      const now = new Date();
+      const joinDate = tsMs(state.profile.createdAt) ? new Date(tsMs(state.profile.createdAt)).toISOString().slice(0, 10) : "";
+      state.calendar = {
+        uid: state.user.uid,
+        name: "My reporting history",
+        year: now.getFullYear(),
+        month: now.getMonth(),
+        joinDate,
+        records: [],
+        mode: "self"
+      };
+      await refreshCalendarRecords();
+      openModal(
+        "My Reporting Calendar",
+        "Review your day-wise reporting history here. Your own pending group items remain visible on your side until they finalize.",
+        `
+          <div class="calendar-shell">
+            <div class="calendar-head">
+              <div class="calendar-title-block">
+                <strong id="admin-calendar-title"></strong>
+                <div class="subline">${joinDate ? `Joined on ${formatDate(joinDate)}.` : "Review your own reporting month by month."}</div>
+              </div>
+              <div class="calendar-nav-actions">
+                <button class="btn btn-outline small" id="calendar-prev" type="button">Previous</button>
+                <button class="btn btn-outline small" id="calendar-refresh" type="button">Refresh</button>
+                <button class="btn btn-outline small" id="calendar-next" type="button">Next</button>
+              </div>
+            </div>
+            <div class="calendar-legend">
+              <span class="calendar-legend-item"><span class="calendar-legend-swatch reported" aria-hidden="true"></span>Reported</span>
+              <span class="calendar-legend-item"><span class="calendar-legend-swatch bulk" aria-hidden="true"></span>Bulk report</span>
+              <span class="calendar-legend-item"><span class="calendar-legend-swatch no-report" aria-hidden="true"></span>No report</span>
+              <span class="calendar-legend-item"><span class="calendar-legend-swatch weekend" aria-hidden="true"></span>Weekend / inactive day</span>
+            </div>
+            <div id="admin-calendar-grid" class="calendar-grid"></div>
+          </div>
+        `
+      );
+      byId("calendar-prev")?.addEventListener("click", () => shiftAdminCalendar(-1));
+      byId("calendar-refresh")?.addEventListener("click", async () => {
+        await refreshCalendarRecords();
         renderAdminCalendar();
         toast("Calendar refreshed.", "success");
       });
@@ -7411,50 +7750,290 @@ button.summary-card.clickable {
       renderGroupApprovals();
     }
 
+    function hubEntryHours(record, uid = state.user?.uid || "") {
+      if (!record) return 0;
+      if (record.entryKind === "group") return Number(userEntryForGroup(record, uid).totalHours || 0);
+      if (record.entryKind === "bulk") return Number(totalHoursFromMap(record.dailyHours || {}) || record.totalHours || 0);
+      return Number(record.hours || 0);
+    }
+
+    function hubHoursText(value) {
+      return `${Number(value || 0).toFixed(1)} h`;
+    }
+
+    function hubTodayProductivity() {
+      return state.hub.productivity.find((item) => item.date === todayStr()) || null;
+    }
+
+    function hubSubjectTotals(items = state.hub.study) {
+      const bucket = {};
+      (items || []).forEach((item) => {
+        const subject = String(item.subject || "Unassigned").trim() || "Unassigned";
+        bucket[subject] = bucket[subject] || { hours: 0, count: 0 };
+        bucket[subject].hours += Number(item.hours || 0);
+        bucket[subject].count += 1;
+      });
+      return Object.entries(bucket).sort((a, b) => b[1].hours - a[1].hours);
+    }
+
+    function hubStudyFilters() {
+      return {
+        search: normalizeCompareText(byId("study-search")?.value || ""),
+        subject: String(byId("study-filter-subject")?.value || "").trim(),
+        month: String(byId("study-filter-month")?.value || "").trim()
+      };
+    }
+
+    function filteredStudyEntries() {
+      const filters = hubStudyFilters();
+      return (state.hub.study || []).filter((item) => {
+        if (filters.subject && String(item.subject || "") !== filters.subject) return false;
+        if (filters.month && !String(item.date || "").startsWith(filters.month)) return false;
+        if (!filters.search) return true;
+        const hay = normalizeCompareText([item.subject, item.note, item.date].join(" | "));
+        return hay.includes(filters.search);
+      });
+    }
+
+    function filteredKnowledgeEntries() {
+      const search = normalizeCompareText(byId("kb-search")?.value || "");
+      const task = String(byId("kb-task-filter")?.value || "").trim();
+      return (state.myEntries || []).filter((record) => {
+        const tasks = normalizeTaskList(record);
+        if (task && !tasks.includes(task)) return false;
+        if (!search) return true;
+        const hay = normalizeCompareText([
+          clientLabel(record),
+          tasks.join(" | "),
+          record.remarks || "",
+          displayDate(record)
+        ].join(" | "));
+        return hay.includes(search);
+      });
+    }
+
+    function filteredCases() {
+      const search = normalizeCompareText(byId("case-search")?.value || "");
+      const category = String(byId("case-filter")?.value || "").trim();
+      return (state.hub.cases || []).filter((item) => {
+        if (category && String(item.category || "") !== category) return false;
+        if (!search) return true;
+        const hay = normalizeCompareText([item.title, item.category, item.issue, item.note, item.reference].join(" | "));
+        return hay.includes(search);
+      });
+    }
+
+    function filteredNotes() {
+      const search = normalizeCompareText(byId("note-search")?.value || "");
+      const type = String(byId("note-filter")?.value || "").trim();
+      return (state.hub.notes || []).filter((item) => {
+        if (type && String(item.type || "") !== type) return false;
+        if (!search) return true;
+        const hay = normalizeCompareText([item.title, item.body, item.type].join(" | "));
+        return hay.includes(search);
+      });
+    }
+
+    function renderHubDashboard() {
+      const today = todayStr();
+      const todayWork = (state.myEntries || []).filter((record) => recordDates(record).includes(today)).reduce((sum, record) => sum + hubEntryHours(record), 0);
+      const todayStudy = (state.hub.study || []).filter((item) => item.date === today).reduce((sum, item) => sum + Number(item.hours || 0), 0);
+      const weekStart = new Date(`${today}T12:00:00`);
+      weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+      const weekStartStr = `${weekStart.getFullYear()}-${String(weekStart.getMonth() + 1).padStart(2, "0")}-${String(weekStart.getDate()).padStart(2, "0")}`;
+      const monthPrefix = today.slice(0, 7);
+      const weeklyStudy = (state.hub.study || []).filter((item) => String(item.date || "") >= weekStartStr).reduce((sum, item) => sum + Number(item.hours || 0), 0);
+      const monthlyStudy = (state.hub.study || []).filter((item) => String(item.date || "").startsWith(monthPrefix)).reduce((sum, item) => sum + Number(item.hours || 0), 0);
+      const topSubject = hubSubjectTotals()[0];
+      const focusHost = byId("hub-dashboard-focus");
+      const recentHost = byId("hub-dashboard-recent");
+      const panelHost = byId("hub-dashboard-panels");
+      renderStatCards("hub-dashboard-stats", [
+        { label: "Today's work", value: hubHoursText(todayWork), note: "Auto-read from your timesheet", icon: "&#128188;" },
+        { label: "Today's study", value: hubHoursText(todayStudy), note: "Saved in your private study log", icon: "&#128218;" },
+        { label: "This week", value: hubHoursText(weeklyStudy), note: "Study hours from Sunday onward", icon: "&#128197;" },
+        { label: "This month", value: hubHoursText(monthlyStudy), note: monthLabel(Number(monthPrefix.slice(0, 4)), Number(monthPrefix.slice(5, 7)) - 1), icon: "&#128200;" }
+      ]);
+      if (focusHost) {
+        const studyShare = todayWork + todayStudy > 0 ? Math.min(100, (todayStudy / (todayWork + todayStudy)) * 100) : 0;
+        const productivity = hubTodayProductivity();
+        focusHost.innerHTML = `
+          <div class="hub-dashboard-note">
+            <strong>Today's focus balance</strong>
+            <div class="subline">${todayWork > 0 ? `You have already worked ${safe(hubHoursText(todayWork))} today.` : "No work entry logged for today yet."}</div>
+            <div class="hub-tag-row">
+              <span class="hub-tag work">&#128188; Work ${safe(hubHoursText(todayWork))}</span>
+              <span class="hub-tag study">&#128218; Study ${safe(hubHoursText(todayStudy))}</span>
+              <span class="hub-tag ${todayStudy >= todayWork && todayStudy > 0 ? "study" : "warn"}">&#9889; Study share ${safe(studyShare.toFixed(0))}%</span>
+              <span class="hub-tag note">&#127919; ${safe(topSubject ? `${topSubject[0]} leads this month` : "Pick a subject and start logging")}</span>
+              <span class="hub-tag ${productivity?.value === "yes" ? "study" : productivity?.value === "no" ? "warn" : "note"}">&#9203; ${safe(productivity ? `Today's mood: ${String(productivity.value).toUpperCase()}` : "No productivity mark for today")}</span>
+            </div>
+            <div class="hub-progress-rail"><span class="hub-progress-fill study" style="width:${safe(studyShare.toFixed(2))}%"></span></div>
+          </div>
+        `;
+      }
+      if (recentHost) {
+        const latestStudy = state.hub.study[0];
+        const latestCase = state.hub.cases[0];
+        const latestNote = state.hub.notes[0];
+        recentHost.innerHTML = `
+          <div class="hub-dashboard-note">
+            <strong>Latest private activity</strong>
+            <div class="hub-highlight-grid">
+              <div class="hub-highlight-card">
+                <div class="hub-mini-metric">&#128218; Study</div>
+                <div class="subline">${safe(latestStudy ? `${formatDate(latestStudy.date)} | ${latestStudy.subject || "No subject"}` : "No study session saved yet.")}</div>
+              </div>
+              <div class="hub-highlight-card">
+                <div class="hub-mini-metric">&#128193; Case</div>
+                <div class="subline">${safe(latestCase ? `${latestCase.title || "-"} | ${latestCase.category || "No area"}` : "No case saved yet.")}</div>
+              </div>
+              <div class="hub-highlight-card">
+                <div class="hub-mini-metric">&#128221; Note</div>
+                <div class="subline">${safe(latestNote ? `${latestNote.title || noteTypeUiMeta(latestNote.type).label} | ${nowTimestampText(latestNote.updatedAt || latestNote.createdAt)}` : "No note saved yet.")}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      if (panelHost) {
+        const pendingNotes = (state.hub.notes || []).filter((item) => ["task", "reminder", "important"].includes(String(item.type || "").toLowerCase()));
+        panelHost.innerHTML = `
+          <div class="summary-card">
+            <span class="card-icon" aria-hidden="true">&#127891;</span>
+            <strong>${safe(topSubject ? topSubject[0] : "No subject logged yet")}</strong>
+            <small>${safe(topSubject ? `${hubHoursText(topSubject[1].hours)} across ${topSubject[1].count} session(s)` : "Your top study subject for this month will appear here.")}</small>
+          </div>
+          <div class="summary-card">
+            <span class="card-icon" aria-hidden="true">&#9203;</span>
+            <strong>${safe(String(pendingNotes.length))} reminder/task item(s)</strong>
+            <small>${pendingNotes.length ? "Open Notes Board to clear tasks, reminders, and important items." : "No reminder or task pressure right now."}</small>
+          </div>
+          <div class="summary-card">
+            <span class="card-icon" aria-hidden="true">&#128214;</span>
+            <strong>${safe(String((state.hub.cases || []).length))} case note(s)</strong>
+            <small>${state.hub.cases.length ? "Case Library is ready for revision." : "Start capturing important audit/tax situations for revision."}</small>
+          </div>
+        `;
+      }
+    }
+
     function renderKnowledgeBank() {
-      const tally = {};
-      state.myEntries.forEach((record) => {
+      const entries = filteredKnowledgeEntries();
+      const clients = new Set();
+      const tasks = {};
+      let totalHours = 0;
+      entries.forEach((record) => {
+        totalHours += hubEntryHours(record);
+        normalizeClientList(record).forEach((client) => clients.add(client));
         normalizeTaskList(record).forEach((task) => {
-          tally[task] = tally[task] || { count: 0, hours: 0 };
-          tally[task].count += 1;
-          tally[task].hours += record.entryKind === "group" ? userEntryForGroup(record, state.user?.uid || "").totalHours || 0 : record.entryKind === "bulk" ? totalHoursFromMap(record.dailyHours || {}) : Number(record.hours || 0);
+          tasks[task] = (tasks[task] || 0) + 1;
         });
       });
-
-      const cards = Object.entries(tally)
-        .sort((a, b) => b[1].count - a[1].count)
-        .map(([task, data]) => ({ label: shortTaskLabel(task), value: String(data.count), note: `${data.hours.toFixed(1)} hour(s)` }));
-
-      renderStatCards("hub-kb-stats", cards.length ? cards : [{ label: "Knowledge Bank", value: "0", note: "No timesheet data yet." }]);
+      renderStatCards("hub-kb-stats", [
+        { label: "Visible records", value: String(entries.length), note: "Filtered knowledge cards" },
+        { label: "Visible hours", value: hubHoursText(totalHours), note: "Hours across the filtered record set" },
+        { label: "Clients", value: String(clients.size), note: "Client contexts covered" },
+        { label: "Work types", value: String(Object.keys(tasks).length), note: "Distinct work categories" }
+      ]);
       const host = byId("hub-kb-recent");
       if (!host) return;
-      host.innerHTML = state.myEntries.length
-        ? state.myEntries
-            .slice(0, 6)
-            .map((record) => `<div class="hub-card"><strong>${safe(clientLabel(record))}</strong><div class="subline">${safe(displayDate(record))}</div><div class="subline">${safe(normalizeTaskList(record).join(", "))}</div></div>`)
-            .join("")
-        : "No timesheet data yet.";
+      host.innerHTML = entries.length
+        ? entries.slice(0, 18).map((record) => `
+            <div class="hub-card hub-record-card">
+              <div class="hub-record-head">
+                <div class="hub-record-title">
+                  <strong>${safe(clientLabel(record))}</strong>
+                  <div class="subline">${safe(displayDate(record))}</div>
+                </div>
+                <span class="hub-mini-metric">${safe(hubHoursText(hubEntryHours(record)))}</span>
+              </div>
+              <div class="hub-tag-row">${normalizeTaskList(record).map((task) => `<span class="hub-tag work">${safe(shortTaskLabel(task))}</span>`).join("")}</div>
+              <div class="hub-record-body">${safe((record.remarks || "").slice(0, 220) || "No remarks recorded.")}</div>
+            </div>
+          `).join("")
+        : "No timesheet knowledge matches the current filters.";
     }
 
     function renderStudySection() {
-      const total = state.hub.study.reduce((sum, item) => sum + (Number(item.hours) || 0), 0);
+      if (byId("study-date") && !byId("study-date").value) byId("study-date").value = todayStr();
+      const today = todayStr();
+      const todayWork = (state.myEntries || []).filter((record) => recordDates(record).includes(today)).reduce((sum, record) => sum + hubEntryHours(record), 0);
+      const todayStudy = (state.hub.study || []).filter((item) => item.date === today).reduce((sum, item) => sum + Number(item.hours || 0), 0);
+      const filtered = filteredStudyEntries();
+      const subjectTotals = hubSubjectTotals();
       renderStatCards("study-weekly", [
-        { label: "Entries", value: String(state.hub.study.length) },
-        { label: "Hours", value: total.toFixed(1) }
+        { label: "Study entries", value: String(filtered.length), note: "Visible sessions after filters" },
+        { label: "Visible hours", value: hubHoursText(filtered.reduce((sum, item) => sum + Number(item.hours || 0), 0)), note: "Hours in the filtered study list" },
+        { label: "Today's work", value: hubHoursText(todayWork), note: "Auto-read from your timesheet" },
+        { label: "Today's study", value: hubHoursText(todayStudy), note: "Private study log for today" }
       ]);
+      renderStatCards("study-subject-stats", subjectTotals.slice(0, 4).map(([subject, data]) => ({
+        label: subject,
+        value: hubHoursText(data.hours),
+        note: `${data.count} session(s)`
+      })) || [{ label: "Subjects", value: "0", note: "Start your first study session." }]);
+      const todaySummary = byId("study-today-summary");
+      if (todaySummary) {
+        const combined = todayWork + todayStudy;
+        todaySummary.innerHTML = `
+          <div class="summary-card">
+            <span class="card-icon" aria-hidden="true">&#128188;</span>
+            <strong>You have worked ${safe(hubHoursText(todayWork))} today</strong>
+            <small>${todayWork > 0 ? "Your work hours are pulled from the timesheet automatically." : "No work entry is recorded for today yet."}</small>
+          </div>
+          <div class="summary-card">
+            <span class="card-icon" aria-hidden="true">&#128218;</span>
+            <strong>${safe(hubHoursText(todayStudy))} study logged today</strong>
+            <small>${todayStudy > 0 ? "Add another study session below if you continue later." : "Save today's study hours and subject below."}</small>
+          </div>
+          <div class="summary-card">
+            <span class="card-icon" aria-hidden="true">&#128200;</span>
+            <strong>${safe(hubHoursText(combined))} productive total</strong>
+            <small>${combined > 0 ? `Study is ${(todayStudy / combined * 100 || 0).toFixed(0)}% of today's tracked effort.` : "Work and study together will appear here."}</small>
+          </div>
+        `;
+      }
       const host = byId("study-list");
       if (!host) return;
-      host.innerHTML = state.hub.study.length
-        ? state.hub.study.map((item) => `<div class="hub-card"><strong>${safe(formatDate(item.date))}</strong><div class="subline">${safe(String(item.hours || 0))} hour(s)</div>${item.subject ? `<div class="subline">${safe(item.subject)}</div>` : ""}<div class="actions"><button class="btn btn-ghost small" type="button" data-action="delete-private" data-collection="cahub_study" data-id="${item.id}">Delete</button></div></div>`).join("")
-        : "No study entries yet.";
+      host.innerHTML = filtered.length
+        ? filtered.map((item) => `
+            <div class="hub-card hub-record-card">
+              <div class="hub-record-head">
+                <div class="hub-record-title">
+                  <strong>${safe(item.subject || "No subject")}</strong>
+                  <div class="subline">${safe(formatDate(item.date))}</div>
+                </div>
+                <span class="hub-mini-metric">${safe(hubHoursText(item.hours))}</span>
+              </div>
+              <div class="hub-record-body">${safe(item.note || "No study note recorded.")}</div>
+              <div class="actions"><button class="btn btn-ghost small" type="button" data-action="delete-private" data-collection="cahub_study" data-id="${item.id}">Delete</button></div>
+            </div>
+          `).join("")
+        : "No study entries match the current filters.";
     }
 
     function renderCaseSection() {
+      const items = filteredCases();
       const host = byId("case-list");
       if (!host) return;
-      host.innerHTML = state.hub.cases.length
-        ? state.hub.cases.map((item) => `<div class="hub-card"><strong>${safe(item.title || "-")}</strong><div class="subline">${safe(item.category || "-")}</div><div class="note-block">${safe(item.note || "")}</div><div class="actions"><button class="btn btn-ghost small" type="button" data-action="delete-private" data-collection="cahub_cases" data-id="${item.id}">Delete</button></div></div>`).join("")
-        : "No cases saved yet.";
+      host.innerHTML = items.length
+        ? items.map((item) => `
+            <div class="hub-card hub-record-card">
+              <div class="hub-record-head">
+                <div class="hub-record-title">
+                  <strong>${safe(item.title || "-")}</strong>
+                  <div class="subline">${safe(item.category || "No area selected")}</div>
+                </div>
+                <span class="hub-mini-metric">${safe(nowTimestampText(item.updatedAt || item.createdAt))}</span>
+              </div>
+              ${item.issue ? `<div class="hub-record-body"><strong>Issue:</strong> ${safe(item.issue)}</div>` : ""}
+              <div class="hub-record-body"><strong>Conclusion:</strong> ${safe(item.note || "No conclusion saved.")}</div>
+              ${item.reference ? `<div class="hub-tag-row"><span class="hub-tag note">${safe(item.reference)}</span></div>` : ""}
+              <div class="actions"><button class="btn btn-ghost small" type="button" data-action="delete-private" data-collection="cahub_cases" data-id="${item.id}">Delete</button></div>
+            </div>
+          `).join("")
+        : "No cases match the current filters.";
     }
 
     function renderProductivitySection() {
@@ -7463,27 +8042,56 @@ button.summary-card.clickable {
         okay: state.hub.productivity.filter((item) => item.value === "okay").length,
         no: state.hub.productivity.filter((item) => item.value === "no").length
       };
+      let streak = 0;
+      const ordered = [...state.hub.productivity].sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
+      for (let i = 0; i < ordered.length; i += 1) {
+        if (ordered[i].value !== "yes") break;
+        streak += 1;
+      }
       renderStatCards("productivity-weekly", [
-        { label: "Productive", value: String(counts.yes) },
-        { label: "Average", value: String(counts.okay) },
-        { label: "Not Productive", value: String(counts.no) }
+        { label: "Productive", value: String(counts.yes), note: "Strong focus days" },
+        { label: "Average", value: String(counts.okay), note: "Moderate days" },
+        { label: "Not productive", value: String(counts.no), note: "Low focus days" },
+        { label: "Current streak", value: String(streak), note: "Consecutive productive days" }
       ]);
       const host = byId("productivity-list");
       if (!host) return;
-      host.innerHTML = state.hub.productivity.length
-        ? state.hub.productivity.map((item) => `<div class="hub-card"><strong>${safe(formatDate(item.date))}</strong><div class="subline">${safe(String(item.value || "-").toUpperCase())}</div><div class="actions"><button class="btn btn-ghost small" type="button" data-action="delete-private" data-collection="cahub_productivity" data-id="${item.id}">Delete</button></div></div>`).join("")
+      host.innerHTML = ordered.length
+        ? ordered.slice(0, 12).map((item) => `
+            <div class="hub-card hub-record-card">
+              <div class="hub-record-head">
+                <div class="hub-record-title">
+                  <strong>${safe(formatDate(item.date))}</strong>
+                  <div class="subline">${safe(item.value === "yes" ? "Productive day" : item.value === "okay" ? "Average day" : "Not productive")}</div>
+                </div>
+                <span class="hub-tag ${item.value === "yes" ? "study" : item.value === "okay" ? "warn" : "note"}">${safe(String(item.value || "").toUpperCase())}</span>
+              </div>
+              <div class="actions"><button class="btn btn-ghost small" type="button" data-action="delete-private" data-collection="cahub_productivity" data-id="${item.id}">Delete</button></div>
+            </div>
+          `).join("")
         : "No productivity records yet.";
     }
 
     function renderNotesSection() {
+      const items = filteredNotes();
       const host = byId("notes-list");
       if (!host) return;
-      host.innerHTML = state.hub.notes.length
-        ? state.hub.notes.map((item) => {
+      host.innerHTML = items.length
+        ? items.map((item) => {
             const meta = noteTypeUiMeta(item.type);
-            return `<div class="hub-card"><div class="note-type-row"><span class="note-type-pill ${safe(meta.className)}"><span>${safe(meta.icon)}</span><span>${safe(meta.label)}</span></span><div class="subline">${safe(nowTimestampText(item.updatedAt || item.createdAt))}</div></div><div class="note-block">${safe(item.body || "")}</div><div class="actions"><button class="btn btn-ghost small" type="button" data-action="delete-private" data-collection="cahub_notes" data-id="${item.id}">Delete</button></div></div>`;
+            return `
+              <div class="hub-card hub-record-card">
+                <div class="note-type-row">
+                  <span class="note-type-pill ${safe(meta.className)}"><span>${safe(meta.icon)}</span><span>${safe(meta.label)}</span></span>
+                  <div class="subline">${safe(nowTimestampText(item.updatedAt || item.createdAt))}</div>
+                </div>
+                ${item.title ? `<strong>${safe(item.title)}</strong>` : ""}
+                <div class="note-block">${safe(item.body || "")}</div>
+                <div class="actions"><button class="btn btn-ghost small" type="button" data-action="delete-private" data-collection="cahub_notes" data-id="${item.id}">Delete</button></div>
+              </div>
+            `;
           }).join("")
-        : "No notes yet.";
+        : "No notes match the current filters.";
     }
 
     async function loadHubData() {
@@ -7500,6 +8108,8 @@ button.summary-card.clickable {
       state.hub.cases = cases;
       state.hub.productivity = productivity;
       state.hub.notes = notes;
+      if (byId("study-date") && !byId("study-date").value) byId("study-date").value = todayStr();
+      renderHubDashboard();
       renderKnowledgeBank();
       renderStudySection();
       renderCaseSection();
@@ -9773,11 +10383,13 @@ button.summary-card.clickable {
       const date = byId("study-date")?.value || "";
       const hours = Number(byId("study-hours")?.value || 0);
       const subject = String(byId("study-subject")?.value || "").trim();
-      if (!date || date > todayStr() || !(hours > 0)) return toast("Enter valid study details.", "warn");
+      const note = String(byId("study-note")?.value || "").trim();
+      if (!date || date > todayStr() || !(hours > 0) || !subject) return toast("Date, subject, and valid study hours are required.", "warn");
       await addDoc(collection(db, "users", state.user.uid, "cahub_study"), {
         date,
         hours: Number(hours.toFixed(2)),
         subject,
+        note,
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now()
       });
@@ -9791,12 +10403,16 @@ button.summary-card.clickable {
       event.preventDefault();
       const title = String(byId("case-title")?.value || "").trim();
       const category = String(byId("case-category")?.value || "").trim();
+      const issue = String(byId("case-issue")?.value || "").trim();
       const note = String(byId("case-note")?.value || "").trim();
-      if (!title || !note) return toast("Case title and note are required.", "warn");
+      const reference = String(byId("case-reference")?.value || "").trim();
+      if (!title || !category || !note) return toast("Case title, area, and conclusion are required.", "warn");
       await addDoc(collection(db, "users", state.user.uid, "cahub_cases"), {
         title,
         category,
+        issue,
         note,
+        reference,
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now()
       });
@@ -9807,10 +10423,12 @@ button.summary-card.clickable {
 
     async function saveNoteEntry(event) {
       event.preventDefault();
+      const title = String(byId("note-title")?.value || "").trim();
       const body = String(byId("note-body")?.value || "").trim();
       const type = byId("note-type")?.value || "note";
       if (!body) return toast("Note text is required.", "warn");
       await addDoc(collection(db, "users", state.user.uid, "cahub_notes"), {
+        title,
         body,
         type,
         createdAt: Timestamp.now(),
@@ -9977,6 +10595,7 @@ button.summary-card.clickable {
                 <p>Your timesheet is user-specific. It is the place to review, search, export, edit, or delete your own visible records.</p>
                 <div class="guide-step-list">
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Visible here:</strong> your single entries, your bulk entries, and your visible group entries.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Calendar:</strong> use the Calendar button in My Timesheet to review your own day-wise reporting history month by month.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Edit rule:</strong> you can edit your own single/bulk entries. In group entries, the reporter edits shared fields and members edit only their own section.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Delete rule:</strong> delete moves the record to recycle first, and trails stay recorded.</span></div>
                 </div>
@@ -10003,7 +10622,7 @@ button.summary-card.clickable {
                 </div>
                 <p>The bell is the fastest place to see what needs action instead of manually checking every page.</p>
                 <div class="guide-step-list">
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Users:</strong> check group reminders and items waiting on you.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Users:</strong> use the bell for group reminders and items waiting on you instead of looking for a separate notification card on the page.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Admin:</strong> check pending registrations, locked accounts, and recycle activity.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Refresh:</strong> key panels auto-update, but Refresh is still the fastest manual sync when needed.</span></div>
                 </div>
@@ -10014,10 +10633,11 @@ button.summary-card.clickable {
                   <span class="guide-card-icon">&#128218;</span>
                   <h4>My Hub / CA Hub</h4>
                 </div>
-                <p>${isArticleView ? "Your article tools stay private inside My Hub. Only you can see your study, cases, productivity, and notes." : "CA Hub appears only for approved CA Article accounts. When enabled, it adds a private work-and-study area."}</p>
+                <p>${isArticleView ? "Your article tools stay private inside My Hub. Only you can see your dashboard, study, cases, productivity, and notes." : "CA Hub appears only for approved CA Article accounts. When enabled, it adds a private work-and-study area."}</p>
                 <div class="guide-step-list">
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Knowledge Bank:</strong> reads from your timesheet records automatically.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Private sections:</strong> Study and Work, Case Library, Productivity, and Notes are user-only.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Dashboard:</strong> see today's work hours from timesheet, today's study hours, and your current private summary first.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Study and Work:</strong> select a fixed subject, add study hours, and compare study against today's work instantly.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Knowledge Bank and Case Library:</strong> use them for revision, client recall, issue tracking, and conclusions.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Notes Board:</strong> save items as Note, Task, Reminder, or Important.</span></div>
                 </div>
               </article>
@@ -10160,6 +10780,7 @@ button.summary-card.clickable {
       bind("header-notify", "click", openHeaderNotifications);
       bind("open-guide", "click", openGuide);
       bind("public-log-button", "click", openPublicLog);
+      bind("my-calendar", "click", openOwnCalendar);
       bind("pin-clear", "click", clearPinDigits);
       bind("pin-delete", "click", deletePinDigit);
 
@@ -10297,6 +10918,31 @@ button.summary-card.clickable {
       bind("study-form", "submit", saveStudyEntry);
       bind("case-form", "submit", saveCaseEntry);
       bind("note-form", "submit", saveNoteEntry);
+      bindFilters(["kb-search", "kb-task-filter"], renderKnowledgeBank);
+      bindFilters(["study-search", "study-filter-subject", "study-filter-month"], renderStudySection);
+      bindFilters(["case-search", "case-filter"], renderCaseSection);
+      bindFilters(["note-search", "note-filter"], renderNotesSection);
+      bind("kb-clear", "click", () => {
+        setFieldValue("kb-search", "");
+        setFieldValue("kb-task-filter", "");
+        renderKnowledgeBank();
+      });
+      bind("study-clear", "click", () => {
+        setFieldValue("study-search", "");
+        setFieldValue("study-filter-subject", "");
+        setFieldValue("study-filter-month", "");
+        renderStudySection();
+      });
+      bind("case-clear", "click", () => {
+        setFieldValue("case-search", "");
+        setFieldValue("case-filter", "");
+        renderCaseSection();
+      });
+      bind("note-clear", "click", () => {
+        setFieldValue("note-search", "");
+        setFieldValue("note-filter", "");
+        renderNotesSection();
+      });
 
       all("#pin-pad [data-pin]").forEach((button) => {
         button.addEventListener("click", () => addPinDigit(button.dataset.pin));
