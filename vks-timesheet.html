@@ -893,6 +893,7 @@ button {
 .tabbar,
 .subtabbar {
   display: flex;
+  align-items: stretch;
   gap: 8px;
   overflow-x: auto;
   padding: 0 24px;
@@ -908,25 +909,35 @@ button {
 
 .tabbar button,
 .subtab {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
   flex: 0 0 auto;
   border: 0;
   border-bottom: 3px solid transparent;
   background: transparent;
   color: var(--muted);
-  padding: 14px 8px 12px;
+  min-height: 54px;
+  padding: 10px 8px 8px;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .tab-inner {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 100%;
   gap: 8px;
+  text-align: center;
 }
 
 .tab-label {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  line-height: 1.2;
 }
 
 .tab-icon {
@@ -2361,6 +2372,7 @@ button.summary-card.clickable {
 .screen.app-screen .recycle-card,
 .screen.app-screen .hub-card,
 .screen.app-screen .list-card {
+  height: 100%;
   padding: 13px 14px;
   border-radius: 6px;
   border-color: rgba(203, 213, 225, 0.76);
@@ -2467,6 +2479,54 @@ button.summary-card.clickable {
 .screen.app-screen .panel-head {
   align-items: center;
   margin-bottom: 6px;
+}
+
+.screen.app-screen .tabbar,
+.screen.app-screen .subtabbar {
+  align-items: stretch;
+  gap: 10px;
+  padding-inline: 18px;
+}
+
+.screen.app-screen .tabbar button,
+.screen.app-screen .subtab {
+  min-height: 52px;
+  padding: 8px 10px 6px;
+}
+
+.screen.app-screen .tab-inner {
+  justify-content: center;
+}
+
+.screen.app-screen .toolbar,
+.screen.app-screen .panel-actions,
+.screen.app-screen .toolbar-actions,
+.screen.app-screen .button-row {
+  align-items: center;
+}
+
+.screen.app-screen .toolbar > .field {
+  flex: 1 1 190px;
+}
+
+.screen.app-screen .toolbar > .field.compact {
+  flex: 1 1 170px;
+}
+
+.screen.app-screen .toolbar > .field.grow,
+.screen.app-screen .toolbar > .grow {
+  flex: 1 1 260px;
+}
+
+.screen.app-screen .toolbar > .toolbar-actions,
+.screen.app-screen .toolbar > .button-row {
+  margin-left: auto;
+}
+
+.screen.app-screen .panel-actions .btn,
+.screen.app-screen .toolbar-actions .btn,
+.screen.app-screen .button-row .btn {
+  min-height: 44px;
 }
 
 .screen.app-screen .activity-log-label {
@@ -3208,6 +3268,11 @@ button.summary-card.clickable {
   .app-main {
     width: min(100% - 20px, 1440px);
     margin-top: 18px;
+  }
+
+  .screen.app-screen .toolbar > .toolbar-actions,
+  .screen.app-screen .toolbar > .button-row {
+    margin-left: 0;
   }
 }
 
