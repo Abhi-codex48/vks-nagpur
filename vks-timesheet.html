@@ -1738,7 +1738,7 @@ button.summary-card.clickable {
 
 .single-client-card {
   display: grid;
-  gap: 14px;
+  gap: 10px;
 }
 
 .single-client-card-head {
@@ -1751,18 +1751,20 @@ button.summary-card.clickable {
 
 .single-client-empty {
   border-style: dashed;
+  padding: 12px 14px;
 }
 
 .single-total-card {
-  min-height: 100%;
+  min-height: auto;
   display: grid;
-  gap: 6px;
-  align-content: center;
+  gap: 4px;
+  align-content: start;
+  padding: 12px 14px;
 }
 
 .single-total-hours {
   font-family: "Fraunces", serif;
-  font-size: 1.6rem;
+  font-size: 1.35rem;
   line-height: 1;
   color: var(--ink);
 }
@@ -1774,6 +1776,34 @@ button.summary-card.clickable {
 .readonly-wrap input[readonly] {
   cursor: default;
   color: var(--ink);
+}
+
+.single-entry-form-shell {
+  display: grid;
+  gap: 12px;
+}
+
+.single-entry-top-grid,
+.single-entry-client-grid {
+  gap: 12px;
+  align-items: start;
+}
+
+.single-entry-top-grid {
+  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+}
+
+.single-entry-form-shell .hub-card {
+  padding: 12px 14px;
+  border-radius: 14px;
+}
+
+.single-entry-form-shell .button-row {
+  margin-top: 0;
+}
+
+.single-entry-form-shell .subline {
+  line-height: 1.4;
 }
 
 .hub-dashboard-note {
@@ -3274,6 +3304,11 @@ button.summary-card.clickable {
   .screen.app-screen .toolbar > .button-row {
     margin-left: 0;
   }
+
+  .single-entry-top-grid,
+  .single-entry-client-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 640px) {
@@ -3648,8 +3683,8 @@ button.summary-card.clickable {
             </div>
           </div>
 
-          <form id="single-entry-form">
-            <div class="grid two">
+          <form id="single-entry-form" class="single-entry-form-shell">
+            <div class="grid two single-entry-top-grid">
               <label class="field">
                 <span>Date</span>
                 <input id="entry-date" type="date">
@@ -3659,17 +3694,17 @@ button.summary-card.clickable {
                 <strong id="entry-total-hours-label" class="single-total-hours">0.0 h</strong>
                 <div class="subline">Calculated from the client boxes below.</div>
                 <div class="hrmin-wrap readonly-wrap">
-                  <input id="entry-hours-h" type="number" min="0" max="23" placeholder="0" aria-label="Hours" readonly>
+                  <input id="entry-hours-h" type="number" min="0" max="24" placeholder="0" aria-label="Hours" readonly>
                   <span class="hrmin-unit">hr</span>
                   <span class="hrmin-divider"></span>
-                  <input id="entry-hours-m" type="number" min="0" max="59" placeholder="0" aria-label="Minutes" readonly>
+                  <input id="entry-hours-m" type="number" min="0" max="60" placeholder="0" aria-label="Minutes" readonly>
                   <span class="hrmin-unit">min</span>
                 </div>
                 <input id="entry-hours" type="hidden" value="">
               </div>
             </div>
 
-            <div class="grid two">
+            <div class="grid two single-entry-client-grid">
               <div class="field">
                 <span>Select client</span>
                 <input id="entry-client-search" type="text" autocomplete="off" placeholder="Search client and add">
@@ -4493,9 +4528,10 @@ button.summary-card.clickable {
     }
 
     function hrmToDecimal(h, m) {
-      const hours = Math.max(0, Math.min(23, parseInt(h, 10) || 0));
-      const mins  = Math.max(0, Math.min(59, parseInt(m, 10) || 0));
-      return Number((hours + mins / 60).toFixed(2));
+      const hours = Math.max(0, Math.min(24, parseInt(h, 10) || 0));
+      const mins  = Math.max(0, Math.min(60, parseInt(m, 10) || 0));
+      const totalMinutes = Math.min(24 * 60, (hours * 60) + mins);
+      return Number((totalMinutes / 60).toFixed(2));
     }
 
     function clampWholeNumberInput(input, min, max) {
@@ -4521,8 +4557,8 @@ button.summary-card.clickable {
       const m = r.querySelector ? r.querySelector("#" + mId) : byId(mId);
       const hidden = r.querySelector ? r.querySelector("#" + hiddenId) : byId(hiddenId);
       if (!h || !m || !hidden) return;
-      const hours = clampWholeNumberInput(h, 0, 23);
-      const mins = clampWholeNumberInput(m, 0, 59);
+      const hours = clampWholeNumberInput(h, 0, 24);
+      const mins = clampWholeNumberInput(m, 0, 60);
       const val = hrmToDecimal(hours, mins);
       hidden.value = val > 0 ? String(val) : "";
     }
@@ -7328,10 +7364,10 @@ button.summary-card.clickable {
                 <label class="field">
                   <span>Time worked</span>
                   <div class="hrmin-wrap">
-                    <input id="entry-client-hours-h-${safe(item.key)}" type="number" min="0" max="23" placeholder="0" aria-label="Hours for ${safe(item.client)}">
+                    <input id="entry-client-hours-h-${safe(item.key)}" type="number" min="0" max="24" placeholder="0" aria-label="Hours for ${safe(item.client)}">
                     <span class="hrmin-unit">hr</span>
                     <span class="hrmin-divider"></span>
-                    <input id="entry-client-hours-m-${safe(item.key)}" type="number" min="0" max="59" placeholder="0" aria-label="Minutes for ${safe(item.client)}">
+                    <input id="entry-client-hours-m-${safe(item.key)}" type="number" min="0" max="60" placeholder="0" aria-label="Minutes for ${safe(item.client)}">
                     <span class="hrmin-unit">min</span>
                   </div>
                   <input id="entry-client-hours-${safe(item.key)}" type="hidden" value="${safe(String(item.hours || ""))}">
@@ -9520,10 +9556,10 @@ button.summary-card.clickable {
                 <label class="field readonly-wrap">
                   <span>Total time</span>
                   <div class="hrmin-wrap">
-                    <input id="edit-hours-h" type="number" min="0" max="23" placeholder="0" readonly>
+                    <input id="edit-hours-h" type="number" min="0" max="24" placeholder="0" readonly>
                     <span class="hrmin-unit">hr</span>
                     <span class="hrmin-divider"></span>
-                    <input id="edit-hours-m" type="number" min="0" max="59" placeholder="0" readonly>
+                    <input id="edit-hours-m" type="number" min="0" max="60" placeholder="0" readonly>
                     <span class="hrmin-unit">min</span>
                   </div>
                   <input id="edit-hours" type="hidden" value="">
@@ -9611,10 +9647,10 @@ button.summary-card.clickable {
                     <label class="field">
                       <span>Time worked</span>
                       <div class="hrmin-wrap">
-                        <input id="edit-single-client-hours-h-${safe(item.key)}" type="number" min="0" max="23" placeholder="0" aria-label="Hours for ${safe(item.client)}">
+                        <input id="edit-single-client-hours-h-${safe(item.key)}" type="number" min="0" max="24" placeholder="0" aria-label="Hours for ${safe(item.client)}">
                         <span class="hrmin-unit">hr</span>
                         <span class="hrmin-divider"></span>
-                        <input id="edit-single-client-hours-m-${safe(item.key)}" type="number" min="0" max="59" placeholder="0" aria-label="Minutes for ${safe(item.client)}">
+                        <input id="edit-single-client-hours-m-${safe(item.key)}" type="number" min="0" max="60" placeholder="0" aria-label="Minutes for ${safe(item.client)}">
                         <span class="hrmin-unit">min</span>
                       </div>
                       <input id="edit-single-client-hours-${safe(item.key)}" type="hidden" value="${safe(String(item.hours || ""))}">
@@ -9833,7 +9869,7 @@ button.summary-card.clickable {
               </select>
             </label>
             <div id="edit-bulk-task-chips" class="chip-row"></div>
-            <label class="field"><span>Hours Per Day</span><div class="hrmin-wrap"><input id="edit-hours-h" type="number" min="0" max="23" placeholder="0" value="${Math.floor(Number(record.hours || avgHoursFromMap(record.dailyHours || {}, dates) || 0))}"><span class="hrmin-unit">hr</span><span class="hrmin-divider"></span><input id="edit-hours-m" type="number" min="0" max="59" placeholder="0" value="${Math.round((Number(record.hours || avgHoursFromMap(record.dailyHours || {}, dates) || 0) % 1) * 60)}"><span class="hrmin-unit">min</span></div><input id="edit-hours" type="hidden" value="${safe(String(record.hours || avgHoursFromMap(record.dailyHours || {}, dates) || ""))}"></label>
+            <label class="field"><span>Hours Per Day</span><div class="hrmin-wrap"><input id="edit-hours-h" type="number" min="0" max="24" placeholder="0" value="${Math.floor(Number(record.hours || avgHoursFromMap(record.dailyHours || {}, dates) || 0))}"><span class="hrmin-unit">hr</span><span class="hrmin-divider"></span><input id="edit-hours-m" type="number" min="0" max="60" placeholder="0" value="${Math.round((Number(record.hours || avgHoursFromMap(record.dailyHours || {}, dates) || 0) % 1) * 60)}"><span class="hrmin-unit">min</span></div><input id="edit-hours" type="hidden" value="${safe(String(record.hours || avgHoursFromMap(record.dailyHours || {}, dates) || ""))}"></label>
             <label class="field"><span>Remarks</span><textarea id="edit-remarks" rows="5">${safe(record.remarks || "")}</textarea><div class="field-note"><span id="edit-remarks-count">0 characters</span><span>Minimum 100 characters required.</span></div></label>
             <div class="button-row"><button class="btn btn-ghost" id="edit-cancel" type="button">Cancel</button><button class="btn btn-primary" id="edit-save" type="button">Save</button></div>
           </div>
@@ -10000,7 +10036,7 @@ button.summary-card.clickable {
               <div id="bulk-date-summary" class="selection-summary"></div>
               <div id="bulk-date-grid"></div>
             </div>
-            <label class="field"><span>Hours Per Day</span><div class="hrmin-wrap"><input id="bulk-hours-h" type="number" min="0" max="23" placeholder="0" aria-label="Hours"><span class="hrmin-unit">hr</span><span class="hrmin-divider"></span><input id="bulk-hours-m" type="number" min="0" max="59" placeholder="0" aria-label="Minutes"><span class="hrmin-unit">min</span></div><input id="bulk-hours" type="hidden" value=""></label>
+            <label class="field"><span>Hours Per Day</span><div class="hrmin-wrap"><input id="bulk-hours-h" type="number" min="0" max="24" placeholder="0" aria-label="Hours"><span class="hrmin-unit">hr</span><span class="hrmin-divider"></span><input id="bulk-hours-m" type="number" min="0" max="60" placeholder="0" aria-label="Minutes"><span class="hrmin-unit">min</span></div><input id="bulk-hours" type="hidden" value=""></label>
             <label class="field"><span>Remarks</span><textarea id="bulk-remarks" rows="5" placeholder="Minimum 100 characters"></textarea><div class="field-note"><span id="bulk-remarks-count">0 characters</span><span>Minimum 100 characters required.</span></div></label>
             <div class="hub-card">
               <strong>Save For Later</strong>
