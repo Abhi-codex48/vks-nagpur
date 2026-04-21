@@ -230,6 +230,8 @@ button {
 .ll-quote-new em{color:#f5c84f;font-style:normal;font-weight:700;text-shadow:0 0 14px rgba(245,200,79,.18)}
 .login-right{flex:1;background:linear-gradient(160deg,#fdfaf5 0%,#f5ece0 100%);display:flex;flex-direction:column;position:relative;overflow:hidden}
 .login-right::before{content:'';position:absolute;top:-100px;right:-100px;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(201,150,12,.07),transparent 70%);pointer-events:none}
+.login-beta-badge{position:absolute;top:22px;right:26px;z-index:2;display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1px solid rgba(190,142,27,.28);background:rgba(255,252,246,.92);box-shadow:0 10px 24px rgba(23,18,13,.08);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.login-beta-badge-dot{width:9px;height:9px;border-radius:50%;background:linear-gradient(135deg,#f0b63a 0%,#be8e1b 100%);box-shadow:0 0 0 4px rgba(190,142,27,.14)}
 .lr-inner{flex:1;display:flex;flex-direction:column;justify-content:center;padding:52px 48px;position:relative;z-index:1;overflow-y:auto}
 .lr-heading{font-family:'DM Serif Display',serif;font-size:1.9rem;color:var(--ink);margin-bottom:6px;line-height:1.2}
 .lr-sub{font-size:.82rem;color:var(--muted);margin-bottom:28px;line-height:1.65;font-family:'DM Sans',sans-serif}
@@ -609,6 +611,29 @@ button {
   flex-wrap: wrap;
   line-height: 1.5;
 }
+
+.remarks-counter {
+  font-weight: 700;
+  transition: color 0.18s ease;
+}
+
+.remarks-counter.is-good {
+  color: var(--sage);
+}
+
+.remarks-counter.is-warn {
+  color: var(--gold);
+}
+
+.remarks-counter.is-danger {
+  color: var(--rust);
+}
+
+.remarks-target-error {
+  border-color: rgba(183, 86, 43, 0.85) !important;
+  box-shadow: 0 0 0 3px rgba(183, 86, 43, 0.18);
+}
+
 .hrmin-wrap {
   display: flex;
   align-items: center;
@@ -3079,6 +3104,7 @@ button.summary-card.clickable {
   .ll-vks{font-size:2.6rem}
   .ll-inner{flex:none}
   .login-right{overflow:visible}
+  .login-beta-badge{top:18px;right:20px}
   .lr-inner{padding:28px 24px;overflow-y:visible}
   .lr-footer{padding:12px 24px 16px}
 
@@ -3151,6 +3177,7 @@ button.summary-card.clickable {
   }
 
   .login-left{padding:24px 18px}
+  .login-beta-badge{top:14px;right:16px;padding:7px 10px;font-size:.66rem}
   .ll-vks{font-size:2.2rem}
   .ll-eyebrow{margin-bottom:20px}
   .lr-inner{padding:22px 18px}
@@ -3330,6 +3357,10 @@ button.summary-card.clickable {
         </div>
       </div>
       <div class="login-right">
+        <div class="login-beta-badge" aria-label="Beta version">
+          <span class="login-beta-badge-dot" aria-hidden="true"></span>
+          <span>Beta</span>
+        </div>
         <div class="lr-inner">
           <div class="lr-heading" id="lr-greeting">Good Morning</div>
           <div class="lr-sub">Sign in with your work Gmail to access your timesheet portal.</div>
@@ -3526,12 +3557,12 @@ button.summary-card.clickable {
             </div>
 
             <div class="grid two">
-              <label class="field">
+              <div class="field">
                 <span>Client</span>
                 <input id="entry-client-search" type="text" autocomplete="off" placeholder="Search client">
                 <input id="entry-client" type="hidden">
                 <div id="entry-client-options" class="suggestions"></div>
-              </label>
+              </div>
               <label class="field">
                 <span>Other client name</span>
                 <input id="entry-client-other" type="text" placeholder="Use only when client is not in the list">
@@ -3705,12 +3736,12 @@ button.summary-card.clickable {
               <span>To</span>
               <input id="all-to" type="date">
             </label>
-            <label class="field compact">
+            <div class="field compact">
               <span>Employee / Article</span>
               <input id="all-user-search" type="text" autocomplete="off" placeholder="All employees / articles">
               <input id="all-user-id" type="hidden">
               <div id="all-user-options" class="suggestions"></div>
-            </label>
+            </div>
             <label class="field compact">
               <span>Role</span>
               <select id="all-role-filter">
@@ -3796,12 +3827,12 @@ button.summary-card.clickable {
             </div>
           </div>
           <div class="toolbar">
-            <label class="field compact grow">
+            <div class="field compact grow">
               <span>Employee / Article</span>
               <input id="pin-reset-search" type="text" autocomplete="off" placeholder="Search employee / article">
               <input id="pin-reset-user-id" type="hidden">
               <div id="pin-reset-options" class="suggestions"></div>
-            </label>
+            </div>
             <div class="toolbar-actions">
               <button id="pin-reset-submit" class="btn btn-primary small" type="button">Reset PIN</button>
             </div>
@@ -4266,6 +4297,7 @@ button.summary-card.clickable {
       liveRefreshTimer: null,
       liveRefreshBusy: false,
       singleSubmitBusy: false,
+      pinSubmitBusy: false,
       myEntriesLoaded: false,
       myEntriesLoadedAt: 0,
       modalCleanups: [],
@@ -4280,6 +4312,7 @@ button.summary-card.clickable {
         clients: [],
         users: []
       },
+      directoryBackfillDone: false,
       employees: [],
       clientDocs: [],
       myEntries: [],
@@ -4588,10 +4621,11 @@ button.summary-card.clickable {
         return;
       }
 
+      const targetScreen = state.user ? currentAuthScreen() : (route.screen || "screen-login");
       state.applyingHistory = true;
       try {
-        switchScreen(route.screen || "screen-login", { historyMode: "replace" });
-        if ((route.screen || "") === "screen-app") {
+        switchScreen(targetScreen, { historyMode: "replace" });
+        if (targetScreen === "screen-app") {
           if (route.page) {
             setActivePage(route.page, { historyMode: "replace" });
           }
@@ -4609,6 +4643,15 @@ button.summary-card.clickable {
         state.applyingHistory = false;
         state.lastHistoryKey = routeKey(currentRouteSnapshot());
       }
+    }
+
+    function currentAuthScreen() {
+      if (!state.user || !state.profile) return "screen-login";
+      if (state.profile.locked && !isAdmin()) return "screen-locked";
+      if (state.profile.approved === false) return "screen-pending";
+      if (!state.profile.pinSet) return "screen-set-pin";
+      if (!pinDone(state.user.uid)) return "screen-pin";
+      return "screen-app";
     }
 
     function profileName() {
@@ -4945,15 +4988,25 @@ button.summary-card.clickable {
 
     async function writeLog(payload) {
       try {
-        await addDoc(collection(db, "logs"), {
+        const entry = {
           action: payload.action || "",
+          actorUid: payload.actorUid || state.user?.uid || "",
           actorName: payload.actorName || "",
           actorEmail: payload.actorEmail || "",
           detail: payload.detail || "",
           detailAdmin: payload.detailAdmin || "",
           type: payload.type || "entry",
           createdAt: Timestamp.now()
-        });
+        };
+        await addDoc(collection(db, "logs"), entry);
+        if (isPublicSafeLog(entry)) {
+          await addDoc(collection(db, "public_logs"), {
+            action: entry.action || "",
+            actorUid: entry.actorUid || "",
+            type: entry.type || "entry",
+            createdAt: entry.createdAt
+          }).catch(() => {});
+        }
       } catch (_error) {
         // no-op
       }
@@ -5054,6 +5107,8 @@ button.summary-card.clickable {
         const refreshed = await getDoc(doc(db, "users", user.uid));
         state.profile = { id: refreshed.id, ...(refreshed.data() || {}) };
       }
+
+      await syncUserDirectoryEntry({ id: state.profile.id, ...(state.profile || {}) });
 
       if (state.profile.locked && !isAdmin()) {
         switchScreen("screen-locked", { historyMode: "replace" });
@@ -5177,59 +5232,64 @@ button.summary-card.clickable {
     }
 
     async function submitPin() {
-      if (state.pinBuffer.length !== 4) return;
-      const freshSnap = state.user?.uid ? await getDoc(doc(db, "users", state.user.uid)).catch(() => null) : null;
-      if (freshSnap?.exists()) {
-        state.profile = { id: freshSnap.id, ...(freshSnap.data() || {}) };
-      }
-      if (!state.profile?.pinSet || !String(state.profile?.pinHash || "").trim()) {
-        state.pinBuffer = "";
-        updatePinDots();
-        byId("pin-error").textContent = "PIN is not available for this account. Set a new PIN.";
-        switchScreen("screen-set-pin", { historyMode: "replace" });
-        return;
-      }
-      const hash = await hashPin(state.pinBuffer);
-      const attempts = Number(state.profile?.pinAttempts || 0);
-      if (hash === String(state.profile?.pinHash || "").trim().toLowerCase()) {
-        await updateDoc(doc(db, "users", state.user.uid), { pinAttempts: 0, locked: false }).catch(() => {});
-        state.profile = { ...state.profile, pinAttempts: 0, locked: false };
-        setPinDone(state.user.uid);
-        state.pinBuffer = "";
-        updatePinDots();
-        enterPortal();
-        return;
-      }
+      if (state.pinSubmitBusy || state.pinBuffer.length !== 4) return;
+      state.pinSubmitBusy = true;
+      try {
+        const freshSnap = state.user?.uid ? await getDoc(doc(db, "users", state.user.uid)).catch(() => null) : null;
+        if (freshSnap?.exists()) {
+          state.profile = { id: freshSnap.id, ...(freshSnap.data() || {}) };
+        }
+        if (!state.profile?.pinSet || !String(state.profile?.pinHash || "").trim()) {
+          state.pinBuffer = "";
+          updatePinDots();
+          byId("pin-error").textContent = "PIN is not available for this account. Set a new PIN.";
+          switchScreen("screen-set-pin", { historyMode: "replace" });
+          return;
+        }
+        const hash = await hashPin(state.pinBuffer);
+        const attempts = Number(state.profile?.pinAttempts || 0);
+        if (hash === String(state.profile?.pinHash || "").trim().toLowerCase()) {
+          await updateDoc(doc(db, "users", state.user.uid), { pinAttempts: 0, locked: false }).catch(() => {});
+          state.profile = { ...state.profile, pinAttempts: 0, locked: false };
+          setPinDone(state.user.uid);
+          state.pinBuffer = "";
+          updatePinDots();
+          enterPortal();
+          return;
+        }
 
-      const nextAttempts = attempts + 1;
-      if (nextAttempts >= 3 && !isAdmin()) {
-        await updateDoc(doc(db, "users", state.user.uid), {
-          locked: true,
-          pinAttempts: nextAttempts,
-          lockedAt: Timestamp.now(),
-          lockedReason: "3 wrong PIN attempts"
-        }).catch(() => {});
-        await writeLog({
-          action: `${profileName()} account locked after wrong PIN attempts`,
-          actorName: profileName(),
-          actorEmail: profileEmail(),
-          type: "lock",
-          detail: "3 wrong PIN attempts",
-          detailAdmin: state.user.uid
-        });
-        state.profile = { ...state.profile, locked: true, pinAttempts: nextAttempts };
+        const nextAttempts = attempts + 1;
+        if (nextAttempts >= 3 && !isAdmin()) {
+          await updateDoc(doc(db, "users", state.user.uid), {
+            locked: true,
+            pinAttempts: nextAttempts,
+            lockedAt: Timestamp.now(),
+            lockedReason: "3 wrong PIN attempts"
+          }).catch(() => {});
+          await writeLog({
+            action: `${profileName()} account locked after wrong PIN attempts`,
+            actorName: profileName(),
+            actorEmail: profileEmail(),
+            type: "lock",
+            detail: "3 wrong PIN attempts",
+            detailAdmin: state.user.uid
+          });
+          state.profile = { ...state.profile, locked: true, pinAttempts: nextAttempts };
+          state.pinBuffer = "";
+          updatePinDots();
+          switchScreen("screen-locked", { historyMode: "replace" });
+          return;
+        }
+
+        await updateDoc(doc(db, "users", state.user.uid), { pinAttempts: nextAttempts }).catch(() => {});
+        state.profile = { ...state.profile, pinAttempts: nextAttempts };
         state.pinBuffer = "";
         updatePinDots();
-        switchScreen("screen-locked", { historyMode: "replace" });
-        return;
+        byId("pin-error").textContent = "Incorrect PIN.";
+        byId("pin-attempts").textContent = `${3 - nextAttempts} attempt(s) remaining`;
+      } finally {
+        state.pinSubmitBusy = false;
       }
-
-      await updateDoc(doc(db, "users", state.user.uid), { pinAttempts: nextAttempts }).catch(() => {});
-      state.profile = { ...state.profile, pinAttempts: nextAttempts };
-      state.pinBuffer = "";
-      updatePinDots();
-      byId("pin-error").textContent = "Incorrect PIN.";
-      byId("pin-attempts").textContent = `${3 - nextAttempts} attempt(s) remaining`;
     }
 
     async function logout() {
@@ -5238,9 +5298,16 @@ button.summary-card.clickable {
       await signOut(auth).catch(() => {});
       state.user = null;
       state.profile = null;
+      state.lookups = { clients: [], users: [] };
+      state.directoryBackfillDone = false;
+      state.employees = [];
+      state.clientDocs = [];
       state.myEntries = [];
       state.myEntriesLoaded = false;
       state.myEntriesLoadedAt = 0;
+      state.allEntries = [];
+      state.logs = [];
+      state.recycleDocs = [];
       state.pinBuffer = "";
       setEntryLastSaved("");
       byId("login-error").textContent = "";
@@ -5583,6 +5650,56 @@ button.summary-card.clickable {
       return out;
     }
 
+    function isLinkableUserDirectoryRecord(user) {
+      const id = String(user?.id || user?.uid || "").trim();
+      const email = String(user?.email || "").trim().toLowerCase();
+      if (!id || !email) return false;
+      if (user?.googleLinked === true) return true;
+      return !id.startsWith("pre_");
+    }
+
+    function userDirectoryPayload(user) {
+      if (!isLinkableUserDirectoryRecord(user)) return null;
+      return {
+        name: String(user?.name || user?.email || user?.id || "").trim(),
+        email: String(user?.email || "").trim().toLowerCase(),
+        role: String(user?.role || "").trim(),
+        department: String(user?.department || "").trim(),
+        approved: user?.approved !== false,
+        photo: String(user?.photo || "").trim(),
+        googleLinked: user?.googleLinked !== false,
+        sourceUid: String(user?.uid || user?.id || "").trim(),
+        createdAt: user?.createdAt || Timestamp.now(),
+        updatedAt: Timestamp.now()
+      };
+    }
+
+    async function syncUserDirectoryEntry(user) {
+      const id = String(user?.id || user?.uid || "").trim();
+      const payload = userDirectoryPayload({ ...(user || {}), id });
+      if (!id || !payload) return false;
+      try {
+        await setDoc(doc(db, "user_directory", id), payload, { merge: true });
+        return true;
+      } catch (_error) {
+        return false;
+      }
+    }
+
+    async function deleteUserDirectoryEntry(id) {
+      const safeId = String(id || "").trim();
+      if (!safeId) return;
+      await deleteDoc(doc(db, "user_directory", safeId)).catch(() => {});
+    }
+
+    async function backfillUserDirectory() {
+      if (!isAdmin() || state.directoryBackfillDone) return;
+      state.directoryBackfillDone = true;
+      const linkedUsers = (state.employees || []).filter((user) => isLinkableUserDirectoryRecord({ ...(user || {}), id: user?.id }));
+      if (!linkedUsers.length) return;
+      await Promise.allSettled(linkedUsers.map((user) => syncUserDirectoryEntry({ ...(user || {}), id: user.id })));
+    }
+
     function splitKnownTasks(raw) {
       const text = String(raw || "").trim();
       if (!text) return [];
@@ -5747,6 +5864,12 @@ button.summary-card.clickable {
       return uniq((ids || memberIdList(record)).map((id) => map[id]?.name || lookupUser(id)?.name || id).filter(Boolean));
     }
 
+    function pendingGroupVisibleToUid(record, uid) {
+      if (!record || record.entryKind !== "group" || record.status !== "pending" || !uid) return false;
+      if ((record.rejectedUserIds || []).includes(uid)) return false;
+      return record.creatorUid === uid || (record.pendingUserIds || []).includes(uid) || (record.approvedUserIds || []).includes(uid);
+    }
+
     function userEntryForGroup(record, uid) {
       const raw = record?.memberEntries && typeof record.memberEntries === "object" ? record.memberEntries[uid] : null;
       if (raw) {
@@ -5838,6 +5961,15 @@ button.summary-card.clickable {
       return clients.length ? clients.join(", ") : "-";
     }
 
+    function remarksTextForRecord(record, options = {}) {
+      if (record?.entryKind !== "group") return String(record?.remarks || "").trim();
+      const ids = options.adminView ? visibleMemberIds(record) : [options.uid || state.user?.uid || ""].filter(Boolean);
+      return ids
+        .map((uid) => String(userEntryForGroup(record, uid).remarks || "").trim())
+        .filter(Boolean)
+        .join(" | ");
+    }
+
     function shortTaskLabel(task) {
       const text = String(task || "").trim();
       if (text.startsWith("Audit")) return "Audit";
@@ -5913,17 +6045,33 @@ button.summary-card.clickable {
 
       if (!state.lookups.users.length || force) {
         try {
-          const snap = await getDocs(collection(db, "users"));
-          state.employees = snap.docs.map((item) => ({ id: item.id, ...(item.data() || {}) }));
-          state.lookups.users = state.employees
-            .map((user) => ({
-              id: user.id,
-              name: user.name || user.email || user.id,
-              email: user.email || "",
-              role: user.role || "",
-              approved: user.approved !== false
-            }))
-            .sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
+          if (isAdmin()) {
+            const snap = await getDocs(collection(db, "users"));
+            state.employees = snap.docs.map((item) => ({ id: item.id, ...(item.data() || {}) }));
+            await backfillUserDirectory();
+            state.lookups.users = state.employees
+              .map((user) => ({
+                id: user.id,
+                name: user.name || user.email || user.id,
+                email: user.email || "",
+                role: user.role || "",
+                approved: user.approved !== false
+              }))
+              .sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
+          } else {
+            const snap = await getDocs(collection(db, "user_directory"));
+            state.employees = [];
+            state.lookups.users = snap.docs
+              .map((item) => ({ id: item.id, ...(item.data() || {}) }))
+              .map((user) => ({
+                id: user.id,
+                name: user.name || user.email || user.id,
+                email: user.email || "",
+                role: user.role || "",
+                approved: user.approved !== false
+              }))
+              .sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
+          }
         } catch (_error) {
           state.employees = [];
           state.lookups.users = [];
@@ -6009,7 +6157,7 @@ button.summary-card.clickable {
       const entries = [
         ...singles,
         ...bulks,
-        ...groups.filter((record) => (record.status === "active" && visibleMemberIds(record).includes(state.user?.uid || "")) || (record.status === "pending" && memberIdList(record).includes(state.user?.uid || "")))
+        ...groups.filter((record) => (record.status === "active" && visibleMemberIds(record).includes(state.user?.uid || "")) || pendingGroupVisibleToUid(record, state.user?.uid || ""))
       ].sort(sortRecords);
       state.myEntries = entries;
       state.myEntriesLoaded = true;
@@ -6027,7 +6175,7 @@ button.summary-card.clickable {
       return [
         ...singles,
         ...bulks,
-        ...groups.filter((record) => (record.status === "active" && visibleMemberIds(record).includes(uid)) || (record.status === "pending" && memberIdList(record).includes(uid)))
+        ...groups.filter((record) => (record.status === "active" && visibleMemberIds(record).includes(uid)) || pendingGroupVisibleToUid(record, uid))
       ].sort(sortRecords);
     }
 
@@ -6394,7 +6542,7 @@ button.summary-card.clickable {
         Email: record.creatorEmail || record.email || "-",
         Role: record.creatorRole || record.role || "-",
         Client: clientLabel(record),
-        Members: record.entryKind === "group" ? memberNames(record).join(", ") : "",
+        Members: record.entryKind === "group" ? memberNames(record, visibleMemberIds(record)).join(", ") : "",
         WorkType: normalizeTaskList(record).join(" | "),
         Hours: record.entryKind === "group" ? visibleMemberIds(record).map((uid) => `${lookupUser(uid)?.name || uid}: ${userEntryForGroup(record, uid).totalHours || 0}`).join(" | ") : singleOrBulkHoursLabel(record),
         Days: recordDates(record).length || 1,
@@ -6497,13 +6645,22 @@ button.summary-card.clickable {
 
     function normalizeRoleValue(role) {
       const value = String(role || "").trim();
-      if (value === "Employee / Professional") return value;
-      if (value === "CA Article") return value;
+      const lower = value.toLowerCase();
+      if (lower === "admin") return "admin";
+      if (["employee / professional", "employee/professional", "employee professional"].includes(lower)) return "Employee / Professional";
+      if (["ca article", "ca articles"].includes(lower)) return "CA Article";
       return "CA Article";
     }
 
     function defaultDepartmentForRole(role) {
       return role === "CA Article" ? "CA Articles" : "Audit Team";
+    }
+
+    function readSpreadsheetCell(row, keys = []) {
+      if (!row || typeof row !== "object") return "";
+      const wanted = new Set((keys || []).map((key) => normalizeCompareText(key)));
+      const match = Object.entries(row).find(([key]) => wanted.has(normalizeCompareText(key)));
+      return match ? match[1] : "";
     }
 
     function readSpreadsheetRows(file, mode = "objects") {
@@ -6552,7 +6709,7 @@ button.summary-card.clickable {
           const monthOk = !month || dates.some((date) => date.startsWith(month));
           const dateOk = (!from || dates.some((date) => date >= from)) && (!to || dates.some((date) => date <= to));
           const taskOk = !task || normalizeTaskList(record).includes(task);
-          const searchBlob = [displayDate(record), clientLabel(record), normalizeTaskList(record).join(" "), record.remarks, memberNames(record).join(" ")].join(" ").toLowerCase();
+          const searchBlob = [displayDate(record), clientLabel(record), normalizeTaskList(record).join(" "), remarksTextForRecord(record), memberNames(record).join(" ")].join(" ").toLowerCase();
           return monthOk && dateOk && taskOk && (!q || searchBlob.includes(q));
         })
         .sort(sortRecords);
@@ -6575,7 +6732,7 @@ button.summary-card.clickable {
           const userOk = userId ? ownerFields(record).includes(userId) || memberIdList(record).includes(userId) : (!userText || userBlob.includes(userText));
           const roleOk = !role || String(record.creatorRole || record.role || "").toLowerCase() === String(role).toLowerCase();
           const taskOk = !task || normalizeTaskList(record).includes(task);
-          const searchBlob = [displayDate(record), clientLabel(record), normalizeTaskList(record).join(" "), record.remarks, record.name, record.email, record.creatorName, record.creatorEmail, memberNames(record).join(" ")].join(" ").toLowerCase();
+          const searchBlob = [displayDate(record), clientLabel(record), normalizeTaskList(record).join(" "), remarksTextForRecord(record, { adminView: true }), record.name, record.email, record.creatorName, record.creatorEmail, memberNames(record).join(" ")].join(" ").toLowerCase();
           return dateOk && userOk && roleOk && taskOk && (!q || searchBlob.includes(q));
         })
         .sort(sortRecords);
@@ -6824,9 +6981,45 @@ button.summary-card.clickable {
     }
 
     function updateEntryRemarkCount() {
-      const value = String(byId("entry-remarks")?.value || "").trim();
-      const count = byId("entry-remarks-count");
-      if (count) count.textContent = `${value.length} characters`;
+      updateRemarksCounter("entry-remarks-count", byId("entry-remarks")?.value || "");
+    }
+
+    function trimmedRemarkLength(value) {
+      return String(value || "").trim().length;
+    }
+
+    function remarksCounterTone(length) {
+      if (length >= 100) return "is-good";
+      if (length >= 50) return "is-warn";
+      return "is-danger";
+    }
+
+    function updateRemarksCounter(counterOrId, value) {
+      const counter = typeof counterOrId === "string" ? byId(counterOrId) : counterOrId;
+      if (!counter) return;
+      const length = trimmedRemarkLength(value);
+      counter.textContent = `${length} characters`;
+      counter.classList.add("remarks-counter");
+      counter.classList.remove("is-good", "is-warn", "is-danger");
+      counter.classList.add(remarksCounterTone(length));
+    }
+
+    function bindRemarksCounter(inputOrId, counterOrId) {
+      const input = typeof inputOrId === "string" ? byId(inputOrId) : inputOrId;
+      const counter = typeof counterOrId === "string" ? byId(counterOrId) : counterOrId;
+      if (!input || !counter) return;
+      const refresh = () => updateRemarksCounter(counter, input.value || "");
+      input.addEventListener("input", refresh);
+      refresh();
+    }
+
+    function focusInvalidRemarksField(field) {
+      if (!field) return;
+      field.classList.remove("remarks-target-error");
+      field.scrollIntoView({ behavior: "smooth", block: "center" });
+      field.focus({ preventScroll: true });
+      window.requestAnimationFrame(() => field.classList.add("remarks-target-error"));
+      window.setTimeout(() => field.classList.remove("remarks-target-error"), 1800);
     }
 
     async function renderEntryClientSuggestions() {
@@ -7160,7 +7353,7 @@ button.summary-card.clickable {
       sourceRecords.forEach((record) => {
         const owned = usingScopedRecords ? true : (record.entryKind === "group" ? visibleMemberIds(record).includes(uid) : ownerFields(record).includes(uid));
         if (!owned) return;
-        if (record.entryKind === "group" && record.status !== "active" && !usingScopedRecords) return;
+        if (record.entryKind === "group" && record.status !== "active") return;
         recordDates(record).forEach((date) => {
           if (date < first || date > last) return;
           const nextValue = record.entryKind === "bulk" ? "bulk" : "reported";
@@ -7805,7 +7998,7 @@ button.summary-card.clickable {
         const hay = normalizeCompareText([
           clientLabel(record),
           tasks.join(" | "),
-          record.remarks || "",
+          remarksTextForRecord(record),
           displayDate(record)
         ].join(" | "));
         return hay.includes(search);
@@ -7949,7 +8142,7 @@ button.summary-card.clickable {
                 <span class="hub-mini-metric">${safe(hubHoursText(hubEntryHours(record)))}</span>
               </div>
               <div class="hub-tag-row">${normalizeTaskList(record).map((task) => `<span class="hub-tag work">${safe(shortTaskLabel(task))}</span>`).join("")}</div>
-              <div class="hub-record-body">${safe((record.remarks || "").slice(0, 220) || "No remarks recorded.")}</div>
+              <div class="hub-record-body">${safe(remarksTextForRecord(record).slice(0, 220) || "No remarks recorded.")}</div>
             </div>
           `).join("")
         : "No timesheet knowledge matches the current filters.";
@@ -8314,6 +8507,10 @@ button.summary-card.clickable {
     }
 
     function openDeleteModal(record, context) {
+      if (!record || !canDeleteRecord(record)) {
+        toast("You can delete only records available to you for deletion.", "warn");
+        return;
+      }
       openModal(
         "Delete Entry",
         "Deleted entries first move to Recycle Bin.",
@@ -8632,8 +8829,16 @@ button.summary-card.clickable {
     }
 
     function openEditRecordModal(record) {
+      if (!record) {
+        toast("Record not found.", "error");
+        return;
+      }
       if (isAdmin()) {
         toast("Admin cannot edit entries.", "warn");
+        return;
+      }
+      if (!canEditRecord(record)) {
+        toast("You can edit only records available to you for editing.", "warn");
         return;
       }
       if (record.entryKind === "group") {
@@ -8702,7 +8907,8 @@ button.summary-card.clickable {
                       </div>
                       <label class="field">
                         <span>Remarks</span>
-                        <textarea rows="4" data-group-edit-remarks="${safe(member.id)}" ${disabled ? "disabled" : ""}>${safe(entry.remarks || "")}</textarea>
+                        <textarea rows="4" data-group-edit-remarks="${safe(member.id)}" data-counter-id="group-edit-remarks-count-${safe(member.id)}" ${disabled ? "disabled" : ""}>${safe(entry.remarks || "")}</textarea>
+                        <div class="field-note"><span id="group-edit-remarks-count-${safe(member.id)}">0 characters</span></div>
                       </label>
                     </div>
                   `;
@@ -8713,6 +8919,9 @@ button.summary-card.clickable {
           `
         );
         byId("edit-cancel")?.addEventListener("click", closeModal);
+        all('[data-group-edit-remarks]').forEach((input) => {
+          bindRemarksCounter(input, input.dataset.counterId || "");
+        });
         let saving = false;
         byId("edit-save")?.addEventListener("click", async () => {
           if (saving) return;
@@ -8744,8 +8953,12 @@ button.summary-card.clickable {
               };
               continue;
             }
-            const remarks = String(document.querySelector(`[data-group-edit-remarks="${CSS.escape(member.id)}"]`)?.value || "").trim();
-            if (remarks.length < 100) return toast(`Remarks for ${member.name} must be at least 100 characters.`, "warn");
+            const remarksField = document.querySelector(`[data-group-edit-remarks="${CSS.escape(member.id)}"]`);
+            const remarks = String(remarksField?.value || "").trim();
+            if (remarks.length < 100) {
+              focusInvalidRemarksField(remarksField);
+              return toast(`Remarks for ${member.name} must be at least 100 characters.`, "warn");
+            }
             const dailyHours = {};
             for (const date of dates) {
               const hours = Number(document.querySelector(`[data-group-edit-hours="${CSS.escape(member.id)}"][data-date="${CSS.escape(date)}"]`)?.value || 0);
@@ -8811,7 +9024,7 @@ button.summary-card.clickable {
             ${record.entryKind === "single" ? `<div class="grid two"><label class="field"><span>Date</span><input id="edit-date" type="date" value="${safe(dates[0] || "")}"></label><label class="field"><span>Hours worked</span><div class="hrmin-wrap"><input id="edit-hours-h" type="number" min="0" max="23" placeholder="0" value="${Math.floor(Number(record.hours||0))}"><span class="hrmin-unit">hr</span><span class="hrmin-divider"></span><input id="edit-hours-m" type="number" min="0" max="59" placeholder="0" value="${Math.round((Number(record.hours||0)%1)*60)}"><span class="hrmin-unit">min</span></div><input id="edit-hours" type="hidden" value="${safe(String(record.hours || ""))}"></label></div>` : `<div class="hub-card"><strong>${safe(displayDate(record))}</strong><div class="subline">Edit covered dates using the same parent record.</div></div>`}
             <label class="field"><span>Client${record.entryKind === "bulk" ? "(s)" : ""}</span><input id="edit-clients" type="text" value="${safe(initialClients.join(", "))}"></label>
             <label class="field"><span>Work types</span><input id="edit-tasks" type="text" value="${safe(initialTasks.join(" | "))}"></label>
-            <label class="field"><span>Remarks</span><textarea id="edit-remarks" rows="5">${safe(record.remarks || "")}</textarea></label>
+            <label class="field"><span>Remarks</span><textarea id="edit-remarks" rows="5">${safe(record.remarks || "")}</textarea><div class="field-note"><span id="edit-remarks-count">0 characters</span><span>Minimum 100 characters required.</span></div></label>
             ${record.entryKind === "bulk" ? `<label class="field"><span>Hours Per Day</span><div class="hrmin-wrap"><input id="edit-hours-h" type="number" min="0" max="23" placeholder="0" value="${Math.floor(Number(record.hours||avgHoursFromMap(record.dailyHours||{},dates)||0))}"><span class="hrmin-unit">hr</span><span class="hrmin-divider"></span><input id="edit-hours-m" type="number" min="0" max="59" placeholder="0" value="${Math.round((Number(record.hours||avgHoursFromMap(record.dailyHours||{},dates)||0)%1)*60)}"><span class="hrmin-unit">min</span></div><input id="edit-hours" type="hidden" value="${safe(String(record.hours || avgHoursFromMap(record.dailyHours || {}, dates) || ""))}"></label>` : ""}
             <div class="button-row"><button class="btn btn-ghost" id="edit-cancel" type="button">Cancel</button><button class="btn btn-primary" id="edit-save" type="button">Save</button></div>
           </div>
@@ -8820,6 +9033,7 @@ button.summary-card.clickable {
       byId("edit-cancel")?.addEventListener("click", closeModal);
       bindHrmPair("edit-hours-h", "edit-hours-m", "edit-hours");
       syncHrmHidden("edit-hours-h", "edit-hours-m", "edit-hours");
+      bindRemarksCounter("edit-remarks", "edit-remarks-count");
       let saving = false;
       byId("edit-save")?.addEventListener("click", async () => {
         if (saving) return;
@@ -8920,7 +9134,7 @@ button.summary-card.clickable {
               <label class="field"><span>To</span><input id="bulk-to" type="date" value="${todayStr()}"></label>
             </div>
             <label class="field"><span>Working Days</span><select id="bulk-mode"><option value="no-sun">All days except Sundays</option><option value="yes">All days including Sundays</option></select></label>
-            <label class="field"><span>Client</span><input id="bulk-client-input" type="text" autocomplete="off" placeholder="Search client"><div id="bulk-client-suggestions" class="suggestions"></div></label>
+            <div class="field"><span>Client</span><input id="bulk-client-input" type="text" autocomplete="off" placeholder="Search client"><div id="bulk-client-suggestions" class="suggestions"></div></div>
             <div id="bulk-client-chips" class="chip-row"></div>
             <label class="field"><span>Work Type</span><select id="bulk-task-picker"><option value="">Add work type</option>${TASK_OPTIONS.map((task) => `<option value="${safe(task)}">${safe(task)}</option>`).join("")}</select></label>
             <div id="bulk-task-chips" class="chip-row"></div>
@@ -8930,7 +9144,7 @@ button.summary-card.clickable {
               <div id="bulk-date-grid"></div>
             </div>
             <label class="field"><span>Hours Per Day</span><div class="hrmin-wrap"><input id="bulk-hours-h" type="number" min="0" max="23" placeholder="0" aria-label="Hours"><span class="hrmin-unit">hr</span><span class="hrmin-divider"></span><input id="bulk-hours-m" type="number" min="0" max="59" placeholder="0" aria-label="Minutes"><span class="hrmin-unit">min</span></div><input id="bulk-hours" type="hidden" value=""></label>
-            <label class="field"><span>Remarks</span><textarea id="bulk-remarks" rows="5" placeholder="Minimum 100 characters"></textarea></label>
+            <label class="field"><span>Remarks</span><textarea id="bulk-remarks" rows="5" placeholder="Minimum 100 characters"></textarea><div class="field-note"><span id="bulk-remarks-count">0 characters</span><span>Minimum 100 characters required.</span></div></label>
             <div class="hub-card">
               <strong>Save For Later</strong>
               <div class="subline">This draft is saved on this local browser/device only. It is not sent to the database and is not visible to admin unless you submit it.</div>
@@ -8945,6 +9159,7 @@ button.summary-card.clickable {
         `
       );
       bindHrmPair("bulk-hours-h", "bulk-hours-m", "bulk-hours");
+      bindRemarksCounter("bulk-remarks", "bulk-remarks-count");
 
       const renderBulkChips = () => {
         byId("bulk-client-chips").innerHTML = modalState.clients.map((client) => `<span class="chip">${safe(client)}<button type="button" data-action="remove-bulk-client" data-value="${encodeURIComponent(client)}">x</button></span>`).join("");
@@ -8956,6 +9171,10 @@ button.summary-card.clickable {
         const input = byId("bulk-client-input");
         const q = String(input?.value || "").trim().toLowerCase();
         const options = state.lookups.clients.filter((client) => client.toLowerCase().includes(q) && !modalState.clients.includes(client)).slice(0, 20);
+        if (!options.length || !input?.matches(":focus")) {
+          clearSuggestions("bulk-client-suggestions");
+          return;
+        }
         setSuggestions(
           "bulk-client-suggestions",
           options.length ? `<div class="suggestion-list">${options.map((client) => `<button class="suggestion-item" type="button" data-action="pick-bulk-client" data-value="${encodeURIComponent(client)}">${safe(client)}</button>`).join("")}</div>` : "",
@@ -9015,6 +9234,7 @@ button.summary-card.clickable {
         if (byId("bulk-hours")) byId("bulk-hours").value = String(draft.hours || "");
         fillHrmFromDecimal("bulk-hours-h", "bulk-hours-m", draft.hours || 0);
         if (byId("bulk-remarks")) byId("bulk-remarks").value = String(draft.remarks || "");
+        updateRemarksCounter("bulk-remarks-count", draft.remarks || "");
         modalState.clients = uniq(Array.isArray(draft.clients) ? draft.clients.map((item) => String(item || "").trim()).filter(Boolean) : []);
         modalState.tasks = uniq(Array.isArray(draft.tasks) ? draft.tasks.map((item) => String(item || "").trim()).filter(Boolean) : []);
         modalState.manualExcluded = new Set(Array.isArray(draft.manualExcludedDates) ? draft.manualExcludedDates.map((item) => String(item || "")) : []);
@@ -9043,6 +9263,7 @@ button.summary-card.clickable {
 
       byId("bulk-client-input")?.addEventListener("input", renderBulkClientSuggestions);
       byId("bulk-client-input")?.addEventListener("focus", renderBulkClientSuggestions);
+      byId("bulk-client-input")?.addEventListener("blur", () => window.setTimeout(() => clearSuggestions("bulk-client-suggestions"), 250));
       setSuggestionInput("bulk-client-input", "bulk-client-suggestions");
       byId("bulk-from")?.addEventListener("change", syncBulkDates);
       byId("bulk-to")?.addEventListener("change", syncBulkDates);
@@ -9213,9 +9434,9 @@ button.summary-card.clickable {
               <label class="mode-chip"><input type="radio" name="group-mode" value="range"> Bulk Days</label>
             </div>
             <div id="group-mode-fields" class="field-stack"></div>
-            <label class="field"><span>Add Users</span><input id="group-user-input" type="text" autocomplete="off" placeholder="Search employee / article"><div id="group-user-suggestions" class="suggestions"></div></label>
+            <div class="field"><span>Add Users</span><input id="group-user-input" type="text" autocomplete="off" placeholder="Search employee / article"><div id="group-user-suggestions" class="suggestions"></div></div>
             <div id="group-user-chips" class="chip-row"></div>
-            <label class="field"><span>Client</span><input id="group-client-input" type="text" autocomplete="off" placeholder="Search one shared client"><div id="group-client-suggestions" class="suggestions"></div></label>
+            <div class="field"><span>Client</span><input id="group-client-input" type="text" autocomplete="off" placeholder="Search one shared client"><div id="group-client-suggestions" class="suggestions"></div></div>
             <div id="group-client-chip" class="chip-row"></div>
             <label class="field"><span>Work Type</span><select id="group-task-picker"><option value="">Add work type</option>${TASK_OPTIONS.map((task) => `<option value="${safe(task)}">${safe(task)}</option>`).join("")}</select></label>
             <div id="group-task-chips" class="chip-row"></div>
@@ -9348,11 +9569,15 @@ button.summary-card.clickable {
               </div>
               <label class="field">
                 <span>Remarks</span>
-                <textarea rows="4" data-group-remarks="${safe(member.id)}" placeholder="Minimum 100 characters for ${safe(member.name)}">${safe(draft.remarks || "")}</textarea>
+                <textarea rows="4" data-group-remarks="${safe(member.id)}" data-counter-id="group-remarks-count-${safe(member.id)}" placeholder="Minimum 100 characters for ${safe(member.name)}">${safe(draft.remarks || "")}</textarea>
+                <div class="field-note"><span id="group-remarks-count-${safe(member.id)}">0 characters</span></div>
               </label>
             </div>
           `;
         }).join("");
+        all("#group-member-sections [data-group-remarks]").forEach((input) => {
+          bindRemarksCounter(input, input.dataset.counterId || "");
+        });
       };
 
       const saveGroupDraft = () => {
@@ -9436,6 +9661,10 @@ button.summary-card.clickable {
         const options = state.lookups.users
           .filter((user) => user.approved && String(user.role || "").toLowerCase() !== "admin" && user.id !== state.user?.uid && !modalState.selectedUsers.some((item) => item.id === user.id) && `${user.name} ${user.email}`.toLowerCase().includes(q))
           .slice(0, 20);
+        if (!options.length || !input?.matches(":focus")) {
+          clearSuggestions("group-user-suggestions");
+          return;
+        }
         setSuggestions("group-user-suggestions", options.length ? `<div class="suggestion-list">${options.map((user) => `<button class="suggestion-item" type="button" data-action="pick-group-user" data-id="${user.id}"><strong>${safe(user.name)}</strong><br><small>${safe(user.email)}</small></button>`).join("")}</div>` : "", { inputId: "group-user-input" });
       };
 
@@ -9444,6 +9673,10 @@ button.summary-card.clickable {
         const input = byId("group-client-input");
         const q = String(input?.value || "").trim().toLowerCase();
         const options = state.lookups.clients.filter((client) => client.toLowerCase().includes(q)).slice(0, 20);
+        if (!options.length || !input?.matches(":focus")) {
+          clearSuggestions("group-client-suggestions");
+          return;
+        }
         setSuggestions("group-client-suggestions", options.length ? `<div class="suggestion-list">${options.map((client) => `<button class="suggestion-item" type="button" data-action="pick-group-client" data-value="${encodeURIComponent(client)}">${safe(client)}</button>`).join("")}</div>` : "", { inputId: "group-client-input" });
       };
 
@@ -9451,6 +9684,8 @@ button.summary-card.clickable {
       byId("group-user-input")?.addEventListener("focus", renderGroupUserSuggestions);
       byId("group-client-input")?.addEventListener("input", renderGroupClientSuggestions);
       byId("group-client-input")?.addEventListener("focus", renderGroupClientSuggestions);
+      byId("group-user-input")?.addEventListener("blur", () => window.setTimeout(() => clearSuggestions("group-user-suggestions"), 250));
+      byId("group-client-input")?.addEventListener("blur", () => window.setTimeout(() => clearSuggestions("group-client-suggestions"), 250));
       setSuggestionInput("group-user-input", "group-user-suggestions");
       setSuggestionInput("group-client-input", "group-client-suggestions");
       all('input[name="group-mode"]').forEach((input) => {
@@ -9511,7 +9746,10 @@ button.summary-card.clickable {
           for (const member of members) {
             const draft = modalState.memberDrafts[member.id] || { dailyHours: {}, remarks: "" };
             const remarks = String(draft.remarks || "").trim();
-            if (remarks.length < 100) return toast(`Remarks for ${member.name} must be at least 100 characters.`, "warn");
+            if (remarks.length < 100) {
+              focusInvalidRemarksField(document.querySelector(`[data-group-remarks="${CSS.escape(member.id)}"]`));
+              return toast(`Remarks for ${member.name} must be at least 100 characters.`, "warn");
+            }
             const dailyHours = {};
             for (const date of dates) {
               const hours = Number(draft.dailyHours?.[date] || 0);
@@ -9689,11 +9927,13 @@ button.summary-card.clickable {
 
     async function approveUser(id, role) {
       const user = state.employees.find((item) => item.id === id);
+      const department = role === "CA Article" ? "CA Articles" : (user?.department || "Audit Team");
       await updateDoc(doc(db, "users", id), {
         approved: true,
         role,
-        department: role === "CA Article" ? "CA Articles" : (user?.department || "Audit Team")
+        department
       });
+      await syncUserDirectoryEntry({ ...(user || {}), id, approved: true, role, department });
       await writeLog({
         action: `${profileName()} approved a user`,
         actorName: profileName(),
@@ -9718,11 +9958,13 @@ button.summary-card.clickable {
       for (const id of ids) {
         const user = state.employees.find((item) => item.id === id);
         const role = selectedApprovalRole(id);
+        const department = role === "CA Article" ? "CA Articles" : (user?.department || "Audit Team");
         await updateDoc(doc(db, "users", id), {
           approved: true,
           role,
-          department: role === "CA Article" ? "CA Articles" : (user?.department || "Audit Team")
+          department
         });
+        await syncUserDirectoryEntry({ ...(user || {}), id, approved: true, role, department });
       }
       await writeLog({
         action: `${profileName()} bulk approved pending users`,
@@ -9785,6 +10027,7 @@ button.summary-card.clickable {
         try {
           for (const id of uniqueIds) {
             await deleteDoc(doc(db, "users", id));
+            await deleteUserDirectoryEntry(id);
           }
           await writeLog({
             action: `${profileName()} rejected registration(s)`,
@@ -9859,6 +10102,15 @@ button.summary-card.clickable {
     }
 
     async function resetPinForUser(id) {
+      const user = state.employees.find((item) => item.id === id);
+      if (!user) {
+        toast("User not found.", "error");
+        return;
+      }
+      if (String(user.role || "").toLowerCase() === "admin") {
+        toast("Admin PIN cannot be reset from here.", "warn");
+        return;
+      }
       await updateDoc(doc(db, "users", id), {
         pinSet: false,
         pinHash: "",
@@ -9867,7 +10119,6 @@ button.summary-card.clickable {
         lockedAt: null,
         lockedReason: null
       });
-      const user = state.employees.find((item) => item.id === id);
       await writeLog({
         action: `${profileName()} reset a user PIN`,
         actorName: profileName(),
@@ -9925,6 +10176,7 @@ button.summary-card.clickable {
         if (cancelButton) cancelButton.disabled = true;
         try {
           await deleteDoc(doc(db, "users", id));
+          await deleteUserDirectoryEntry(id);
           await writeLog({
             action: `${profileName()} removed a user`,
             actorName: profileName(),
@@ -10137,14 +10389,14 @@ button.summary-card.clickable {
         let skipped = 0;
 
         for (const row of parsedRows) {
-          const name = String(row.name || row.Name || row.NAME || "").trim();
-          const email = String(row.email || row.Email || row.EMAIL || "").trim().toLowerCase();
+          const name = String(readSpreadsheetCell(row, ["name", "employee name", "article name"]) || "").trim();
+          const email = String(readSpreadsheetCell(row, ["email", "email id", "email address"]) || "").trim().toLowerCase();
           if (!email) {
             skipped += 1;
             continue;
           }
-          const role = normalizeRoleValue(row.role || row.Role || row.ROLE || "CA Article");
-          const department = String(row.department || row.Department || row.DEPARTMENT || defaultDepartmentForRole(role)).trim() || defaultDepartmentForRole(role);
+          const role = normalizeRoleValue(readSpreadsheetCell(row, ["role", "designation"]) || "CA Article");
+          const department = String(readSpreadsheetCell(row, ["department", "dept"]) || defaultDepartmentForRole(role)).trim() || defaultDepartmentForRole(role);
           const existing = existingByEmail.get(email);
           if (existing) {
             await setDoc(doc(db, "users", existing.id), {
@@ -10155,6 +10407,15 @@ button.summary-card.clickable {
               approved: true,
               updatedAt: Timestamp.now()
             }, { merge: true });
+            await syncUserDirectoryEntry({
+              ...(existing || {}),
+              id: existing.id,
+              name: name || existing.name || email,
+              email,
+              role,
+              department,
+              approved: true
+            });
             updated += 1;
           } else {
             const preUserId = `pre_${email.replace(/[^a-z0-9]+/gi, "_")}`;
@@ -10670,7 +10931,7 @@ button.summary-card.clickable {
       let lastDoc = null;
 
       while (scanned < maxScan) {
-        const parts = [collection(db, "logs"), orderBy("createdAt", "desc")];
+        const parts = [collection(db, "public_logs"), orderBy("createdAt", "desc")];
         if (lastDoc) parts.push(startAfter(lastDoc));
         parts.push(limit(pageSize));
         const snap = await getDocs(query(...parts));
@@ -10682,7 +10943,7 @@ button.summary-card.clickable {
         const items = snap.docs.map((item) => ({ id: item.id, ...(item.data() || {}) }));
         items.forEach((item) => {
           const createdMs = tsMs(item.createdAt);
-          if (createdMs >= cutoffMs && isPublicSafeLog(item)) results.push(item);
+          if (createdMs >= cutoffMs) results.push(item);
         });
 
         const lastCreatedMs = tsMs(items[items.length - 1]?.createdAt);
@@ -10832,9 +11093,9 @@ button.summary-card.clickable {
 
       bind("pin-reset-search", "input", async () => {
         byId("pin-reset-user-id").value = "";
-        await renderGenericUserSuggestions({ inputId: "pin-reset-search", hostId: "pin-reset-options", hiddenId: "pin-reset-user-id" });
+        await renderGenericUserSuggestions({ inputId: "pin-reset-search", hostId: "pin-reset-options", hiddenId: "pin-reset-user-id", includeAdmin: false });
       });
-      bind("pin-reset-search", "focus", () => renderGenericUserSuggestions({ inputId: "pin-reset-search", hostId: "pin-reset-options", hiddenId: "pin-reset-user-id" }));
+      bind("pin-reset-search", "focus", () => renderGenericUserSuggestions({ inputId: "pin-reset-search", hostId: "pin-reset-options", hiddenId: "pin-reset-user-id", includeAdmin: false }));
       setSuggestionInput("pin-reset-search", "pin-reset-options");
       bindSuggestionClear("pin-reset-search", "pin-reset-options");
 
