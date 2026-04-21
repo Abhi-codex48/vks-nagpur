@@ -1541,6 +1541,7 @@ button.summary-card.clickable {
 
 .suggestions.open {
   display: block;
+  z-index: 25;
 }
 
 .suggestion-list {
@@ -1558,6 +1559,11 @@ button.summary-card.clickable {
   border: 1px solid var(--line);
   background: var(--white);
   box-shadow: var(--shadow-md);
+}
+
+.suggestion-list.above {
+  top: auto;
+  bottom: calc(var(--suggestion-anchor-height, 0px) + 8px);
 }
 
 .suggestion-item {
@@ -1717,6 +1723,46 @@ button.summary-card.clickable {
 
 .hub-card .subline + .subline {
   margin-top: 6px;
+}
+
+.single-client-card {
+  display: grid;
+  gap: 14px;
+}
+
+.single-client-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.single-client-empty {
+  border-style: dashed;
+}
+
+.single-total-card {
+  min-height: 100%;
+  display: grid;
+  gap: 6px;
+  align-content: center;
+}
+
+.single-total-hours {
+  font-family: "Fraunces", serif;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.readonly-wrap {
+  background: var(--paper);
+}
+
+.readonly-wrap input[readonly] {
+  cursor: default;
+  color: var(--ink);
 }
 
 .hub-dashboard-note {
@@ -3543,31 +3589,39 @@ button.summary-card.clickable {
                 <span>Date</span>
                 <input id="entry-date" type="date">
               </label>
-              <label class="field">
-                <span>Hours worked</span>
-                <div class="hrmin-wrap">
-                  <input id="entry-hours-h" type="number" min="0" max="23" placeholder="0" aria-label="Hours">
+              <div class="hub-card single-total-card">
+                <span class="panel-kicker">Auto Total</span>
+                <strong id="entry-total-hours-label" class="single-total-hours">0.0 h</strong>
+                <div class="subline">Calculated from the client boxes below.</div>
+                <div class="hrmin-wrap readonly-wrap">
+                  <input id="entry-hours-h" type="number" min="0" max="23" placeholder="0" aria-label="Hours" readonly>
                   <span class="hrmin-unit">hr</span>
                   <span class="hrmin-divider"></span>
-                  <input id="entry-hours-m" type="number" min="0" max="59" placeholder="0" aria-label="Minutes">
+                  <input id="entry-hours-m" type="number" min="0" max="59" placeholder="0" aria-label="Minutes" readonly>
                   <span class="hrmin-unit">min</span>
                 </div>
                 <input id="entry-hours" type="hidden" value="">
-              </label>
+              </div>
             </div>
 
             <div class="grid two">
               <div class="field">
-                <span>Client</span>
-                <input id="entry-client-search" type="text" autocomplete="off" placeholder="Search client">
+                <span>Select client</span>
+                <input id="entry-client-search" type="text" autocomplete="off" placeholder="Search client and add">
                 <input id="entry-client" type="hidden">
                 <div id="entry-client-options" class="suggestions"></div>
               </div>
               <label class="field">
                 <span>Other client name</span>
-                <input id="entry-client-other" type="text" placeholder="Use only when client is not in the list">
+                <input id="entry-client-other" type="text" placeholder="Type and add a custom client">
               </label>
             </div>
+
+            <div class="button-row">
+              <button id="entry-add-client" class="btn btn-outline small" type="button">Add client</button>
+            </div>
+            <div id="entry-client-chips" class="chip-row"></div>
+            <div id="entry-client-breakdown" class="field-stack"></div>
 
             <label class="field">
               <span>Work types</span>
@@ -3575,15 +3629,6 @@ button.summary-card.clickable {
                 <option value="">Add work type</option>
               </select>
               <div id="entry-task-chips" class="chip-row"></div>
-            </label>
-
-            <label class="field">
-              <span>Remarks and notes</span>
-              <textarea id="entry-remarks" rows="6" placeholder="Write a clear description of the work done. Minimum 100 characters."></textarea>
-              <div class="field-note">
-                <span id="entry-remarks-count">0 characters</span>
-                <span>If total hours exceed 12, include the extended work explanation in this note.</span>
-              </div>
             </label>
 
             <div id="single-entry-error" class="message error" role="alert"></div>
@@ -4303,6 +4348,7 @@ button.summary-card.clickable {
       modalCleanups: [],
       pinBuffer: "",
       entryDraftTasks: [],
+      entryClientDrafts: [],
       selectedMy: new Set(),
       selectedPendingUsers: new Set(),
       selectedLockedUsers: new Set(),
@@ -4387,13 +4433,32 @@ button.summary-card.clickable {
       return Number((hours + mins / 60).toFixed(2));
     }
 
+    function clampWholeNumberInput(input, min, max) {
+      if (!input) return "";
+      const raw = String(input.value || "").trim();
+      if (!raw) {
+        input.value = "";
+        return "";
+      }
+      const parsed = parseInt(raw, 10);
+      if (!Number.isFinite(parsed)) {
+        input.value = "";
+        return "";
+      }
+      const bounded = Math.max(min, Math.min(max, parsed));
+      input.value = String(bounded);
+      return bounded;
+    }
+
     function syncHrmHidden(hId, mId, hiddenId, root) {
       const r = root || document;
       const h = r.querySelector ? r.querySelector("#" + hId) : byId(hId);
       const m = r.querySelector ? r.querySelector("#" + mId) : byId(mId);
       const hidden = r.querySelector ? r.querySelector("#" + hiddenId) : byId(hiddenId);
       if (!h || !m || !hidden) return;
-      const val = hrmToDecimal(h.value, m.value);
+      const hours = clampWholeNumberInput(h, 0, 23);
+      const mins = clampWholeNumberInput(m, 0, 59);
+      const val = hrmToDecimal(hours, mins);
       hidden.value = val > 0 ? String(val) : "";
     }
 
@@ -4409,12 +4474,14 @@ button.summary-card.clickable {
     }
 
     function fillHrmFromDecimal(hId, mId, decimalVal, root) {
-      const val = Number(decimalVal) || 0;
+      const totalMinutes = Math.max(0, Math.min(24 * 60, Math.round((Number(decimalVal) || 0) * 60)));
       const r = root || document;
       const hEl = r.querySelector ? r.querySelector("#" + hId) : byId(hId);
       const mEl = r.querySelector ? r.querySelector("#" + mId) : byId(mId);
-      if (hEl) hEl.value = Math.floor(val) > 0 ? String(Math.floor(val)) : "";
-      if (mEl) mEl.value = Math.round((val % 1) * 60) > 0 ? String(Math.round((val % 1) * 60)) : "";
+      const hours = Math.floor(totalMinutes / 60);
+      const mins = totalMinutes % 60;
+      if (hEl) hEl.value = hours > 0 ? String(hours) : "";
+      if (mEl) mEl.value = mins > 0 ? String(mins) : "";
     }
 
     function simpleHash(value) {
@@ -4741,7 +4808,7 @@ button.summary-card.clickable {
         clientHidden: byId("entry-client")?.value || "",
         clientOther: byId("entry-client-other")?.value || "",
         tasks: [...(state.entryDraftTasks || [])],
-        remarks: byId("entry-remarks")?.value || ""
+        clientBreakdown: singleBreakdownPayload(state.entryClientDrafts || [])
       };
     }
 
@@ -4749,14 +4816,21 @@ button.summary-card.clickable {
       if (!draft || typeof draft !== "object") return;
       if (byId("entry-date")) byId("entry-date").value = String(draft.date || todayStr());
       if (byId("entry-hours")) byId("entry-hours").value = String(draft.hours || "");
-      fillHrmFromDecimal("entry-hours-h", "entry-hours-m", draft.hours || 0);
       if (byId("entry-client-search")) byId("entry-client-search").value = String(draft.clientSearch || "");
       if (byId("entry-client")) byId("entry-client").value = String(draft.clientHidden || "");
       if (byId("entry-client-other")) byId("entry-client-other").value = String(draft.clientOther || "");
-      if (byId("entry-remarks")) byId("entry-remarks").value = String(draft.remarks || "");
       state.entryDraftTasks = uniq(Array.isArray(draft.tasks) ? draft.tasks.map((item) => String(item || "").trim()).filter(Boolean) : []);
+      state.entryClientDrafts = normalizeSingleClientBreakdown(
+        Array.isArray(draft.clientBreakdown) && draft.clientBreakdown.length
+          ? { clientBreakdown: draft.clientBreakdown }
+          : {
+              client: String(draft.clientOther || draft.clientHidden || draft.clientSearch || "").trim(),
+              hours: draft.hours || 0,
+              remarks: String(draft.remarks || "").trim()
+            }
+      );
       renderEntryTaskChips();
-      updateEntryRemarkCount();
+      renderSingleEntryClientBreakdown();
       enforceDateInputRules(byId("entry-date"));
     }
 
@@ -4788,9 +4862,15 @@ button.summary-card.clickable {
       byId("header-role").textContent = roleLabel();
       byId("header-avatar").textContent = String(profileName()).trim().charAt(0).toUpperCase() || "V";
       renderHeaderNotificationBell();
+      byId("single-entry-form")?.reset();
+      state.entryDraftTasks = [];
+      state.entryClientDrafts = [];
       byId("entry-date").value = todayStr();
       byId("study-date").value = todayStr();
       byId("my-month").value = todayMonthStr();
+      clearSuggestions("entry-client-options");
+      renderEntryTaskChips();
+      renderSingleEntryClientBreakdown();
       applyDateLimits();
     }
 
@@ -5302,6 +5382,8 @@ button.summary-card.clickable {
       state.directoryBackfillDone = false;
       state.employees = [];
       state.clientDocs = [];
+      state.entryDraftTasks = [];
+      state.entryClientDrafts = [];
       state.myEntries = [];
       state.myEntriesLoaded = false;
       state.myEntriesLoadedAt = 0;
@@ -5714,6 +5796,9 @@ button.summary-card.clickable {
     }
 
     function normalizeClientList(data) {
+      if (Array.isArray(data?.clientBreakdown) && data.clientBreakdown.length) {
+        return uniq(data.clientBreakdown.map((item) => String(item?.client || "").trim()).filter(Boolean));
+      }
       if (Array.isArray(data?.clients) && data.clients.length) return uniq(data.clients.map((item) => String(item || "").trim()));
       if (data?.client) return [String(data.client).trim()];
       return [];
@@ -5739,6 +5824,75 @@ button.summary-card.clickable {
         }
       });
       return out;
+    }
+
+    function makeSingleClientDraftKey(client, existingKeys = []) {
+      const base = simpleHash(normalizeCompareText(client) || Date.now().toString(36));
+      const used = new Set((existingKeys || []).map((item) => String(item || "")));
+      let key = base;
+      let index = 1;
+      while (used.has(key)) {
+        key = `${base}_${index}`;
+        index += 1;
+      }
+      return key;
+    }
+
+    function normalizeSingleClientBreakdown(source) {
+      const rawItems = Array.isArray(source?.clientBreakdown) ? source.clientBreakdown : [];
+      const seen = new Set();
+      const items = rawItems
+        .map((item, index) => {
+          const client = String(item?.client || "").trim();
+          if (!client) return null;
+          const hours = Number(item?.hours ?? item?.totalHours ?? 0);
+          return {
+            key: String(item?.key || makeSingleClientDraftKey(client, rawItems.slice(0, index).map((row) => row?.key))),
+            client,
+            hours: Number.isFinite(hours) && hours > 0 ? Number(hours.toFixed(2)) : 0,
+            remarks: String(item?.remarks || "").trim()
+          };
+        })
+        .filter(Boolean)
+        .filter((item) => {
+          const clientKey = normalizeCompareText(item.client);
+          if (!clientKey || seen.has(clientKey)) return false;
+          seen.add(clientKey);
+          return true;
+        });
+      if (items.length) return items;
+
+      const fallbackClients = normalizeClientList(source);
+      const fallbackClient = fallbackClients.length ? fallbackClients.join(", ") : String(source?.client || "").trim();
+      if (!fallbackClient) return [];
+      const hours = Number(source?.hours ?? source?.totalHours ?? 0);
+      return [{
+        key: makeSingleClientDraftKey(fallbackClient),
+        client: fallbackClient,
+        hours: Number.isFinite(hours) && hours > 0 ? Number(hours.toFixed(2)) : 0,
+        remarks: String(source?.remarks || "").trim()
+      }];
+    }
+
+    function singleBreakdownPayload(items) {
+      return normalizeSingleClientBreakdown({ clientBreakdown: items }).map((item) => ({
+        client: item.client,
+        hours: Number(item.hours || 0),
+        remarks: String(item.remarks || "").trim()
+      }));
+    }
+
+    function singleBreakdownTotalHours(items) {
+      return Number(singleBreakdownPayload(items).reduce((sum, item) => sum + (Number(item.hours) || 0), 0).toFixed(2));
+    }
+
+    function singleBreakdownRemarks(items, includeClientLabel = null) {
+      const payload = singleBreakdownPayload(items).filter((item) => item.remarks);
+      if (!payload.length) return "";
+      const showClientLabel = includeClientLabel === null ? payload.length > 1 : !!includeClientLabel;
+      return payload
+        .map((item) => showClientLabel ? `${item.client}: ${item.remarks}` : item.remarks)
+        .join(" | ");
     }
 
     function totalHoursFromMap(map) {
@@ -5896,17 +6050,22 @@ button.summary-card.clickable {
 
     function normalizeSingleDoc(docLike) {
       const raw = asDocData(docLike);
+      const clientBreakdown = normalizeSingleClientBreakdown(raw);
+      const totalHours = singleBreakdownTotalHours(clientBreakdown) || Number(raw.hours || 0);
       const dates = [raw.date].filter(Boolean);
-      const dailyHours = normalizeDailyHours({ [raw.date]: raw.hours }, dates, raw.hours);
+      const dailyHours = normalizeDailyHours({ [raw.date]: totalHours }, dates, totalHours);
       return {
         ...raw,
         collection: "entries",
         entryKind: raw.entryKind || "single",
         taskList: normalizeTaskList(raw),
-        clients: normalizeClientList(raw),
+        clientBreakdown,
+        clients: normalizeClientList({ ...raw, clientBreakdown }),
+        hours: Number((totalHours || 0).toFixed(2)),
+        remarks: singleBreakdownRemarks(clientBreakdown, clientBreakdown.length > 1) || String(raw.remarks || "").trim(),
         dates,
         dailyHours,
-        totalHours: Number((raw.hours || totalHoursFromMap(dailyHours) || 0).toFixed(2))
+        totalHours: Number((totalHours || totalHoursFromMap(dailyHours) || 0).toFixed(2))
       };
     }
 
@@ -5962,6 +6121,10 @@ button.summary-card.clickable {
     }
 
     function remarksTextForRecord(record, options = {}) {
+      if (record?.entryKind === "single") {
+        const breakdown = normalizeSingleClientBreakdown(record);
+        return singleBreakdownRemarks(breakdown, breakdown.length > 1) || String(record?.remarks || "").trim();
+      }
       if (record?.entryKind !== "group") return String(record?.remarks || "").trim();
       const ids = options.adminView ? visibleMemberIds(record) : [options.uid || state.user?.uid || ""].filter(Boolean);
       return ids
@@ -5996,7 +6159,11 @@ button.summary-card.clickable {
     }
 
     function singleOrBulkHoursLabel(record) {
-      if (record.entryKind === "single") return `${Number(record.hours || record.totalHours || 0).toFixed(1)} h`;
+      if (record.entryKind === "single") {
+        const breakdown = normalizeSingleClientBreakdown(record);
+        const total = singleBreakdownTotalHours(breakdown) || Number(record.totalHours || record.hours || 0);
+        return `${Number(total || 0).toFixed(1)} h${breakdown.length > 1 ? " total" : ""}`;
+      }
       const dates = recordDates(record);
       const total = totalHoursFromMap(record.dailyHours || {});
       if (dates.length <= 1) return `${Number(total || record.hours || 0).toFixed(1)} h`;
@@ -6180,12 +6347,26 @@ button.summary-card.clickable {
     }
 
     function signatureForSingle(values) {
+      const breakdown = normalizeSingleClientBreakdown(
+        Array.isArray(values?.clientBreakdown)
+          ? { clientBreakdown: values.clientBreakdown }
+          : {
+              client: values?.client,
+              hours: values?.hours,
+              remarks: values?.remarks
+            }
+      );
       return JSON.stringify({
         date: values.date || "",
-        client: normalizeCompareText(values.client),
         tasks: normalizeListKey(values.tasks),
-        hours: normalizeHoursValue(values.hours),
-        remarks: normalizeCompareText(values.remarks)
+        clientBreakdown: breakdown
+          .map((item) => [
+            normalizeCompareText(item.client),
+            normalizeHoursValue(item.hours),
+            normalizeCompareText(item.remarks)
+          ].join("::"))
+          .sort()
+          .join("||")
       });
     }
 
@@ -6236,10 +6417,8 @@ button.summary-card.clickable {
       const target = signatureForSingle(values);
       return entries.find((record) => record.entryKind === "single" && signatureForSingle({
         date: record.date,
-        client: clientLabel(record),
         tasks: normalizeTaskList(record),
-        hours: record.hours,
-        remarks: record.remarks
+        clientBreakdown: normalizeSingleClientBreakdown(record)
       }) === target) || null;
     }
 
@@ -6546,7 +6725,9 @@ button.summary-card.clickable {
         WorkType: normalizeTaskList(record).join(" | "),
         Hours: record.entryKind === "group" ? visibleMemberIds(record).map((uid) => `${lookupUser(uid)?.name || uid}: ${userEntryForGroup(record, uid).totalHours || 0}`).join(" | ") : singleOrBulkHoursLabel(record),
         Days: recordDates(record).length || 1,
-        Remarks: record.remarks || (record.entryKind === "group" ? visibleMemberIds(record).map((uid) => `${lookupUser(uid)?.name || uid}: ${userEntryForGroup(record, uid).remarks || ""}`).join(" | ") : "")
+        Remarks: record.entryKind === "group"
+          ? visibleMemberIds(record).map((uid) => `${lookupUser(uid)?.name || uid}: ${userEntryForGroup(record, uid).remarks || ""}`).join(" | ")
+          : remarksTextForRecord(record, { adminView: true })
       }));
     }
 
@@ -6607,6 +6788,25 @@ button.summary-card.clickable {
       items[bounded]?.scrollIntoView?.({ block: "nearest" });
     }
 
+    function positionSuggestionHost(hostOrId) {
+      const host = typeof hostOrId === "string" ? byId(hostOrId) : hostOrId;
+      if (!host) return;
+      const list = host.querySelector(".suggestion-list");
+      if (!list) return;
+      const anchorId = String(host.dataset.inputId || "").trim();
+      const anchor = anchorId ? byId(anchorId) : host;
+      const anchorRect = anchor?.getBoundingClientRect?.();
+      if (!anchorRect) return;
+      const viewportMargin = 14;
+      const availableBelow = Math.max(0, window.innerHeight - anchorRect.bottom - viewportMargin);
+      const availableAbove = Math.max(0, anchorRect.top - viewportMargin);
+      const shouldOpenAbove = availableBelow < 180 && availableAbove > availableBelow;
+      const maxHeight = Math.max(80, Math.min(220, (shouldOpenAbove ? availableAbove : availableBelow) - 8));
+      host.style.setProperty("--suggestion-anchor-height", `${Math.round(anchorRect.height)}px`);
+      list.classList.toggle("above", shouldOpenAbove);
+      list.style.maxHeight = `${maxHeight}px`;
+    }
+
     function setSuggestions(hostId, html, options = {}) {
       const host = byId(hostId);
       if (!host) return;
@@ -6614,6 +6814,9 @@ button.summary-card.clickable {
       host.classList.toggle("open", !!html);
       if (options.inputId) host.dataset.inputId = options.inputId;
       host.dataset.activeIndex = "-1";
+      if (html) {
+        window.requestAnimationFrame(() => positionSuggestionHost(host));
+      }
     }
 
     function clearSuggestions(hostId) {
@@ -6980,8 +7183,130 @@ button.summary-card.clickable {
         .join("");
     }
 
+    function syncSingleEntryTotals() {
+      const total = singleBreakdownTotalHours(state.entryClientDrafts || []);
+      if (byId("entry-hours")) byId("entry-hours").value = total > 0 ? String(total) : "";
+      fillHrmFromDecimal("entry-hours-h", "entry-hours-m", total);
+      if (byId("entry-total-hours-label")) byId("entry-total-hours-label").textContent = `${total.toFixed(1)} h`;
+    }
+
+    function updateSingleClientDraftFromInputs(key) {
+      const row = (state.entryClientDrafts || []).find((item) => item.key === key);
+      if (!row) return;
+      const hidden = byId(`entry-client-hours-${key}`);
+      const remarks = byId(`entry-client-remarks-${key}`);
+      row.hours = Number(Number(hidden?.value || 0).toFixed(2));
+      row.remarks = String(remarks?.value || "").trim();
+      syncSingleEntryTotals();
+    }
+
+    function focusSingleClientCard(key) {
+      const card = document.querySelector(`[data-entry-client-row="${CSS.escape(String(key || ""))}"]`);
+      if (!card) return;
+      card.scrollIntoView({ behavior: "smooth", block: "center" });
+      card.classList.remove("remarks-target-error");
+      window.requestAnimationFrame(() => card.classList.add("remarks-target-error"));
+      window.setTimeout(() => card.classList.remove("remarks-target-error"), 1800);
+    }
+
+    function addSingleEntryClient(clientName) {
+      const client = String(clientName || "").trim();
+      if (!client) return false;
+      const exists = (state.entryClientDrafts || []).find((item) => normalizeCompareText(item.client) === normalizeCompareText(client));
+      if (exists) {
+        focusSingleClientCard(exists.key);
+        toast("That client is already added below.", "warn");
+        return false;
+      }
+      const key = makeSingleClientDraftKey(client, (state.entryClientDrafts || []).map((item) => item.key));
+      state.entryClientDrafts = [...(state.entryClientDrafts || []), { key, client, hours: 0, remarks: "" }];
+      renderSingleEntryClientBreakdown();
+      window.requestAnimationFrame(() => byId(`entry-client-hours-h-${key}`)?.focus());
+      return true;
+    }
+
+    function addSingleEntryClientFromInputs() {
+      const chosenClient = String(byId("entry-client")?.value || "").trim();
+      const typedClient = String(byId("entry-client-search")?.value || "").trim();
+      const otherClient = String(byId("entry-client-other")?.value || "").trim();
+      const client = otherClient || chosenClient || typedClient;
+      if (!client) {
+        toast("Select or type a client name first.", "warn");
+        return;
+      }
+      if (!addSingleEntryClient(client)) return;
+      if (byId("entry-client-search")) byId("entry-client-search").value = "";
+      if (byId("entry-client")) byId("entry-client").value = "";
+      if (byId("entry-client-other")) byId("entry-client-other").value = "";
+      clearSuggestions("entry-client-options");
+    }
+
+    function renderSingleEntryClientBreakdown() {
+      const chipHost = byId("entry-client-chips");
+      const listHost = byId("entry-client-breakdown");
+      if (!chipHost || !listHost) return;
+      const rows = state.entryClientDrafts || [];
+      chipHost.innerHTML = rows
+        .map((item) => `<span class="chip">${safe(item.client)}<button type="button" data-action="remove-entry-client" data-key="${encodeURIComponent(item.key)}">x</button></span>`)
+        .join("");
+      listHost.innerHTML = rows.length
+        ? rows.map((item) => `
+            <div class="hub-card single-client-card" data-entry-client-row="${safe(item.key)}">
+              <div class="single-client-card-head">
+                <div>
+                  <strong>${safe(item.client)}</strong>
+                  <div class="subline">Enter time worked and remarks for this client.</div>
+                </div>
+                <button class="btn btn-ghost small" type="button" data-action="remove-entry-client" data-key="${encodeURIComponent(item.key)}">Remove</button>
+              </div>
+              <div class="grid two">
+                <label class="field">
+                  <span>Time worked</span>
+                  <div class="hrmin-wrap">
+                    <input id="entry-client-hours-h-${safe(item.key)}" type="number" min="0" max="23" placeholder="0" aria-label="Hours for ${safe(item.client)}">
+                    <span class="hrmin-unit">hr</span>
+                    <span class="hrmin-divider"></span>
+                    <input id="entry-client-hours-m-${safe(item.key)}" type="number" min="0" max="59" placeholder="0" aria-label="Minutes for ${safe(item.client)}">
+                    <span class="hrmin-unit">min</span>
+                  </div>
+                  <input id="entry-client-hours-${safe(item.key)}" type="hidden" value="${safe(String(item.hours || ""))}">
+                </label>
+                <label class="field">
+                  <span>Remarks</span>
+                  <textarea id="entry-client-remarks-${safe(item.key)}" rows="4" data-counter-id="entry-client-remarks-count-${safe(item.key)}" placeholder="Minimum 100 characters for ${safe(item.client)}">${safe(item.remarks || "")}</textarea>
+                  <div class="field-note">
+                    <span id="entry-client-remarks-count-${safe(item.key)}">0 characters</span>
+                    <span>Minimum 100 characters required.</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+          `).join("")
+        : `
+            <div class="hub-card single-client-empty">
+              <strong>No clients added yet</strong>
+              <div class="subline">Add one or more clients, then fill time and remarks separately for each client.</div>
+            </div>
+          `;
+      rows.forEach((item) => {
+        fillHrmFromDecimal(`entry-client-hours-h-${item.key}`, `entry-client-hours-m-${item.key}`, item.hours || 0);
+        bindHrmPair(`entry-client-hours-h-${item.key}`, `entry-client-hours-m-${item.key}`, `entry-client-hours-${item.key}`);
+        syncHrmHidden(`entry-client-hours-h-${item.key}`, `entry-client-hours-m-${item.key}`, `entry-client-hours-${item.key}`);
+        const hidden = byId(`entry-client-hours-${item.key}`);
+        const remarks = byId(`entry-client-remarks-${item.key}`);
+        hidden?.addEventListener("input", () => updateSingleClientDraftFromInputs(item.key));
+        byId(`entry-client-hours-h-${item.key}`)?.addEventListener("input", () => updateSingleClientDraftFromInputs(item.key));
+        byId(`entry-client-hours-m-${item.key}`)?.addEventListener("input", () => updateSingleClientDraftFromInputs(item.key));
+        if (remarks) {
+          bindRemarksCounter(remarks, remarks.dataset.counterId || "");
+          remarks.addEventListener("input", () => updateSingleClientDraftFromInputs(item.key));
+        }
+      });
+      syncSingleEntryTotals();
+    }
+
     function updateEntryRemarkCount() {
-      updateRemarksCounter("entry-remarks-count", byId("entry-remarks")?.value || "");
+      renderSingleEntryClientBreakdown();
     }
 
     function trimmedRemarkLength(value) {
@@ -7026,7 +7351,10 @@ button.summary-card.clickable {
       await ensureLookups();
       const input = byId("entry-client-search");
       const q = String(input?.value || "").trim().toLowerCase();
-      const options = state.lookups.clients.filter((client) => client.toLowerCase().includes(q)).slice(0, 20);
+      const selected = new Set((state.entryClientDrafts || []).map((item) => normalizeCompareText(item.client)));
+      const options = state.lookups.clients
+        .filter((client) => client.toLowerCase().includes(q) && !selected.has(normalizeCompareText(client)))
+        .slice(0, 20);
       if (!options.length || !input?.matches(":focus")) {
         clearSuggestions("entry-client-options");
         return;
@@ -7084,10 +7412,25 @@ button.summary-card.clickable {
           .join("");
       }
 
+      if (record.entryKind === "single") {
+        const breakdown = normalizeSingleClientBreakdown(record);
+        if (breakdown.length > 1) {
+          return breakdown
+            .map((item) => `
+              <div class="note-block">
+                <strong>${safe(item.client)}</strong>
+                <div>${safe(item.remarks || "-")}</div>
+                <div class="subline">${safe(Number(item.hours || 0).toFixed(1))} h</div>
+              </div>
+            `)
+            .join("");
+        }
+      }
+
       const daily = dailyHoursSummary(record.dailyHours || {});
       return `
         <div class="note-block">
-          <div>${safe(record.remarks || "-")}</div>
+          <div>${safe(remarksTextForRecord(record, { adminView }) || "-")}</div>
           ${daily.length ? `<div class="subline">${safe(daily.join(" | "))}</div>` : ""}
         </div>
       `;
@@ -8373,40 +8716,48 @@ button.summary-card.clickable {
       let submitClaim = null;
       try {
         const date = byId("entry-date")?.value || "";
-        const hours = Number(byId("entry-hours")?.value || 0);
-        const remarks = String(byId("entry-remarks")?.value || "").trim();
-        const chosenClient = String(byId("entry-client")?.value || "").trim();
-        const typedClient = String(byId("entry-client-search")?.value || "").trim();
-        const otherClient = String(byId("entry-client-other")?.value || "").trim();
-        const client = otherClient || chosenClient || typedClient;
+        const clientRows = normalizeSingleClientBreakdown({ clientBreakdown: state.entryClientDrafts || [] });
+        const payloadRows = singleBreakdownPayload(clientRows);
+        const totalHours = singleBreakdownTotalHours(clientRows);
+        const clients = payloadRows.map((item) => item.client);
+        const clientSummary = clients.join(", ");
+        const remarks = singleBreakdownRemarks(clientRows, clientRows.length > 1);
 
         if (!date || date > todayStr()) {
           if (error) error.textContent = "Select a valid date.";
           return;
         }
-        if (!(hours > 0)) {
-          if (error) error.textContent = "Enter valid hours.";
-          return;
-        }
-        if (!client) {
-          if (error) error.textContent = "Select or type a client name.";
+        if (!clientRows.length) {
+          if (error) error.textContent = "Add at least one client below.";
+          byId("entry-client-search")?.focus();
           return;
         }
         if (!state.entryDraftTasks.length) {
           if (error) error.textContent = "Select at least one work type.";
           return;
         }
-        if (remarks.length < 100) {
-          if (error) error.textContent = "Remarks must be at least 100 characters.";
+        const invalidHoursRow = clientRows.find((item) => !(Number(item.hours) > 0));
+        if (invalidHoursRow) {
+          if (error) error.textContent = `Enter valid time for ${invalidHoursRow.client}.`;
+          focusSingleClientCard(invalidHoursRow.key);
+          byId(`entry-client-hours-h-${invalidHoursRow.key}`)?.focus();
+          return;
+        }
+        if (totalHours > 24) {
+          if (error) error.textContent = "Total time for one day cannot exceed 24 hours.";
+          return;
+        }
+        const invalidRemarksRow = clientRows.find((item) => trimmedRemarkLength(item.remarks) < 100);
+        if (invalidRemarksRow) {
+          if (error) error.textContent = `Remarks for ${invalidRemarksRow.client} must be at least 100 characters.`;
+          focusInvalidRemarksField(byId(`entry-client-remarks-${invalidRemarksRow.key}`));
           return;
         }
 
         const duplicateValues = {
           date,
-          client,
           tasks: [...state.entryDraftTasks],
-          hours,
-          remarks
+          clientBreakdown: payloadRows
         };
         const duplicateRecord = await findExactSingleDuplicate(duplicateValues);
         if (duplicateRecord && !window.confirm(`A very similar single entry already exists for ${displayDate(duplicateRecord)} and ${clientLabel(duplicateRecord)}.\n\nSubmit anyway?`)) {
@@ -8428,11 +8779,13 @@ button.summary-card.clickable {
           role: state.profile?.role || "Employee / Professional",
           department: state.profile?.department || "",
           date,
-          client,
-          clients: [client],
+          client: clients[0] || "",
+          clients,
+          clientBreakdown: payloadRows,
           taskList: [...state.entryDraftTasks],
           task: state.entryDraftTasks.join(", "),
-          hours: Number(hours.toFixed(2)),
+          hours: Number(totalHours.toFixed(2)),
+          totalHours: Number(totalHours.toFixed(2)),
           remarks,
           clientSubmitHash: simpleHash(submitSignature),
           clientSubmitAtMs: Date.now(),
@@ -8448,21 +8801,22 @@ button.summary-card.clickable {
           actorName: profileName(),
           actorEmail: profileEmail(),
           type: "entry",
-          detail: `${client} | ${state.entryDraftTasks.join(", ")} | ${hours}h`,
-          detailAdmin: `${date} | ${client}`
+          detail: `${clientSummary} | ${state.entryDraftTasks.join(", ")} | ${totalHours}h`,
+          detailAdmin: `${date} | ${clientSummary}`
         });
-        await writeUserAudit("Submitted entry", `${displayDate(record)} | ${client}`);
+        await writeUserAudit("Submitted entry", `${displayDate(record)} | ${clientSummary}`);
         deleteLocalDraft("single");
         upsertMyEntryCache(record);
 
         byId("single-entry-form")?.reset();
         byId("entry-date").value = todayStr();
         state.entryDraftTasks = [];
+        state.entryClientDrafts = [];
         if (byId("entry-hours-h")) byId("entry-hours-h").value = "";
         if (byId("entry-hours-m")) byId("entry-hours-m").value = "";
         if (byId("entry-hours")) byId("entry-hours").value = "";
         renderEntryTaskChips();
-        updateEntryRemarkCount();
+        renderSingleEntryClientBreakdown();
         submitted = true;
         completeSubmitAttempt(submitClaim?.key);
         setEntryLastSaved(`Last saved: Single entry for ${formatDate(date)} at ${timeOnlyText(Date.now())}`);
@@ -8852,6 +9206,7 @@ button.summary-card.clickable {
         const sharedClient = normalizeClientList(record)[0] || "";
         const sharedTasks = normalizeTaskList(record);
         const dates = recordDates(record);
+        const sharedEditState = { tasks: [...sharedTasks] };
         const draftEntries = {};
         members.forEach((member) => {
           const entry = userEntryForGroup(record, member.id);
@@ -8871,8 +9226,19 @@ button.summary-card.clickable {
               </div>
               ${canEditShared
                 ? `
-                    <label class="field"><span>Shared Client</span><input id="group-edit-client" type="text" value="${safe(sharedClient)}"></label>
-                    <label class="field"><span>Shared Work Types</span><input id="group-edit-tasks" type="text" value="${safe(sharedTasks.join(" | "))}"></label>
+                    <div class="field">
+                      <span>Shared Client</span>
+                      <input id="group-edit-client" type="text" autocomplete="off" value="${safe(sharedClient)}" placeholder="Search client">
+                      <div id="group-edit-client-suggestions" class="suggestions"></div>
+                    </div>
+                    <label class="field">
+                      <span>Shared Work Type</span>
+                      <select id="group-edit-task-picker">
+                        <option value="">Add work type</option>
+                        ${TASK_OPTIONS.map((task) => `<option value="${safe(task)}">${safe(task)}</option>`).join("")}
+                      </select>
+                    </label>
+                    <div id="group-edit-task-chips" class="chip-row"></div>
                   `
                 : `
                     <div class="hub-card">
@@ -8922,6 +9288,62 @@ button.summary-card.clickable {
         all('[data-group-edit-remarks]').forEach((input) => {
           bindRemarksCounter(input, input.dataset.counterId || "");
         });
+        if (canEditShared) {
+          const modalRoot = byId("modal-root");
+          const renderGroupEditTaskChips = () => {
+            const host = byId("group-edit-task-chips");
+            if (!host) return;
+            host.innerHTML = sharedEditState.tasks
+              .map((task) => `<span class="chip">${safe(shortTaskLabel(task))}<button type="button" data-action="remove-edit-group-task" data-value="${encodeURIComponent(task)}">x</button></span>`)
+              .join("");
+          };
+          const renderGroupEditClientSuggestions = async () => {
+            await ensureLookups();
+            const input = byId("group-edit-client");
+            const q = String(input?.value || "").trim().toLowerCase();
+            const options = state.lookups.clients.filter((client) => client.toLowerCase().includes(q)).slice(0, 20);
+            if (!options.length || !input?.matches(":focus")) {
+              clearSuggestions("group-edit-client-suggestions");
+              return;
+            }
+            setSuggestions(
+              "group-edit-client-suggestions",
+              `<div class="suggestion-list">${options.map((client) => `<button class="suggestion-item" type="button" data-action="pick-edit-group-client" data-value="${encodeURIComponent(client)}">${safe(client)}</button>`).join("")}</div>`,
+              { inputId: "group-edit-client" }
+            );
+          };
+          byId("group-edit-client")?.addEventListener("input", renderGroupEditClientSuggestions);
+          byId("group-edit-client")?.addEventListener("focus", renderGroupEditClientSuggestions);
+          byId("group-edit-client")?.addEventListener("blur", () => window.setTimeout(() => clearSuggestions("group-edit-client-suggestions"), 250));
+          byId("group-edit-client")?.addEventListener("keydown", (event) => {
+            if (event.key !== "Enter") return;
+            if (byId("group-edit-client-suggestions")?.classList.contains("open")) return;
+            event.preventDefault();
+          });
+          byId("group-edit-task-picker")?.addEventListener("change", () => {
+            const value = byId("group-edit-task-picker")?.value || "";
+            if (value && !sharedEditState.tasks.includes(value)) sharedEditState.tasks.push(value);
+            byId("group-edit-task-picker").value = "";
+            renderGroupEditTaskChips();
+          });
+          setSuggestionInput("group-edit-client", "group-edit-client-suggestions");
+          const groupEditClickHandler = (event) => {
+            const actionEl = event.target.closest("[data-action]");
+            if (!actionEl || !modalRoot.contains(actionEl)) return;
+            if (actionEl.dataset.action === "pick-edit-group-client") {
+              if (byId("group-edit-client")) byId("group-edit-client").value = decodeURIComponent(actionEl.dataset.value || "");
+              clearSuggestions("group-edit-client-suggestions");
+            }
+            if (actionEl.dataset.action === "remove-edit-group-task") {
+              const task = decodeURIComponent(actionEl.dataset.value || "");
+              sharedEditState.tasks = sharedEditState.tasks.filter((item) => item !== task);
+              renderGroupEditTaskChips();
+            }
+          };
+          modalRoot.addEventListener("click", groupEditClickHandler);
+          state.modalCleanups.push(() => modalRoot.removeEventListener("click", groupEditClickHandler));
+          renderGroupEditTaskChips();
+        }
         let saving = false;
         byId("edit-save")?.addEventListener("click", async () => {
           if (saving) return;
@@ -8934,7 +9356,7 @@ button.summary-card.clickable {
           let tasks = [...sharedTasks];
           if (canEditShared) {
             client = String(byId("group-edit-client")?.value || "").trim();
-            tasks = uniq(String(byId("group-edit-tasks")?.value || "").split("|").map((item) => item.trim()).filter(Boolean));
+            tasks = [...sharedEditState.tasks];
             if (!client) return toast("Shared client is required.", "warn");
             if (!tasks.length) return toast("Enter at least one shared work type.", "warn");
           }
@@ -9014,26 +9436,429 @@ button.summary-card.clickable {
         return;
       }
       const dates = recordDates(record);
-      const initialTasks = [...normalizeTaskList(record)];
-      const initialClients = [...normalizeClientList(record)];
+      if (record.entryKind === "single") {
+        const modalState = {
+          date: dates[0] || "",
+          tasks: [...normalizeTaskList(record)],
+          clientRows: normalizeSingleClientBreakdown(record)
+        };
+        openModal(
+          "Edit Entry",
+          "Update the same single-entry record with client-wise time and remarks.",
+          `
+            <div class="field-stack">
+              <div class="grid two">
+                <label class="field">
+                  <span>Date</span>
+                  <input id="edit-date" type="date" value="${safe(modalState.date)}">
+                </label>
+                <label class="field readonly-wrap">
+                  <span>Total time</span>
+                  <div class="hrmin-wrap">
+                    <input id="edit-hours-h" type="number" min="0" max="23" placeholder="0" readonly>
+                    <span class="hrmin-unit">hr</span>
+                    <span class="hrmin-divider"></span>
+                    <input id="edit-hours-m" type="number" min="0" max="59" placeholder="0" readonly>
+                    <span class="hrmin-unit">min</span>
+                  </div>
+                  <input id="edit-hours" type="hidden" value="">
+                </label>
+              </div>
+              <div class="hub-card single-total-card">
+                <div class="subline">Client-wise total</div>
+                <strong id="edit-total-hours-label" class="single-total-hours">0.0 h</strong>
+              </div>
+              <div class="field-stack">
+                <div class="field">
+                  <span>Client</span>
+                  <input id="edit-single-client-search" type="text" autocomplete="off" placeholder="Search client">
+                  <div id="edit-single-client-options" class="suggestions"></div>
+                </div>
+                <label class="field">
+                  <span>Other client name</span>
+                  <input id="edit-single-client-other" type="text" placeholder="Type client name if not listed">
+                </label>
+                <div class="button-row">
+                  <button class="btn btn-outline small" id="edit-single-add-client" type="button">Add client</button>
+                </div>
+                <div id="edit-single-client-chips" class="chip-row"></div>
+                <div id="edit-single-client-breakdown" class="field-stack"></div>
+              </div>
+              <label class="field">
+                <span>Work Type</span>
+                <select id="edit-single-task-picker">
+                  <option value="">Add work type</option>
+                  ${TASK_OPTIONS.map((task) => `<option value="${safe(task)}">${safe(task)}</option>`).join("")}
+                </select>
+              </label>
+              <div id="edit-single-task-chips" class="chip-row"></div>
+              <div class="button-row"><button class="btn btn-ghost" id="edit-cancel" type="button">Cancel</button><button class="btn btn-primary" id="edit-save" type="button">Save</button></div>
+            </div>
+          `
+        );
+        const modalRoot = byId("modal-root");
+        const syncTotal = () => {
+          const total = singleBreakdownTotalHours(modalState.clientRows || []);
+          if (byId("edit-hours")) byId("edit-hours").value = total > 0 ? String(total) : "";
+          fillHrmFromDecimal("edit-hours-h", "edit-hours-m", total);
+          if (byId("edit-total-hours-label")) byId("edit-total-hours-label").textContent = `${total.toFixed(1)} h`;
+        };
+        const renderTaskChipsLocal = () => {
+          const host = byId("edit-single-task-chips");
+          if (!host) return;
+          host.innerHTML = modalState.tasks
+            .map((task) => `<span class="chip">${safe(shortTaskLabel(task))}<button type="button" data-action="remove-edit-single-task" data-task="${encodeURIComponent(task)}">x</button></span>`)
+            .join("");
+        };
+        const focusClientRow = (key) => {
+          const card = modalRoot?.querySelector(`[data-edit-single-client-row="${CSS.escape(String(key || ""))}"]`);
+          if (!card) return;
+          card.scrollIntoView({ behavior: "smooth", block: "center" });
+          card.classList.remove("remarks-target-error");
+          window.requestAnimationFrame(() => card.classList.add("remarks-target-error"));
+          window.setTimeout(() => card.classList.remove("remarks-target-error"), 1800);
+        };
+        const updateClientRow = (key) => {
+          const row = modalState.clientRows.find((item) => item.key === key);
+          if (!row) return;
+          row.hours = Number(Number(byId(`edit-single-client-hours-${key}`)?.value || 0).toFixed(2));
+          row.remarks = String(byId(`edit-single-client-remarks-${key}`)?.value || "").trim();
+          syncTotal();
+        };
+        const renderClientRows = () => {
+          const chipHost = byId("edit-single-client-chips");
+          const listHost = byId("edit-single-client-breakdown");
+          if (!chipHost || !listHost) return;
+          chipHost.innerHTML = modalState.clientRows
+            .map((item) => `<span class="chip">${safe(item.client)}<button type="button" data-action="remove-edit-single-client" data-key="${encodeURIComponent(item.key)}">x</button></span>`)
+            .join("");
+          listHost.innerHTML = modalState.clientRows.length
+            ? modalState.clientRows.map((item) => `
+                <div class="hub-card single-client-card" data-edit-single-client-row="${safe(item.key)}">
+                  <div class="single-client-card-head">
+                    <div>
+                      <strong>${safe(item.client)}</strong>
+                      <div class="subline">Edit time and remarks for this client.</div>
+                    </div>
+                    <button class="btn btn-ghost small" type="button" data-action="remove-edit-single-client" data-key="${encodeURIComponent(item.key)}">Remove</button>
+                  </div>
+                  <div class="grid two">
+                    <label class="field">
+                      <span>Time worked</span>
+                      <div class="hrmin-wrap">
+                        <input id="edit-single-client-hours-h-${safe(item.key)}" type="number" min="0" max="23" placeholder="0" aria-label="Hours for ${safe(item.client)}">
+                        <span class="hrmin-unit">hr</span>
+                        <span class="hrmin-divider"></span>
+                        <input id="edit-single-client-hours-m-${safe(item.key)}" type="number" min="0" max="59" placeholder="0" aria-label="Minutes for ${safe(item.client)}">
+                        <span class="hrmin-unit">min</span>
+                      </div>
+                      <input id="edit-single-client-hours-${safe(item.key)}" type="hidden" value="${safe(String(item.hours || ""))}">
+                    </label>
+                    <label class="field">
+                      <span>Remarks</span>
+                      <textarea id="edit-single-client-remarks-${safe(item.key)}" rows="4" data-counter-id="edit-single-client-remarks-count-${safe(item.key)}" placeholder="Minimum 100 characters for ${safe(item.client)}">${safe(item.remarks || "")}</textarea>
+                      <div class="field-note">
+                        <span id="edit-single-client-remarks-count-${safe(item.key)}">0 characters</span>
+                        <span>Minimum 100 characters required.</span>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              `).join("")
+            : `
+                <div class="hub-card single-client-empty">
+                  <strong>No clients added yet</strong>
+                  <div class="subline">Add one or more clients, then fill time and remarks separately for each client.</div>
+                </div>
+              `;
+          modalState.clientRows.forEach((item) => {
+            fillHrmFromDecimal(`edit-single-client-hours-h-${item.key}`, `edit-single-client-hours-m-${item.key}`, item.hours || 0);
+            bindHrmPair(`edit-single-client-hours-h-${item.key}`, `edit-single-client-hours-m-${item.key}`, `edit-single-client-hours-${item.key}`);
+            syncHrmHidden(`edit-single-client-hours-h-${item.key}`, `edit-single-client-hours-m-${item.key}`, `edit-single-client-hours-${item.key}`);
+            byId(`edit-single-client-hours-${item.key}`)?.addEventListener("input", () => updateClientRow(item.key));
+            byId(`edit-single-client-hours-h-${item.key}`)?.addEventListener("input", () => updateClientRow(item.key));
+            byId(`edit-single-client-hours-m-${item.key}`)?.addEventListener("input", () => updateClientRow(item.key));
+            const remarksField = byId(`edit-single-client-remarks-${item.key}`);
+            if (remarksField) {
+              bindRemarksCounter(remarksField, remarksField.dataset.counterId || "");
+              remarksField.addEventListener("input", () => updateClientRow(item.key));
+            }
+          });
+          syncTotal();
+        };
+        const addClient = (clientName) => {
+          const client = String(clientName || "").trim();
+          if (!client) return false;
+          const exists = modalState.clientRows.find((item) => normalizeCompareText(item.client) === normalizeCompareText(client));
+          if (exists) {
+            focusClientRow(exists.key);
+            toast("That client is already added below.", "warn");
+            return false;
+          }
+          const key = makeSingleClientDraftKey(client, modalState.clientRows.map((item) => item.key));
+          modalState.clientRows = [...modalState.clientRows, { key, client, hours: 0, remarks: "" }];
+          renderClientRows();
+          window.requestAnimationFrame(() => byId(`edit-single-client-hours-h-${key}`)?.focus());
+          return true;
+        };
+        const addClientFromInputs = () => {
+          const client = String(byId("edit-single-client-other")?.value || byId("edit-single-client-search")?.value || "").trim();
+          if (!client) {
+            toast("Select or type a client name first.", "warn");
+            return;
+          }
+          if (!addClient(client)) return;
+          if (byId("edit-single-client-search")) byId("edit-single-client-search").value = "";
+          if (byId("edit-single-client-other")) byId("edit-single-client-other").value = "";
+          clearSuggestions("edit-single-client-options");
+        };
+        const renderClientSuggestions = async () => {
+          await ensureLookups();
+          const input = byId("edit-single-client-search");
+          const q = String(input?.value || "").trim().toLowerCase();
+          const selected = new Set(modalState.clientRows.map((item) => normalizeCompareText(item.client)));
+          const options = state.lookups.clients
+            .filter((client) => client.toLowerCase().includes(q) && !selected.has(normalizeCompareText(client)))
+            .slice(0, 20);
+          if (!options.length || !input?.matches(":focus")) {
+            clearSuggestions("edit-single-client-options");
+            return;
+          }
+          setSuggestions(
+            "edit-single-client-options",
+            `<div class="suggestion-list">${options.map((client) => `<button class="suggestion-item" type="button" data-action="pick-edit-single-client" data-value="${encodeURIComponent(client)}">${safe(client)}</button>`).join("")}</div>`,
+            { inputId: "edit-single-client-search" }
+          );
+        };
+        byId("edit-cancel")?.addEventListener("click", closeModal);
+        byId("edit-single-add-client")?.addEventListener("click", addClientFromInputs);
+        byId("edit-single-client-search")?.addEventListener("input", renderClientSuggestions);
+        byId("edit-single-client-search")?.addEventListener("focus", renderClientSuggestions);
+        byId("edit-single-client-search")?.addEventListener("blur", () => window.setTimeout(() => clearSuggestions("edit-single-client-options"), 250));
+        byId("edit-single-client-search")?.addEventListener("keydown", (event) => {
+          if (event.key !== "Enter") return;
+          if (byId("edit-single-client-options")?.classList.contains("open")) return;
+          event.preventDefault();
+          addClientFromInputs();
+        });
+        byId("edit-single-client-other")?.addEventListener("keydown", (event) => {
+          if (event.key !== "Enter") return;
+          event.preventDefault();
+          addClientFromInputs();
+        });
+        byId("edit-single-task-picker")?.addEventListener("change", () => {
+          const value = byId("edit-single-task-picker")?.value || "";
+          if (value && !modalState.tasks.includes(value)) modalState.tasks.push(value);
+          byId("edit-single-task-picker").value = "";
+          renderTaskChipsLocal();
+        });
+        setSuggestionInput("edit-single-client-search", "edit-single-client-options");
+        const modalClickHandler = (event) => {
+          const actionEl = event.target.closest("[data-action]");
+          if (!actionEl || !modalRoot.contains(actionEl)) return;
+          if (actionEl.dataset.action === "pick-edit-single-client") {
+            addClient(decodeURIComponent(actionEl.dataset.value || ""));
+            if (byId("edit-single-client-search")) byId("edit-single-client-search").value = "";
+            clearSuggestions("edit-single-client-options");
+          }
+          if (actionEl.dataset.action === "remove-edit-single-client") {
+            const key = decodeURIComponent(actionEl.dataset.key || "");
+            modalState.clientRows = modalState.clientRows.filter((item) => item.key !== key);
+            renderClientRows();
+          }
+          if (actionEl.dataset.action === "remove-edit-single-task") {
+            const task = decodeURIComponent(actionEl.dataset.task || "");
+            modalState.tasks = modalState.tasks.filter((item) => item !== task);
+            renderTaskChipsLocal();
+          }
+        };
+        modalRoot.addEventListener("click", modalClickHandler);
+        state.modalCleanups.push(() => modalRoot.removeEventListener("click", modalClickHandler));
+        renderTaskChipsLocal();
+        renderClientRows();
+        let saving = false;
+        byId("edit-save")?.addEventListener("click", async () => {
+          if (saving) return;
+          saving = true;
+          setButtonBusy(byId("edit-save"), true, "Saving...");
+          const cancelButton = byId("edit-cancel");
+          if (cancelButton) cancelButton.disabled = true;
+          try {
+            const date = byId("edit-date")?.value || "";
+            if (!date || date > todayStr()) return toast("Select a valid date.", "warn");
+            if (!modalState.tasks.length) return toast("Select at least one work type.", "warn");
+            if (!modalState.clientRows.length) return toast("Add at least one client.", "warn");
+            const invalidHoursRow = modalState.clientRows.find((item) => !(Number(item.hours) > 0));
+            if (invalidHoursRow) {
+              focusClientRow(invalidHoursRow.key);
+              byId(`edit-single-client-hours-h-${invalidHoursRow.key}`)?.focus();
+              return toast(`Enter valid time for ${invalidHoursRow.client}.`, "warn");
+            }
+            const totalHours = singleBreakdownTotalHours(modalState.clientRows);
+            if (totalHours > 24) return toast("Total time for one day cannot exceed 24 hours.", "warn");
+            const invalidRemarksRow = modalState.clientRows.find((item) => trimmedRemarkLength(item.remarks) < 100);
+            if (invalidRemarksRow) {
+              focusInvalidRemarksField(byId(`edit-single-client-remarks-${invalidRemarksRow.key}`));
+              return toast(`Remarks for ${invalidRemarksRow.client} must be at least 100 characters.`, "warn");
+            }
+            const payloadRows = singleBreakdownPayload(modalState.clientRows);
+            const clients = payloadRows.map((item) => item.client);
+            const updatedAt = Timestamp.now();
+            const payload = {
+              date,
+              client: clients[0] || "",
+              clients,
+              clientBreakdown: payloadRows,
+              taskList: [...modalState.tasks],
+              task: modalState.tasks.join(", "),
+              hours: Number(totalHours.toFixed(2)),
+              totalHours: Number(totalHours.toFixed(2)),
+              remarks: singleBreakdownRemarks(modalState.clientRows, modalState.clientRows.length > 1),
+              updatedAt,
+              lastEditedByUid: state.user?.uid || "",
+              lastEditedBy: profileName()
+            };
+            await updateDoc(doc(db, "entries", record.id), payload);
+            upsertMyEntryCache(normalizeSingleDoc({ ...record, ...payload }));
+            await addTrail(record, "Edited", "Single entry updated");
+            await writeLog({
+              action: `${profileName()} edited time entry`,
+              actorName: profileName(),
+              actorEmail: profileEmail(),
+              type: "entry",
+              detail: `${clients.join(", ")} | ${formatDate(date)}`,
+              detailAdmin: record.id
+            });
+            closeModal();
+            toast("Entry updated.", "success");
+            await refreshCurrentPage();
+          } finally {
+            saving = false;
+            setButtonBusy(byId("edit-save"), false);
+            if (cancelButton) cancelButton.disabled = false;
+          }
+        });
+        return;
+      }
+
+      const modalState = {
+        clients: [...normalizeClientList(record)],
+        tasks: [...normalizeTaskList(record)]
+      };
       openModal(
-        record.entryKind === "bulk" ? "Edit Bulk Entry" : "Edit Entry",
-        "Update the existing record and save it back to the same Firestore document.",
+        "Edit Bulk Entry",
+        "Update the existing bulk record and save it back to the same Firestore document.",
         `
           <div class="field-stack">
-            ${record.entryKind === "single" ? `<div class="grid two"><label class="field"><span>Date</span><input id="edit-date" type="date" value="${safe(dates[0] || "")}"></label><label class="field"><span>Hours worked</span><div class="hrmin-wrap"><input id="edit-hours-h" type="number" min="0" max="23" placeholder="0" value="${Math.floor(Number(record.hours||0))}"><span class="hrmin-unit">hr</span><span class="hrmin-divider"></span><input id="edit-hours-m" type="number" min="0" max="59" placeholder="0" value="${Math.round((Number(record.hours||0)%1)*60)}"><span class="hrmin-unit">min</span></div><input id="edit-hours" type="hidden" value="${safe(String(record.hours || ""))}"></label></div>` : `<div class="hub-card"><strong>${safe(displayDate(record))}</strong><div class="subline">Edit covered dates using the same parent record.</div></div>`}
-            <label class="field"><span>Client${record.entryKind === "bulk" ? "(s)" : ""}</span><input id="edit-clients" type="text" value="${safe(initialClients.join(", "))}"></label>
-            <label class="field"><span>Work types</span><input id="edit-tasks" type="text" value="${safe(initialTasks.join(" | "))}"></label>
+            <div class="hub-card"><strong>${safe(displayDate(record))}</strong><div class="subline">Edit covered dates using the same parent record.</div></div>
+            <div class="field">
+              <span>Client</span>
+              <input id="edit-bulk-client-input" type="text" autocomplete="off" placeholder="Search client">
+              <div id="edit-bulk-client-suggestions" class="suggestions"></div>
+            </div>
+            <div class="button-row">
+              <button class="btn btn-outline small" id="edit-bulk-add-client" type="button">Add client</button>
+            </div>
+            <div id="edit-bulk-client-chips" class="chip-row"></div>
+            <label class="field">
+              <span>Work Type</span>
+              <select id="edit-bulk-task-picker">
+                <option value="">Add work type</option>
+                ${TASK_OPTIONS.map((task) => `<option value="${safe(task)}">${safe(task)}</option>`).join("")}
+              </select>
+            </label>
+            <div id="edit-bulk-task-chips" class="chip-row"></div>
+            <label class="field"><span>Hours Per Day</span><div class="hrmin-wrap"><input id="edit-hours-h" type="number" min="0" max="23" placeholder="0" value="${Math.floor(Number(record.hours || avgHoursFromMap(record.dailyHours || {}, dates) || 0))}"><span class="hrmin-unit">hr</span><span class="hrmin-divider"></span><input id="edit-hours-m" type="number" min="0" max="59" placeholder="0" value="${Math.round((Number(record.hours || avgHoursFromMap(record.dailyHours || {}, dates) || 0) % 1) * 60)}"><span class="hrmin-unit">min</span></div><input id="edit-hours" type="hidden" value="${safe(String(record.hours || avgHoursFromMap(record.dailyHours || {}, dates) || ""))}"></label>
             <label class="field"><span>Remarks</span><textarea id="edit-remarks" rows="5">${safe(record.remarks || "")}</textarea><div class="field-note"><span id="edit-remarks-count">0 characters</span><span>Minimum 100 characters required.</span></div></label>
-            ${record.entryKind === "bulk" ? `<label class="field"><span>Hours Per Day</span><div class="hrmin-wrap"><input id="edit-hours-h" type="number" min="0" max="23" placeholder="0" value="${Math.floor(Number(record.hours||avgHoursFromMap(record.dailyHours||{},dates)||0))}"><span class="hrmin-unit">hr</span><span class="hrmin-divider"></span><input id="edit-hours-m" type="number" min="0" max="59" placeholder="0" value="${Math.round((Number(record.hours||avgHoursFromMap(record.dailyHours||{},dates)||0)%1)*60)}"><span class="hrmin-unit">min</span></div><input id="edit-hours" type="hidden" value="${safe(String(record.hours || avgHoursFromMap(record.dailyHours || {}, dates) || ""))}"></label>` : ""}
             <div class="button-row"><button class="btn btn-ghost" id="edit-cancel" type="button">Cancel</button><button class="btn btn-primary" id="edit-save" type="button">Save</button></div>
           </div>
         `
       );
+      const modalRoot = byId("modal-root");
+      const renderBulkEditChips = () => {
+        byId("edit-bulk-client-chips").innerHTML = modalState.clients.map((client) => `<span class="chip">${safe(client)}<button type="button" data-action="remove-edit-bulk-client" data-value="${encodeURIComponent(client)}">x</button></span>`).join("");
+        byId("edit-bulk-task-chips").innerHTML = modalState.tasks.map((task) => `<span class="chip">${safe(shortTaskLabel(task))}<button type="button" data-action="remove-edit-bulk-task" data-value="${encodeURIComponent(task)}">x</button></span>`).join("");
+      };
+      const addBulkClient = (clientName) => {
+        const client = String(clientName || "").trim();
+        if (!client) return false;
+        if (modalState.clients.some((item) => normalizeCompareText(item) === normalizeCompareText(client))) {
+          toast("That client is already added.", "warn");
+          return false;
+        }
+        modalState.clients.push(client);
+        renderBulkEditChips();
+        return true;
+      };
+      const addBulkClientFromInput = () => {
+        const client = String(byId("edit-bulk-client-input")?.value || "").trim();
+        if (!client) {
+          toast("Select or type a client name first.", "warn");
+          return;
+        }
+        if (!addBulkClient(client)) return;
+        if (byId("edit-bulk-client-input")) byId("edit-bulk-client-input").value = "";
+        clearSuggestions("edit-bulk-client-suggestions");
+      };
+      const renderBulkClientSuggestions = async () => {
+        await ensureLookups();
+        const input = byId("edit-bulk-client-input");
+        const q = String(input?.value || "").trim().toLowerCase();
+        const selected = new Set(modalState.clients.map((item) => normalizeCompareText(item)));
+        const options = state.lookups.clients.filter((client) => client.toLowerCase().includes(q) && !selected.has(normalizeCompareText(client))).slice(0, 20);
+        if (!options.length || !input?.matches(":focus")) {
+          clearSuggestions("edit-bulk-client-suggestions");
+          return;
+        }
+        setSuggestions(
+          "edit-bulk-client-suggestions",
+          `<div class="suggestion-list">${options.map((client) => `<button class="suggestion-item" type="button" data-action="pick-edit-bulk-client" data-value="${encodeURIComponent(client)}">${safe(client)}</button>`).join("")}</div>`,
+          { inputId: "edit-bulk-client-input" }
+        );
+      };
       byId("edit-cancel")?.addEventListener("click", closeModal);
       bindHrmPair("edit-hours-h", "edit-hours-m", "edit-hours");
       syncHrmHidden("edit-hours-h", "edit-hours-m", "edit-hours");
       bindRemarksCounter("edit-remarks", "edit-remarks-count");
+      byId("edit-bulk-add-client")?.addEventListener("click", addBulkClientFromInput);
+      byId("edit-bulk-client-input")?.addEventListener("input", renderBulkClientSuggestions);
+      byId("edit-bulk-client-input")?.addEventListener("focus", renderBulkClientSuggestions);
+      byId("edit-bulk-client-input")?.addEventListener("blur", () => window.setTimeout(() => clearSuggestions("edit-bulk-client-suggestions"), 250));
+      byId("edit-bulk-client-input")?.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") return;
+        if (byId("edit-bulk-client-suggestions")?.classList.contains("open")) return;
+        event.preventDefault();
+        addBulkClientFromInput();
+      });
+      byId("edit-bulk-task-picker")?.addEventListener("change", () => {
+        const value = byId("edit-bulk-task-picker")?.value || "";
+        if (value && !modalState.tasks.includes(value)) modalState.tasks.push(value);
+        byId("edit-bulk-task-picker").value = "";
+        renderBulkEditChips();
+      });
+      setSuggestionInput("edit-bulk-client-input", "edit-bulk-client-suggestions");
+      const bulkModalClickHandler = (event) => {
+        const actionEl = event.target.closest("[data-action]");
+        if (!actionEl || !modalRoot.contains(actionEl)) return;
+        if (actionEl.dataset.action === "pick-edit-bulk-client") {
+          addBulkClient(decodeURIComponent(actionEl.dataset.value || ""));
+          if (byId("edit-bulk-client-input")) byId("edit-bulk-client-input").value = "";
+          clearSuggestions("edit-bulk-client-suggestions");
+        }
+        if (actionEl.dataset.action === "remove-edit-bulk-client") {
+          const client = decodeURIComponent(actionEl.dataset.value || "");
+          modalState.clients = modalState.clients.filter((item) => normalizeCompareText(item) !== normalizeCompareText(client));
+          renderBulkEditChips();
+        }
+        if (actionEl.dataset.action === "remove-edit-bulk-task") {
+          const task = decodeURIComponent(actionEl.dataset.value || "");
+          modalState.tasks = modalState.tasks.filter((item) => item !== task);
+          renderBulkEditChips();
+        }
+      };
+      modalRoot.addEventListener("click", bulkModalClickHandler);
+      state.modalCleanups.push(() => modalRoot.removeEventListener("click", bulkModalClickHandler));
+      renderBulkEditChips();
       let saving = false;
       byId("edit-save")?.addEventListener("click", async () => {
         if (saving) return;
@@ -9042,53 +9867,23 @@ button.summary-card.clickable {
         const cancelButton = byId("edit-cancel");
         if (cancelButton) cancelButton.disabled = true;
         try {
-        const tasks = uniq(String(byId("edit-tasks")?.value || "").split("|").map((item) => item.trim()).filter(Boolean));
-        const clients = uniq(String(byId("edit-clients")?.value || "").split(",").map((item) => item.trim()).filter(Boolean));
-        const remarks = String(byId("edit-remarks")?.value || "").trim();
-        const hours = Number(byId("edit-hours")?.value || 0);
-        if (!tasks.length) return toast("Enter at least one work type.", "warn");
-        if (!clients.length) return toast("Enter at least one client.", "warn");
-        if (remarks.length < 100) return toast("Remarks must be at least 100 characters.", "warn");
-        if (!(hours > 0)) return toast("Enter valid hours.", "warn");
+          const remarks = String(byId("edit-remarks")?.value || "").trim();
+          const hours = Number(byId("edit-hours")?.value || 0);
+          if (!modalState.tasks.length) return toast("Select at least one work type.", "warn");
+          if (!modalState.clients.length) return toast("Add at least one client.", "warn");
+          if (remarks.length < 100) return toast("Remarks must be at least 100 characters.", "warn");
+          if (!(hours > 0)) return toast("Enter valid hours.", "warn");
 
-        if (record.entryKind === "single") {
-          const date = byId("edit-date")?.value || "";
-          if (!date || date > todayStr()) return toast("Select a valid date.", "warn");
-          const updatedAt = Timestamp.now();
-          await updateDoc(doc(db, "entries", record.id), {
-            date,
-            client: clients[0],
-            clients,
-            taskList: tasks,
-            task: tasks.join(", "),
-            hours: Number(hours.toFixed(2)),
-            remarks,
-            updatedAt,
-            lastEditedByUid: state.user?.uid || "",
-            lastEditedBy: profileName()
-          });
-          upsertMyEntryCache({
-            ...record,
-            date,
-            client: clients[0],
-            clients,
-            taskList: tasks,
-            task: tasks.join(", "),
-            hours: Number(hours.toFixed(2)),
-            remarks,
-            updatedAt
-          });
-        } else {
           const dailyHours = {};
           dates.forEach((date) => {
             dailyHours[date] = Number(hours.toFixed(2));
           });
           const updatedAt = Timestamp.now();
-          await updateDoc(doc(db, "bulk_entries", record.id), {
-            client: clients[0],
-            clients,
-            taskList: tasks,
-            task: tasks.join(", "),
+          const payload = {
+            client: modalState.clients[0],
+            clients: [...modalState.clients],
+            taskList: [...modalState.tasks],
+            task: modalState.tasks.join(", "),
             hours: Number(hours.toFixed(2)),
             dailyHours,
             totalHours: Number(totalHoursFromMap(dailyHours).toFixed(2)),
@@ -9096,24 +9891,21 @@ button.summary-card.clickable {
             updatedAt,
             lastEditedByUid: state.user?.uid || "",
             lastEditedBy: profileName()
+          };
+          await updateDoc(doc(db, "bulk_entries", record.id), payload);
+          upsertMyEntryCache(normalizeBulkDoc({ ...record, ...payload }));
+          await addTrail(record, "Edited", "Bulk entry updated");
+          await writeLog({
+            action: `${profileName()} edited bulk entry`,
+            actorName: profileName(),
+            actorEmail: profileEmail(),
+            type: "entry",
+            detail: `${modalState.clients.join(", ")} | ${displayDate(record)}`,
+            detailAdmin: record.id
           });
-          upsertMyEntryCache({
-            ...record,
-            client: clients[0],
-            clients,
-            taskList: tasks,
-            task: tasks.join(", "),
-            hours: Number(hours.toFixed(2)),
-            dailyHours,
-            totalHours: Number(totalHoursFromMap(dailyHours).toFixed(2)),
-            remarks,
-            updatedAt
-          });
-        }
-        await addTrail(record, "Edited", "Record updated");
-        closeModal();
-        toast("Entry updated.", "success");
-        await refreshCurrentPage();
+          closeModal();
+          toast("Entry updated.", "success");
+          await refreshCurrentPage();
         } finally {
           saving = false;
           setButtonBusy(byId("edit-save"), false);
@@ -10815,7 +11607,7 @@ button.summary-card.clickable {
                 </div>
                 <p>Use the reporting mode that matches the work. This keeps the timesheet clean and avoids correction work later.</p>
                 <div class="guide-step-list">
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Single entry:</strong> one date only.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Single entry:</strong> one date only, with one or more client rows if the day was split across multiple clients.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Bulk entry:</strong> more than one day, only for your own work.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Group reporting:</strong> one shared client, shared work type(s), and separate hours/remarks for each member.</span></div>
                 </div>
@@ -11073,12 +11865,23 @@ button.summary-card.clickable {
         byId("entry-task-picker").value = "";
         renderEntryTaskChips();
       });
-      bind("entry-remarks", "input", updateEntryRemarkCount);
+      bind("entry-add-client", "click", addSingleEntryClientFromInputs);
       bind("entry-client-search", "input", async () => {
         byId("entry-client").value = "";
         await renderEntryClientSuggestions();
       });
       bind("entry-client-search", "focus", renderEntryClientSuggestions);
+      bind("entry-client-search", "keydown", (event) => {
+        if (event.key !== "Enter") return;
+        if (byId("entry-client-options")?.classList.contains("open")) return;
+        event.preventDefault();
+        addSingleEntryClientFromInputs();
+      });
+      bind("entry-client-other", "keydown", (event) => {
+        if (event.key !== "Enter") return;
+        event.preventDefault();
+        addSingleEntryClientFromInputs();
+      });
       setSuggestionInput("entry-client-search", "entry-client-options");
       bindSuggestionClear("entry-client-search", "entry-client-options");
 
@@ -11147,7 +11950,7 @@ button.summary-card.clickable {
             WorkType: normalizeTaskList(record).join(" | "),
             Hours: record.entryKind === "group" ? Number(groupEntry?.totalHours || 0) : record.entryKind === "bulk" ? Number(totalHoursFromMap(record.dailyHours || {}).toFixed(2)) : Number(record.hours || 0),
             Days: recordDates(record).length || 1,
-            Remarks: record.entryKind === "group" ? groupEntry?.remarks || "" : record.remarks || ""
+            Remarks: record.entryKind === "group" ? groupEntry?.remarks || "" : remarksTextForRecord(record)
           };
         });
         await exportRowsToExcel(rows, `my-timesheet-${todayStr()}.xlsx`, "My Timesheet");
@@ -11271,9 +12074,17 @@ button.summary-card.clickable {
 
         if (actionEl.dataset.action === "pick-entry-client") {
           const value = decodeURIComponent(actionEl.dataset.value || "");
-          byId("entry-client-search").value = value;
-          byId("entry-client").value = value;
+          addSingleEntryClient(value);
+          byId("entry-client-search").value = "";
+          byId("entry-client").value = "";
           clearSuggestions("entry-client-options");
+          return;
+        }
+
+        if (actionEl.dataset.action === "remove-entry-client") {
+          const key = decodeURIComponent(actionEl.dataset.key || "");
+          state.entryClientDrafts = (state.entryClientDrafts || []).filter((item) => item.key !== key);
+          renderSingleEntryClientBreakdown();
           return;
         }
 
