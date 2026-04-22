@@ -2685,15 +2685,56 @@ button.summary-card.clickable {
 }
 
 .screen.app-screen #page-log .single-entry-form-shell {
+  gap: 14px;
+}
+
+.screen.app-screen #page-log .logtime-hero-grid {
+  grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+  gap: 18px;
+}
+
+.screen.app-screen #page-log .logtime-input-rail,
+.screen.app-screen #page-log .logtime-summary-rail,
+.screen.app-screen #page-log .logtime-task-field,
+.screen.app-screen #page-log .logtime-draft-card {
+  padding: 16px;
+  border: 1px solid rgba(203, 213, 225, 0.74);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(248, 251, 255, 0.94));
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.05);
+}
+
+.screen.app-screen #page-log .logtime-input-rail,
+.screen.app-screen #page-log .logtime-summary-rail {
+  gap: 14px;
+}
+
+.screen.app-screen #page-log .logtime-summary-rail .hub-card {
+  padding: 14px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255, 250, 242, 0.98), rgba(245, 248, 252, 0.92));
+}
+
+.screen.app-screen #page-log .single-total-card {
   gap: 8px;
 }
 
-.screen.app-screen #page-log .single-entry-layout {
-  gap: 8px 14px;
+.screen.app-screen #page-log .single-total-hours {
+  font-size: 2.1rem;
 }
 
-.screen.app-screen #page-log .single-entry-col {
-  gap: 8px;
+.screen.app-screen #page-log .logtime-command-row {
+  justify-content: flex-start;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: -2px;
+}
+
+.screen.app-screen #page-log .logtime-inline-note {
+  color: #64748b;
+  font-size: 0.82rem;
+  line-height: 1.5;
 }
 
 .screen.app-screen #page-log #entry-client-chips,
@@ -2703,14 +2744,31 @@ button.summary-card.clickable {
 }
 
 .screen.app-screen #page-log #entry-client-breakdown {
-  gap: 10px;
+  gap: 12px;
 }
 
 .screen.app-screen #page-log .single-client-card {
-  gap: 8px;
+  gap: 10px;
+  padding: 14px;
 }
 
-.screen.app-screen #page-log #entry-task-chips:empty,
+.screen.app-screen #page-log .single-client-empty {
+  padding: 18px 16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(247, 250, 252, 0.9));
+}
+
+.screen.app-screen #page-log .logtime-footer-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(280px, 0.92fr);
+  gap: 14px;
+  align-items: stretch;
+}
+
+.screen.app-screen #page-log .logtime-task-field {
+  gap: 10px;
+}
+
+.screen.app-screen #page-log .logtime-task-field #entry-task-chips:empty,
 .screen.app-screen #page-log #entry-client-chips:empty,
 .screen.app-screen #page-log #single-entry-error:empty {
   display: none;
@@ -2718,11 +2776,21 @@ button.summary-card.clickable {
 
 .screen.app-screen #page-log #single-entry-error {
   min-height: 0;
-  margin-top: 0;
+  margin-top: -2px;
 }
 
-.screen.app-screen #page-log .single-entry-form-shell > .hub-card {
-  padding: 10px 12px;
+.screen.app-screen #page-log .logtime-draft-card {
+  gap: 8px;
+  align-content: start;
+}
+
+.screen.app-screen #page-log .logtime-submit-row {
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.screen.app-screen #page-log .logtime-submit-row .btn-primary {
+  min-width: 220px;
 }
 
 .screen.app-screen #page-my #my-stats {
@@ -3450,6 +3518,13 @@ button.summary-card.clickable {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .screen.app-screen #page-log .logtime-hero-grid,
+  .screen.app-screen #page-log .logtime-footer-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .screen.app-screen #page-log .logtime-command-row,
   .screen.app-screen #page-my .toolbar > .toolbar-actions {
     grid-column: 1 / -1;
     justify-content: flex-start;
@@ -3493,6 +3568,56 @@ button.summary-card.clickable {
 
   .screen.app-screen #page-my .toolbar {
     grid-template-columns: 1fr;
+  }
+
+  .screen.app-screen #page-log .logtime-command-row {
+    align-items: stretch;
+  }
+
+  .calendar-shell {
+    gap: 12px;
+  }
+
+  .calendar-head {
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .calendar-grid {
+    gap: 5px;
+  }
+
+  .calendar-label {
+    padding: 7px 0;
+    border-radius: 10px;
+    font-size: 0.62rem;
+    letter-spacing: 0.05em;
+  }
+
+  .calendar-day {
+    min-height: 68px;
+    padding: 8px 4px;
+    gap: 4px;
+    border-radius: 12px;
+    font-size: 0.72rem;
+  }
+
+  .calendar-day strong {
+    font-size: 0.84rem;
+  }
+
+  .calendar-dot {
+    padding: 3px 6px;
+    font-size: 0.56rem;
+  }
+
+  .calendar-legend {
+    gap: 8px;
+  }
+
+  .calendar-legend-item {
+    padding: 6px 9px;
+    font-size: 0.68rem;
   }
 
   .detail-grid {
@@ -3833,8 +3958,8 @@ button.summary-card.clickable {
           </div>
 
           <form id="single-entry-form" class="single-entry-form-shell">
-            <div class="single-entry-layout">
-              <div class="single-entry-col">
+            <div class="single-entry-layout logtime-hero-grid">
+              <div class="single-entry-col logtime-input-rail">
                 <label class="field">
                   <span>Date</span>
                   <input id="entry-date" type="date">
@@ -3846,7 +3971,7 @@ button.summary-card.clickable {
                   <div id="entry-client-options" class="suggestions"></div>
                 </div>
               </div>
-              <div class="single-entry-col">
+              <div class="single-entry-col logtime-summary-rail">
                 <div class="hub-card single-total-card">
                   <span class="panel-kicker">Auto Total</span>
                   <strong id="entry-total-hours-label" class="single-total-hours">0.0 h</strong>
@@ -3867,27 +3992,30 @@ button.summary-card.clickable {
               </div>
             </div>
 
-            <div class="button-row">
+            <div class="button-row logtime-command-row">
               <button id="entry-add-client" class="btn btn-outline small" type="button">Add client</button>
+              <div class="logtime-inline-note">Add a client to open a separate time and remarks block below.</div>
             </div>
             <div id="entry-client-chips" class="chip-row"></div>
             <div id="entry-client-breakdown" class="field-stack"></div>
 
-            <label class="field">
-              <span>Work types</span>
-              <select id="entry-task-picker">
-                <option value="">Add work type</option>
-              </select>
-              <div id="entry-task-chips" class="chip-row"></div>
-            </label>
+            <div class="logtime-footer-grid">
+              <label class="field logtime-task-field">
+                <span>Work types</span>
+                <select id="entry-task-picker">
+                  <option value="">Add work type</option>
+                </select>
+                <div id="entry-task-chips" class="chip-row"></div>
+              </label>
 
+              <div class="hub-card logtime-draft-card">
+                <strong>Save For Later</strong>
+                <div class="subline">This draft is saved on this local browser/device only. It is not sent to the database and is not visible to admin unless you submit it.</div>
+              </div>
+            </div>
             <div id="single-entry-error" class="message error" role="alert"></div>
             <div id="entry-last-saved" class="message success action-status" role="status" hidden></div>
-            <div class="hub-card">
-              <strong>Save For Later</strong>
-              <div class="subline">This draft is saved on this local browser/device only. It is not sent to the database and is not visible to admin unless you submit it.</div>
-            </div>
-            <div class="button-row">
+            <div class="button-row logtime-submit-row">
               <button id="single-save-draft" class="btn btn-outline" type="button">Save For Later</button>
               <button id="single-load-draft" class="btn btn-outline" type="button">Load Draft</button>
               <button id="single-delete-draft" class="btn btn-ghost" type="button">Delete Saved Draft</button>
