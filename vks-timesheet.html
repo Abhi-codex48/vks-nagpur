@@ -1601,6 +1601,17 @@ button.summary-card.clickable {
   outline: none;
 }
 
+.suggestion-item strong,
+.suggestion-item small {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.suggestion-item small {
+  margin-top: 3px;
+  color: var(--muted);
+}
+
 .suggestion-empty {
   padding: 12px 14px;
   color: var(--muted);
@@ -2674,15 +2685,15 @@ button.summary-card.clickable {
 }
 
 .screen.app-screen #page-log .single-entry-form-shell {
-  gap: 10px;
+  gap: 8px;
 }
 
 .screen.app-screen #page-log .single-entry-layout {
-  gap: 10px 14px;
+  gap: 8px 14px;
 }
 
 .screen.app-screen #page-log .single-entry-col {
-  gap: 10px;
+  gap: 8px;
 }
 
 .screen.app-screen #page-log #entry-client-chips,
@@ -2697,6 +2708,21 @@ button.summary-card.clickable {
 
 .screen.app-screen #page-log .single-client-card {
   gap: 8px;
+}
+
+.screen.app-screen #page-log #entry-task-chips:empty,
+.screen.app-screen #page-log #entry-client-chips:empty,
+.screen.app-screen #page-log #single-entry-error:empty {
+  display: none;
+}
+
+.screen.app-screen #page-log #single-entry-error {
+  min-height: 0;
+  margin-top: 0;
+}
+
+.screen.app-screen #page-log .single-entry-form-shell > .hub-card {
+  padding: 10px 12px;
 }
 
 .screen.app-screen #page-my #my-stats {
@@ -7025,8 +7051,9 @@ button.summary-card.clickable {
       const viewportMargin = 14;
       const availableBelow = Math.max(0, window.innerHeight - anchorRect.bottom - viewportMargin);
       const availableAbove = Math.max(0, anchorRect.top - viewportMargin);
-      const shouldOpenAbove = availableBelow < 180 && availableAbove > availableBelow;
-      const maxHeight = Math.max(80, Math.min(220, (shouldOpenAbove ? availableAbove : availableBelow) - 8));
+      const preferredHeight = Math.min(260, Math.max(140, list.scrollHeight || 0));
+      const shouldOpenAbove = availableBelow < 120 && availableAbove > (availableBelow + 60);
+      const maxHeight = Math.max(120, Math.min(preferredHeight, (shouldOpenAbove ? availableAbove : availableBelow) - 10));
       host.style.setProperty("--suggestion-anchor-height", `${Math.round(anchorRect.height)}px`);
       list.classList.toggle("above", shouldOpenAbove);
       list.style.maxHeight = `${maxHeight}px`;
