@@ -1555,6 +1555,10 @@ button.summary-card.clickable {
   z-index: 25;
 }
 
+.modal-card .suggestions.open {
+  z-index: 80;
+}
+
 .suggestion-list {
   position: absolute;
   top: 4px;
@@ -1570,6 +1574,10 @@ button.summary-card.clickable {
   border: 1px solid var(--line);
   background: var(--white);
   box-shadow: var(--shadow-md);
+}
+
+.modal-card .suggestion-list {
+  z-index: 81;
 }
 
 .suggestion-list.above {
@@ -1591,6 +1599,13 @@ button.summary-card.clickable {
 .suggestion-item:focus-visible {
   background: var(--paper);
   outline: none;
+}
+
+.suggestion-empty {
+  padding: 12px 14px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
 }
 
 .stat-grid {
@@ -1783,14 +1798,17 @@ button.summary-card.clickable {
   gap: 12px;
 }
 
-.single-entry-top-grid,
-.single-entry-client-grid {
-  gap: 12px;
+.single-entry-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+  gap: 12px 16px;
   align-items: start;
 }
 
-.single-entry-top-grid {
-  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+.single-entry-col {
+  display: grid;
+  gap: 12px;
+  align-content: start;
 }
 
 .single-entry-form-shell .hub-card {
@@ -1804,6 +1822,10 @@ button.summary-card.clickable {
 
 .single-entry-form-shell .subline {
   line-height: 1.4;
+}
+
+.single-total-card .hrmin-wrap {
+  max-width: 360px;
 }
 
 .hub-dashboard-note {
@@ -2629,6 +2651,95 @@ button.summary-card.clickable {
   background: linear-gradient(180deg, rgba(255, 252, 248, 1), rgba(252, 248, 243, 1));
 }
 
+.screen.app-screen #page-log,
+.screen.app-screen #page-my {
+  gap: 16px;
+}
+
+.screen.app-screen #page-log .panel,
+.screen.app-screen #page-my .panel {
+  display: grid;
+  gap: 14px;
+}
+
+.screen.app-screen #page-log .panel-head,
+.screen.app-screen #page-my .panel-head {
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.screen.app-screen #page-log .panel-actions,
+.screen.app-screen #page-my .panel-actions {
+  gap: 10px;
+}
+
+.screen.app-screen #page-log .single-entry-form-shell {
+  gap: 10px;
+}
+
+.screen.app-screen #page-log .single-entry-layout {
+  gap: 10px 14px;
+}
+
+.screen.app-screen #page-log .single-entry-col {
+  gap: 10px;
+}
+
+.screen.app-screen #page-log #entry-client-chips,
+.screen.app-screen #page-log #entry-task-chips,
+.screen.app-screen #page-log #entry-client-breakdown {
+  margin-top: 0;
+}
+
+.screen.app-screen #page-log #entry-client-breakdown {
+  gap: 10px;
+}
+
+.screen.app-screen #page-log .single-client-card {
+  gap: 8px;
+}
+
+.screen.app-screen #page-my #my-stats {
+  margin-bottom: 0;
+}
+
+.screen.app-screen #page-my .toolbar {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.screen.app-screen #page-my .toolbar > .field,
+.screen.app-screen #page-my .toolbar > .field.compact {
+  min-width: 0;
+  flex: initial;
+}
+
+.screen.app-screen #page-my .toolbar > .toolbar-actions {
+  margin-left: 0;
+  justify-content: flex-end;
+  align-self: end;
+}
+
+.screen.app-screen #page-my .toolbar-actions {
+  gap: 10px;
+}
+
+.screen.app-screen #page-my .table-shell,
+.screen.app-screen #page-my #my-audit-list {
+  margin-top: 0;
+}
+
+.screen.app-screen #page-my #my-audit-list .audit-card-grid {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.screen.app-screen #page-my #my-audit-list .log-card {
+  gap: 8px;
+}
+
 .screen.app-screen .toolbar + .table-shell,
 .screen.app-screen .filter-summary + .table-shell,
 .screen.app-screen .toolbar + .stack-list,
@@ -3305,9 +3416,17 @@ button.summary-card.clickable {
     margin-left: 0;
   }
 
-  .single-entry-top-grid,
-  .single-entry-client-grid {
+  .single-entry-layout {
     grid-template-columns: 1fr;
+  }
+
+  .screen.app-screen #page-my .toolbar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .screen.app-screen #page-my .toolbar > .toolbar-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
   }
 }
 
@@ -3344,6 +3463,10 @@ button.summary-card.clickable {
   .modal-card {
     width: 100%;
     max-height: 92vh;
+  }
+
+  .screen.app-screen #page-my .toolbar {
+    grid-template-columns: 1fr;
   }
 
   .detail-grid {
@@ -3684,37 +3807,38 @@ button.summary-card.clickable {
           </div>
 
           <form id="single-entry-form" class="single-entry-form-shell">
-            <div class="grid two single-entry-top-grid">
-              <label class="field">
-                <span>Date</span>
-                <input id="entry-date" type="date">
-              </label>
-              <div class="hub-card single-total-card">
-                <span class="panel-kicker">Auto Total</span>
-                <strong id="entry-total-hours-label" class="single-total-hours">0.0 h</strong>
-                <div class="subline">Calculated from the client boxes below.</div>
-                <div class="hrmin-wrap readonly-wrap">
-                  <input id="entry-hours-h" type="number" min="0" max="24" placeholder="0" aria-label="Hours" readonly>
-                  <span class="hrmin-unit">hr</span>
-                  <span class="hrmin-divider"></span>
-                  <input id="entry-hours-m" type="number" min="0" max="60" placeholder="0" aria-label="Minutes" readonly>
-                  <span class="hrmin-unit">min</span>
+            <div class="single-entry-layout">
+              <div class="single-entry-col">
+                <label class="field">
+                  <span>Date</span>
+                  <input id="entry-date" type="date">
+                </label>
+                <div class="field">
+                  <span>Select client</span>
+                  <input id="entry-client-search" type="text" autocomplete="off" placeholder="Search client and add">
+                  <input id="entry-client" type="hidden">
+                  <div id="entry-client-options" class="suggestions"></div>
                 </div>
-                <input id="entry-hours" type="hidden" value="">
               </div>
-            </div>
-
-            <div class="grid two single-entry-client-grid">
-              <div class="field">
-                <span>Select client</span>
-                <input id="entry-client-search" type="text" autocomplete="off" placeholder="Search client and add">
-                <input id="entry-client" type="hidden">
-                <div id="entry-client-options" class="suggestions"></div>
+              <div class="single-entry-col">
+                <div class="hub-card single-total-card">
+                  <span class="panel-kicker">Auto Total</span>
+                  <strong id="entry-total-hours-label" class="single-total-hours">0.0 h</strong>
+                  <div class="subline">Calculated from the client boxes below.</div>
+                  <div class="hrmin-wrap readonly-wrap">
+                    <input id="entry-hours-h" type="number" min="0" max="24" placeholder="0" aria-label="Hours" readonly>
+                    <span class="hrmin-unit">hr</span>
+                    <span class="hrmin-divider"></span>
+                    <input id="entry-hours-m" type="number" min="0" max="60" placeholder="0" aria-label="Minutes" readonly>
+                    <span class="hrmin-unit">min</span>
+                  </div>
+                  <input id="entry-hours" type="hidden" value="">
+                </div>
+                <label class="field">
+                  <span>Other client name</span>
+                  <input id="entry-client-other" type="text" placeholder="Type and add a custom client">
+                </label>
               </div>
-              <label class="field">
-                <span>Other client name</span>
-                <input id="entry-client-other" type="text" placeholder="Type and add a custom client">
-              </label>
             </div>
 
             <div class="button-row">
@@ -6928,6 +7052,10 @@ button.summary-card.clickable {
       host.dataset.activeIndex = "-1";
     }
 
+    function suggestionEmptyHtml(message) {
+      return `<div class="suggestion-list"><div class="suggestion-empty">${safe(message || "No matching options found.")}</div></div>`;
+    }
+
     function findCachedRecord(collectionName, id) {
       return [...(state.myEntries || []), ...(state.allEntries || []), ...(state.groupApprovals || [])].find((record) => record.collection === collectionName && record.id === id) || null;
     }
@@ -7448,16 +7576,20 @@ button.summary-card.clickable {
       window.setTimeout(() => field.classList.remove("remarks-target-error"), 1800);
     }
 
-    async function renderEntryClientSuggestions() {
-      await ensureLookups();
+    async function renderEntryClientSuggestions(forceRefresh = false) {
+      await ensureLookups(forceRefresh);
       const input = byId("entry-client-search");
       const q = String(input?.value || "").trim().toLowerCase();
       const selected = new Set((state.entryClientDrafts || []).map((item) => normalizeCompareText(item.client)));
       const options = state.lookups.clients
         .filter((client) => client.toLowerCase().includes(q) && !selected.has(normalizeCompareText(client)))
         .slice(0, 20);
-      if (!options.length || !input?.matches(":focus")) {
+      if (!input?.matches(":focus")) {
         clearSuggestions("entry-client-options");
+        return;
+      }
+      if (!options.length) {
+        setSuggestions("entry-client-options", suggestionEmptyHtml("No matching client was found. You can still type a custom client name."), { inputId: "entry-client-search" });
         return;
       }
       setSuggestions(
@@ -7469,15 +7601,19 @@ button.summary-card.clickable {
       );
     }
 
-    async function renderGenericUserSuggestions({ inputId, hostId, hiddenId, includeAdmin = true }) {
-      await ensureLookups();
+    async function renderGenericUserSuggestions({ inputId, hostId, hiddenId, includeAdmin = true, forceRefresh = false, emptyMessage = "" }) {
+      await ensureLookups(forceRefresh);
       const input = byId(inputId);
       const q = String(input?.value || "").trim().toLowerCase();
       const options = state.lookups.users
         .filter((user) => (includeAdmin || String(user.role || "").toLowerCase() !== "admin") && `${user.name} ${user.email}`.toLowerCase().includes(q))
         .slice(0, 20);
-      if (!options.length || !input?.matches(":focus")) {
+      if (!input?.matches(":focus")) {
         clearSuggestions(hostId);
+        return;
+      }
+      if (!options.length) {
+        setSuggestions(hostId, suggestionEmptyHtml(emptyMessage || "No matching user was found."), { inputId });
         return;
       }
       setSuggestions(
@@ -9398,13 +9534,17 @@ button.summary-card.clickable {
               .map((task) => `<span class="chip">${safe(shortTaskLabel(task))}<button type="button" data-action="remove-edit-group-task" data-value="${encodeURIComponent(task)}">x</button></span>`)
               .join("");
           };
-          const renderGroupEditClientSuggestions = async () => {
-            await ensureLookups();
+          const renderGroupEditClientSuggestions = async (forceRefresh = false) => {
+            await ensureLookups(forceRefresh);
             const input = byId("group-edit-client");
             const q = String(input?.value || "").trim().toLowerCase();
             const options = state.lookups.clients.filter((client) => client.toLowerCase().includes(q)).slice(0, 20);
-            if (!options.length || !input?.matches(":focus")) {
+            if (!input?.matches(":focus")) {
               clearSuggestions("group-edit-client-suggestions");
+              return;
+            }
+            if (!options.length) {
+              setSuggestions("group-edit-client-suggestions", suggestionEmptyHtml("No matching client was found. You can still type the shared client name manually."), { inputId: "group-edit-client" });
               return;
             }
             setSuggestions(
@@ -9414,7 +9554,7 @@ button.summary-card.clickable {
             );
           };
           byId("group-edit-client")?.addEventListener("input", renderGroupEditClientSuggestions);
-          byId("group-edit-client")?.addEventListener("focus", renderGroupEditClientSuggestions);
+          byId("group-edit-client")?.addEventListener("focus", () => renderGroupEditClientSuggestions(true));
           byId("group-edit-client")?.addEventListener("blur", () => window.setTimeout(() => clearSuggestions("group-edit-client-suggestions"), 250));
           byId("group-edit-client")?.addEventListener("keydown", (event) => {
             if (event.key !== "Enter") return;
@@ -9713,16 +9853,20 @@ button.summary-card.clickable {
           if (byId("edit-single-client-other")) byId("edit-single-client-other").value = "";
           clearSuggestions("edit-single-client-options");
         };
-        const renderClientSuggestions = async () => {
-          await ensureLookups();
+        const renderClientSuggestions = async (forceRefresh = false) => {
+          await ensureLookups(forceRefresh);
           const input = byId("edit-single-client-search");
           const q = String(input?.value || "").trim().toLowerCase();
           const selected = new Set(modalState.clientRows.map((item) => normalizeCompareText(item.client)));
           const options = state.lookups.clients
             .filter((client) => client.toLowerCase().includes(q) && !selected.has(normalizeCompareText(client)))
             .slice(0, 20);
-          if (!options.length || !input?.matches(":focus")) {
+          if (!input?.matches(":focus")) {
             clearSuggestions("edit-single-client-options");
+            return;
+          }
+          if (!options.length) {
+            setSuggestions("edit-single-client-options", suggestionEmptyHtml("No matching client was found. You can still type a custom client name."), { inputId: "edit-single-client-search" });
             return;
           }
           setSuggestions(
@@ -9734,7 +9878,7 @@ button.summary-card.clickable {
         byId("edit-cancel")?.addEventListener("click", closeModal);
         byId("edit-single-add-client")?.addEventListener("click", addClientFromInputs);
         byId("edit-single-client-search")?.addEventListener("input", renderClientSuggestions);
-        byId("edit-single-client-search")?.addEventListener("focus", renderClientSuggestions);
+        byId("edit-single-client-search")?.addEventListener("focus", () => renderClientSuggestions(true));
         byId("edit-single-client-search")?.addEventListener("blur", () => window.setTimeout(() => clearSuggestions("edit-single-client-options"), 250));
         byId("edit-single-client-search")?.addEventListener("keydown", (event) => {
           if (event.key !== "Enter") return;
@@ -9901,14 +10045,18 @@ button.summary-card.clickable {
         if (byId("edit-bulk-client-input")) byId("edit-bulk-client-input").value = "";
         clearSuggestions("edit-bulk-client-suggestions");
       };
-      const renderBulkClientSuggestions = async () => {
-        await ensureLookups();
+      const renderBulkClientSuggestions = async (forceRefresh = false) => {
+        await ensureLookups(forceRefresh);
         const input = byId("edit-bulk-client-input");
         const q = String(input?.value || "").trim().toLowerCase();
         const selected = new Set(modalState.clients.map((item) => normalizeCompareText(item)));
         const options = state.lookups.clients.filter((client) => client.toLowerCase().includes(q) && !selected.has(normalizeCompareText(client))).slice(0, 20);
-        if (!options.length || !input?.matches(":focus")) {
+        if (!input?.matches(":focus")) {
           clearSuggestions("edit-bulk-client-suggestions");
+          return;
+        }
+        if (!options.length) {
+          setSuggestions("edit-bulk-client-suggestions", suggestionEmptyHtml("No matching client was found. You can still type a client name manually."), { inputId: "edit-bulk-client-input" });
           return;
         }
         setSuggestions(
@@ -9923,7 +10071,7 @@ button.summary-card.clickable {
       bindRemarksCounter("edit-remarks", "edit-remarks-count");
       byId("edit-bulk-add-client")?.addEventListener("click", addBulkClientFromInput);
       byId("edit-bulk-client-input")?.addEventListener("input", renderBulkClientSuggestions);
-      byId("edit-bulk-client-input")?.addEventListener("focus", renderBulkClientSuggestions);
+      byId("edit-bulk-client-input")?.addEventListener("focus", () => renderBulkClientSuggestions(true));
       byId("edit-bulk-client-input")?.addEventListener("blur", () => window.setTimeout(() => clearSuggestions("edit-bulk-client-suggestions"), 250));
       byId("edit-bulk-client-input")?.addEventListener("keydown", (event) => {
         if (event.key !== "Enter") return;
@@ -10059,18 +10207,22 @@ button.summary-card.clickable {
         byId("bulk-task-chips").innerHTML = modalState.tasks.map((task) => `<span class="chip">${safe(shortTaskLabel(task))}<button type="button" data-action="remove-bulk-task" data-value="${encodeURIComponent(task)}">x</button></span>`).join("");
       };
 
-      const renderBulkClientSuggestions = async () => {
-        await ensureLookups();
+      const renderBulkClientSuggestions = async (forceRefresh = false) => {
+        await ensureLookups(forceRefresh);
         const input = byId("bulk-client-input");
         const q = String(input?.value || "").trim().toLowerCase();
         const options = state.lookups.clients.filter((client) => client.toLowerCase().includes(q) && !modalState.clients.includes(client)).slice(0, 20);
-        if (!options.length || !input?.matches(":focus")) {
+        if (!input?.matches(":focus")) {
           clearSuggestions("bulk-client-suggestions");
+          return;
+        }
+        if (!options.length) {
+          setSuggestions("bulk-client-suggestions", suggestionEmptyHtml("No matching client was found. You can still type a client name manually."), { inputId: "bulk-client-input" });
           return;
         }
         setSuggestions(
           "bulk-client-suggestions",
-          options.length ? `<div class="suggestion-list">${options.map((client) => `<button class="suggestion-item" type="button" data-action="pick-bulk-client" data-value="${encodeURIComponent(client)}">${safe(client)}</button>`).join("")}</div>` : "",
+          `<div class="suggestion-list">${options.map((client) => `<button class="suggestion-item" type="button" data-action="pick-bulk-client" data-value="${encodeURIComponent(client)}">${safe(client)}</button>`).join("")}</div>`,
           { inputId: "bulk-client-input" }
         );
       };
@@ -10155,7 +10307,7 @@ button.summary-card.clickable {
       };
 
       byId("bulk-client-input")?.addEventListener("input", renderBulkClientSuggestions);
-      byId("bulk-client-input")?.addEventListener("focus", renderBulkClientSuggestions);
+      byId("bulk-client-input")?.addEventListener("focus", () => renderBulkClientSuggestions(true));
       byId("bulk-client-input")?.addEventListener("blur", () => window.setTimeout(() => clearSuggestions("bulk-client-suggestions"), 250));
       setSuggestionInput("bulk-client-input", "bulk-client-suggestions");
       byId("bulk-from")?.addEventListener("change", syncBulkDates);
@@ -10317,6 +10469,7 @@ button.summary-card.clickable {
         manualExcluded: new Set(),
         submitting: false
       };
+      let groupLookupWarmup = null;
       openModal(
         "Group Reporting",
         "One shared client for the whole group. Use single-day mode for one date or bulk-days mode for more than one day.",
@@ -10349,6 +10502,13 @@ button.summary-card.clickable {
       );
 
       const allGroupMembers = () => [{ id: state.user?.uid || "", name: profileName(), email: profileEmail() }, ...modalState.selectedUsers];
+
+      const warmGroupLookups = async (force = false) => {
+        if (!groupLookupWarmup || force) {
+          groupLookupWarmup = ensureLookups(force).catch(() => {});
+        }
+        await groupLookupWarmup;
+      };
 
       const currentGroupDates = () => {
         if (modalState.mode === "single") {
@@ -10547,40 +10707,59 @@ button.summary-card.clickable {
         });
       };
 
-      const renderGroupUserSuggestions = async () => {
-        await ensureLookups();
+      const renderGroupUserSuggestions = async (forceRefresh = false) => {
+        await warmGroupLookups(forceRefresh);
         const input = byId("group-user-input");
         const q = String(input?.value || "").trim().toLowerCase();
         const options = state.lookups.users
           .filter((user) => user.approved && String(user.role || "").toLowerCase() !== "admin" && user.id !== state.user?.uid && !modalState.selectedUsers.some((item) => item.id === user.id) && `${user.name} ${user.email}`.toLowerCase().includes(q))
           .slice(0, 20);
-        if (!options.length || !input?.matches(":focus")) {
+        if (!input?.matches(":focus")) {
           clearSuggestions("group-user-suggestions");
           return;
         }
-        setSuggestions("group-user-suggestions", options.length ? `<div class="suggestion-list">${options.map((user) => `<button class="suggestion-item" type="button" data-action="pick-group-user" data-id="${user.id}"><strong>${safe(user.name)}</strong><br><small>${safe(user.email)}</small></button>`).join("")}</div>` : "", { inputId: "group-user-input" });
+        if (!options.length) {
+          setSuggestions(
+            "group-user-suggestions",
+            `<div class="suggestion-list"><div class="suggestion-empty">No eligible teammates are available right now.</div></div>`,
+            { inputId: "group-user-input" }
+          );
+          return;
+        }
+        setSuggestions("group-user-suggestions", `<div class="suggestion-list">${options.map((user) => `<button class="suggestion-item" type="button" data-action="pick-group-user" data-id="${user.id}"><strong>${safe(user.name)}</strong><br><small>${safe(user.email)}</small></button>`).join("")}</div>`, { inputId: "group-user-input" });
       };
 
-      const renderGroupClientSuggestions = async () => {
-        await ensureLookups();
+      const renderGroupClientSuggestions = async (forceRefresh = false) => {
+        await warmGroupLookups(forceRefresh);
         const input = byId("group-client-input");
         const q = String(input?.value || "").trim().toLowerCase();
         const options = state.lookups.clients.filter((client) => client.toLowerCase().includes(q)).slice(0, 20);
-        if (!options.length || !input?.matches(":focus")) {
+        if (!input?.matches(":focus")) {
           clearSuggestions("group-client-suggestions");
           return;
         }
-        setSuggestions("group-client-suggestions", options.length ? `<div class="suggestion-list">${options.map((client) => `<button class="suggestion-item" type="button" data-action="pick-group-client" data-value="${encodeURIComponent(client)}">${safe(client)}</button>`).join("")}</div>` : "", { inputId: "group-client-input" });
+        if (!options.length) {
+          setSuggestions(
+            "group-client-suggestions",
+            `<div class="suggestion-list"><div class="suggestion-empty">No matching client was found. You can still type the shared client name manually.</div></div>`,
+            { inputId: "group-client-input" }
+          );
+          return;
+        }
+        setSuggestions("group-client-suggestions", `<div class="suggestion-list">${options.map((client) => `<button class="suggestion-item" type="button" data-action="pick-group-client" data-value="${encodeURIComponent(client)}">${safe(client)}</button>`).join("")}</div>`, { inputId: "group-client-input" });
       };
 
       byId("group-user-input")?.addEventListener("input", renderGroupUserSuggestions);
-      byId("group-user-input")?.addEventListener("focus", renderGroupUserSuggestions);
+      byId("group-user-input")?.addEventListener("focus", () => renderGroupUserSuggestions(true));
       byId("group-client-input")?.addEventListener("input", renderGroupClientSuggestions);
-      byId("group-client-input")?.addEventListener("focus", renderGroupClientSuggestions);
+      byId("group-client-input")?.addEventListener("focus", () => renderGroupClientSuggestions(true));
       byId("group-user-input")?.addEventListener("blur", () => window.setTimeout(() => clearSuggestions("group-user-suggestions"), 250));
       byId("group-client-input")?.addEventListener("blur", () => window.setTimeout(() => clearSuggestions("group-client-suggestions"), 250));
       setSuggestionInput("group-user-input", "group-user-suggestions");
       setSuggestionInput("group-client-input", "group-client-suggestions");
+      window.requestAnimationFrame(() => {
+        warmGroupLookups(true);
+      });
       all('input[name="group-mode"]').forEach((input) => {
         input.addEventListener("change", () => {
           modalState.mode = input.value || "single";
@@ -11971,7 +12150,7 @@ button.summary-card.clickable {
         byId("entry-client").value = "";
         await renderEntryClientSuggestions();
       });
-      bind("entry-client-search", "focus", renderEntryClientSuggestions);
+      bind("entry-client-search", "focus", () => renderEntryClientSuggestions(true));
       bind("entry-client-search", "keydown", (event) => {
         if (event.key !== "Enter") return;
         if (byId("entry-client-options")?.classList.contains("open")) return;
@@ -11991,15 +12170,15 @@ button.summary-card.clickable {
         await renderGenericUserSuggestions({ inputId: "all-user-search", hostId: "all-user-options", hiddenId: "all-user-id" });
         renderAllTable();
       });
-      bind("all-user-search", "focus", () => renderGenericUserSuggestions({ inputId: "all-user-search", hostId: "all-user-options", hiddenId: "all-user-id" }));
+      bind("all-user-search", "focus", () => renderGenericUserSuggestions({ inputId: "all-user-search", hostId: "all-user-options", hiddenId: "all-user-id", forceRefresh: true, emptyMessage: "No matching employee or article was found." }));
       setSuggestionInput("all-user-search", "all-user-options");
       bindSuggestionClear("all-user-search", "all-user-options");
 
       bind("pin-reset-search", "input", async () => {
         byId("pin-reset-user-id").value = "";
-        await renderGenericUserSuggestions({ inputId: "pin-reset-search", hostId: "pin-reset-options", hiddenId: "pin-reset-user-id", includeAdmin: false });
+        await renderGenericUserSuggestions({ inputId: "pin-reset-search", hostId: "pin-reset-options", hiddenId: "pin-reset-user-id", includeAdmin: false, emptyMessage: "No matching employee or article was found." });
       });
-      bind("pin-reset-search", "focus", () => renderGenericUserSuggestions({ inputId: "pin-reset-search", hostId: "pin-reset-options", hiddenId: "pin-reset-user-id", includeAdmin: false }));
+      bind("pin-reset-search", "focus", () => renderGenericUserSuggestions({ inputId: "pin-reset-search", hostId: "pin-reset-options", hiddenId: "pin-reset-user-id", includeAdmin: false, forceRefresh: true, emptyMessage: "No matching employee or article was found." }));
       setSuggestionInput("pin-reset-search", "pin-reset-options");
       bindSuggestionClear("pin-reset-search", "pin-reset-options");
 
