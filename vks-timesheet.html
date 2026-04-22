@@ -1567,13 +1567,30 @@ button.summary-card.clickable {
   z-index: 20;
   display: grid;
   gap: 4px;
-  max-height: 220px;
-  overflow: auto;
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
   padding: 8px;
   border-radius: 18px;
   border: 1px solid var(--line);
   background: var(--white);
   box-shadow: var(--shadow-md);
+}
+
+.suggestion-list::-webkit-scrollbar {
+  width: 10px;
+}
+
+.suggestion-list::-webkit-scrollbar-track {
+  background: rgba(226, 232, 240, 0.55);
+  border-radius: 999px;
+}
+
+.suggestion-list::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.9);
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.9);
 }
 
 .modal-card .suggestion-list {
@@ -1586,12 +1603,16 @@ button.summary-card.clickable {
 }
 
 .suggestion-item {
+  display: block;
+  width: 100%;
+  min-width: 0;
   border: 0;
   border-radius: 12px;
   background: transparent;
   padding: 10px 12px;
   text-align: left;
   color: var(--ink);
+  line-height: 1.35;
 }
 
 .suggestion-item:hover,
@@ -2185,11 +2206,11 @@ button.summary-card.clickable {
 }
 
 .screen.app-screen .app-main {
-  width: min(1480px, calc(100% - 28px));
+  width: min(1490px, calc(100% - 24px));
 }
 
 .screen.app-screen .page.active {
-  gap: 14px;
+  gap: 10px;
 }
 
 .screen.app-screen .panel {
@@ -2199,7 +2220,7 @@ button.summary-card.clickable {
   border: 1px solid rgba(203, 213, 225, 0.76);
   border-radius: 8px;
   box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
-  padding: 16px;
+  padding: 12px;
   animation: appShellRise 0.24s ease both;
 }
 
@@ -2228,8 +2249,8 @@ button.summary-card.clickable {
   background: linear-gradient(180deg, rgba(255, 252, 248, 1), rgba(252, 248, 243, 1));
   border: 1px solid rgba(203, 213, 225, 0.82);
   border-radius: 6px;
-  padding: 12px;
-  margin-bottom: 10px;
+  padding: 10px;
+  margin-bottom: 8px;
   isolation: isolate;
 }
 
@@ -2541,7 +2562,7 @@ button.summary-card.clickable {
 
 .screen.app-screen .panel-head {
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .screen.app-screen .tabbar,
@@ -2685,19 +2706,19 @@ button.summary-card.clickable {
 }
 
 .screen.app-screen #page-log .single-entry-form-shell {
-  gap: 14px;
+  gap: 12px;
 }
 
 .screen.app-screen #page-log .logtime-hero-grid {
   grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
-  gap: 18px;
+  gap: 12px;
 }
 
 .screen.app-screen #page-log .logtime-input-rail,
 .screen.app-screen #page-log .logtime-summary-rail,
 .screen.app-screen #page-log .logtime-task-field,
 .screen.app-screen #page-log .logtime-draft-card {
-  padding: 16px;
+  padding: 12px;
   border: 1px solid rgba(203, 213, 225, 0.74);
   border-radius: 18px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(248, 251, 255, 0.94));
@@ -2706,7 +2727,7 @@ button.summary-card.clickable {
 
 .screen.app-screen #page-log .logtime-input-rail,
 .screen.app-screen #page-log .logtime-summary-rail {
-  gap: 14px;
+  gap: 10px;
 }
 
 .screen.app-screen #page-log .logtime-summary-rail .hub-card {
@@ -2744,23 +2765,27 @@ button.summary-card.clickable {
 }
 
 .screen.app-screen #page-log #entry-client-breakdown {
-  gap: 12px;
+  gap: 10px;
 }
 
 .screen.app-screen #page-log .single-client-card {
-  gap: 10px;
-  padding: 14px;
+  gap: 8px;
+  padding: 12px;
 }
 
 .screen.app-screen #page-log .single-client-empty {
-  padding: 18px 16px;
+  padding: 12px 14px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(247, 250, 252, 0.9));
+}
+
+.screen.app-screen #page-log .single-client-empty strong {
+  margin-bottom: 4px;
 }
 
 .screen.app-screen #page-log .logtime-footer-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.08fr) minmax(280px, 0.92fr);
-  gap: 14px;
+  gap: 10px;
   align-items: stretch;
 }
 
@@ -7179,7 +7204,7 @@ button.summary-card.clickable {
       const viewportMargin = 14;
       const availableBelow = Math.max(0, window.innerHeight - anchorRect.bottom - viewportMargin);
       const availableAbove = Math.max(0, anchorRect.top - viewportMargin);
-      const preferredHeight = Math.min(260, Math.max(140, list.scrollHeight || 0));
+      const preferredHeight = Math.min(320, Math.max(140, list.scrollHeight || 0));
       const shouldOpenAbove = availableBelow < 120 && availableAbove > (availableBelow + 60);
       const maxHeight = Math.max(120, Math.min(preferredHeight, (shouldOpenAbove ? availableAbove : availableBelow) - 10));
       host.style.setProperty("--suggestion-anchor-height", `${Math.round(anchorRect.height)}px`);
@@ -7737,8 +7762,7 @@ button.summary-card.clickable {
       const q = String(input?.value || "").trim().toLowerCase();
       const selected = new Set((state.entryClientDrafts || []).map((item) => normalizeCompareText(item.client)));
       const options = state.lookups.clients
-        .filter((client) => client.toLowerCase().includes(q) && !selected.has(normalizeCompareText(client)))
-        .slice(0, 20);
+        .filter((client) => client.toLowerCase().includes(q) && !selected.has(normalizeCompareText(client)));
       if (!input?.matches(":focus")) {
         clearSuggestions("entry-client-options");
         return;
@@ -9691,9 +9715,9 @@ button.summary-card.clickable {
           };
           const renderGroupEditClientSuggestions = async (forceRefresh = false) => {
             await ensureLookups(forceRefresh);
-            const input = byId("group-edit-client");
-            const q = String(input?.value || "").trim().toLowerCase();
-            const options = state.lookups.clients.filter((client) => client.toLowerCase().includes(q)).slice(0, 20);
+          const input = byId("group-edit-client");
+          const q = String(input?.value || "").trim().toLowerCase();
+          const options = state.lookups.clients.filter((client) => client.toLowerCase().includes(q));
             if (!input?.matches(":focus")) {
               clearSuggestions("group-edit-client-suggestions");
               return;
@@ -10014,8 +10038,7 @@ button.summary-card.clickable {
           const q = String(input?.value || "").trim().toLowerCase();
           const selected = new Set(modalState.clientRows.map((item) => normalizeCompareText(item.client)));
           const options = state.lookups.clients
-            .filter((client) => client.toLowerCase().includes(q) && !selected.has(normalizeCompareText(client)))
-            .slice(0, 20);
+            .filter((client) => client.toLowerCase().includes(q) && !selected.has(normalizeCompareText(client)));
           if (!input?.matches(":focus")) {
             clearSuggestions("edit-single-client-options");
             return;
@@ -10205,7 +10228,7 @@ button.summary-card.clickable {
         const input = byId("edit-bulk-client-input");
         const q = String(input?.value || "").trim().toLowerCase();
         const selected = new Set(modalState.clients.map((item) => normalizeCompareText(item)));
-        const options = state.lookups.clients.filter((client) => client.toLowerCase().includes(q) && !selected.has(normalizeCompareText(client))).slice(0, 20);
+        const options = state.lookups.clients.filter((client) => client.toLowerCase().includes(q) && !selected.has(normalizeCompareText(client)));
         if (!input?.matches(":focus")) {
           clearSuggestions("edit-bulk-client-suggestions");
           return;
@@ -10366,7 +10389,7 @@ button.summary-card.clickable {
         await ensureLookups(forceRefresh);
         const input = byId("bulk-client-input");
         const q = String(input?.value || "").trim().toLowerCase();
-        const options = state.lookups.clients.filter((client) => client.toLowerCase().includes(q) && !modalState.clients.includes(client)).slice(0, 20);
+        const options = state.lookups.clients.filter((client) => client.toLowerCase().includes(q) && !modalState.clients.includes(client));
         if (!input?.matches(":focus")) {
           clearSuggestions("bulk-client-suggestions");
           return;
@@ -10888,7 +10911,7 @@ button.summary-card.clickable {
         await warmGroupLookups(forceRefresh);
         const input = byId("group-client-input");
         const q = String(input?.value || "").trim().toLowerCase();
-        const options = state.lookups.clients.filter((client) => client.toLowerCase().includes(q)).slice(0, 20);
+        const options = state.lookups.clients.filter((client) => client.toLowerCase().includes(q));
         if (!input?.matches(":focus")) {
           clearSuggestions("group-client-suggestions");
           return;
