@@ -1,23 +1,98 @@
 [
   {
-    "title": "Key Changes in GSTR-9 & GSTR-9C for FY 2019-20",
+    "slug": "gstr-9-gstr-9c-fy-2019-20",
+    "title": "Key Changes in GSTR-9 and GSTR-9C for FY 2019-20",
     "tag": "GST & Indirect Tax",
-    "excerpt": "Significant amendments in GST annual return forms applicable from FY 2019-20 and their impact on taxpayers.",
+    "excerpt": "A practical overview of key GST annual return and reconciliation points for FY 2019-20.",
     "date": "December 2020",
-    "read": "8 min read"
+    "read": "8 min read",
+    "author": "VK&S Team",
+    "content": [
+      {
+        "type": "paragraph",
+        "text": "GSTR-9 and GSTR-9C require taxpayers to reconcile outward supplies, input tax credit, taxes paid and adjustments reported during the financial year. For FY 2019-20, the focus was on accurate reconciliation, proper disclosure of amendments and careful review of auto-populated data."
+      },
+      {
+        "type": "heading",
+        "text": "Key areas requiring review"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Match turnover reported in GSTR-1, GSTR-3B and financial statements.",
+          "Review input tax credit availed, reversed and reclaimed during the year.",
+          "Check amendments, credit notes, debit notes and year-end adjustments.",
+          "Verify tax paid through cash ledger and credit ledger before filing."
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "The annual return process should not be treated as a mechanical upload. It is a closing reconciliation exercise and should be reviewed with supporting ledgers, returns and management explanations before final submission."
+      }
+    ]
   },
   {
-    "title": "Section 115BAA — New Corporate Tax Regime",
+    "slug": "section-115baa-new-corporate-tax-regime",
+    "title": "Section 115BAA - New Corporate Tax Regime",
     "tag": "Direct Tax",
-    "excerpt": "Analysis of the 22% concessional corporate tax rate — impact on MAT, deductions and dividend distribution.",
+    "excerpt": "A concise note on the concessional corporate tax regime and practical evaluation points for companies.",
     "date": "October 2019",
-    "read": "6 min read"
+    "read": "6 min read",
+    "author": "VK&S Team",
+    "content": [
+      {
+        "type": "paragraph",
+        "text": "Section 115BAA introduced an option for eligible domestic companies to pay tax at a concessional rate subject to prescribed conditions. The option requires evaluation of available incentives, deductions, brought forward losses and long-term tax impact."
+      },
+      {
+        "type": "heading",
+        "text": "Evaluation points before opting"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Identify deductions, incentives or exemptions that may not be available after opting.",
+          "Evaluate brought forward losses and depreciation linked to restricted deductions.",
+          "Compare tax outflow under the existing regime and concessional regime.",
+          "Document management approval and basis of selection for future reference."
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "The regime can be useful, but the decision should be made after a computation-based comparison rather than only by looking at the headline tax rate."
+      }
+    ]
   },
   {
-    "title": "Insolvency & Bankruptcy Code — One Year of Resolution",
+    "slug": "insolvency-bankruptcy-code-one-year-resolution",
+    "title": "Insolvency and Bankruptcy Code - One Year of Resolution",
     "tag": "IBC & Insolvency",
-    "excerpt": "Practical insights from the first year of IBC 2016 proceedings and key learnings for creditors and debtors.",
+    "excerpt": "Practical observations from early IBC proceedings and learnings for creditors, debtors and stakeholders.",
     "date": "March 2018",
-    "read": "10 min read"
+    "read": "10 min read",
+    "author": "VK&S Team",
+    "content": [
+      {
+        "type": "paragraph",
+        "text": "The Insolvency and Bankruptcy Code changed the approach to stressed assets by introducing a time-bound resolution framework. Early proceedings highlighted the importance of documentation, creditor coordination and realistic resolution planning."
+      },
+      {
+        "type": "heading",
+        "text": "Practical learnings"
+      },
+      {
+        "type": "list",
+        "items": [
+          "Maintain clear loan, security, invoice and default records before initiating or defending proceedings.",
+          "Review claims carefully and support them with complete documentation.",
+          "Assess resolution plans with commercial viability and statutory requirements in mind.",
+          "Track timelines closely because delay can materially affect recovery and resolution outcomes."
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "IBC-related work requires coordinated financial, legal and operational review. Each matter should be assessed on its facts, applicable law and professional role permitted for the firm."
+      }
+    ]
   }
 ]

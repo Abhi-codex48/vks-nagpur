@@ -1,13 +1,8 @@
-﻿/* VKS — Interactions v5 | 2026 */
+/* VK&S — Interactions v5 | 2026 */
 (function(){
   'use strict';
 
   /* ── IMAGE PROTECTION ── */
- document.addEventListener('contextmenu', e=>e.preventDefault());
-document.addEventListener('touchstart', e=>{ if(e.touches.length>1) e.preventDefault(); }, {passive:false});
-document.addEventListener('touchmove', e=>{ if(e.touches.length>1) e.preventDefault(); }, {passive:false});
-document.addEventListener('keydown', e=>{ if((e.ctrlKey||e.metaKey)&&(e.key==='+'||e.key==='-'||e.key==='=')) e.preventDefault(); });
-document.addEventListener('wheel', e=>{ if(e.ctrlKey) e.preventDefault(); }, {passive:false});
   document.addEventListener('dragstart', e=>{ if(e.target.tagName==='IMG') e.preventDefault(); });
 
   /* ── NAV SCROLL ── */
@@ -35,16 +30,76 @@ document.addEventListener('wheel', e=>{ if(e.ctrlKey) e.preventDefault(); }, {pa
       item.querySelector('.nav-drop-toggle')?.setAttribute('aria-expanded','false');
     });
   };
+  const closeMobileDrawer = ()=>{
+    ham?.classList.remove('open');
+    ham?.setAttribute('aria-expanded','false');
+    drawer?.classList.remove('open');
+    document.body.classList.remove('no-scroll');
+  };
+  ham?.setAttribute('aria-expanded','false');
   ham?.addEventListener('click', ()=>{
     const open = ham.classList.toggle('open');
     drawer?.classList.toggle('open', open);
     document.body.classList.toggle('no-scroll', open);
+    ham.setAttribute('aria-expanded', open ? 'true' : 'false');
   });
   drawer?.querySelectorAll('a').forEach(a=>{
-    a.addEventListener('click', ()=>{
-      ham?.classList.remove('open');
-      drawer?.classList.remove('open');
-      document.body.classList.remove('no-scroll');
+    a.addEventListener('click', closeMobileDrawer);
+  });
+  drawer?.addEventListener('click', e=>{
+    if(e.target === drawer) closeMobileDrawer();
+  });
+  document.addEventListener('keydown', e=>{
+    if(e.key === 'Escape' && drawer?.classList.contains('open')){
+      closeMobileDrawer();
+    }
+  });
+
+  /* ── INTERNAL TIMESHEET ACCESS ── */
+  document.querySelectorAll('[data-timesheet-link]').forEach(link=>{
+    link.addEventListener('click', e=>{
+      const allowed = window.confirm('This timesheet is for the internal VK&S team only. Click OK to continue, or Cancel to stay on this page.');
+      if(!allowed){
+        e.preventDefault();
+        return;
+      }
+    });
+  });
+
+  /* ── PARTNER PHONE PRIVACY ── */
+  document.querySelectorAll('.bento-card[data-card-href]').forEach(card=>{
+    const target = card.dataset.cardHref;
+    if(!target) return;
+    const openCard = e=>{
+      if(e?.button === 1 || e?.ctrlKey || e?.metaKey || e?.shiftKey) return;
+      e?.preventDefault();
+      if(card.classList.contains('is-opening')) return;
+      card.classList.add('is-opening');
+      window.setTimeout(()=>{ window.location.href = target; }, 240);
+    };
+    card.addEventListener('click', openCard);
+    card.addEventListener('keydown', e=>{
+      if(e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') openCard(e);
+    });
+  });
+
+  const eyeIcon = '<svg class="phone-reveal-eye" viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="3"/></svg>';
+  const callIcon = '<svg class="phone-reveal-call" viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16z"/></svg>';
+  document.querySelectorAll('a.ft-p-num[href^="tel:"],a.p-mobile[href^="tel:"],a.pf-mobile-link[href^="tel:"]').forEach(link=>{
+    const phoneText = link.textContent.replace(/\s+/g,' ').trim();
+    if(!phoneText) return;
+    link.classList.add('phone-reveal-link');
+    link.dataset.phoneText = phoneText;
+    link.setAttribute('aria-expanded','false');
+    link.setAttribute('aria-label',`Show mobile number for ${phoneText}`);
+    link.innerHTML = `${eyeIcon}<span class="phone-reveal-label">View contact details</span>`;
+    link.addEventListener('click', e=>{
+      if(link.classList.contains('is-revealed')) return;
+      e.preventDefault();
+      link.classList.add('is-revealed');
+      link.setAttribute('aria-expanded','true');
+      link.setAttribute('aria-label',`Dial ${phoneText}`);
+      link.innerHTML = `${callIcon}<span class="phone-reveal-label">${phoneText}</span>`;
     });
   });
 
@@ -98,59 +153,59 @@ document.addEventListener('wheel', e=>{ if(e.ctrlKey) e.preventDefault(); }, {pa
     rvEls.forEach(el => io.observe(el));
   }
 
-  /* ── TYPEWRITER (home hero) ── */
-  const tw = document.querySelector('.hero-typewriter');
-  if(tw){
-    const cursor = tw.querySelector('.tw-cursor');
-    const phrases = ['Audit & Assurance','Direct Taxation','Indirect Tax & GST','Legal Services','Debt Syndication','Insolvency & IBC','State Incentives','Listing Compliances'];
-    let pi=0,ci=0,deleting=false;
-    const textNode = document.createElement('span');
-    tw.insertBefore(textNode, cursor);
-    function typeStep(){
-      const phrase = phrases[pi];
-      if(!deleting){
-        textNode.textContent = phrase.slice(0, ++ci);
-        if(ci===phrase.length){ deleting=true; setTimeout(typeStep,2000); return; }
-        setTimeout(typeStep,65);
-      } else {
-        textNode.textContent = phrase.slice(0, --ci);
-        if(ci===0){ deleting=false; pi=(pi+1)%phrases.length; setTimeout(typeStep,380); return; }
-        setTimeout(typeStep,36);
-      }
-    }
-    setTimeout(typeStep,1000);
-  }
-
   /* ── PEER REVIEW STAMP MODAL ── */
   const peerStamp = document.querySelector('.hero-peer-stamp');
+  const peerTriggers = document.querySelectorAll('[data-peer-open]');
   const peerModal = document.getElementById('peerReviewModal');
   const peerImage = peerModal?.querySelector('.peer-review-image');
   const peerPlaceholder = peerModal?.querySelector('.peer-review-placeholder');
+  const peerFocusable = 'a[href],button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])';
+  let peerReturnFocus = null;
   if(peerStamp){
     requestAnimationFrame(()=> peerStamp.classList.add('is-live'));
   }
   const openPeerModal = ()=>{
     if(!peerModal) return;
+    peerReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     peerModal.classList.add('open');
     peerModal.setAttribute('aria-hidden','false');
     document.body.classList.add('no-scroll');
+    window.setTimeout(()=> peerModal.querySelector(peerFocusable)?.focus(), 0);
   };
   const closePeerModal = ()=>{
     if(!peerModal) return;
     peerModal.classList.remove('open');
     peerModal.setAttribute('aria-hidden','true');
     document.body.classList.remove('no-scroll');
+    peerReturnFocus?.focus?.();
   };
-  peerStamp?.addEventListener('click', openPeerModal);
+  peerTriggers.forEach(trigger=>{
+    trigger.addEventListener('click', openPeerModal);
+  });
   peerModal?.querySelectorAll('[data-peer-close]').forEach(el=>{
     el.addEventListener('click', closePeerModal);
   });
   document.addEventListener('click', e=>{
-    if(e.target.closest('.hero-peer-stamp')) openPeerModal();
     if(e.target.closest('[data-peer-close]')) closePeerModal();
   });
   document.addEventListener('keydown', e=>{
-    if(e.key === 'Escape' && peerModal?.classList.contains('open')) closePeerModal();
+    if(!peerModal?.classList.contains('open')) return;
+    if(e.key === 'Escape'){
+      closePeerModal();
+      return;
+    }
+    if(e.key !== 'Tab') return;
+    const focusables = [...peerModal.querySelectorAll(peerFocusable)].filter(el=>el.offsetParent !== null);
+    if(!focusables.length) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if(e.shiftKey && document.activeElement === first){
+      e.preventDefault();
+      last.focus();
+    } else if(!e.shiftKey && document.activeElement === last){
+      e.preventDefault();
+      first.focus();
+    }
   });
   if(peerImage && peerPlaceholder){
     peerImage.addEventListener('load', ()=>{ peerPlaceholder.style.display = 'none'; });
@@ -325,31 +380,6 @@ document.addEventListener('wheel', e=>{ if(e.ctrlKey) e.preventDefault(); }, {pa
   counters.forEach(c=>io.observe(c));
 })();
 
-/* Footer dynamics */
-(function(){
-  const footerText = document.querySelector('.ft-dynamic-text');
-  if(footerText){
-    const phrases = [
-      'Audit and assurance mandates',
-      'Direct and indirect tax advisory',
-      'Litigation and representation support',
-      'IBC and restructuring matters',
-      'Business setup and incentive advisory'
-    ];
-    let index = 0;
-    setInterval(()=>{
-      index = (index + 1) % phrases.length;
-      footerText.style.opacity = '0';
-      footerText.style.transform = 'translateY(6px)';
-      setTimeout(()=>{
-        footerText.textContent = phrases[index];
-        footerText.style.opacity = '1';
-        footerText.style.transform = 'translateY(0)';
-      }, 180);
-    }, 2600);
-  }
-})();
-
 /* ── PARTNER CARDS MOBILE SLIDER ── */
 (function(){
   const isMob = () => window.innerWidth <= 640;
@@ -362,7 +392,25 @@ document.addEventListener('wheel', e=>{ if(e.ctrlKey) e.preventDefault(); }, {pa
   if(!grid||!sliderWrap||!track) return;
 
   const partnerLinks = ['partners.html#varun','partners.html#pavan','partners.html#ashish'];
-  let current = 0, autoTimer = null, initialized = false;
+  let current = 0, autoTimer = null, resumeTimer = null, initialized = false;
+  let touchStartX = 0, touchStartY = 0;
+
+  function stopAuto(){
+    clearInterval(autoTimer);
+    autoTimer = null;
+  }
+
+  function startAuto(){
+    stopAuto();
+    if(!isMob() || track.querySelectorAll('.p-card').length < 2) return;
+    autoTimer = setInterval(()=>goTo(current+1),4500);
+  }
+
+  function restartAuto(delay = 6500){
+    stopAuto();
+    clearTimeout(resumeTimer);
+    resumeTimer = setTimeout(startAuto, delay);
+  }
 
   function init(){
     if(initialized) return;
@@ -370,13 +418,27 @@ document.addEventListener('wheel', e=>{ if(e.ctrlKey) e.preventDefault(); }, {pa
     Array.from(grid.querySelectorAll('.p-card')).forEach((card,i)=>{
       const clone = card.cloneNode(true);
       clone.style.cursor = 'pointer';
-      clone.addEventListener('click',()=>{ window.location.href = partnerLinks[i]||'partners.html'; });
+      clone.addEventListener('click',e=>{
+        if(e.target.closest('a, button')) return;
+        window.location.href = partnerLinks[i]||'partners.html';
+      });
+      clone.querySelectorAll('.phone-reveal-link').forEach(link=>{
+        link.addEventListener('click',e=>{
+          e.stopPropagation();
+          if(link.classList.contains('is-revealed')) return;
+          e.preventDefault();
+          const phoneText = link.dataset.phoneText || link.getAttribute('href')?.replace('tel:','') || '';
+          link.classList.add('is-revealed');
+          link.setAttribute('aria-expanded','true');
+          link.innerHTML = `<span class="phone-reveal-label">${phoneText}</span>`;
+        });
+      });
       clone.classList.remove('rv','rv-d1','rv-d2','rv-d3');
       clone.classList.add('vis');
       track.appendChild(clone);
       const dot = document.createElement('div');
       dot.className = 'p-slider-dot'+(i===0?' active':'');
-      dot.addEventListener('click',()=>goTo(i));
+      dot.addEventListener('click',()=>{ goTo(i); restartAuto(); });
       dotsWrap.appendChild(dot);
     });
     goTo(0);
@@ -390,14 +452,31 @@ document.addEventListener('wheel', e=>{ if(e.ctrlKey) e.preventDefault(); }, {pa
     dotsWrap.querySelectorAll('.p-slider-dot').forEach((d,i)=>d.classList.toggle('active',i===current));
   }
 
-  function startAuto(){ clearInterval(autoTimer); autoTimer = setInterval(()=>goTo(current+1),4500); }
-
-  prevBtn.addEventListener('click',()=>{ goTo(current-1); startAuto(); });
-  nextBtn.addEventListener('click',()=>{ goTo(current+1); startAuto(); });
+  prevBtn?.addEventListener('click',()=>{ goTo(current-1); restartAuto(); });
+  nextBtn?.addEventListener('click',()=>{ goTo(current+1); restartAuto(); });
+  sliderWrap.addEventListener('touchstart',e=>{
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    stopAuto();
+  }, {passive:true});
+  sliderWrap.addEventListener('touchend',e=>{
+    const dx = touchStartX - e.changedTouches[0].clientX;
+    const dy = touchStartY - e.changedTouches[0].clientY;
+    if(Math.abs(dx) > 42 && Math.abs(dx) > Math.abs(dy)){
+      goTo(current + (dx > 0 ? 1 : -1));
+    }
+    restartAuto();
+  }, {passive:true});
+  sliderWrap.addEventListener('mouseenter',stopAuto);
+  sliderWrap.addEventListener('mouseleave',startAuto);
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden) stopAuto();
+    else startAuto();
+  });
 
   function toggle(){
-    if(isMob()){ grid.style.display='none'; sliderWrap.style.display='block'; init(); }
-    else { grid.style.display=''; sliderWrap.style.display='none'; }
+    if(isMob()){ grid.style.display='none'; sliderWrap.style.display='block'; init(); startAuto(); }
+    else { grid.style.display=''; sliderWrap.style.display='none'; stopAuto(); }
   }
   toggle();
   window.addEventListener('resize',toggle);

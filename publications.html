@@ -1,45 +1,169 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Insights &amp; Publications — Vijaywargi Khabiya &amp; Saoji</title>
-<meta name="description" content="Tax alerts, regulatory updates and thought leadership from the VKS partners — covering GST, Direct Tax, IBC, Corporate Law and more."/>
+<title>Insights &amp; Publications | Vijaywargi Khabiya &amp; Saoji</title>
+<meta name="description" content="VK&amp;S monthly bulletins, technical articles and regulatory updates across audit, taxation, IBC and related areas."/>
+<meta name="robots" content="index,follow,max-image-preview:large"/>
+<meta property="og:title" content="Insights &amp; Publications | Vijaywargi Khabiya &amp; Saoji"/>
+<meta property="og:description" content="VK&amp;S monthly bulletins, technical articles and regulatory updates across audit, taxation, IBC and related areas."/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://www.cavks.in/publications.html"/>
+<meta property="og:image" content="https://www.cavks.in/images/logo.jpg"/>
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Insights &amp; Publications | Vijaywargi Khabiya &amp; Saoji"/>
+<meta name="twitter:description" content="VK&amp;S monthly bulletins, technical articles and regulatory updates across audit, taxation, IBC and related areas."/>
+<meta name="twitter:image" content="https://www.cavks.in/images/logo.jpg"/>
+<link rel="canonical" href="https://www.cavks.in/publications.html"/>
+<link rel="icon" type="image/jpeg" href="images/logo.jpg"/>
+<link rel="apple-touch-icon" href="images/logo.jpg"/>
+<link rel="manifest" href="site.webmanifest"/>
+<meta name="theme-color" content="#7b1d2e"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700&display=swap"/>
 <link rel="stylesheet" href="style.css"/>
 <style>
-/* Filter bar */
-.pub-filters{display:flex;flex-wrap:wrap;gap:.5rem;margin:2rem 0 2.5rem}
-.pub-filter-btn{font-size:.72rem;font-weight:600;letter-spacing:.06em;padding:.42rem 1rem;border-radius:40px;border:1.5px solid var(--line);background:var(--white);color:var(--ink3);cursor:pointer;transition:all var(--tf)}
-.pub-filter-btn:hover{border-color:var(--navy);color:var(--navy)}
-.pub-filter-btn.active{background:var(--navy);color:var(--white);border-color:var(--navy)}
+/* Insights layout */
+body{background:#fbf7ef}
+.insights-ph{padding:calc(var(--nav-h) + 2.55rem) 0 2.75rem;background:linear-gradient(120deg,#fffaf2 0%,#f5ede2 58%,#fffdf7 100%);border-bottom:1px solid rgba(123,33,53,.1)}
+.insights-ph::before{background-image:linear-gradient(rgba(123,33,53,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(123,33,53,.03) 1px,transparent 1px);background-size:48px 48px;opacity:.55}
+.insights-ph::after{content:'';position:absolute;right:-4rem;bottom:-5rem;width:22rem;height:22rem;border-radius:50%;background:radial-gradient(circle,rgba(176,28,46,.07),transparent 64%);pointer-events:none}
+.insights-hero-inner{display:grid;grid-template-columns:minmax(0,680px) minmax(280px,1fr);gap:2rem;align-items:center}
+.insights-hero-copy{position:relative;z-index:2}
+.insights-hero-art{position:relative;z-index:1;max-width:390px;width:100%;margin-left:auto;overflow:hidden;border:1px solid rgba(138,35,56,.12);border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.78),rgba(255,246,235,.68));box-shadow:0 22px 58px rgba(80,51,26,.08);padding:1.15rem}
+.insights-art-card{position:relative;background:#fff;border:1px solid rgba(138,35,56,.12);border-radius:18px;padding:1.25rem;overflow:hidden}
+.insights-art-card::before{content:'';position:absolute;right:-1.8rem;top:-1.8rem;width:6.4rem;height:6.4rem;border-radius:50%;background:rgba(176,28,46,.06)}
+.insights-art-kicker{font-size:.58rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#8a2338;margin-bottom:.65rem}
+.insights-art-title{font-family:'Cormorant Garamond',serif;font-size:2rem;line-height:1;color:#201313;margin-bottom:.35rem}
+.insights-art-lead{font-size:.76rem;line-height:1.65;color:#786b62;margin:0 0 1rem;max-width:275px}
+.insights-art-bottom{display:flex;flex-wrap:wrap;gap:.45rem}
+.insights-art-chip{border:1px solid rgba(138,35,56,.13);border-radius:999px;background:#fff7ed;padding:.34rem .62rem;font-size:.56rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#8a2338}
+.insights-art-shelf{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.45rem;margin-top:.7rem}
+.insights-art-book{min-height:48px;border:1px solid rgba(138,35,56,.12);border-radius:12px;background:#fff;color:rgba(138,35,56,.72);display:flex;align-items:center;justify-content:center;font-size:.56rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;line-height:1.1;text-align:center}
+.insights-ph h1,.insights-ph p{color:var(--ink)}
+.insights-ph h1{max-width:760px}
+.insights-ph h1 em{color:var(--red);font-style:normal}
+.insights-ph .eyebrow{color:var(--red)}
+.insights-ph .eyebrow::before{background:rgba(176,28,46,.45)}
+#monthly-bulletins{padding:50px 0 24px!important;background:#fbf7ef!important}
+#articles-alerts{padding:42px 0 70px!important;background:#fbf7ef}
+.insights-section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;padding-bottom:1.15rem;border-bottom:1px solid rgba(123,33,53,.12)}
+.insights-section-head h2{font-size:clamp(2.25rem,4vw,3.6rem)}
+.insights-section-head p{max-width:470px;margin:0;color:#75675d;font-size:.86rem;line-height:1.75}
+.insights-section-head .rule{margin-bottom:0}
 
-/* Cards hidden state */
+/* Bulletins */
+.bull-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.85rem;margin-top:1.15rem}
+.bull-card{display:flex;align-items:center;gap:1rem;background:rgba(255,255,255,.72);border:1px solid rgba(123,33,53,.12);border-radius:14px;padding:.95rem 1.05rem;transition:all var(--tf);text-decoration:none;color:var(--ink);box-shadow:0 10px 28px rgba(80,51,26,.045)}
+.bull-card:hover{border-color:rgba(176,28,46,.28);box-shadow:0 16px 42px rgba(80,51,26,.08);transform:translateY(-2px)}
+.bull-icon{width:44px;height:38px;border-radius:10px;background:#fff4ea;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.62rem;font-weight:800;letter-spacing:.08em;color:var(--red);border:1px solid rgba(176,28,46,.16)}
+.bull-name{font-size:.9rem;font-weight:700;color:#331719;line-height:1.25}
+.bull-sub{font-size:.68rem;color:#8a7567;margin-top:.08rem;letter-spacing:.03em}
+.bull-empty{font-size:.85rem;color:var(--ink4);padding:1.2rem;background:rgba(255,255,255,.62);border-radius:14px;border:1px dashed rgba(123,33,53,.18)}
+
+/* Filters and cards */
+.pub-filters{display:flex;flex-wrap:wrap;gap:.5rem;margin:1.25rem 0 1.2rem}
+.pub-filter-btn{font-size:.68rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;padding:.48rem .9rem;border-radius:999px;border:1px solid rgba(123,33,53,.14);background:rgba(255,255,255,.62);color:#6f625b;cursor:pointer;transition:all var(--tf)}
+.pub-filter-btn:hover{border-color:rgba(176,28,46,.34);color:var(--red);background:#fff}
+.pub-filter-btn.active{background:#8a2338;color:var(--white);border-color:#8a2338}
+.pub-grid{gap:.95rem!important;margin-top:0!important}
 .pub-card.hidden{display:none}
-
-/* Bulletins section */
-.bull-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;margin-top:1.5rem}
-.bull-card{display:flex;align-items:center;gap:1rem;background:var(--white);border:1px solid var(--line2);border-radius:var(--r);padding:1rem 1.2rem;transition:all var(--tf);text-decoration:none;color:var(--ink)}
-.bull-card:hover{border-color:var(--gold);box-shadow:var(--sh-sm);transform:translateY(-2px)}
-.bull-icon{width:38px;height:38px;border-radius:var(--rs);background:rgba(176,28,46,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem}
-.bull-name{font-size:.82rem;font-weight:600;color:var(--navy);line-height:1.3}
-.bull-sub{font-size:.7rem;color:var(--ink4);margin-top:.15rem}
-.bull-empty{font-size:.85rem;color:var(--ink4);padding:1.5rem;background:var(--surf);border-radius:var(--r);border:1px dashed var(--line)}
-
-/* No results */
-.pub-no-results{display:none;text-align:center;padding:3rem;color:var(--ink4);font-size:.9rem;grid-column:1/-1}
+.pub-card{appearance:none;text-align:left;width:100%;font:inherit;color:inherit;cursor:pointer;background:linear-gradient(145deg,#fff 0%,#fffaf4 100%)!important;border:1px solid rgba(123,33,53,.11)!important;border-radius:16px!important;padding:1.3rem!important;min-height:248px;box-shadow:0 12px 34px rgba(80,51,26,.045);transition:all var(--t)!important}
+.pub-card::after{height:3px!important;background:#8a2338!important}
+.pub-card:hover{box-shadow:0 20px 54px rgba(80,51,26,.09)!important;transform:translateY(-4px)}
+.pub-card:focus-visible{outline:3px solid rgba(176,28,46,.2);outline-offset:4px}
+.pub-topline{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:.9rem}
+.pub-tag{margin:0!important;background:#fff2e4!important;color:#8a2338!important;border:1px solid rgba(176,28,46,.12);max-width:78%;white-space:normal}
+.pub-index{font-size:.68rem;font-weight:800;color:rgba(138,35,56,.45);letter-spacing:.08em}
+.pub-title{font-size:1.28rem!important;line-height:1.22!important;margin-bottom:.62rem!important;color:#201313!important}
+.pub-excerpt{font-size:.84rem!important;line-height:1.72!important;color:#5e5752!important;margin-bottom:1rem!important}
+.pub-meta{font-size:.68rem!important;color:#8a7567!important}
+.pub-read{display:inline-flex;align-items:center;gap:.42rem;margin-top:1rem;font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8a2338}
+.pub-read::after{content:'>';font-size:.82rem;transition:transform var(--tf)}
+.pub-card:hover .pub-read::after{transform:translateX(3px)}
+.pub-no-results{display:none;text-align:center;padding:2.5rem;color:var(--ink4);font-size:.9rem;grid-column:1/-1}
 .pub-no-results.show{display:block}
+
+/* Article reader */
+.article-reader-section{padding:0 0 74px;background:#fbf7ef}
+.article-reader-card{max-width:900px;margin:0 auto;background:#fff;border:1px solid rgba(123,33,53,.12);box-shadow:0 24px 70px rgba(80,51,26,.09);padding:2.35rem;border-radius:18px}
+.article-back{appearance:none;border:0;background:#fff6ed;color:#8a2338;font:inherit;font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin-bottom:1.45rem;padding:.55rem .8rem;border-radius:999px}
+.article-back:hover{background:#fdebd9}
+.article-kicker{font-size:.68rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#8a2338;margin-bottom:.65rem}
+.article-title{font-size:clamp(2rem,4vw,3.2rem);font-weight:500;margin-bottom:.8rem}
+.article-meta{font-size:.78rem;font-weight:700;color:#8a7567;letter-spacing:.04em;margin-bottom:1.55rem}
+.article-body{border-top:1px solid rgba(123,33,53,.12);padding-top:1.45rem}
+.article-body h3{font-size:1.42rem;font-weight:600;margin:1.6rem 0 .65rem}
+.article-body p{font-size:.98rem;line-height:1.9;color:var(--ink3);margin-bottom:1rem}
+.article-body ul{display:grid;gap:.58rem;margin:0 0 1.1rem;padding:0;list-style:none}
+.article-body li{position:relative;padding-left:1.25rem;color:var(--ink3);font-size:.94rem;line-height:1.75}
+.article-body li::before{content:'';position:absolute;left:0;top:.72rem;width:6px;height:6px;border-radius:50%;background:#8a2338}
+.article-note{margin-top:1.45rem;padding:1rem 1.1rem;border-left:3px solid #8a2338;background:#fff8f3;color:#7c6d64;font-size:.82rem;line-height:1.7}
+@media (max-width:760px){
+  .insights-hero-inner{display:block}
+  .insights-hero-art{display:none}
+  .insights-section-head{display:block}
+  #monthly-bulletins{padding-top:38px!important}
+  #articles-alerts{padding-top:34px!important}
+  .article-reader-card{padding:1.4rem;border-radius:16px}
+}
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Insights &amp; Publications | Vijaywargi Khabiya &amp; Saoji",
+  "description": "VK&amp;S monthly bulletins, technical articles and regulatory updates across audit, taxation, IBC and related areas.",
+  "url": "https://www.cavks.in/publications.html",
+  "publisher": {
+    "@type": "AccountingService",
+    "name": "Vijaywargi Khabiya & Saoji",
+    "url": "https://www.cavks.in/",
+    "logo": "https://www.cavks.in/images/logo.jpg",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "3rd Floor, MG House, Ravindranath Tagore Marg, Civil Lines",
+      "addressLocality": "Nagpur",
+      "addressRegion": "Maharashtra",
+      "postalCode": "440001",
+      "addressCountry": "IN"
+    },
+    "telephone": "+91-712-2522020",
+    "email": "info@cavks.in"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://www.cavks.in/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Insights &amp; Publications",
+      "item": "https://www.cavks.in/publications.html"
+    }
+  ]
+}
+</script>
 </head>
 <body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
 
 <!-- NAV -->
 <nav class="nav">
   <div class="container nav-inner">
     <a href="index.html" class="logo">
-  <img src="images/logo.jpg" alt="VKS CA" class="logo-img" loading="eager"/>
+  <img height="1330" width="1703" decoding="async" src="images/logo.jpg" alt="VK&amp;S CA" class="logo-img" loading="eager"/>
   <div class="logo-text">
     <span class="logo-firm">Vijaywargi Khabiya &amp; Saoji</span>        <span class="logo-tag">Chartered Accountants</span>
   </div>
@@ -61,7 +185,7 @@
           <a href="services.html#audit"><span>Audit &amp; Assurance</span><small>Statutory, internal, tax and concurrent audit support.</small></a>
           <a href="services.html#direct-tax"><span>Direct Taxation</span><small>Tax planning, assessments and litigation representation.</small></a>
           <a href="services.html#indirect-tax"><span>Indirect Tax &amp; GST</span><small>GST advisory, compliance, refunds and disputes.</small></a>
-          <a href="services.html#legal"><span>Legal Services</span><small>Representation before tribunals and higher courts.</small></a>
+          <a href="services.html#legal"><span>Tax Representation</span><small>Tax notices, appeals and case-file support.</small></a>
           <a href="services.html#insolvency"><span>Insolvency &amp; IBC</span><small>CIRP, NCLT matters and restructuring support.</small></a>
           <a href="services.html"><span>See All Services In Detail</span></a>
         </div>
@@ -71,13 +195,13 @@
       <li class="nav-item has-dropdown">
         <button class="nav-drop-toggle active" aria-expanded="false">Insights <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
         <div class="nav-dropdown">
-          <a href="publications.html#monthly-bulletins"><span>Monthly Bulletins</span><small>Monthly VKS bulletin issues in one place.</small></a>
-          <a href="publications.html#articles-alerts"><span>Articles &amp; Alerts</span><small>Insights, technical articles and regulatory updates.</small></a>
+      <a href="publications.html#monthly-bulletins"><span>Monthly Bulletins</span><small>Monthly VK&amp;S bulletin issues in one place.</small></a>
+      <a href="publications.html#articles-alerts"><span>Articles &amp; Alerts</span><small>Insights, technical articles and regulatory updates.</small></a>
         </div>
       </li>
       <li class="nav-item"><a href="careers.html">Careers</a></li>
       <li class="nav-item"><a href="articleship.html">Articleship</a></li>
-      <li class="nav-item"><a href="gallery.html" class="nav-gallery-link">Gallery</a></li>
+      <li class="nav-item"><a href="https://abhi-codex48.github.io/vks-nagpur/vks-timesheet.html" class="nav-timesheet-btn" data-timesheet-link>Timesheet</a></li>
       <li class="nav-item"><a href="contact.html" class="nav-cta-btn">Contact Us</a></li>
     </ul>
     <button class="ham" aria-label="Menu"><span></span><span></span><span></span></button>
@@ -100,7 +224,7 @@
       <a href="services.html#audit">Audit &amp; Assurance</a>
       <a href="services.html#direct-tax">Direct Taxation</a>
       <a href="services.html#indirect-tax">Indirect Tax &amp; GST</a>
-      <a href="services.html#legal">Legal Services</a>
+      <a href="services.html#legal">Tax Representation</a>
       <a href="services.html#insolvency">Insolvency &amp; IBC</a>
       <a href="services.html">See All Services In Detail</a>
     </div></div>
@@ -110,33 +234,53 @@
   <div class="drawer-group">
     <button class="drawer-toggle" aria-expanded="false">Insights <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
     <div class="drawer-panel"><div class="drawer-panel-inner">
-      <a href="publications.html#monthly-bulletins">Monthly Bulletins</a>
-      <a href="publications.html#articles-alerts">Articles &amp; Alerts</a>
+    <a href="publications.html#monthly-bulletins">Monthly Bulletins</a>
+    <a href="publications.html#articles-alerts">Articles &amp; Alerts</a>
     </div></div>
   </div>
   <a href="careers.html">Careers</a>
   <a href="articleship.html">Articleship</a>
-  <a href="gallery.html">Gallery</a>
+  <a href="https://abhi-codex48.github.io/vks-nagpur/vks-timesheet.html" data-timesheet-link>Timesheet</a>
   <a href="contact.html">Contact</a>
 </div>
 <!-- PAGE HEADER -->
-<div class="ph">
-  <div class="container ph-inner">
-    <div class="breadcrumb"><a href="index.html">Home</a><span>/</span>Insights</div>
-    <span class="eyebrow">Knowledge Hub</span>
-    <h1>Insights &amp; <em>Publications</em></h1>
-    <p style="max-width:min(560px,100%);margin-top:.75rem">Tax alerts, regulatory updates and thought leadership from the VKS partners — keeping you informed and ahead of change.</p>
+<div class="ph insights-ph">
+  <div class="container ph-inner insights-hero-inner">
+    <div class="insights-hero-copy">
+      <div class="breadcrumb"><a href="index.html">Home</a><span>/</span>Insights</div>
+      <span class="eyebrow">Knowledge Hub</span>
+      <h1>Insights &amp; <em>Publications</em></h1>
+      <p style="max-width:min(560px,100%);margin-top:.75rem">A structured knowledge desk for monthly bulletins, practice notes and professional reading material.</p>
+    </div>
+    <div class="insights-hero-art" aria-hidden="true">
+      <div class="insights-art-card">
+        <div class="insights-art-kicker">Knowledge Desk</div>
+        <div class="insights-art-title">Briefing Notes</div>
+        <p class="insights-art-lead">Practice notes, monthly references and curated reading material across key work areas.</p>
+        <div class="insights-art-bottom">
+          <div class="insights-art-chip">Bulletins</div>
+          <div class="insights-art-chip">Articles</div>
+        </div>
+      </div>
+      <div class="insights-art-shelf">
+        <div class="insights-art-book">GST</div>
+        <div class="insights-art-book">Income Tax</div>
+        <div class="insights-art-book">IBC</div>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- MONTHLY BULLETINS -->
 <section class="pad" id="monthly-bulletins" style="background:var(--surf)">
   <div class="container">
-    <div class="rv">
-      <span class="eyebrow">Monthly</span>
-      <h2>VKS <em style="color:var(--gold)">Bulletins</em></h2>
-      <div class="rule"></div>
-      <p style="max-width:min(480px,100%)">Monthly regulatory and compliance updates — compiled by the VKS team. Download the PDF for your records.</p>
+    <div class="insights-section-head rv">
+      <div>
+        <span class="eyebrow">VK&amp;S Bulletin</span>
+        <h2>Monthly <em style="color:var(--red)">Bulletins</em></h2>
+        <div class="rule"></div>
+      </div>
+      <p>Download recent PDF issues for quick reference and circulation.</p>
     </div>
     <div class="bull-grid rv rv-d1" id="bull-grid">
       <!-- filled by JS from bulletins-manifest.json -->
@@ -147,19 +291,22 @@
 <!-- PUBLICATIONS -->
 <section class="pad" id="articles-alerts">
   <div class="container">
-    <div class="rv">
-      <span class="eyebrow">Articles &amp; Alerts</span>
-      <h2>All <em style="color:var(--gold)">Publications</em></h2>
-      <div class="rule"></div>
+    <div class="insights-section-head rv">
+      <div>
+        <span class="eyebrow">Article Library</span>
+        <h2>Articles &amp; <em style="color:var(--red)">Notes</em></h2>
+        <div class="rule"></div>
+      </div>
+      <p>Practice-area notes prepared for reference, awareness and ongoing professional reading.</p>
     </div>
 
-    <!-- FILTER BUTTONS — rendered by JS from tags in publications.json -->
+    <!-- FILTER BUTTONS - rendered by JS from tags in publications.json -->
     <div class="pub-filters rv" id="pub-filters">
-      <button class="pub-filter-btn active" data-tag="all">All Publications</button>
+      <button class="pub-filter-btn active" data-tag="all">All Notes</button>
       <!-- other tags injected by JS -->
     </div>
 
-    <!-- CARDS GRID — rendered by JS from publications.json -->
+    <!-- CARDS GRID - rendered by JS from publications.json -->
     <div class="pub-grid" id="pub-grid">
       <!-- filled by JS -->
     </div>
@@ -167,15 +314,14 @@
   </div>
 </section>
 
-<!-- CTA -->
-<section class="cta-strip">
-  <div class="container"><div class="cta-inner">
-    <div class="cta-copy rv"><h2>Want to Receive <em>Updates Directly?</em></h2><p>Reach out and we will ensure you receive our monthly bulletins and tax alerts.</p></div>
-    <div class="cta-actions rv rv-d2">
-      <a href="contact.html" class="btn btn-gold">Contact Us <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-      <a href="tel:07122522020" class="btn btn-ghost">📞 0712-2522020</a>
-    </div>
-  </div></div>
+<!-- ARTICLE READER -->
+<section class="article-reader-section" id="article-reader" hidden>
+  <div class="container">
+    <article class="article-reader-card">
+      <button type="button" class="article-back" id="article-back">&larr; Back to library</button>
+      <div id="article-reader-content"></div>
+    </article>
+  </div>
 </section>
 
 <!-- FOOTER -->
@@ -184,29 +330,18 @@
     <div class="footer-shell">
       <div class="footer-spotlight">
         <div class="footer-brand-card rv">
-          <div class="footer-kicker">Trusted Since 2014</div>
           <div class="footer-brand">
             <a href="index.html" class="logo" style="display:inline-flex">
-              <img src="images/logo.jpg" alt="VKS" style="object-fit:contain;flex-shrink:0"/>
+              <img height="1330" width="1703" decoding="async" src="images/logo.jpg" alt="VK&amp;S" style="object-fit:contain;flex-shrink:0"/>
               <div class="logo-text" style="margin-left:.6rem">
                 <span class="logo-firm">Vijaywargi Khabiya &amp; Saoji</span>        <span class="logo-tag">Chartered Accountants</span>
               </div>
             </a>
           </div>
-          <p class="ft-desc">A multi-disciplinary chartered accountancy firm delivering audit, tax, legal and advisory services with single-window execution for businesses across Nagpur and beyond.</p>
-          <div class="ft-dynamic-line" aria-live="polite">
-            <span class="ft-dynamic-dot"></span>
-            <span>Currently helping with</span>
-            <span class="ft-dynamic-text">Audit and assurance mandates</span>
-          </div>
-          <div class="ft-highlight-row">
-            <div class="ft-highlight"><strong data-count="12" data-suffix="+">12+</strong><span>Years of Excellence</span></div>
-            <div class="ft-highlight"><strong data-count="80" data-suffix="+">80+</strong><span>Professionals</span></div>
-            <div class="ft-highlight"><strong data-count="7">7</strong><span>Cities Served</span></div>
-          </div>
+          <p class="ft-desc">A multi-disciplinary chartered accountancy firm providing audit, tax, representation and advisory support for businesses across Nagpur and beyond.</p>
         </div>
         <div class="footer-contact-card rv rv-d1">
-          <h5>Start A Conversation</h5>
+          <h5>Office Contact</h5>
           <div class="footer-action">
             <div class="footer-action-copy">
               <span>Main Office Line</span>
@@ -220,6 +355,13 @@
               <a href="mailto:info@cavks.in">info@cavks.in</a>
             </div>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div class="footer-action footer-linkedin-action">
+            <div class="footer-action-copy">
+              <span>Official LinkedIn</span>
+              <a href="https://www.linkedin.com/company/vijaywargi-khabiya-saoji-chartered-accountants/about/" target="_blank" rel="noopener">Follow VK&amp;S</a>
+            </div>
+            <span class="footer-linkedin-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 110-4.12 2.06 2.06 0 010 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.23 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.72V1.72C24 .77 23.21 0 22.23 0z"/></svg></span>
           </div>
           <p class="ft-note">3rd Floor, MG House, Ravindranath Tagore Marg, Civil Lines, Nagpur &ndash; 440001</p>
         </div>
@@ -238,7 +380,7 @@
           <ul>
             <li><a href="about.html">About The Firm</a></li>
             <li><a href="services.html">Service Portfolio</a></li>
-            <li><a href="industries.html">Industry Expertise</a></li>
+            <li><a href="industries.html">Industry Exposure</a></li>
             <li><a href="partners.html">Meet The Team</a></li>
             <li><a href="publications.html">Insights &amp; Bulletins</a></li>
           </ul>
@@ -249,7 +391,7 @@
             <li><a href="services.html#audit">Audit &amp; Assurance</a></li>
             <li><a href="services.html#direct-tax">Direct Taxation</a></li>
             <li><a href="services.html#indirect-tax">Indirect Tax &amp; GST</a></li>
-            <li><a href="services.html#legal">Legal Representation</a></li>
+            <li><a href="services.html#legal">Tax Representation</a></li>
             <li><a href="services.html#insolvency">Insolvency &amp; IBC</a></li>
           </ul>
         </div>
@@ -259,11 +401,12 @@
             <div class="ft-ci"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span>3rd Floor, MG House, Ravindranath Tagore Marg, Civil Lines, Nagpur &ndash; 440001</span></div>
             <div class="ft-ci"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg><span><a href="https://www.cavks.in" target="_blank" rel="noopener">www.cavks.in</a></span></div>
             <div class="ft-ci"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span><a href="mailto:info@cavks.in">info@cavks.in</a></span></div>
+            <div class="ft-ci"><span class="footer-linkedin-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 110-4.12 2.06 2.06 0 010 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.23 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.72V1.72C24 .77 23.21 0 22.23 0z"/></svg></span><span><a href="https://www.linkedin.com/company/vijaywargi-khabiya-saoji-chartered-accountants/about/" target="_blank" rel="noopener">Official LinkedIn</a></span></div>
           </div>
         </div>
       </div>
       <div class="footer-bottom">
-        <p>&copy; 2026 Vijaywargi Khabiya &amp; Saoji. All rights reserved.</p>
+        <p>&copy; 2026 Vijaywargi Khabiya &amp; Saoji. All rights reserved. <a href="sitemap.html" class="footer-sitemap-link">Sitemap</a></p>
         <p>Chartered Accountants &middot; Nagpur &middot; Est. 2014</p>
       </div>
     </div>
@@ -294,21 +437,52 @@
 </nav>
 <script src="main.js"></script>
 <script>
-// ── Publications: load from publications.json, build filter buttons & cards ──
+// -- Publications: load from publications.json, build filters, cards and reader --
 let allPubs = [];
 let activeTag = 'all';
+
+const articleReader = document.getElementById('article-reader');
+const articleContent = document.getElementById('article-reader-content');
+const articleBack = document.getElementById('article-back');
 
 fetch('publications.json?v=' + Date.now())
   .then(r => r.json())
   .then(data => {
-    allPubs = data;
-    buildFilters(data);
-    renderCards(data, 'all');
+    allPubs = data.map(normalizePublication);
+    buildFilters(allPubs);
+    renderCards(allPubs, 'all');
+    openArticleFromHash(false);
   })
   .catch(() => {
     document.getElementById('pub-grid').innerHTML =
-      '<p style="color:var(--ink4);font-size:.88rem">Publications loading…</p>';
+      '<p style="color:var(--ink4);font-size:.88rem">Publications could not be loaded right now.</p>';
   });
+
+function normalizePublication(pub) {
+  return {
+    ...pub,
+    slug: pub.slug || slugify(pub.title || 'publication'),
+    content: Array.isArray(pub.content) ? pub.content : []
+  };
+}
+
+function slugify(text) {
+  return String(text)
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function escapeHTML(value) {
+  return String(value || '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  }[char]));
+}
 
 function buildFilters(data) {
   const tags = ['all', ...new Set(data.map(p => p.tag))];
@@ -318,11 +492,12 @@ function buildFilters(data) {
     const btn = document.createElement('button');
     btn.className = 'pub-filter-btn' + (tag === 'all' ? ' active' : '');
     btn.dataset.tag = tag;
-    btn.textContent = tag === 'all' ? 'All Publications' : tag;
+    btn.textContent = tag === 'all' ? 'All Notes' : tag;
     btn.addEventListener('click', () => {
       document.querySelectorAll('.pub-filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       activeTag = tag;
+      closeArticle(false);
       renderCards(allPubs, tag);
     });
     bar.appendChild(btn);
@@ -343,41 +518,109 @@ function renderCards(data, tag) {
 
   const delays = ['', ' rv-d1', ' rv-d2'];
   grid.innerHTML = filtered.map((p, i) => `
-    <div class="pub-card rv${delays[i % 3]}">
-      <span class="pub-tag">${p.tag}</span>
-      <h3 class="pub-title">${p.title}</h3>
-      <p class="pub-excerpt">${p.excerpt}</p>
-      <div class="pub-meta">${p.date}${p.read ? ' · ' + p.read : ''}</div>
-    </div>`).join('');
+    <button type="button" class="pub-card rv${delays[i % 3]}" data-article-slug="${escapeHTML(p.slug)}">
+      <div class="pub-topline">
+        <span class="pub-tag">${escapeHTML(p.tag)}</span>
+        <span class="pub-index">${String(i + 1).padStart(2, '0')}</span>
+      </div>
+      <h3 class="pub-title">${escapeHTML(p.title)}</h3>
+      <p class="pub-excerpt">${escapeHTML(p.excerpt)}</p>
+      <div class="pub-meta">${escapeHTML(p.date)}${p.read ? ' &middot; ' + escapeHTML(p.read) : ''}</div>
+      <span class="pub-read">Read full article</span>
+    </button>`).join('');
 
-  // Re-trigger reveal animations on new cards
+  grid.querySelectorAll('[data-article-slug]').forEach(card => {
+    card.addEventListener('click', () => openArticle(card.dataset.articleSlug, true));
+  });
+
+  // Re-trigger reveal animations on new cards.
   document.querySelectorAll('#pub-grid .rv').forEach(el => {
     el.classList.remove('vis');
     setTimeout(() => el.classList.add('vis'), 50);
   });
 }
 
-// ── Bulletins: load from bulletins-manifest.json ──
+function renderArticleBody(sections) {
+  if (!sections.length) {
+    return '<p>The full note will be available here shortly.</p>';
+  }
+
+  return sections.map(section => {
+    if (section.type === 'heading') {
+      return `<h3>${escapeHTML(section.text)}</h3>`;
+    }
+
+    if (section.type === 'list' && Array.isArray(section.items)) {
+      return `<ul>${section.items.map(item => `<li>${escapeHTML(item)}</li>`).join('')}</ul>`;
+    }
+
+    return `<p>${escapeHTML(section.text)}</p>`;
+  }).join('');
+}
+
+function openArticle(slug, updateHash) {
+  const pub = allPubs.find(item => item.slug === slug);
+  if (!pub) return;
+
+  articleContent.innerHTML = `
+    <div class="article-kicker">${escapeHTML(pub.tag)}</div>
+    <h2 class="article-title">${escapeHTML(pub.title)}</h2>
+    <div class="article-meta">${escapeHTML(pub.date)}${pub.read ? ' &middot; ' + escapeHTML(pub.read) : ''}${pub.author ? ' &middot; ' + escapeHTML(pub.author) : ''}</div>
+    <div class="article-body">${renderArticleBody(pub.content)}</div>
+  `;
+  articleReader.hidden = false;
+
+  if (updateHash) {
+    history.pushState(null, '', `#article-${pub.slug}`);
+  }
+
+  articleReader.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function closeArticle(updateHash = true) {
+  articleReader.hidden = true;
+  articleContent.innerHTML = '';
+
+  if (updateHash && location.hash.startsWith('#article-')) {
+    history.pushState(null, '', '#articles-alerts');
+  }
+}
+
+function openArticleFromHash(shouldScroll = true) {
+  if (!location.hash.startsWith('#article-')) return;
+  openArticle(location.hash.replace('#article-', ''), shouldScroll);
+}
+
+articleBack.addEventListener('click', () => closeArticle(true));
+window.addEventListener('hashchange', () => {
+  if (location.hash.startsWith('#article-')) {
+    openArticleFromHash(true);
+  } else {
+    closeArticle(false);
+  }
+});
+
+// -- Bulletins: load from bulletins-manifest.json --
 fetch('bulletins-manifest.json?v=' + Date.now())
   .then(r => r.json())
   .then(data => {
     const grid = document.getElementById('bull-grid');
     if (!data || data.length === 0) {
-      grid.innerHTML = '<div class="bull-empty">Monthly bulletins will appear here automatically once PDFs are uploaded to the <strong>bulletins/</strong> folder. Name them as <strong>Month-YYYY.pdf</strong> (e.g. March-2026.pdf).</div>';
+      grid.innerHTML = '<div class="bull-empty">Monthly bulletins will appear here when available.</div>';
       return;
     }
     grid.innerHTML = data.map((b, i) => `
       <a href="${b.path}" class="bull-card rv vis${['', ' rv-d1', ' rv-d2'][i % 3]}" target="_blank" rel="noopener">
-        <div class="bull-icon">📄</div>
+        <div class="bull-icon">PDF</div>
         <div>
           <div class="bull-name">${b.display}</div>
-          <div class="bull-sub">VKS Monthly Bulletin · PDF</div>
+          <div class="bull-sub">VK&amp;S Bulletin &middot; PDF</div>
         </div>
       </a>`).join('');
   })
   .catch(() => {
     document.getElementById('bull-grid').innerHTML =
-      '<div class="bull-empty">Bulletins will appear here once uploaded to the <strong>bulletins/</strong> folder.</div>';
+      '<div class="bull-empty">Monthly bulletins will appear here when available.</div>';
   });
 </script>
 </body>

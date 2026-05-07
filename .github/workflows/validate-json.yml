@@ -1,0 +1,108 @@
+name: Validate Content JSON
+
+# Runs automatically on every commit that touches a content JSON file.
+# If a JSON file has a typo, missing comma, unmatched bracket, etc.
+# the run will FAIL with a red X next to the commit on github.com,
+# and an email is sent to the repository owner.
+#
+# This is a safety net so a broken JSON never silently ships to the
+# live site (the page section would otherwise just go blank).
+
+on:
+  push:
+    paths:
+      - 'publications.json'
+      - 'job-openings.json'
+      - 'bulletins-manifest.json'
+  pull_request:
+    paths:
+      - 'publications.json'
+      - 'job-openings.json'
+      - 'bulletins-manifest.json'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JSON syntax + required fields
+        run: |
+          python3 - << 'PYEOF'
+          import json, sys, os
+
+          errors = []
+
+          def must_have(obj, keys, where):
+              missing = [k for k in keys if k not in obj]
+              if missing:
+                  errors.append(f"{where}: missing field(s) {missing}")
+
+          # ── publications.json ──────────────────────────────────────────────
+          if os.path.exists("publications.json"):
+              try:
+                  data = json.load(open("publications.json"))
+                  if not isinstance(data, list):
+                      errors.append("publications.json: top level must be a list [ ... ]")
+                  else:
+                      slugs = set()
+                      for i, art in enumerate(data):
+                          where = f"publications.json article #{i+1}"
+                          must_have(art, ["slug", "title", "tag", "excerpt", "date", "content"], where)
+                          slug = art.get("slug")
+                          if slug in slugs:
+                              errors.append(f"{where}: duplicate slug '{slug}' (each article must have a unique slug)")
+                          slugs.add(slug)
+                          # content blocks
+                          for j, block in enumerate(art.get("content") or []):
+                              btype = block.get("type")
+                              if btype not in ("paragraph", "heading", "list"):
+                                  errors.append(f"{where} block #{j+1}: type must be paragraph, heading or list (got '{btype}')")
+                              if btype in ("paragraph", "heading") and "text" not in block:
+                                  errors.append(f"{where} block #{j+1}: '{btype}' block needs a 'text' field")
+                              if btype == "list" and not isinstance(block.get("items"), list):
+                                  errors.append(f"{where} block #{j+1}: 'list' block needs an 'items' array")
+                  print("publications.json: parsed OK ({} articles)".format(len(data) if isinstance(data, list) else 0))
+              except json.JSONDecodeError as e:
+                  errors.append(f"publications.json: invalid JSON — {e.msg} at line {e.lineno}, column {e.colno}")
+
+          # ── job-openings.json ──────────────────────────────────────────────
+          if os.path.exists("job-openings.json"):
+              try:
+                  data = json.load(open("job-openings.json"))
+                  if not isinstance(data, list):
+                      errors.append("job-openings.json: top level must be a list [ ... ]")
+                  else:
+                      for i, job in enumerate(data):
+                          where = f"job-openings.json job #{i+1}"
+                          must_have(job, ["status", "role", "practice", "summary"], where)
+                          status = job.get("status")
+                          if status not in ("open", "closed"):
+                              errors.append(f"{where}: status must be 'open' or 'closed' (got '{status}')")
+                  print("job-openings.json: parsed OK ({} jobs)".format(len(data) if isinstance(data, list) else 0))
+              except json.JSONDecodeError as e:
+                  errors.append(f"job-openings.json: invalid JSON — {e.msg} at line {e.lineno}, column {e.colno}")
+
+          # ── bulletins-manifest.json ────────────────────────────────────────
+          if os.path.exists("bulletins-manifest.json"):
+              try:
+                  data = json.load(open("bulletins-manifest.json"))
+                  if not isinstance(data, list):
+                      errors.append("bulletins-manifest.json: top level must be a list [ ... ]")
+                  else:
+                      for i, b in enumerate(data):
+                          where = f"bulletins-manifest.json entry #{i+1}"
+                          must_have(b, ["file", "display", "path"], where)
+                  print("bulletins-manifest.json: parsed OK ({} bulletins)".format(len(data) if isinstance(data, list) else 0))
+              except json.JSONDecodeError as e:
+                  errors.append(f"bulletins-manifest.json: invalid JSON — {e.msg} at line {e.lineno}, column {e.colno}")
+
+          # ── Result ─────────────────────────────────────────────────────────
+          if errors:
+              print("\n❌ Validation failed:")
+              for err in errors:
+                  print(f"   • {err}")
+              sys.exit(1)
+          print("\n✅ All content JSON files are valid.")
+          PYEOF

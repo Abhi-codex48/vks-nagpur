@@ -1,13 +1,15 @@
-name: Generate Manifests
+name: Sync Bulletins Manifest
+
+# Runs automatically whenever a PDF is added/removed/renamed in the bulletins/ folder.
+# Result: bulletins-manifest.json is rewritten and committed back, so the
+# Insights page picks up the new PDF without any manual JSON editing.
+#
+# Can also be run manually from the Actions tab via the "Run workflow" button.
 
 on:
   push:
     paths:
-      - 'images/seminar-knowledge/**'
-      - 'images/team-movements/**'
-      - 'images/weekend-charcha/**'
       - 'bulletins/**'
-      - 'publications.json'
   workflow_dispatch:
 
 jobs:
@@ -22,39 +24,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Generate gallery-manifest.json
-        run: |
-          python3 - << 'PYEOF'
-          import json
-          import os
-          from pathlib import Path
-
-          def get_images(folder):
-              folder_path = Path('images') / folder
-              if not folder_path.exists():
-                  return []
-
-              allowed_exts = {'.jpg', '.jpeg', '.png', '.webp'}
-              files = [
-                  path.name for path in folder_path.iterdir()
-                  if path.is_file() and path.suffix.lower() in allowed_exts
-              ]
-              return sorted(files, key=str.lower)
-
-          manifest = {
-              "seminar-knowledge": get_images("seminar-knowledge"),
-              "team-movements": get_images("team-movements"),
-              "weekend-charcha": get_images("weekend-charcha")
-          }
-
-          with open('gallery-manifest.json','w') as f:
-              json.dump(manifest, f, indent=2)
-
-          print("gallery-manifest.json generated")
-          print(json.dumps(manifest, indent=2))
-          PYEOF
-
-      - name: Generate bulletins-manifest.json
+      - name: Generate bulletins-manifest.json from bulletins/*.pdf
         run: |
           python3 - << 'PYEOF'
           import json
@@ -63,24 +33,17 @@ jobs:
           import re
 
           month_order = {
-              "january": 1,
-              "february": 2,
-              "march": 3,
-              "april": 4,
-              "may": 5,
-              "june": 6,
-              "july": 7,
-              "august": 8,
-              "september": 9,
-              "october": 10,
-              "november": 11,
-              "december": 12
+              "january": 1, "february": 2, "march": 3, "april": 4,
+              "may": 5, "june": 6, "july": 7, "august": 8,
+              "september": 9, "october": 10, "november": 11, "december": 12
           }
 
           def bulletin_sort_key(path):
+              # Filenames must follow: Month-YYYY.pdf  (e.g. March-2026.pdf)
               name = os.path.basename(path).replace('.pdf', '')
               match = re.fullmatch(r'([A-Za-z]+)-(\d{4})', name)
               if not match:
+                  # Files that don't match the naming convention sort to the bottom
                   return (0, 0, name.lower())
               month_name, year = match.groups()
               return (int(year), month_order.get(month_name.lower(), 0), name.lower())
@@ -89,25 +52,26 @@ jobs:
           bulletins = []
           for f in files:
               name = os.path.basename(f)
-              # Expected format: Month-YYYY.pdf e.g. March-2026.pdf
-              display = name.replace('.pdf','').replace('-',' ')
+              # "March-2026.pdf" -> display "March 2026"
+              display = name.replace('.pdf', '').replace('-', ' ')
               bulletins.append({
                   "file": name,
                   "display": display,
                   "path": f"bulletins/{name}"
               })
 
-          with open('bulletins-manifest.json','w') as f:
+          with open('bulletins-manifest.json', 'w') as f:
               json.dump(bulletins, f, indent=2)
+              f.write('\n')
 
-          print("bulletins-manifest.json generated")
+          print(f"Generated bulletins-manifest.json with {len(bulletins)} entries")
           print(json.dumps(bulletins, indent=2))
           PYEOF
 
-      - name: Commit manifests
+      - name: Commit updated manifest (if changed)
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add gallery-manifest.json bulletins-manifest.json
-          git diff --staged --quiet || git commit -m "Auto-update manifests"
+          git add bulletins-manifest.json
+          git diff --staged --quiet || git commit -m "chore: refresh bulletins-manifest.json"
           git push

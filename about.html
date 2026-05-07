@@ -1,56 +1,106 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>About — Vijaywargi Khabiya &amp; Saoji | CA Firm Nagpur Est. 2014</title>
-<meta name="description" content="Learn about VKS — a multi-disciplinary chartered accountancy firm established in Nagpur in 2014. 12 years, 7 cities, 80+ professionals."/>
+<title>About | Vijaywargi Khabiya &amp; Saoji &mdash; CA Firm, Nagpur (Est. 2014)</title>
+<meta name="description" content="VK&amp;S is a Nagpur-based multi-disciplinary chartered accountancy firm established in 2014. Practice areas include audit, taxation, representation and advisory work."/>
+<meta name="robots" content="index,follow,max-image-preview:large"/>
+<meta property="og:title" content="About | Vijaywargi Khabiya &amp; Saoji &mdash; CA Firm, Nagpur (Est. 2014)"/>
+<meta property="og:description" content="VK&amp;S is a Nagpur-based multi-disciplinary chartered accountancy firm established in 2014. Practice areas include audit, taxation, representation and advisory work."/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://www.cavks.in/about.html"/>
+<meta property="og:image" content="https://www.cavks.in/images/logo.jpg"/>
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="About | Vijaywargi Khabiya &amp; Saoji &mdash; CA Firm, Nagpur (Est. 2014)"/>
+<meta name="twitter:description" content="VK&amp;S is a Nagpur-based multi-disciplinary chartered accountancy firm established in 2014. Practice areas include audit, taxation, representation and advisory work."/>
+<meta name="twitter:image" content="https://www.cavks.in/images/logo.jpg"/>
+<link rel="canonical" href="https://www.cavks.in/about.html"/>
+<link rel="icon" type="image/jpeg" href="images/logo.jpg"/>
+<link rel="apple-touch-icon" href="images/logo.jpg"/>
+<link rel="manifest" href="site.webmanifest"/>
+<meta name="theme-color" content="#7b1d2e"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700&display=swap"/>
 <link rel="stylesheet" href="style.css"/>
 <style>
-.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem}
-.why-card{background:var(--white);border:1px solid var(--line2);border-radius:var(--rl);padding:2rem 1.75rem;transition:all var(--t);position:relative;overflow:hidden}
-.why-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--navy),var(--gold));transform:scaleX(0);transform-origin:left;transition:transform var(--t)}
-.why-card:hover{box-shadow:var(--sh-md);border-color:transparent;transform:translateY(-4px)}
-.why-card:hover::after{transform:scaleX(1)}
-.why-n{font-family:'Cormorant Garamond',serif;font-size:3.5rem;font-weight:300;color:rgba(196,154,26,.15);line-height:1;margin-bottom:1rem}
-.why-icon{font-size:2rem;margin-bottom:.75rem}
-.why-h{font-size:1rem;font-weight:600;color:var(--navy);margin-bottom:.5rem}
+.about-ph{background:linear-gradient(135deg,#fff9ef 0%,#f7eadc 54%,#efdccc 100%);border-bottom:1px solid rgba(123,33,53,.1)}
+.about-ph::before{background-image:radial-gradient(circle at 18% 18%,rgba(196,154,26,.14),transparent 28%),linear-gradient(rgba(123,33,53,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(123,33,53,.035) 1px,transparent 1px);background-size:auto,64px 64px,64px 64px}
+.about-ph h1{color:#2f201f}
+.about-ph h1 em{color:var(--gold)}
+.about-ph p{color:#65534c}
+.about-ph .eyebrow{color:#8a2338}
+.about-ph .eyebrow::before{background:#8a2338}
+.about-ph .breadcrumb{color:#8b786f}
+.about-ph .breadcrumb a{color:#8a2338}
+.about-ph .breadcrumb span{color:rgba(138,35,56,.28)}
+.about-profile-card{background:linear-gradient(145deg,#fffefa 0%,#f6eadc 100%);border:1px solid rgba(123,33,53,.1);border-radius:28px;padding:2rem;box-shadow:0 22px 56px rgba(76,32,20,.09);min-height:420px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
+.about-profile-card::before{content:'';position:absolute;inset:auto -50px -70px auto;width:220px;height:220px;border-radius:50%;background:rgba(196,154,26,.14)}
+.about-profile-card .logo{position:relative;z-index:1;gap:.85rem;align-items:center}
+.about-profile-card .logo img{width:66px;height:66px;border-radius:0;object-fit:contain;background:#fff;border:1px solid rgba(123,33,53,.08);padding:.4rem}
+.about-profile-kicker{position:relative;z-index:1;font-size:.68rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#8a2338;margin-bottom:1rem}
+.about-profile-title{position:relative;z-index:1;font-family:'Cormorant Garamond',serif;font-size:2rem;line-height:1.1;color:#3b1015;margin:1.5rem 0 .7rem}
+.about-profile-desc{position:relative;z-index:1;font-size:.88rem;color:#6a5a52;line-height:1.75;max-width:32ch}
+.about-profile-metrics{position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem;margin-top:1.6rem}
+.about-profile-metric{background:rgba(255,255,255,.64);border:1px solid rgba(123,33,53,.09);padding:.8rem .65rem}
+.about-profile-metric strong{display:block;font-family:'Cormorant Garamond',serif;font-size:1.65rem;color:#8a2338;line-height:1}
+.about-profile-metric span{display:block;font-size:.56rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#8a7567;margin-top:.35rem;line-height:1.35}
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.05rem;margin-top:2.25rem}
+.why-card{background:linear-gradient(145deg,#fffefa 0%,#fff8ef 100%);border:1px solid rgba(123,33,53,.1);border-radius:20px;padding:1.6rem 1.4rem;transition:all var(--t);position:relative;overflow:hidden;box-shadow:0 10px 28px rgba(76,32,20,.04)}
+.why-card::after{display:none}
+.why-card:hover{box-shadow:0 16px 38px rgba(76,32,20,.09);border-color:rgba(196,154,26,.45);transform:translateY(-4px)}
+.why-card:hover::after{display:none}
+.why-n{font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;color:rgba(196,154,26,.2);line-height:1;margin-bottom:.75rem}
+.why-icon{font-size:1.7rem;margin-bottom:.65rem}
+.why-h{font-size:.96rem;font-weight:700;color:#3b1015;margin-bottom:.45rem}
+.profile-glance-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin-top:2.35rem;align-items:stretch}
+.profile-glance-card{position:relative;min-height:252px;display:flex;flex-direction:column;padding:1.4rem 1.35rem 1.3rem;border:1px solid rgba(123,33,53,.11);border-radius:22px;background:linear-gradient(145deg,#fffef9 0%,#fff8ef 72%,#f8efe4 100%);box-shadow:0 14px 34px rgba(76,32,20,.055);overflow:hidden;transition:transform var(--t),box-shadow var(--t),border-color var(--t)}
+.profile-glance-card::before{content:'';position:absolute;inset:0 0 auto 0;height:4px;background:linear-gradient(90deg,#8a2338,#c49a1a);opacity:.9}
+.profile-glance-card::after{content:attr(data-no);position:absolute;right:1rem;top:1rem;font-family:'Cormorant Garamond',serif;font-size:3.05rem;line-height:1;color:rgba(138,35,56,.042);font-weight:300;pointer-events:none}
+.profile-glance-card:hover{transform:translateY(-5px);box-shadow:0 22px 48px rgba(76,32,20,.09);border-color:rgba(196,154,26,.38)}
+.profile-glance-head{position:relative;z-index:1;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.95rem;padding-right:4rem;min-height:46px}
+.profile-glance-icon{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:#fff4df;border:1px solid rgba(196,154,26,.28);box-shadow:inset 0 1px 0 rgba(255,255,255,.85);font-size:1.28rem}
+.profile-glance-label{display:flex;align-items:center;justify-content:flex-end;min-height:46px;max-width:88px;text-align:right;font-size:.58rem;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:#8a2338}
+.profile-glance-value{position:relative;z-index:1;font-family:'Cormorant Garamond',serif;font-size:clamp(2.45rem,3vw,3.15rem);font-weight:500;line-height:.92;color:#3b1015;margin:.15rem 0 .72rem}
+.profile-glance-card h3{position:relative;z-index:1;font-size:1rem;line-height:1.25;color:#241612;margin:0 0 .58rem;font-weight:800}
+.profile-glance-card p{position:relative;z-index:1;font-size:.84rem;line-height:1.68;color:#655750;margin:0}
+.profile-glance-foot{position:relative;z-index:1;margin-top:auto;padding-top:1rem;display:flex;align-items:center;gap:.45rem;font-size:.58rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#9a7417}
+.profile-glance-foot::before{content:'';width:24px;height:1px;background:rgba(196,154,26,.65)}
 .city-list{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.5rem}
-.city{padding:.32rem .95rem;border:1.5px solid var(--line);border-radius:40px;font-size:.78rem;font-weight:500;color:var(--ink3);transition:all var(--t)}
-.city:hover{border-color:var(--gold);color:var(--navy);background:var(--gold-lt)}
-.city.hq{border-color:var(--navy);color:var(--navy);font-weight:600}
+.city{padding:.32rem .95rem;border:1.5px solid rgba(123,33,53,.12);border-radius:40px;font-size:.78rem;font-weight:500;color:var(--ink3);transition:all var(--t);background:#fffdfa}
+.city:hover{border-color:var(--gold);color:#8a2338;background:#fff4df}
+.city.hq{border-color:#8a2338;color:#8a2338;font-weight:700;background:#fff8e8}
 .anchor-section{scroll-margin-top:110px}
 .firm-story-actions{margin-top:2rem;display:flex;gap:.75rem;flex-wrap:wrap}
-.firm-focus-nav{display:flex;flex-wrap:wrap;gap:.75rem;margin:0 0 2rem}
-.firm-focus-link{display:inline-flex;align-items:center;gap:.5rem;padding:.85rem 1.2rem;border-radius:999px;background:var(--white);border:1px solid var(--line2);font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--navy);transition:all var(--t)}
-.firm-focus-link:hover{transform:translateY(-2px);border-color:var(--navy);box-shadow:var(--sh-sm)}
-.firm-focus-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.4rem}
-.firm-focus-card{background:var(--white);border:1px solid var(--line2);border-radius:24px;padding:2rem 1.8rem;box-shadow:var(--sh-sm);position:relative;overflow:hidden}
-.firm-focus-card::before{content:'';position:absolute;inset:0 auto auto 0;width:100%;height:5px;background:linear-gradient(90deg,var(--navy),rgba(13,27,62,.22))}
-.firm-focus-card.strengths::before{background:linear-gradient(90deg,var(--navy2),rgba(13,27,62,.18))}
-.firm-focus-card h3{font-size:1.5rem;margin-bottom:.6rem;color:var(--navy)}
+.firm-focus-nav{display:flex;flex-wrap:wrap;gap:.6rem;margin:0 0 1.6rem;justify-content:center}
+.firm-focus-link{display:inline-flex;align-items:center;gap:.5rem;padding:.74rem 1.05rem;border-radius:999px;background:#fffefa;border:1px solid rgba(123,33,53,.1);font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8a2338;transition:all var(--t)}
+.firm-focus-link:hover{transform:translateY(-2px);border-color:rgba(196,154,26,.55);box-shadow:0 12px 24px rgba(76,32,20,.08)}
+.firm-focus-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+.firm-focus-card{background:linear-gradient(145deg,#fffefa 0%,#fff8ef 100%);border:1px solid rgba(123,33,53,.1);border-radius:22px;padding:1.75rem 1.55rem;box-shadow:0 10px 28px rgba(76,32,20,.04);position:relative;overflow:hidden}
+.firm-focus-card::before{content:'';position:absolute;inset:0 auto auto 0;width:100%;height:4px;background:linear-gradient(90deg,#8a2338,#c49a1a)}
+.firm-focus-card.strengths::before{background:linear-gradient(90deg,#c49a1a,#8a2338)}
+.firm-focus-card h3{font-size:1.42rem;margin-bottom:.55rem;color:#3b1015}
 .firm-focus-card p{font-size:.86rem;color:var(--ink4);max-width:38ch}
-.firm-focus-list{display:grid;gap:.8rem;margin-top:1.45rem}
-.firm-focus-list li{display:grid;grid-template-columns:20px 1fr;gap:.7rem;align-items:start;font-size:.92rem;color:var(--ink2);font-weight:500;line-height:1.65}
-.firm-focus-list li::before{content:'▪';color:var(--navy);font-size:1rem;line-height:1.4}
-.split-section{display:grid;grid-template-columns:1fr 1fr;min-height:400px;margin:3rem 0 0;border-radius:var(--rl);overflow:hidden;box-shadow:var(--sh-lg)}
-.split-left{background:var(--navy);padding:4rem 3.5rem;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
-.split-left::before{content:'';position:absolute;top:-3rem;right:-3rem;width:220px;height:220px;border-radius:50%;background:rgba(196,154,26,.07)}
-.split-left::after{content:'';position:absolute;bottom:-2rem;left:-2rem;width:160px;height:160px;border-radius:50%;background:rgba(176,28,46,.08)}
-.split-right{background:var(--white);padding:4rem 3.5rem;display:flex;flex-direction:column;justify-content:center}
-.split-quote{font-family:'Cormorant Garamond',serif;font-size:clamp(1.2rem,2.5vw,1.6rem);font-weight:300;font-style:italic;color:rgba(255,255,255,.85);line-height:1.55;position:relative;z-index:1}
-.split-quote::before{content:'❝';font-size:4rem;color:rgba(196,154,26,.25);position:absolute;top:-1.5rem;left:-1rem;font-style:normal;line-height:1}
-.split-cite{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(196,154,26,.7);margin-top:1.5rem;position:relative;z-index:1}
-.value-row{display:flex;align-items:flex-start;gap:1.25rem;padding:1.25rem 0;border-bottom:1px solid var(--line2)}
+.firm-focus-list{display:grid;gap:.72rem;margin-top:1.25rem}
+.firm-focus-list li{display:grid;grid-template-columns:18px 1fr;gap:.65rem;align-items:start;font-size:.9rem;color:var(--ink2);font-weight:500;line-height:1.6}
+.firm-focus-list li::before{content:'';width:6px;height:6px;background:#c49a1a;transform:rotate(45deg);margin-top:.62rem}
+.split-section{display:grid;grid-template-columns:1fr 1fr;min-height:360px;margin:2.4rem 0 0;border-radius:24px;overflow:hidden;box-shadow:0 18px 48px rgba(76,32,20,.08);border:1px solid rgba(123,33,53,.08)}
+.split-left{background:linear-gradient(145deg,#8a2338 0%,#5f1828 100%);padding:3.2rem 3rem;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
+.split-left::before{content:'';position:absolute;top:-3rem;right:-3rem;width:220px;height:220px;border-radius:50%;background:rgba(196,154,26,.14)}
+.split-left::after{content:'';position:absolute;bottom:-2rem;left:-2rem;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.05)}
+.split-right{background:linear-gradient(145deg,#fffefa 0%,#fff8ef 100%);padding:3.2rem 3rem;display:flex;flex-direction:column;justify-content:center}
+.split-quote{font-family:'Cormorant Garamond',serif;font-size:clamp(1.2rem,2.5vw,1.6rem);font-weight:300;font-style:italic;color:rgba(255,255,255,.9);line-height:1.55;position:relative;z-index:1}
+.split-quote::before{content:'"';font-size:4rem;color:rgba(196,154,26,.35);position:absolute;top:-1.5rem;left:-1rem;font-style:normal;line-height:1}
+.split-cite{font-size:.68rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,220,126,.78);margin-top:1.5rem;position:relative;z-index:1}
+.value-row{display:flex;align-items:flex-start;gap:1.05rem;padding:1.05rem 0;border-bottom:1px solid rgba(123,33,53,.1)}
 .value-row:last-child{border:none}
-.value-icon{width:44px;height:44px;border-radius:var(--rs);background:var(--surf);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;border:1px solid var(--line)}
-.value-row h4{font-size:.88rem;font-weight:600;color:var(--navy);margin-bottom:.25rem}
+.value-icon{width:42px;height:42px;border-radius:0;background:#fff4df;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:800;color:#8a2338;flex-shrink:0;border-left:2px solid #c49a1a}
+.value-row h4{font-size:.88rem;font-weight:700;color:#3b1015;margin-bottom:.25rem}
 .value-row p{font-size:.82rem;color:var(--ink4);line-height:1.6}
 @media(max-width:900px){
   .why-grid{grid-template-columns:1fr 1fr}
+  .profile-glance-grid{grid-template-columns:1fr 1fr}
   .firm-focus-grid{grid-template-columns:1fr}
   .split-section{grid-template-columns:1fr;min-height:auto}
   .split-right{padding:3rem 2rem}
@@ -58,20 +108,68 @@
 }
 @media(max-width:640px){
   .why-grid{grid-template-columns:1fr}
+  .profile-glance-grid{grid-template-columns:1fr}
+  .profile-glance-card{min-height:0}
   .firm-focus-nav{flex-direction:column}
   .firm-focus-link{width:100%;justify-content:center}
   .firm-focus-card{padding:1.5rem 1.2rem}
   .firm-story-actions .btn{width:100%;justify-content:center}
 }
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "name": "About | Vijaywargi Khabiya &amp; Saoji &mdash; CA Firm, Nagpur (Est. 2014)",
+  "description": "VK&amp;S is a Nagpur-based multi-disciplinary chartered accountancy firm established in 2014. Practice areas include audit, taxation, representation and advisory work.",
+  "url": "https://www.cavks.in/about.html",
+  "publisher": {
+    "@type": "AccountingService",
+    "name": "Vijaywargi Khabiya & Saoji",
+    "url": "https://www.cavks.in/",
+    "logo": "https://www.cavks.in/images/logo.jpg",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "3rd Floor, MG House, Ravindranath Tagore Marg, Civil Lines",
+      "addressLocality": "Nagpur",
+      "addressRegion": "Maharashtra",
+      "postalCode": "440001",
+      "addressCountry": "IN"
+    },
+    "telephone": "+91-712-2522020",
+    "email": "info@cavks.in"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://www.cavks.in/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "About",
+      "item": "https://www.cavks.in/about.html"
+    }
+  ]
+}
+</script>
 </head>
 <body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
 
 <!-- NAV -->
 <nav class="nav">
   <div class="container nav-inner">
     <a href="index.html" class="logo">
-  <img src="images/logo.jpg" alt="VKS CA" class="logo-img" loading="eager"/>
+  <img height="1330" width="1703" decoding="async" src="images/logo.jpg" alt="VK&amp;S CA" class="logo-img" loading="eager"/>
   <div class="logo-text">
     <span class="logo-firm">Vijaywargi Khabiya &amp; Saoji</span>        <span class="logo-tag">Chartered Accountants</span>
   </div>
@@ -81,8 +179,8 @@
       <li class="nav-item has-dropdown">
         <button class="nav-drop-toggle active" aria-expanded="false">About <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
         <div class="nav-dropdown">
-          <a href="about.html#overview"><span>Firm Overview</span><small>Our story, multi-city presence and firm philosophy.</small></a>
-          <a href="about.html#firm-vision"><span>Vision</span><small>Inclusive growth, compliance culture and expanding reach.</small></a>
+          <a href="about.html#overview"><span>Firm Overview</span><small>Our story, city coverage and firm philosophy.</small></a>
+          <a href="about.html#firm-vision"><span>Vision</span><small>Inclusive growth, compliance discipline, capability building and wider assignment reach.</small></a>
           <a href="about.html#firm-strengths"><span>Strengths</span><small>Professionalism, quality deliverables and practical advisory.</small></a>
           <a href="about.html#firm-profile"><span>Firm Profile</span><small>Practice approach, reach and core professional strengths.</small></a>
         </div>
@@ -93,7 +191,7 @@
           <a href="services.html#audit"><span>Audit &amp; Assurance</span><small>Statutory, internal, tax and concurrent audit support.</small></a>
           <a href="services.html#direct-tax"><span>Direct Taxation</span><small>Tax planning, assessments and litigation representation.</small></a>
           <a href="services.html#indirect-tax"><span>Indirect Tax &amp; GST</span><small>GST advisory, compliance, refunds and disputes.</small></a>
-          <a href="services.html#legal"><span>Legal Services</span><small>Representation before tribunals and higher courts.</small></a>
+          <a href="services.html#legal"><span>Tax Representation</span><small>Tax notices, appeals and case-file support.</small></a>
           <a href="services.html#insolvency"><span>Insolvency &amp; IBC</span><small>CIRP, NCLT matters and restructuring support.</small></a>
           <a href="services.html"><span>See All Services In Detail</span></a>
         </div>
@@ -103,13 +201,13 @@
       <li class="nav-item has-dropdown">
         <button class="nav-drop-toggle" aria-expanded="false">Insights <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
         <div class="nav-dropdown">
-          <a href="publications.html#monthly-bulletins"><span>Monthly Bulletins</span><small>Monthly VKS bulletin issues in one place.</small></a>
+          <a href="publications.html#monthly-bulletins"><span>Monthly Bulletins</span><small>Monthly VK&amp;S bulletin issues in one place.</small></a>
           <a href="publications.html#articles-alerts"><span>Articles &amp; Alerts</span><small>Insights, technical articles and regulatory updates.</small></a>
         </div>
       </li>
       <li class="nav-item"><a href="careers.html">Careers</a></li>
       <li class="nav-item"><a href="articleship.html">Articleship</a></li>
-      <li class="nav-item"><a href="gallery.html" class="nav-gallery-link">Gallery</a></li>
+      <li class="nav-item"><a href="https://abhi-codex48.github.io/vks-nagpur/vks-timesheet.html" class="nav-timesheet-btn" data-timesheet-link>Timesheet</a></li>
       <li class="nav-item"><a href="contact.html" class="nav-cta-btn">Contact Us</a></li>
     </ul>
     <button class="ham" aria-label="Menu"><span></span><span></span><span></span></button>
@@ -132,7 +230,7 @@
       <a href="services.html#audit">Audit &amp; Assurance</a>
       <a href="services.html#direct-tax">Direct Taxation</a>
       <a href="services.html#indirect-tax">Indirect Tax &amp; GST</a>
-      <a href="services.html#legal">Legal Services</a>
+      <a href="services.html#legal">Tax Representation</a>
       <a href="services.html#insolvency">Insolvency &amp; IBC</a>
       <a href="services.html">See All Services In Detail</a>
     </div></div>
@@ -148,34 +246,49 @@
   </div>
   <a href="careers.html">Careers</a>
   <a href="articleship.html">Articleship</a>
-  <a href="gallery.html">Gallery</a>
+  <a href="https://abhi-codex48.github.io/vks-nagpur/vks-timesheet.html" data-timesheet-link>Timesheet</a>
   <a href="contact.html">Contact</a>
 </div>
 <!-- PAGE HEADER -->
-<div class="ph">
+<div class="ph about-ph">
   <div class="container ph-inner">
     <div class="breadcrumb"><a href="index.html">Home</a><span>/</span>About</div>
     <span class="eyebrow">About the Firm</span>
-    <h1>About <em>VKS</em></h1>
-    <p style="max-width:min(560px,100%);margin-top:.75rem">12 years of trust, expertise and professional excellence — headquartered in Nagpur, serving organisations across India.</p>
+    <h1>About <em>VK&amp;S</em></h1>
+    <p style="max-width:min(560px,100%);margin-top:.75rem">Established in 2014, headquartered in Nagpur and serving organisations across practice areas and sectors.</p>
   </div>
 </div>
 
 <section class="pad anchor-section" id="overview">
   <div class="container">
     <div class="about-grid">
-      <div class="about-visual rv-scale">
-        <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=900&auto=format&fit=crop&q=80" alt="VKS Team" class="about-img-main" loading="lazy"/>
-        <div class="about-img-badge"><span class="n">2014</span><span class="l">Year<br/>Founded</span></div>
+      <div class="about-visual about-profile-card rv-scale">
+        <div>
+          <div class="about-profile-kicker">Est. 2014 &middot; Nagpur</div>
+          <a href="index.html" class="logo">
+            <img height="1330" width="1703" decoding="async" src="images/logo.jpg" alt="VK&amp;S CA"/>
+            <div class="logo-text">
+              <span class="logo-firm">Vijaywargi Khabiya &amp; Saoji</span>
+              <span class="logo-tag">Chartered Accountants</span>
+            </div>
+          </a>
+          <h3 class="about-profile-title">Multi-Disciplinary Chartered Accountancy Firm</h3>
+          <p class="about-profile-desc">Audit, taxation, representation and advisory work delivered through one integrated professional team.</p>
+        </div>
+        <div class="about-profile-metrics">
+          <div class="about-profile-metric"><strong>12+</strong><span>Years</span></div>
+          <div class="about-profile-metric"><strong>80+</strong><span>Team</span></div>
+          <div class="about-profile-metric"><strong>7</strong><span>City Experience</span></div>
+        </div>
       </div>
       <div class="about-copy">
         <span class="eyebrow rv">Our Story</span>
         <h2 class="rv rv-d1">A Multi-Disciplinary<br/><em style="color:var(--gold)">CA Firm Since 2014</em></h2>
         <div class="rule rv rv-d2"></div>
-        <p class="rv rv-d2">VKS — Vijaywargi Khabiya &amp; Saoji is a multi-disciplinary chartered accountancy firm based in Nagpur. Established in 2014, the firm has grown into a trusted single-window advisory practice serving organisations in Nagpur, Mumbai, Delhi, Pune, Hyderabad, Indore and Raipur.</p>
-        <p class="rv rv-d2" style="margin-top:1rem">Our 80+ member team includes Chartered Accountants, Company Secretaries, Advocates, IBBI-registered Insolvency Professionals and domain specialists working together to deliver integrated, business-relevant solutions.</p>
+        <p class="rv rv-d2">VK&amp;S &mdash; Vijaywargi Khabiya &amp; Saoji is a multi-disciplinary chartered accountancy firm based in Nagpur. Established in 2014, the firm provides audit, taxation, representation and advisory support across practice areas, with assignments involving Nagpur, Mumbai, Delhi, Pune, Hyderabad, Indore and Raipur.</p>
+        <p class="rv rv-d2" style="margin-top:1rem">Our 80+ member team includes Chartered Accountants, Advocates, IBBI-registered Insolvency Professionals and domain professionals working together to deliver integrated, business-relevant solutions.</p>
         <div class="rv rv-d3" style="margin-top:1.5rem">
-          <p style="font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink4);margin-bottom:.75rem">Cities We Serve</p>
+          <p style="font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink4);margin-bottom:.75rem">Multi-City Assignment Experience</p>
           <div class="city-list">
             <span class="city hq">Nagpur (HQ)</span>
             <span class="city">Mumbai</span>
@@ -187,17 +300,16 @@
           </div>
         </div>
         <div class="firm-story-actions rv rv-d4">
-          <a href="about.html#firm-vision" class="btn btn-navy">Firm Vision <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          <a href="about.html#firm-vision" class="btn btn-outline">Firm Vision <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
           <a href="about.html#firm-strengths" class="btn btn-outline">Our Strengths</a>
-          <a href="partners.html" class="btn btn-navy">Meet Our Partners <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-          <a href="contact.html" class="btn btn-outline">Contact Us</a>
+          <a href="partners.html" class="btn btn-outline">Meet Our Partners <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="pad anchor-section" style="background:var(--surf)">
+<section id="main-content" class="pad anchor-section" style="background:var(--surf)">
   <div class="container">
     <div class="rv tc">
       <span class="eyebrow" style="justify-content:center">Firm Direction</span>
@@ -213,44 +325,49 @@
     <div class="firm-focus-grid">
       <article class="firm-focus-card rv rv-d1 anchor-section" id="firm-vision">
         <h3>Vision</h3>
-        <p>The firm is focused on building long-term, meaningful growth for clients, teams and the regions it serves.</p>
+        <p>The firm is focused on disciplined professional work, long-term capability building and steady expansion of assignment depth across practice areas and sectors.</p>
         <ul class="firm-focus-list">
           <li>Inclusive growth</li>
-          <li>Multi-city presence</li>
-          <li>Increased compliance in businesses</li>
+          <li>Compliance-oriented professional support</li>
+          <li>Strong review and documentation discipline</li>
+          <li>Professional team development</li>
+          <li>Business-relevant and practical delivery</li>
+          <li>Multi-city assignment experience</li>
+          <li>Sector-spanning assignment exposure</li>
+          <li>Timely execution with clear communication</li>
         </ul>
       </article>
       <article class="firm-focus-card strengths rv rv-d2 anchor-section" id="firm-strengths">
         <h3>Strengths</h3>
         <p>Our practice culture combines technical depth with professional execution and practical business understanding.</p>
         <ul class="firm-focus-list">
-          <li>Vast experience</li>
+          <li>Experienced professional team</li>
           <li>Professionalism</li>
-          <li>High quality deliverables</li>
-          <li>Proactive ideation</li>
+          <li>Structured deliverables</li>
+          <li>Practical issue analysis</li>
           <li>Practical advisory</li>
         </ul>
       </article>
     </div>
     <div class="split-section rv">
       <div class="split-left">
-        <p class="split-quote">"Our approach is to combine our domain knowledge with the business goals of our clients and proactively alert them to every update that may affect their business."</p>
-        <div class="split-cite">— The VKS Philosophy</div>
+        <p class="split-quote">"Our approach is to combine domain knowledge with the business context of each assignment and communicate relevant regulatory updates where they may affect decision-making."</p>
+        <div class="split-cite">&mdash; The VK&amp;S Philosophy</div>
       </div>
       <div class="split-right">
-        <span class="eyebrow" style="color:var(--navy)">What This Means</span>
+        <span class="eyebrow" style="color:#8a2338">What This Means</span>
         <h2 style="font-size:1.8rem;margin-bottom:1.5rem">How The Vision Shows Up <em style="color:var(--gold)">In Delivery</em></h2>
         <div class="value-row">
           <div class="value-icon">01</div>
-          <div><h4>Single Window Execution</h4><p>Integrated support across audit, tax, legal and advisory so clients do not need to coordinate across multiple firms.</p></div>
+          <div><h4>Integrated Execution</h4><p>Coordinated support across audit, tax, legal and advisory through internal practice teams.</p></div>
         </div>
         <div class="value-row">
           <div class="value-icon">02</div>
-          <div><h4>Forward-Looking Advice</h4><p>We proactively interpret changes, explain implications and help clients move early instead of reacting late.</p></div>
+          <div><h4>Regulatory Update Review</h4><p>We review relevant regulatory changes, explain practical implications and support timely compliance-oriented decisions.</p></div>
         </div>
         <div class="value-row">
           <div class="value-icon">03</div>
-          <div><h4>Business-Relevant Thinking</h4><p>Technical expertise is translated into practical action, sharper compliance and stronger decision-making.</p></div>
+          <div><h4>Business-Relevant Thinking</h4><p>Technical knowledge is translated into practical action, sharper compliance and clearer decision-making.</p></div>
         </div>
       </div>
     </div>
@@ -261,35 +378,72 @@
   <div class="container">
     <div class="rv tc">
       <span class="eyebrow" style="justify-content:center">Our Approach</span>
-      <h2>Six Reasons Clients <em style="color:var(--gold)">Stay With Us</em></h2>
+      <h2>Firm Profile <em style="color:var(--gold)">At A Glance</em></h2>
       <div class="rule c"></div>
     </div>
-    <div class="why-grid">
-      <div class="why-card rv rv-d1"><div class="why-icon">🏆</div><div class="why-n">12</div><div class="why-h">12 Years of Excellence</div><p style="font-size:.84rem;color:var(--ink4)">Established in 2014, VKS has consistently delivered high-quality professional services across all practice areas for over a decade.</p></div>
-      <div class="why-card rv rv-d2"><div class="why-icon">👥</div><div class="why-n">80+</div><div class="why-h">80+ Strong Team</div><p style="font-size:.84rem;color:var(--ink4)">A diverse, multi-disciplinary team of CAs, Advocates, CSs, IBBI-registered IPs and domain specialists under one roof.</p></div>
-      <div class="why-card rv rv-d3"><div class="why-icon">🗺️</div><div class="why-n">7</div><div class="why-h">7 Cities Pan-India</div><p style="font-size:.84rem;color:var(--ink4)">Serving clients across Nagpur, Mumbai, Delhi, Pune, Hyderabad, Indore and Raipur with one consistent service standard.</p></div>
-      <div class="why-card rv rv-d1"><div class="why-icon">⚡</div><div class="why-n">01</div><div class="why-h">Single Window Service</div><p style="font-size:.84rem;color:var(--ink4)">From audit to tax, legal to IBC, debt to incentives — all professional services through one firm and one relationship.</p></div>
-      <div class="why-card rv rv-d2"><div class="why-icon">🔔</div><div class="why-n">∞</div><div class="why-h">Proactive Alerts</div><p style="font-size:.84rem;color:var(--ink4)">We monitor regulatory changes, court rulings and policy updates, then proactively inform clients of business impact.</p></div>
-      <div class="why-card rv rv-d3"><div class="why-icon">🌏</div><div class="why-n">12+</div><div class="why-h">Industry Sectors</div><p style="font-size:.84rem;color:var(--ink4)">Deep sector exposure across IT, manufacturing, real estate, pharma, infrastructure, healthcare, defence, education and more.</p></div>
+    <div class="profile-glance-grid">
+      <article class="profile-glance-card rv rv-d1" data-no="01">
+        <div class="profile-glance-head">
+          <div class="profile-glance-icon">&#x1F3DB;&#xFE0F;</div>
+          <span class="profile-glance-label">Established</span>
+        </div>
+        <div class="profile-glance-value">2014</div>
+        <h3>Nagpur-Based CA Firm</h3>
+        <p>The firm was established in Nagpur and works across audit, taxation, representation and advisory practice areas.</p>
+        <div class="profile-glance-foot">Firm Origin</div>
+      </article>
+      <article class="profile-glance-card rv rv-d2" data-no="02">
+        <div class="profile-glance-head">
+          <div class="profile-glance-icon">&#x1F465;</div>
+          <span class="profile-glance-label">People</span>
+        </div>
+        <div class="profile-glance-value">80+</div>
+        <h3>Professional Team</h3>
+        <p>The team includes Chartered Accountants, Advocates, IBBI-registered Insolvency Professionals and domain professionals.</p>
+        <div class="profile-glance-foot">Team Strength</div>
+      </article>
+      <article class="profile-glance-card rv rv-d3" data-no="03">
+        <div class="profile-glance-head">
+          <div class="profile-glance-icon">&#x1F4CD;</div>
+          <span class="profile-glance-label">Reach</span>
+        </div>
+        <div class="profile-glance-value">7</div>
+        <h3>Multi-City Assignment Experience</h3>
+        <p>Assignments have involved Nagpur, Mumbai, Delhi, Pune, Hyderabad, Indore and Raipur, planned around engagement needs.</p>
+        <div class="profile-glance-foot">Assignment Reach</div>
+      </article>
+      <article class="profile-glance-card rv rv-d1" data-no="04">
+        <div class="profile-glance-head">
+          <div class="profile-glance-icon">&#x1F9E9;</div>
+          <span class="profile-glance-label">Practice</span>
+        </div>
+        <div class="profile-glance-value">01</div>
+        <h3>Integrated Practice Platform</h3>
+        <p>Audit, tax, representation, IBC, debt and incentive-related work are handled through coordinated internal practice teams.</p>
+        <div class="profile-glance-foot">Internal Coordination</div>
+      </article>
+      <article class="profile-glance-card rv rv-d2" data-no="05">
+        <div class="profile-glance-head">
+          <div class="profile-glance-icon">&#x1F4F0;</div>
+          <span class="profile-glance-label">Updates</span>
+        </div>
+        <div class="profile-glance-value">+</div>
+        <h3>Regulatory Update Review</h3>
+        <p>The firm tracks relevant regulatory changes, court rulings and policy updates for assignment-specific professional analysis.</p>
+        <div class="profile-glance-foot">Knowledge Tracking</div>
+      </article>
+      <article class="profile-glance-card rv rv-d3" data-no="06">
+        <div class="profile-glance-head">
+          <div class="profile-glance-icon">&#x1F3ED;</div>
+          <span class="profile-glance-label">Sectors</span>
+        </div>
+        <div class="profile-glance-value">12+</div>
+        <h3>Sector Exposure</h3>
+        <p>Assignments span sectors including IT, manufacturing, real estate, pharma, infrastructure, healthcare, defence and education.</p>
+        <div class="profile-glance-foot">Industry Context</div>
+      </article>
     </div>
   </div>
-</section>
-
-<div class="stats-bar">
-  <div class="stat-cell rv"><div class="stat-n" data-count="12" data-suffix="+">12+</div><div class="stat-l">Years of Excellence</div></div>
-  <div class="stat-cell rv rv-d1"><div class="stat-n" data-count="7">7</div><div class="stat-l">Cities Pan-India</div></div>
-  <div class="stat-cell rv rv-d2"><div class="stat-n" data-count="80" data-suffix="+">80+</div><div class="stat-l">Team Members</div></div>
-  <div class="stat-cell rv rv-d3"><div class="stat-n" data-count="12" data-suffix="+">12+</div><div class="stat-l">Industry Sectors</div></div>
-</div>
-
-<section class="cta-strip">
-  <div class="container"><div class="cta-inner">
-    <div class="cta-copy rv"><h2>Learn More About <em>Our Partners</em></h2><p>Meet the founding partners behind VKS and explore the practice areas they lead.</p></div>
-    <div class="cta-actions rv rv-d2">
-      <a href="partners.html" class="btn btn-gold">Meet the Team <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-      <a href="services.html" class="btn btn-ghost">See All Services In Detail</a>
-    </div>
-  </div></div>
 </section>
 
 <!-- FOOTER -->
@@ -298,29 +452,18 @@
     <div class="footer-shell">
       <div class="footer-spotlight">
         <div class="footer-brand-card rv">
-          <div class="footer-kicker">Trusted Since 2014</div>
           <div class="footer-brand">
             <a href="index.html" class="logo" style="display:inline-flex">
-              <img src="images/logo.jpg" alt="VKS" style="object-fit:contain;flex-shrink:0"/>
+              <img height="1330" width="1703" decoding="async" src="images/logo.jpg" alt="VK&amp;S" style="object-fit:contain;flex-shrink:0"/>
               <div class="logo-text" style="margin-left:.6rem">
                 <span class="logo-firm">Vijaywargi Khabiya &amp; Saoji</span>        <span class="logo-tag">Chartered Accountants</span>
               </div>
             </a>
           </div>
-          <p class="ft-desc">A multi-disciplinary chartered accountancy firm delivering audit, tax, legal and advisory services with single-window execution for businesses across Nagpur and beyond.</p>
-          <div class="ft-dynamic-line" aria-live="polite">
-            <span class="ft-dynamic-dot"></span>
-            <span>Currently helping with</span>
-            <span class="ft-dynamic-text">Audit and assurance mandates</span>
-          </div>
-          <div class="ft-highlight-row">
-            <div class="ft-highlight"><strong data-count="12" data-suffix="+">12+</strong><span>Years of Excellence</span></div>
-            <div class="ft-highlight"><strong data-count="80" data-suffix="+">80+</strong><span>Professionals</span></div>
-            <div class="ft-highlight"><strong data-count="7">7</strong><span>Cities Served</span></div>
-          </div>
+          <p class="ft-desc">A multi-disciplinary chartered accountancy firm providing audit, tax, representation and advisory support for businesses across Nagpur and beyond.</p>
         </div>
         <div class="footer-contact-card rv rv-d1">
-          <h5>Start A Conversation</h5>
+          <h5>Office Contact</h5>
           <div class="footer-action">
             <div class="footer-action-copy">
               <span>Main Office Line</span>
@@ -334,6 +477,13 @@
               <a href="mailto:info@cavks.in">info@cavks.in</a>
             </div>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div class="footer-action footer-linkedin-action">
+            <div class="footer-action-copy">
+              <span>Official LinkedIn</span>
+              <a href="https://www.linkedin.com/company/vijaywargi-khabiya-saoji-chartered-accountants/about/" target="_blank" rel="noopener">Follow VK&amp;S</a>
+            </div>
+            <span class="footer-linkedin-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 110-4.12 2.06 2.06 0 010 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.23 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.72V1.72C24 .77 23.21 0 22.23 0z"/></svg></span>
           </div>
           <p class="ft-note">3rd Floor, MG House, Ravindranath Tagore Marg, Civil Lines, Nagpur &ndash; 440001</p>
         </div>
@@ -352,7 +502,7 @@
           <ul>
             <li><a href="about.html">About The Firm</a></li>
             <li><a href="services.html">Service Portfolio</a></li>
-            <li><a href="industries.html">Industry Expertise</a></li>
+            <li><a href="industries.html">Industry Exposure</a></li>
             <li><a href="partners.html">Meet The Team</a></li>
             <li><a href="publications.html">Insights &amp; Bulletins</a></li>
           </ul>
@@ -363,7 +513,7 @@
             <li><a href="services.html#audit">Audit &amp; Assurance</a></li>
             <li><a href="services.html#direct-tax">Direct Taxation</a></li>
             <li><a href="services.html#indirect-tax">Indirect Tax &amp; GST</a></li>
-            <li><a href="services.html#legal">Legal Representation</a></li>
+            <li><a href="services.html#legal">Tax Representation</a></li>
             <li><a href="services.html#insolvency">Insolvency &amp; IBC</a></li>
           </ul>
         </div>
@@ -373,11 +523,12 @@
             <div class="ft-ci"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span>3rd Floor, MG House, Ravindranath Tagore Marg, Civil Lines, Nagpur &ndash; 440001</span></div>
             <div class="ft-ci"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg><span><a href="https://www.cavks.in" target="_blank" rel="noopener">www.cavks.in</a></span></div>
             <div class="ft-ci"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span><a href="mailto:info@cavks.in">info@cavks.in</a></span></div>
+            <div class="ft-ci"><span class="footer-linkedin-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 110-4.12 2.06 2.06 0 010 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.23 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.72V1.72C24 .77 23.21 0 22.23 0z"/></svg></span><span><a href="https://www.linkedin.com/company/vijaywargi-khabiya-saoji-chartered-accountants/about/" target="_blank" rel="noopener">Official LinkedIn</a></span></div>
           </div>
         </div>
       </div>
       <div class="footer-bottom">
-        <p>&copy; 2026 Vijaywargi Khabiya &amp; Saoji. All rights reserved.</p>
+        <p>&copy; 2026 Vijaywargi Khabiya &amp; Saoji. All rights reserved. <a href="sitemap.html" class="footer-sitemap-link">Sitemap</a></p>
         <p>Chartered Accountants &middot; Nagpur &middot; Est. 2014</p>
       </div>
     </div>
@@ -410,15 +561,3 @@
 <script src="main.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
