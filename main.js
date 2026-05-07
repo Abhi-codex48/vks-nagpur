@@ -230,7 +230,7 @@
 
   /* ── SERVICES SIDEBAR ACTIVE STATE ── */
   function updateSvcNav(){
-    const navLinks = document.querySelectorAll('.svc-nav a');
+    const navLinks = document.querySelectorAll('.svc-nav a, .svc-mobile-jump a');
     if(!navLinks.length) return;
     const navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h'))||76;
     const sections = document.querySelectorAll('.svc-section');
@@ -481,4 +481,3 @@
   toggle();
   window.addEventListener('resize',toggle);
 })();
-

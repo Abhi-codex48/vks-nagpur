@@ -62,20 +62,100 @@
 </head>
 <body>
 <a class="skip-link" href="#main-content">Skip to main content</a>
-<main id="main-content" class="pad" style="min-height:100vh;background:var(--page-bg,#fbf7ef)">
-  <div class="container" style="max-width:960px">
-    <a href="index.html" class="logo" style="display:inline-flex;margin-bottom:2rem">
-      <img width="214" height="168" decoding="async" src="images/logo.jpg" alt="VK&amp;S CA" class="logo-img" loading="eager"/>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="container nav-inner">
+    <a href="index.html" class="logo">
+      <img height="1330" width="1703" decoding="async" src="images/logo.jpg" alt="VK&amp;S CA" class="logo-img" loading="eager"/>
       <div class="logo-text">
         <span class="logo-firm">Vijaywargi Khabiya &amp; Saoji</span>
         <span class="logo-tag">Chartered Accountants</span>
       </div>
     </a>
+    <ul class="nav-links">
+      <li class="nav-item"><a href="index.html">Home</a></li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-drop-toggle" aria-expanded="false">About <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="nav-dropdown">
+          <a href="about.html#overview"><span>Firm Overview</span><small>Our story, multi-city presence and firm philosophy.</small></a>
+          <a href="about.html#firm-vision"><span>Vision</span><small>Inclusive growth, compliance culture and expanding reach.</small></a>
+          <a href="about.html#firm-strengths"><span>Strengths</span><small>Professionalism, quality deliverables and practical advisory.</small></a>
+          <a href="about.html#firm-profile"><span>Firm Profile</span><small>Practice approach, reach and core professional strengths.</small></a>
+        </div>
+      </li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-drop-toggle" aria-expanded="false">Services <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="nav-dropdown">
+          <a href="services.html#audit"><span>Audit &amp; Assurance</span><small>Statutory, internal, tax and concurrent audit support.</small></a>
+          <a href="services.html#direct-tax"><span>Direct Taxation</span><small>Tax planning, assessments and litigation representation.</small></a>
+          <a href="services.html#indirect-tax"><span>Indirect Tax &amp; GST</span><small>GST advisory, compliance, refunds and disputes.</small></a>
+          <a href="services.html#legal"><span>Tax Representation</span><small>Tax notices, appeals and case-file support.</small></a>
+          <a href="services.html#insolvency"><span>Insolvency &amp; IBC</span><small>CIRP, NCLT matters and restructuring support.</small></a>
+          <a href="services.html"><span>See All Services In Detail</span></a>
+        </div>
+      </li>
+      <li class="nav-item"><a href="industries.html">Industries</a></li>
+      <li class="nav-item"><a href="partners.html">Team</a></li>
+      <li class="nav-item has-dropdown">
+        <button class="nav-drop-toggle" aria-expanded="false">Insights <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="nav-dropdown">
+          <a href="publications.html#monthly-bulletins"><span>Monthly Bulletins</span><small>Monthly VK&amp;S bulletin issues in one place.</small></a>
+          <a href="publications.html#articles-alerts"><span>Articles &amp; Alerts</span><small>Insights, technical articles and regulatory updates.</small></a>
+        </div>
+      </li>
+      <li class="nav-item"><a href="careers.html">Careers</a></li>
+      <li class="nav-item"><a href="articleship.html">Articleship</a></li>
+      <li class="nav-item"><a href="https://abhi-codex48.github.io/vks-nagpur/vks-timesheet.html" class="nav-timesheet-btn" data-timesheet-link>Timesheet</a></li>
+      <li class="nav-item"><a href="contact.html" class="nav-cta-btn">Contact Us</a></li>
+    </ul>
+    <button class="ham sitemap-ham" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="drawer">
+  <a href="index.html">Home</a>
+  <div class="drawer-group">
+    <button class="drawer-toggle" aria-expanded="false">About <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+    <div class="drawer-panel"><div class="drawer-panel-inner">
+      <a href="about.html#overview">Firm Overview</a>
+      <a href="about.html#firm-vision">Vision</a>
+      <a href="about.html#firm-strengths">Strengths</a>
+      <a href="about.html#firm-profile">Firm Profile</a>
+    </div></div>
+  </div>
+  <div class="drawer-group">
+    <button class="drawer-toggle" aria-expanded="false">Services <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+    <div class="drawer-panel"><div class="drawer-panel-inner">
+      <a href="services.html#audit">Audit &amp; Assurance</a>
+      <a href="services.html#direct-tax">Direct Taxation</a>
+      <a href="services.html#indirect-tax">Indirect Tax &amp; GST</a>
+      <a href="services.html#legal">Tax Representation</a>
+      <a href="services.html#insolvency">Insolvency &amp; IBC</a>
+      <a href="services.html">See All Services In Detail</a>
+    </div></div>
+  </div>
+  <a href="industries.html">Industries</a>
+  <a href="partners.html">Team</a>
+  <div class="drawer-group">
+    <button class="drawer-toggle" aria-expanded="false">Insights <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+    <div class="drawer-panel"><div class="drawer-panel-inner">
+      <a href="publications.html#monthly-bulletins">Monthly Bulletins</a>
+      <a href="publications.html#articles-alerts">Articles &amp; Alerts</a>
+    </div></div>
+  </div>
+  <a href="careers.html">Careers</a>
+  <a href="articleship.html">Articleship</a>
+  <a href="https://abhi-codex48.github.io/vks-nagpur/vks-timesheet.html" data-timesheet-link>Timesheet</a>
+  <a href="contact.html">Contact</a>
+</div>
+
+<main id="main-content" class="pad sitemap-main">
+  <div class="container sitemap-container">
     <span class="eyebrow">Website Index</span>
     <h1>Site <em style="color:#8a2338">Map</em></h1>
     <div class="rule"></div>
-    <p style="max-width:620px">Quick links to the main public pages of the VK&amp;S website.</p>
-    <div class="bento-grid" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-top:2rem">
+    <p class="sitemap-intro">Quick links to the main public pages of the VK&amp;S website.</p>
+    <div class="bento-grid sitemap-grid">
       <a class="bento-card" href="index.html"><div class="bc-tag">Home</div><div class="bc-title">Home Page</div><p class="bc-desc">Firm introduction, services, leadership and industry overview.</p></a>
       <a class="bento-card" href="about.html"><div class="bc-tag">Firm</div><div class="bc-title">About The Firm</div><p class="bc-desc">Overview, vision, strengths and firm profile.</p></a>
       <a class="bento-card" href="services.html"><div class="bc-tag">Practice</div><div class="bc-title">Service Portfolio</div><p class="bc-desc">Audit, taxation, representation, IBC, finance and advisory areas.</p></a>
