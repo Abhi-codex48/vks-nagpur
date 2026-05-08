@@ -5341,6 +5341,7 @@ tbody tr { transition: background .14s ease; }
               <button id="my-delete-selected" class="btn btn-ghost small" type="button">Delete selected</button>
             </div>
           </div>
+          <p id="my-cache-note" class="section-note">Timesheet data is saved immediately. The table may use a short cache for smoother loading.</p>
           <div id="my-filter-summary" class="filter-summary" hidden></div>
 
           <div class="table-shell">
@@ -5443,10 +5444,12 @@ tbody tr { transition: background .14s ease; }
               </select>
             </label>
             <div class="toolbar-actions">
+              <button id="all-load-range" class="btn btn-primary small" type="button">Load selected range</button>
               <button id="all-today" class="btn btn-outline small" type="button">Today</button>
               <button id="all-clear" class="btn btn-outline small" type="button">Clear filters</button>
             </div>
           </div>
+          <p id="all-load-note" class="section-note">Timesheet entries load by selected date range. Choose a range or employee, then load it when older records are needed.</p>
           <div id="all-filter-summary" class="filter-summary" hidden></div>
 
           <div class="table-shell">
@@ -5937,6 +5940,7 @@ tbody tr { transition: background .14s ease; }
       setDoc,
       getDoc,
       getDocs,
+      onSnapshot,
       updateDoc,
       addDoc,
       deleteDoc,
@@ -5987,6 +5991,13 @@ tbody tr { transition: background .14s ease; }
     ];
     const FORCED_ADMIN_EMAIL = "admin.cavks@gmail.com";
     const RECYCLE_RETENTION_MS = 7 * 24 * 60 * 60 * 1000;
+    const MY_ENTRIES_CACHE_MS = 5 * 60 * 1000;
+    const ADMIN_ENTRIES_CACHE_MS = 2 * 60 * 1000;
+    const AMBIENT_REFRESH_MS = 5 * 60 * 1000;
+    const ADMIN_COLLECTION_READ_LIMIT = 500;
+    const ADMIN_LOG_READ_LIMIT = 300;
+    const ADMIN_RECYCLE_READ_LIMIT = 300;
+    const ADMIN_DATE_RANGE_DAY_LIMIT = 370;
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -6004,6 +6015,7 @@ tbody tr { transition: background .14s ease; }
       lastHistoryKey: "",
       liveRefreshTimer: null,
       liveRefreshBusy: false,
+      adminUserStatusUnsubs: [],
       singleSubmitBusy: false,
       singleEntryConfirmed: false,
       pinSubmitBusy: false,
@@ -6027,6 +6039,11 @@ tbody tr { transition: background .14s ease; }
       clientDocs: [],
       myEntries: [],
       allEntries: [],
+      allEntriesLoaded: false,
+      allEntriesLoadedAt: 0,
+      allEntriesLoadedFrom: "",
+      allEntriesLoadedTo: "",
+      lastAmbientRefreshAt: 0,
       myAudit: [],
       logs: [],
       recycleDocs: [],
@@ -6890,7 +6907,7 @@ tbody tr { transition: background .14s ease; }
       setHubTab("dashboard", { historyMode: "replace" });
       switchScreen("screen-app", { historyMode: "replace" });
       startLiveRefresh();
-      refreshAmbientState({ force: true }).catch(() => {});
+      startAdminUserStatusWatch();
       refreshCurrentPage().catch(() => {});
     }
 
@@ -6906,27 +6923,75 @@ tbody tr { transition: background .14s ease; }
       stopLiveRefresh();
       state.liveRefreshTimer = window.setInterval(() => {
         refreshAmbientState().catch(() => {});
-      }, 30000);
+      }, AMBIENT_REFRESH_MS);
+    }
+
+    function stopAdminUserStatusWatch() {
+      (state.adminUserStatusUnsubs || []).forEach((unsubscribe) => {
+        try {
+          unsubscribe();
+        } catch (_error) {
+          // no-op
+        }
+      });
+      state.adminUserStatusUnsubs = [];
+    }
+
+    function upsertEmployeeRealtime(user) {
+      if (!user?.id) return;
+      const next = [...(state.employees || [])];
+      const index = next.findIndex((item) => item.id === user.id);
+      if (index >= 0) next[index] = { ...next[index], ...user };
+      else next.push(user);
+      state.employees = next.sort((a, b) => String(a.name || a.email || "").localeCompare(String(b.name || b.email || "")));
+      state.lookups.users = state.employees
+        .map((item) => ({
+          id: item.id,
+          name: item.name || item.email || item.id,
+          email: item.email || "",
+          role: item.role || "",
+          approved: item.approved !== false
+        }))
+        .sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
+    }
+
+    function startAdminUserStatusWatch() {
+      if (!isAdmin() || (state.adminUserStatusUnsubs || []).length || document.hidden) return;
+      const watchQuery = (field, value) => onSnapshot(
+        query(collection(db, "users"), where(field, "==", value)),
+        (snap) => {
+          snap.docChanges().forEach((change) => upsertEmployeeRealtime({ id: change.doc.id, ...(change.doc.data() || {}) }));
+          renderApprovalsList();
+          renderEmployeesTable();
+          renderHeaderNotificationBell();
+        },
+        () => {}
+      );
+      state.adminUserStatusUnsubs = [
+        watchQuery("approved", false),
+        watchQuery("locked", true)
+      ];
     }
 
     async function refreshAmbientState(options = {}) {
       if (!state.user || !state.profile || state.currentScreen !== "screen-app" || state.liveRefreshBusy) return;
       if (document.hidden && !options.force) return;
+      const now = Date.now();
+      if (!options.force && (now - Number(state.lastAmbientRefreshAt || 0)) < AMBIENT_REFRESH_MS) return;
       state.liveRefreshBusy = true;
       try {
         if (isAdmin()) {
-          await ensureLookups(true);
-          await loadLogsAndRecycleState();
-          if (state.currentPage === "page-storage") {
-            const [singles, bulks, groups] = await Promise.all([fetchAllSingles(), fetchAllBulks(), fetchAllGroups()]);
-            state.allEntries = [...singles, ...bulks, ...groups.filter((record) => record.status === "active")].sort(sortRecords);
+          if (state.currentPage === "page-dashboard" || state.currentPage === "page-storage") {
+            await loadAll(false);
           }
           renderApprovalsList();
           renderStorageStats();
           renderHeaderNotificationBell();
         } else {
-          await loadGroupApprovals();
+          if (state.currentPage === "page-log") await loadGroupApprovals();
+          if (state.currentPage === "page-my") await loadMyEntries(false);
         }
+        state.lastAmbientRefreshAt = Date.now();
       } finally {
         state.liveRefreshBusy = false;
       }
@@ -7039,6 +7104,7 @@ tbody tr { transition: background .14s ease; }
 
     async function logout() {
       stopLiveRefresh();
+      stopAdminUserStatusWatch();
       if (state.user?.uid) clearPinDone(state.user.uid);
       await signOut(auth).catch(() => {});
       state.user = null;
@@ -7053,6 +7119,11 @@ tbody tr { transition: background .14s ease; }
       state.myEntriesLoaded = false;
       state.myEntriesLoadedAt = 0;
       state.allEntries = [];
+      state.allEntriesLoaded = false;
+      state.allEntriesLoadedAt = 0;
+      state.allEntriesLoadedFrom = "";
+      state.allEntriesLoadedTo = "";
+      state.lastAmbientRefreshAt = 0;
       state.logs = [];
       state.recycleDocs = [];
       state.pinBuffer = "";
@@ -7921,9 +7992,9 @@ tbody tr { transition: background .14s ease; }
     }
 
     async function queryOwnerDocs(collectionName, uid, extraQueries = []) {
-      const jobs = ["uid", "userId", "createdByUid", "creatorUid", "ownerUid", "reportedByUid"].map((field) =>
-        queryDocsByField(collectionName, field, uid, "==")
-      );
+      const jobs = [];
+      const ownerFields = collectionName === "group_entries" ? ["uid", "creatorUid"] : ["uid", "userId", "createdByUid"];
+      ownerFields.forEach((field) => jobs.push(queryDocsByField(collectionName, field, uid, "==")));
       extraQueries.forEach((item) => {
         jobs.push(queryDocsByField(collectionName, item.field, item.value, item.op || "=="));
       });
@@ -7942,6 +8013,15 @@ tbody tr { transition: background .14s ease; }
       return out.sort(sortRecords);
     }
 
+    function uniqueDocList(docs) {
+      const seen = new Set();
+      return (docs || []).filter((docLike) => {
+        if (!docLike?.id || seen.has(docLike.id)) return false;
+        seen.add(docLike.id);
+        return true;
+      });
+    }
+
     async function fetchSinglesByUid(uid) {
       const docs = await queryOwnerDocs("entries", uid);
       return mergeDocs(docs, normalizeSingleDoc);
@@ -7957,19 +8037,66 @@ tbody tr { transition: background .14s ease; }
       return mergeDocs(docs, normalizeGroupDoc);
     }
 
-    async function fetchAllSingles() {
-      const snap = await getDocs(collection(db, "entries"));
+    async function fetchLimitedCollectionSnapshot(collectionName, maxDocs = ADMIN_COLLECTION_READ_LIMIT) {
+      try {
+        return await getDocs(query(collection(db, collectionName), orderBy("createdAt", "desc"), limit(maxDocs)));
+      } catch (_orderedError) {
+        try {
+          return await getDocs(query(collection(db, collectionName), limit(maxDocs)));
+        } catch (_limitedError) {
+          return { docs: [] };
+        }
+      }
+    }
+
+    async function fetchAdminSingles(options = {}) {
+      const from = String(options.from || "").trim();
+      const to = String(options.to || "").trim();
+      const maxDocs = Number(options.maxDocs || ADMIN_COLLECTION_READ_LIMIT);
+      if (from || to) {
+        try {
+          const parts = [collection(db, "entries")];
+          if (from) parts.push(where("date", ">=", from));
+          if (to) parts.push(where("date", "<=", to));
+          parts.push(orderBy("date", "desc"), limit(maxDocs));
+          return await getDocs(query(...parts));
+        } catch (_rangeError) {
+          return fetchLimitedCollectionSnapshot("entries", maxDocs);
+        }
+      }
+      return fetchLimitedCollectionSnapshot("entries", maxDocs);
+    }
+
+    async function fetchAdminDateArrayDocs(collectionName, options = {}) {
+      const from = String(options.from || "").trim();
+      const to = String(options.to || "").trim();
+      const maxDocs = Number(options.maxDocs || ADMIN_COLLECTION_READ_LIMIT);
+      const dates = dateKeysBetween(from, to);
+      if (!dates.length) return fetchLimitedCollectionSnapshot(collectionName, maxDocs);
+      try {
+        const chunks = chunkList(dates, 30);
+        const snaps = await Promise.all(chunks.map((chunk) =>
+          getDocs(query(collection(db, collectionName), where("dates", "array-contains-any", chunk), limit(maxDocs)))
+        ));
+        return { docs: snaps.flatMap((snap) => snap.docs || []) };
+      } catch (_rangeError) {
+        return fetchLimitedCollectionSnapshot(collectionName, maxDocs);
+      }
+    }
+
+    async function fetchAllSingles(options = {}) {
+      const snap = await fetchAdminSingles(options);
       return snap.docs.map(normalizeSingleDoc).sort(sortRecords);
     }
 
-    async function fetchAllBulks() {
-      const snap = await getDocs(collection(db, "bulk_entries"));
-      return snap.docs.map(normalizeBulkDoc).sort(sortRecords);
+    async function fetchAllBulks(options = {}) {
+      const snap = await fetchAdminDateArrayDocs("bulk_entries", options);
+      return uniqueDocList(snap.docs).map(normalizeBulkDoc).sort(sortRecords);
     }
 
-    async function fetchAllGroups() {
-      const snap = await getDocs(collection(db, "group_entries"));
-      return snap.docs.map(normalizeGroupDoc).sort(sortRecords);
+    async function fetchAllGroups(options = {}) {
+      const snap = await fetchAdminDateArrayDocs("group_entries", options);
+      return uniqueDocList(snap.docs).map(normalizeGroupDoc).sort(sortRecords);
     }
 
     async function fetchRecord(collectionName, id) {
@@ -7979,7 +8106,7 @@ tbody tr { transition: background .14s ease; }
     }
 
     async function getMyEntriesSnapshot(forceRefresh = false) {
-      if (state.myEntriesLoaded && !forceRefresh && (Date.now() - Number(state.myEntriesLoadedAt || 0)) < 60000) return [...state.myEntries];
+      if (state.myEntriesLoaded && !forceRefresh && (Date.now() - Number(state.myEntriesLoadedAt || 0)) < MY_ENTRIES_CACHE_MS) return [...state.myEntries];
       await finalizePendingGroupEntries(false);
       const [singles, bulks, groups] = await Promise.all([
         fetchSinglesByUid(state.user?.uid || ""),
@@ -8308,6 +8435,9 @@ tbody tr { transition: background .14s ease; }
 
       await setDoc(doc(db, "deleted_entries", recycleId), payload);
       await deleteDoc(doc(db, record.collection, record.id));
+      const deletedKey = recordKey(record);
+      state.myEntries = (state.myEntries || []).filter((item) => recordKey(item) !== deletedKey);
+      state.allEntries = (state.allEntries || []).filter((item) => recordKey(item) !== deletedKey);
       await addTrail(record, "Deleted", meta.trailDetail || `Reason: ${reason}`);
       if (!meta.skipLog) {
         await writeLog({
@@ -8845,6 +8975,7 @@ tbody tr { transition: background .14s ease; }
 
     function renderAllFilterSummary() {
       setFilterSummary("all-filter-summary", allFilterScopeItems().map((item) => filterChip(item.label, item.value)));
+      updateAdminLoadNote();
     }
 
     function renderEmployeeFilterSummary() {
@@ -8918,6 +9049,31 @@ tbody tr { transition: background .14s ease; }
       host.textContent = text || `Last sync: ${timeOnlyText(Date.now()) || "-"}`;
     }
 
+    function cacheNextText(loadedAt, ttlMs) {
+      const loaded = Number(loadedAt || 0);
+      if (!loaded) return "Refresh will start after this section loads.";
+      const next = loaded + Number(ttlMs || 0);
+      const remainingMs = Math.max(0, next - Date.now());
+      const remainingMin = Math.max(1, Math.ceil(remainingMs / 60000));
+      return `Next automatic check around ${timeOnlyText(next) || "-"} (${remainingMin} min).`;
+    }
+
+    function describeDateRangeText(from, to) {
+      const fmt = (value) => value ? formatDate(value) : "";
+      if (from && to) return from === to ? fmt(from) : `${fmt(from)} to ${fmt(to)}`;
+      if (from) return `from ${fmt(from)}`;
+      if (to) return `until ${fmt(to)}`;
+      return "current range";
+    }
+
+    function updateMyCacheNote() {
+      const host = byId("my-cache-note");
+      if (!host) return;
+      host.textContent = state.myEntriesLoaded
+        ? `Your entries are saved immediately. For smoother loading, this table is showing the cached version. ${cacheNextText(state.myEntriesLoadedAt, MY_ENTRIES_CACHE_MS)} Use Refresh for an immediate update.`
+        : "Your entries are saved immediately. Loading your timesheet now.";
+    }
+
     // Format Date as YYYY-MM-DD using LOCAL time (not UTC) so day boundaries
     // line up with the user's calendar.
     function isoLocalDate(d) {
@@ -8925,6 +9081,26 @@ tbody tr { transition: background .14s ease; }
       const m = String(d.getMonth() + 1).padStart(2, "0");
       const day = String(d.getDate()).padStart(2, "0");
       return `${y}-${m}-${day}`;
+    }
+
+    function dateKeysBetween(from, to, maxDays = ADMIN_DATE_RANGE_DAY_LIMIT) {
+      const start = String(from || "").trim();
+      const end = String(to || "").trim();
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(start) || !/^\d{4}-\d{2}-\d{2}$/.test(end) || start > end) return [];
+      const cursor = new Date(`${start}T00:00:00`);
+      const last = new Date(`${end}T00:00:00`);
+      const out = [];
+      while (cursor <= last && out.length < maxDays) {
+        out.push(isoLocalDate(cursor));
+        cursor.setDate(cursor.getDate() + 1);
+      }
+      return out;
+    }
+
+    function chunkList(list, size) {
+      const out = [];
+      for (let index = 0; index < list.length; index += size) out.push(list.slice(index, index + size));
+      return out;
     }
 
     function dateRangeForPreset(preset) {
@@ -9002,7 +9178,7 @@ tbody tr { transition: background .14s ease; }
       return "All dates";
     }
 
-    function applyDatePreset(preset, target) {
+    async function applyDatePreset(preset, target) {
       const { from, to } = dateRangeForPreset(preset);
       if (target === "my") {
         setFieldValue("my-month", "");
@@ -9012,7 +9188,7 @@ tbody tr { transition: background .14s ease; }
       } else if (target === "all") {
         setFieldValue("all-from", from);
         setFieldValue("all-to", to);
-        renderAllTable();
+        await loadAll(true);
       }
     }
 
@@ -9032,22 +9208,34 @@ tbody tr { transition: background .14s ease; }
       renderMyTable();
     }
 
-    function applyAllTodayFilters() {
+    async function applyAllTodayFilters() {
       setFieldValue("all-from", todayStr());
       setFieldValue("all-to", todayStr());
-      renderAllTable();
+      await loadAll(true);
     }
 
     function clearAllFilters() {
       setFieldValue("all-search", "");
-      setFieldValue("all-from", "");
-      setFieldValue("all-to", "");
+      setFieldValue("all-from", `${todayMonthStr()}-01`);
+      setFieldValue("all-to", todayStr());
       setFieldValue("all-user-search", "");
       setFieldValue("all-user-id", "");
       setFieldValue("all-role-filter", "");
       setFieldValue("all-task-filter", "");
       clearSuggestions("all-user-options");
       renderAllTable();
+    }
+
+    async function loadSelectedAdminRange() {
+      const button = byId("all-load-range");
+      if (button) button.disabled = true;
+      try {
+        ensureAdminDefaultAllRange();
+        await loadAll(true);
+        toast("Selected timesheet range loaded.", "success");
+      } finally {
+        if (button) button.disabled = false;
+      }
     }
 
     function clearEmployeeFilters() {
@@ -9420,6 +9608,7 @@ tbody tr { transition: background .14s ease; }
 
       renderMyStats(rows);
       renderMyFilterSummary();
+      updateMyCacheNote();
       const body = byId("my-table-body");
       if (!body) return;
 
@@ -9462,8 +9651,8 @@ tbody tr { transition: background .14s ease; }
       }
     }
 
-    async function loadMyEntries() {
-      state.myEntries = await getMyEntriesSnapshot(true);
+    async function loadMyEntries(forceRefresh = false) {
+      state.myEntries = await getMyEntriesSnapshot(forceRefresh);
       state.selectedMy = new Set(getSelectedMyRecords().map((record) => recordKey(record)));
       renderMyTable();
     }
@@ -9471,7 +9660,10 @@ tbody tr { transition: background .14s ease; }
     async function loadMyAudit() {
       if (!state.user?.uid) return;
       try {
-        const snap = await getDocs(collection(db, "users", state.user.uid, "audit"));
+        const auditRef = collection(db, "users", state.user.uid, "audit");
+        const snap = await getDocs(query(auditRef, orderBy("createdAt", "desc"), limit(100))).catch(() =>
+          getDocs(query(auditRef, limit(100)))
+        );
         state.myAudit = snap.docs.map((item) => ({ id: item.id, ...(item.data() || {}) })).sort((a, b) => tsMs(b.createdAt) - tsMs(a.createdAt));
       } catch (_error) {
         state.myAudit = [];
@@ -9871,16 +10063,54 @@ tbody tr { transition: background .14s ease; }
         : `<tr><td colspan="10" class="muted">No records found.</td></tr>`;
     }
 
-    async function loadAll() {
-      await ensureLookups(true);
-      await finalizePendingGroupEntries(false);
-      await loadLogsAndRecycleState();
-      const [singles, bulks, groups] = await Promise.all([fetchAllSingles(), fetchAllBulks(), fetchAllGroups()]);
+    function ensureAdminDefaultAllRange() {
+      const from = byId("all-from");
+      const to = byId("all-to");
+      if (from && !from.value) from.value = `${todayMonthStr()}-01`;
+      if (to && !to.value) to.value = todayStr();
+    }
+
+    function adminAllRangeOptions() {
+      return {
+        from: byId("all-from")?.value || "",
+        to: byId("all-to")?.value || "",
+        maxDocs: ADMIN_COLLECTION_READ_LIMIT
+      };
+    }
+
+    function updateAdminLoadNote() {
+      const host = byId("all-load-note");
+      if (!host) return;
+      const from = state.allEntriesLoadedFrom || "";
+      const to = state.allEntriesLoadedTo || "";
+      const loadedAt = state.allEntriesLoadedAt ? ` Last loaded: ${timeOnlyText(state.allEntriesLoadedAt)}. ${cacheNextText(state.allEntriesLoadedAt, ADMIN_ENTRIES_CACHE_MS)}` : "";
+      const range = from || to ? describeDateRangeText(from, to) : "not loaded yet";
+      host.textContent = `Entries are saved immediately. For smoother admin review, this table shows a cached loaded range: ${range}. Showing up to ${ADMIN_COLLECTION_READ_LIMIT} matching records from each entry type.${loadedAt}`;
+    }
+
+    async function loadAll(forceRefresh = false) {
+      ensureAdminDefaultAllRange();
+      await ensureLookups(false);
+      if (state.allEntriesLoaded && !forceRefresh && (Date.now() - Number(state.allEntriesLoadedAt || 0)) < ADMIN_ENTRIES_CACHE_MS) {
+        renderAllTable();
+        renderTodaySummary();
+        renderStorageStats();
+        renderHeaderNotificationBell();
+        updateAdminLoadNote();
+        return;
+      }
+      const rangeOptions = adminAllRangeOptions();
+      const [singles, bulks, groups] = await Promise.all([fetchAllSingles(rangeOptions), fetchAllBulks(rangeOptions), fetchAllGroups(rangeOptions)]);
       state.allEntries = [...singles, ...bulks, ...groups.filter((record) => record.status === "active")].sort(sortRecords);
+      state.allEntriesLoaded = true;
+      state.allEntriesLoadedAt = Date.now();
+      state.allEntriesLoadedFrom = rangeOptions.from || "";
+      state.allEntriesLoadedTo = rangeOptions.to || "";
       renderAllTable();
       renderTodaySummary();
       renderStorageStats();
       renderHeaderNotificationBell();
+      updateAdminLoadNote();
     }
 
     function renderApprovalsList() {
@@ -10193,7 +10423,12 @@ tbody tr { transition: background .14s ease; }
 
     async function loadLogsAndRecycleState() {
       try {
-        const [logSnap, recycleSnap] = await Promise.all([getDocs(collection(db, "logs")), getDocs(collection(db, "deleted_entries"))]);
+        const [logSnap, recycleSnap] = await Promise.all([
+          fetchLimitedCollectionSnapshot("logs", ADMIN_LOG_READ_LIMIT),
+          getDocs(query(collection(db, "deleted_entries"), orderBy("deletedAt", "desc"), limit(ADMIN_RECYCLE_READ_LIMIT))).catch(() =>
+            getDocs(query(collection(db, "deleted_entries"), limit(ADMIN_RECYCLE_READ_LIMIT))).catch(() => ({ docs: [] }))
+          )
+        ]);
         state.logs = logSnap.docs.map((item) => ({ id: item.id, ...(item.data() || {}) })).sort((a, b) => tsMs(b.createdAt) - tsMs(a.createdAt));
         const recycleDocs = recycleSnap.docs.map((item) => ({ id: item.id, ...(item.data() || {}) }));
         state.recycleDocs = (await purgeExpiredRecycleDocs(recycleDocs)).sort((a, b) => tsMs(b.deletedAt) - tsMs(a.deletedAt));
@@ -10612,11 +10847,8 @@ tbody tr { transition: background .14s ease; }
       renderNotesSection();
     }
 
-    async function refreshCurrentPage() {
+    async function refreshCurrentPage(options = {}) {
       if (!state.user || !state.profile) return;
-      if (isAdmin() && !["page-dashboard", "page-logs", "page-storage"].includes(state.currentPage)) {
-        await loadLogsAndRecycleState();
-      }
       if (state.currentPage === "page-log") {
         await ensureLookups(true);
         await loadGroupApprovals();
@@ -10624,13 +10856,13 @@ tbody tr { transition: background .14s ease; }
         return;
       }
       if (state.currentPage === "page-my") {
-        await loadMyEntries();
+        await loadMyEntries(!!options.force);
         await loadMyAudit();
         updateRefreshButtonMeta();
         return;
       }
       if (state.currentPage === "page-dashboard") {
-        await loadAll();
+        await loadAll(!!options.force);
         updateRefreshButtonMeta();
         return;
       }
@@ -10655,7 +10887,7 @@ tbody tr { transition: background .14s ease; }
         return;
       }
       if (state.currentPage === "page-storage") {
-        await loadAll();
+        await loadAll(!!options.force);
         updateRefreshButtonMeta();
         return;
       }
@@ -13747,12 +13979,28 @@ tbody tr { transition: background .14s ease; }
                   <span class="guide-card-icon">&#9998;&#65039;</span>
                   <h4>My Timesheet and Edits</h4>
                 </div>
-                <p>Your timesheet is user-specific. It is the place to review, search, export, edit, or delete your own visible records.</p>
-                <div class="guide-step-list">
+              <p>Your timesheet is user-specific. It is the place to review, search, export, edit, or delete your own visible records.</p>
+              <div class="guide-step-list">
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Visible here:</strong> your single entries, your bulk entries, and your visible group entries.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Saved first:</strong> when you submit, the entry is saved immediately. The table may keep a short smooth-view copy so the page opens quickly.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Latest view:</strong> the note above the table shows when it will check again. Use Refresh if you want the latest view right now.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Calendar:</strong> use the Calendar button in My Timesheet to review your own day-wise reporting history month by month.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Edit rule:</strong> you can edit your own single/bulk entries. In group entries, the reporter edits shared fields and members edit only their own section.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Delete rule:</strong> delete moves the record to recycle first, and trails stay recorded.</span></div>
+                </div>
+              </article>
+
+              <article class="guide-card">
+                <div class="guide-card-head">
+                  <span class="guide-card-icon">&#9889;</span>
+                  <h4>What Updates Immediately</h4>
+                </div>
+                <p>Daily action items still update when you open or use them. The lighter loading rule is mainly for long timesheet lists.</p>
+                <div class="guide-step-list">
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Approvals:</strong> admin gets pending users and locked accounts without waiting for the timesheet list to reload.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Clients:</strong> adding, editing, importing, and deleting clients updates the client list when the action finishes.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Trail and audit:</strong> Trail opens the selected record history when you click it. Your recent activity is loaded on My Timesheet.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Calendar:</strong> calendar data loads when you open the calendar, and the Calendar Refresh button checks again.</span></div>
                 </div>
               </article>
 
@@ -13765,6 +14013,7 @@ tbody tr { transition: background .14s ease; }
                 <div class="guide-step-list">
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Search fast:</strong> My Timesheet, All Timesheets, Employees / Articles, Clients, and Logs all have search/filter controls.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Use quick actions:</strong> Today and Clear filters help you jump or reset instantly.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Admin timesheets:</strong> choose the range or employee, then load that range. This avoids opening years of records when only one month is needed.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Export:</strong> use Excel export after confirming the list on screen is the list you want.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Client search:</strong> click the search box and suggestions appear. Use mouse click or keyboard arrow + Enter to pick a client from the list.</span></div>
                 </div>
@@ -13779,7 +14028,7 @@ tbody tr { transition: background .14s ease; }
                 <div class="guide-step-list">
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Users:</strong> use the bell for group reminders and items waiting on you instead of looking for a separate notification card on the page.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Admin:</strong> check pending registrations, locked accounts, and recycle activity.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Refresh:</strong> key panels auto-update, but Refresh is still the fastest manual sync when needed.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Refresh:</strong> use Refresh when you want the screen checked right away. When the website tab is not in use, it stops checking in the background.</span></div>
                 </div>
               </article>
 
@@ -13805,8 +14054,8 @@ tbody tr { transition: background .14s ease; }
                 <p>${isAdminView ? "Admin pages are split by purpose so reporting, approvals, master data, activity, and storage stay separate." : "These are the main operating rules that matter in daily use."}</p>
                 <div class="guide-step-list">
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>${isAdminView ? "Timesheets:" : "Admin cannot edit entries:"}</strong> ${isAdminView ? "daily summary, all records, filters, exports, and trails." : "admin can review, recycle, restore, and audit, but not change your record content."}</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>${isAdminView ? "Approvals:" : "Public log stays limited:"}</strong> ${isAdminView ? "new registrations, lock handling, and PIN reset control." : "it shows only safe activity with action and time, not private admin work."}</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>${isAdminView ? "Employees / Articles, Clients, Logs, Storage:" : "Shared device rule:"}</strong> ${isAdminView ? "master data, activity history, recycle control, and growth monitoring." : "always log out when you leave a shared device."}</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>${isAdminView ? "Approvals:" : "Public log stays limited:"}</strong> ${isAdminView ? "new registrations, lock handling, and PIN reset control update without waiting for timesheet records." : "it shows only safe activity with action and time, not private admin work."}</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>${isAdminView ? "Employees / Articles, Clients, Logs, Storage:" : "Shared device rule:"}</strong> ${isAdminView ? "master data, activity history, recycle control, and growth monitoring stay separate from entry loading." : "always log out when you leave a shared device."}</span></div>
                 </div>
               </article>
             </section>
@@ -13926,7 +14175,7 @@ tbody tr { transition: background .14s ease; }
         if (button) button.disabled = true;
         updateRefreshButtonMeta("Refreshing...");
         try {
-          await refreshCurrentPage();
+          await refreshCurrentPage({ force: true });
           toast("Section refreshed.", "success");
         } finally {
           if (button) button.disabled = false;
@@ -14012,6 +14261,7 @@ tbody tr { transition: background .14s ease; }
 
       bind("my-today", "click", applyMyTodayFilters);
       bind("my-clear", "click", clearMyFilters);
+      bind("all-load-range", "click", loadSelectedAdminRange);
       bind("all-today", "click", applyAllTodayFilters);
       bind("all-clear", "click", clearAllFilters);
       bind("employee-clear", "click", clearEmployeeFilters);
@@ -14227,13 +14477,13 @@ tbody tr { transition: background .14s ease; }
 
       // Delegated click handler for date-preset chips. Updates active styling
       // within the chip's own row and applies the preset to the right target.
-      document.addEventListener("click", (event) => {
+      document.addEventListener("click", async (event) => {
         const chip = event.target.closest && event.target.closest(".date-preset");
         if (!chip) return;
         const preset = chip.dataset.preset;
         const target = chip.dataset.target;
         if (!preset || !target) return;
-        applyDatePreset(preset, target);
+        await applyDatePreset(preset, target);
         const row = chip.parentElement;
         if (row) {
           row.querySelectorAll(".date-preset.active").forEach((b) => b.classList.remove("active"));
@@ -14734,16 +14984,26 @@ tbody tr { transition: background .14s ease; }
     bindStaticEvents();
     initBrowserHistory();
     document.addEventListener("visibilitychange", () => {
-      if (!document.hidden) refreshAmbientState({ force: true }).catch(() => {});
+      if (document.hidden) {
+        stopLiveRefresh();
+        stopAdminUserStatusWatch();
+        return;
+      }
+      if (state.user && state.profile && state.currentScreen === "screen-app") startLiveRefresh();
+      startAdminUserStatusWatch();
+      refreshAmbientState().catch(() => {});
     });
     window.addEventListener("focus", () => {
-      refreshAmbientState({ force: true }).catch(() => {});
+      if (state.user && state.profile && state.currentScreen === "screen-app" && !state.liveRefreshTimer) startLiveRefresh();
+      startAdminUserStatusWatch();
+      refreshAmbientState().catch(() => {});
     });
 
     getRedirectResult(auth).catch(() => {});
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
         stopLiveRefresh();
+        stopAdminUserStatusWatch();
         state.user = null;
         state.profile = null;
         closeModal({ historyMode: "replace" });
