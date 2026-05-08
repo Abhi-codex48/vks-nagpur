@@ -3419,6 +3419,26 @@ button.summary-card.clickable {
   overflow: auto;
 }
 
+.screen.app-screen #page-my .remarks-stack,
+.screen.app-screen #page-dashboard .remarks-stack {
+  display: grid;
+  gap: 7px;
+  max-height: 9.5em;
+  overflow: auto;
+  padding-right: 3px;
+}
+
+.screen.app-screen #page-my .remarks-stack .note-block,
+.screen.app-screen #page-dashboard .remarks-stack .note-block {
+  max-height: none;
+  overflow: visible;
+}
+
+.screen.app-screen #page-my .note-block + .note-block,
+.screen.app-screen #page-dashboard .note-block + .note-block {
+  margin-top: 7px;
+}
+
 .screen.app-screen #page-my .actions,
 .screen.app-screen #page-dashboard .actions {
   display: grid;
@@ -9758,7 +9778,7 @@ tbody tr { transition: background .14s ease; }
     function remarksHtml(record, adminView = false) {
       if (record.entryKind === "group") {
         const ids = adminView ? visibleMemberIds(record) : [state.user?.uid].filter(Boolean);
-        return ids
+        const html = ids
           .map((uid) => {
             const entry = userEntryForGroup(record, uid);
             const daily = dailyHoursSummary(entry.dailyHours || {});
@@ -9771,12 +9791,13 @@ tbody tr { transition: background .14s ease; }
             `;
           })
           .join("");
+        return `<div class="remarks-stack">${html}</div>`;
       }
 
       if (record.entryKind === "single") {
         const breakdown = normalizeSingleClientBreakdown(record);
         if (breakdown.length > 1) {
-          return breakdown
+          const html = breakdown
             .map((item) => `
               <div class="note-block">
                 <strong>${safe(item.client)}</strong>
@@ -9785,6 +9806,7 @@ tbody tr { transition: background .14s ease; }
               </div>
             `)
             .join("");
+          return `<div class="remarks-stack">${html}</div>`;
         }
       }
 
