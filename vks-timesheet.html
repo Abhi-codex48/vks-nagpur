@@ -2855,7 +2855,112 @@ button.summary-card.clickable {
 }
 
 .screen.app-screen #page-my #my-audit-list .log-card {
+  gap: 5px;
+  padding: 9px 10px;
+  min-height: 0;
+}
+
+.screen.app-screen #page-my #my-audit-list .log-card strong {
+  margin-bottom: 0;
+  line-height: 1.25;
+}
+
+.screen.app-screen #page-my #my-audit-list .log-card .subline,
+.screen.app-screen #page-my #my-audit-list .log-card small {
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.screen.app-screen .trail-list {
+  display: grid;
   gap: 8px;
+}
+
+.screen.app-screen .trail-card {
+  padding: 9px 10px;
+  border-radius: 8px;
+  min-height: 0;
+}
+
+.screen.app-screen .trail-card strong,
+.screen.app-screen .trail-card .subline,
+.screen.app-screen .trail-card small {
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.screen.app-screen .trail-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+}
+
+.screen.app-screen .timesheet-row {
+  cursor: zoom-in;
+}
+
+.screen.app-screen .timesheet-row:focus-visible {
+  outline: 2px solid rgba(190, 142, 27, 0.8);
+  outline-offset: -2px;
+}
+
+.screen.app-screen .entry-detail-view {
+  display: grid;
+  gap: 12px;
+}
+
+.screen.app-screen .entry-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px;
+}
+
+.screen.app-screen .entry-detail-card {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  min-width: 0;
+}
+
+.screen.app-screen .entry-detail-card strong,
+.screen.app-screen .entry-detail-section h4 {
+  display: block;
+  margin: 0 0 5px;
+  line-height: 1.25;
+}
+
+.screen.app-screen .entry-detail-section {
+  display: grid;
+  gap: 8px;
+}
+
+.screen.app-screen .entry-detail-note {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.screen.app-screen .day-hour-list {
+  display: grid;
+  gap: 6px;
+}
+
+.screen.app-screen .day-hour-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  padding: 7px 9px;
+  border-radius: 7px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.62);
+  align-items: center;
+}
+
+.screen.app-screen .timesheet-open-hint {
+  margin-top: 4px;
 }
 
 .screen.app-screen .toolbar + .table-shell,
@@ -3095,6 +3200,33 @@ button.summary-card.clickable {
 .guide-role-pill.article {
   background: rgba(124, 58, 237, 0.12);
   color: #7c3aed;
+}
+
+.guide-role-map {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 8px;
+}
+
+.guide-role-card {
+  display: grid;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(203, 213, 225, 0.72);
+  background: rgba(255, 255, 255, 0.82);
+  min-width: 0;
+}
+
+.guide-role-card strong {
+  color: #0f172a;
+  line-height: 1.25;
+}
+
+.guide-role-card span {
+  color: #64748b;
+  font-size: 0.8rem;
+  line-height: 1.45;
 }
 
 .guide-grid {
@@ -3345,11 +3477,11 @@ button.summary-card.clickable {
 }
 
 .screen.app-screen #page-my table {
-  min-width: 1080px;
+  min-width: 1140px;
 }
 
 .screen.app-screen #page-dashboard table {
-  min-width: 1260px;
+  min-width: 1380px;
 }
 
 .screen.app-screen #page-my tbody tr,
@@ -3412,31 +3544,34 @@ button.summary-card.clickable {
 .screen.app-screen #page-my .note-block,
 .screen.app-screen #page-dashboard .note-block {
   margin: 0;
-  padding: 6px 8px;
+  padding: 9px 10px;
   border-radius: 6px;
-  line-height: 1.35;
-  max-height: 5.4em;
-  overflow: auto;
+  line-height: 1.42;
+  max-height: none;
+  overflow: visible;
 }
 
 .screen.app-screen #page-my .remarks-stack,
 .screen.app-screen #page-dashboard .remarks-stack {
   display: grid;
-  gap: 7px;
-  max-height: 9.5em;
-  overflow: auto;
-  padding-right: 3px;
+  gap: 9px;
+  max-height: none;
+  min-width: 0;
+  overflow: visible;
+  padding-right: 0;
 }
 
 .screen.app-screen #page-my .remarks-stack .note-block,
 .screen.app-screen #page-dashboard .remarks-stack .note-block {
   max-height: none;
+  overflow-wrap: anywhere;
+  word-break: break-word;
   overflow: visible;
 }
 
 .screen.app-screen #page-my .note-block + .note-block,
 .screen.app-screen #page-dashboard .note-block + .note-block {
-  margin-top: 7px;
+  margin-top: 0;
 }
 
 .screen.app-screen #page-my .actions,
@@ -3476,7 +3611,7 @@ button.summary-card.clickable {
 .screen.app-screen #page-my th:nth-child(7),
 .screen.app-screen #page-my td:nth-child(7) { width: 62px; }
 .screen.app-screen #page-my th:nth-child(8),
-.screen.app-screen #page-my td:nth-child(8) { width: 250px; }
+.screen.app-screen #page-my td:nth-child(8) { width: 300px; }
 .screen.app-screen #page-my th:nth-child(9),
 .screen.app-screen #page-my td:nth-child(9) { width: 170px; }
 
@@ -3489,7 +3624,7 @@ button.summary-card.clickable {
 .screen.app-screen #page-dashboard th:nth-child(4),
 .screen.app-screen #page-dashboard td:nth-child(4) { width: 105px; }
 .screen.app-screen #page-dashboard th:nth-child(5),
-.screen.app-screen #page-dashboard td:nth-child(5) { width: 260px; }
+.screen.app-screen #page-dashboard td:nth-child(5) { width: 245px; }
 .screen.app-screen #page-dashboard th:nth-child(6),
 .screen.app-screen #page-dashboard td:nth-child(6) { width: 150px; }
 .screen.app-screen #page-dashboard th:nth-child(7),
@@ -3497,7 +3632,7 @@ button.summary-card.clickable {
 .screen.app-screen #page-dashboard th:nth-child(8),
 .screen.app-screen #page-dashboard td:nth-child(8) { width: 62px; }
 .screen.app-screen #page-dashboard th:nth-child(9),
-.screen.app-screen #page-dashboard td:nth-child(9) { width: 240px; }
+.screen.app-screen #page-dashboard td:nth-child(9) { width: 330px; }
 .screen.app-screen #page-dashboard th:nth-child(10),
 .screen.app-screen #page-dashboard td:nth-child(10) { width: 140px; }
 
@@ -3558,6 +3693,10 @@ button.summary-card.clickable {
   padding: 18px;
   background: rgba(18, 14, 10, 0.6);
   backdrop-filter: blur(10px);
+}
+
+.confirm-overlay-root {
+  z-index: 320;
 }
 
 .modal-card {
@@ -4430,7 +4569,10 @@ tbody tr { transition: background .14s ease; }
   box-shadow: 0 6px 14px rgba(37, 211, 102, 0.30), inset 0 1px 0 rgba(255,255,255,0.18);
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
+  font-weight: 800;
+  letter-spacing: 0;
 }
 .btn.btn-wa:hover {
   background: #1faa54;
@@ -4441,6 +4583,7 @@ tbody tr { transition: background .14s ease; }
   background: #178944;
   transform: translateY(0);
 }
+.btn.btn-wa::before { content: ""; }
 .btn.btn-wa svg { display: block; }
 
 /* ============================================================
@@ -4762,7 +4905,7 @@ tbody tr { transition: background .14s ease; }
     border-color: #ccc !important;
     border-radius: 0 !important;
     background: #fff !important;
-    page-break-inside: avoid;
+    page-break-inside: auto;
   }
   .panel { padding: 3pt 0; border: 0 !important; }
   .panel-head { margin-bottom: 4pt; }
@@ -4813,7 +4956,7 @@ tbody tr { transition: background .14s ease; }
   #page-my th:nth-child(8), #page-my td:nth-child(8),
   #page-dashboard th:nth-child(9), #page-dashboard td:nth-child(9) { width: 25% !important; }
   #page-dashboard th:nth-child(5), #page-dashboard td:nth-child(5) { width: 19% !important; }
-  tbody tr { page-break-inside: avoid; }
+  tbody tr { page-break-inside: auto; break-inside: auto; }
   tbody tr:nth-child(even) td,
   tbody tr:hover td { background: #fff !important; }
   .chip, .status-pill, .role-pill, .type-pill, .summary-status-pill {
@@ -4825,11 +4968,21 @@ tbody tr { transition: background .14s ease; }
   .note-block {
     max-height: none !important;
     overflow: visible !important;
-    padding: 0 !important;
+    padding: 1pt 0 !important;
     margin: 0 !important;
     border: 0 !important;
     background: transparent !important;
     line-height: 1.2 !important;
+  }
+  .remarks-stack {
+    display: block !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  .remarks-stack .note-block + .note-block {
+    margin-top: 3pt !important;
+    padding-top: 3pt !important;
+    border-top: 1px solid #ddd !important;
   }
   .person {
     gap: 1pt !important;
@@ -5562,6 +5715,7 @@ tbody tr { transition: background .14s ease; }
             </div>
           </div>
           <p id="my-cache-note" class="section-note">Timesheet data is saved immediately. The table may use a short cache for smoother loading.</p>
+          <p class="section-note timesheet-open-hint">Double-click any row to read the full entry, including client-wise remarks and day-wise time.</p>
           <div id="my-filter-summary" class="filter-summary" hidden></div>
 
           <div class="table-shell">
@@ -5670,6 +5824,7 @@ tbody tr { transition: background .14s ease; }
             </div>
           </div>
           <p id="all-load-note" class="section-note">Timesheet entries load by selected date range. Choose a range or employee, then load it when older records are needed.</p>
+          <p class="section-note timesheet-open-hint">Double-click any row to read the full entry, including client-wise remarks and day-wise time.</p>
           <div id="all-filter-summary" class="filter-summary" hidden></div>
 
           <div class="table-shell">
@@ -8780,6 +8935,22 @@ tbody tr { transition: background .14s ease; }
       return true;
     }
 
+    function whatsappRemarkLines(record) {
+      if (record?.entryKind === "single") {
+        const breakdown = normalizeSingleClientBreakdown(record);
+        if (breakdown.length > 1) {
+          return breakdown.map((item) => `${item.client || "Client"}: ${String(item.remarks || "-").trim() || "-"}`);
+        }
+      }
+      if (record?.entryKind === "group") {
+        return visibleMemberIds(record).map((uid) => {
+          const entry = userEntryForGroup(record, uid);
+          return `${entry.name || uid}: ${String(entry.remarks || "-").trim() || "-"}`;
+        });
+      }
+      return [`${clientLabel(record) || "Client"}: ${String(remarksTextForRecord(record) || "-").trim() || "-"}`];
+    }
+
     // Open WhatsApp Web/app with a pre-filled message for an entry. Hours
     // are intentionally omitted (the user often shares this in a public
     // group). User picks the recipient inside WhatsApp.
@@ -8811,6 +8982,11 @@ tbody tr { transition: background .14s ease; }
       );
       const remarksLines = (remarks.length ? remarks : ["-"]).map((item) => `- ${item}`);
       const tasks = "";
+      const remarkItems = whatsappRemarkLines(record).filter(Boolean);
+      const numberedRemarks = (remarkItems.length ? remarkItems : ["-"]).flatMap((item, index) => [
+        `${index + 1}. ${item}`,
+        ""
+      ]);
 
       const lines = [
         "VKS Timesheet — Daily Update",
@@ -8828,23 +9004,21 @@ tbody tr { transition: background .14s ease; }
       ].filter(Boolean);
 
       const shareLines = [
-        "VKS Timesheet - Daily Update",
+        "Reporting",
         "",
         `Name: ${name || "-"}`,
         email && email !== name ? `Email: ${email}` : null,
         "",
-        `Client name: ${client}`,
-        "",
         `Reporting for date: ${dateLabel}`,
+        "",
         `Reporting on date: ${reportingOn}`,
         "",
-        "Remarks:",
-        ...remarksLines,
-        "",
-        "Shared via portal"
-      ].filter(Boolean);
+        "(Remarks): -",
+        ...numberedRemarks,
+        "Reporting via Timesheet Portal"
+      ].filter((line) => line !== null);
 
-      const message = shareLines.join("\n");
+      const message = shareLines.join("\r\n");
       const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
       const win = window.open(url, "_blank", "noopener,noreferrer");
       if (!win) {
@@ -9781,12 +9955,10 @@ tbody tr { transition: background .14s ease; }
         const html = ids
           .map((uid) => {
             const entry = userEntryForGroup(record, uid);
-            const daily = dailyHoursSummary(entry.dailyHours || {});
             return `
               <div class="note-block">
                 <strong>${safe(entry.name || uid)}</strong>
                 <div>${safe(entry.remarks || "-")}</div>
-                ${daily.length ? `<div class="subline">${safe(daily.join(" | "))}</div>` : ""}
               </div>
             `;
           })
@@ -9802,7 +9974,6 @@ tbody tr { transition: background .14s ease; }
               <div class="note-block">
                 <strong>${safe(item.client)}</strong>
                 <div>${safe(item.remarks || "-")}</div>
-                <div class="subline">${safe(Number(item.hours || 0).toFixed(1))} h</div>
               </div>
             `)
             .join("");
@@ -9810,11 +9981,9 @@ tbody tr { transition: background .14s ease; }
         }
       }
 
-      const daily = dailyHoursSummary(record.dailyHours || {});
       return `
         <div class="note-block">
           <div>${safe(remarksTextForRecord(record, { adminView }) || "-")}</div>
-          ${daily.length ? `<div class="subline">${safe(daily.join(" | "))}</div>` : ""}
         </div>
       `;
     }
@@ -9892,7 +10061,7 @@ tbody tr { transition: background .14s ease; }
               if (isPendingParticipant(record)) actions.push(`<button class="btn btn-outline small" type="button" data-action="go-group-approvals">Approve</button>`);
 
               return `
-                <tr>
+                <tr class="timesheet-row" tabindex="0" data-collection="${safe(record.collection)}" data-id="${safe(record.id)}" title="Double-click to read full entry">
                   <td><input type="checkbox" data-action="toggle-my-select" data-key="${safe(key)}" ${state.selectedMy.has(key) ? "checked" : ""} ${canDeleteRecord(record) ? "" : "disabled"}></td>
                   <td>${safe(displayDate(record))}</td>
                   <td>${typeCell(record)}</td>
@@ -9959,6 +10128,158 @@ tbody tr { transition: background .14s ease; }
               </div>
             </div>
           `;
+    }
+
+    function dayHourRowsHtml(dailyHours = {}, fallbackDates = [], fallbackHours = 0) {
+      const rows = Object.entries(dailyHours || {})
+        .filter(([, hours]) => Number(hours) > 0)
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .map(([date, hours]) => ({ date, hours: Number(hours || 0) }));
+      if (!rows.length && fallbackDates?.length) {
+        const perDay = fallbackDates.length === 1 ? Number(fallbackHours || 0) : 0;
+        fallbackDates.forEach((date) => rows.push({ date, hours: perDay }));
+      }
+      if (!rows.length) return `<div class="muted">No day-wise hours recorded.</div>`;
+      return `
+        <div class="day-hour-list">
+          ${rows.map((row) => `
+            <div class="day-hour-row">
+              <span>${safe(formatDate(row.date))}</span>
+              <strong>${safe(Number(row.hours || 0).toFixed(1))} h</strong>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function entryDetailRemarksHtml(record, adminView = false) {
+      if (record.entryKind === "group") {
+        const ids = adminView ? visibleMemberIds(record) : [state.user?.uid].filter(Boolean);
+        return `
+          <div class="entry-detail-grid">
+            ${ids.map((uid) => {
+              const entry = userEntryForGroup(record, uid);
+              return `
+                <div class="entry-detail-card">
+                  <strong>${safe(entry.name || lookupUser(uid)?.name || uid)}</strong>
+                  <div class="entry-detail-note">${safe(entry.remarks || "-")}</div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        `;
+      }
+
+      if (record.entryKind === "single") {
+        const breakdown = normalizeSingleClientBreakdown(record);
+        if (breakdown.length > 1) {
+          return `
+            <div class="entry-detail-grid">
+              ${breakdown.map((item) => `
+                <div class="entry-detail-card">
+                  <strong>${safe(item.client || "Client")}</strong>
+                  <div class="subline">${safe(Number(item.hours || 0).toFixed(1))} h</div>
+                  <div class="entry-detail-note">${safe(item.remarks || "-")}</div>
+                </div>
+              `).join("")}
+            </div>
+          `;
+        }
+      }
+
+      return `
+        <div class="entry-detail-card">
+          <strong>${safe(clientLabel(record) || "Remarks")}</strong>
+          <div class="entry-detail-note">${safe(remarksTextForRecord(record, { adminView }) || "-")}</div>
+        </div>
+      `;
+    }
+
+    function entryDetailHoursHtml(record, adminView = false) {
+      const dates = recordDates(record);
+      if (record.entryKind === "group") {
+        const ids = adminView ? visibleMemberIds(record) : [state.user?.uid].filter(Boolean);
+        return `
+          <div class="entry-detail-grid">
+            ${ids.map((uid) => {
+              const entry = userEntryForGroup(record, uid);
+              return `
+                <div class="entry-detail-card">
+                  <strong>${safe(entry.name || lookupUser(uid)?.name || uid)}</strong>
+                  ${dayHourRowsHtml(entry.dailyHours || {}, dates, entry.totalHours || 0)}
+                </div>
+              `;
+            }).join("")}
+          </div>
+        `;
+      }
+
+      if (record.entryKind === "single") {
+        const breakdown = normalizeSingleClientBreakdown(record);
+        if (breakdown.length > 1) {
+          return `
+            <div class="entry-detail-grid">
+              ${breakdown.map((item) => `
+                <div class="entry-detail-card">
+                  <strong>${safe(item.client || "Client")}</strong>
+                  ${dayHourRowsHtml({}, dates, item.hours || 0)}
+                </div>
+              `).join("")}
+            </div>
+          `;
+        }
+      }
+
+      return dayHourRowsHtml(record.dailyHours || {}, dates, record.totalHours || record.hours || 0);
+    }
+
+    function openEntryDetailModal(record, adminView = false) {
+      if (!record) return;
+      const dateText = displayDate(record);
+      const employee = record.entryKind === "group"
+        ? (record.creatorName || record.name || "-")
+        : (record.creatorName || record.name || record.email || "-");
+      openModal(
+        "Full Timesheet Entry",
+        "Complete entry view with full remarks and day-wise time.",
+        `
+          <div class="entry-detail-view">
+            <div class="entry-detail-grid">
+              <div class="entry-detail-card">
+                <strong>Date</strong>
+                <div>${safe(dateText)}</div>
+              </div>
+              <div class="entry-detail-card">
+                <strong>Type</strong>
+                <div>${safe(String(record.entryKind || "single").toUpperCase())}</div>
+              </div>
+              ${adminView ? `
+                <div class="entry-detail-card">
+                  <strong>Employee / Article</strong>
+                  <div>${safe(employee)}</div>
+                  <div class="subline">${safe(record.creatorEmail || record.email || "-")}</div>
+                </div>
+              ` : ""}
+              <div class="entry-detail-card">
+                <strong>Client</strong>
+                <div class="entry-detail-note">${safe(clientLabel(record) || "-")}</div>
+              </div>
+              <div class="entry-detail-card">
+                <strong>Work type</strong>
+                <div class="entry-detail-note">${safe(normalizeTaskList(record).join(", ") || "-")}</div>
+              </div>
+            </div>
+            <div class="entry-detail-section">
+              <h4>Client-wise remarks</h4>
+              ${entryDetailRemarksHtml(record, adminView)}
+            </div>
+            <div class="entry-detail-section">
+              <h4>Day-wise time</h4>
+              ${entryDetailHoursHtml(record, adminView)}
+            </div>
+          </div>
+        `
+      );
     }
 
     function renderStorageStats() {
@@ -10312,7 +10633,7 @@ tbody tr { transition: background .14s ease; }
         ? rows
             .map(
               (record) => `
-                <tr>
+                <tr class="timesheet-row" tabindex="0" data-collection="${safe(record.collection)}" data-id="${safe(record.id)}" title="Double-click to read full entry">
                   <td>${safe(displayDate(record))}</td>
                   <td>${typeCell(record)}</td>
                   <td>${employeeCell(record)}</td>
@@ -11372,10 +11693,10 @@ tbody tr { transition: background .14s ease; }
           "Entry Trail",
           "Recorded create, edit, delete, and approval actions for this entry.",
           items.length
-            ? `<div class="stack-list">${items
+            ? `<div class="trail-list">${items
                 .map(
                   (item) => `
-                    <div class="hub-card">
+                    <div class="hub-card trail-card">
                       <strong>${safe(item.action || "-")}</strong>
                       <div class="subline">${safe(item.actorName || item.actorEmail || "-")}</div>
                       ${item.detail ? `<div class="subline">${safe(item.detail)}</div>` : ""}
@@ -12648,12 +12969,26 @@ tbody tr { transition: background .14s ease; }
             remarks
           };
           const duplicateRecord = await findExactBulkDuplicate(integrityValues);
-          if (duplicateRecord && !window.confirm(`A very similar bulk entry already exists for ${displayDate(duplicateRecord)}.\n\nSubmit anyway?`)) {
-            return toast("Similar bulk entry already exists. Review My Timesheet before submitting again.", "warn");
-          }
           const overlaps = await detectBulkOverlap({ dates });
-          if (overlaps.length && !window.confirm(`Some selected dates already have reporting in your timesheet.\n\n${overlaps.join("\n")}\n\nSubmit anyway?`)) {
-            return toast("Bulk entry paused. Review the overlapping dates first.", "warn");
+          const confirmed = await confirmOverlayModal({
+            title: "Confirm bulk entry",
+            copy: "Review the selected date range, clients, work type, and day-wise time before submitting.",
+            summaryHtml: buildBulkSubmitSummary({
+              from,
+              to,
+              dates,
+              clients: [...modalState.clients],
+              tasks: [...modalState.tasks],
+              hours,
+              remarks,
+              duplicateRecord,
+              overlaps
+            }),
+            confirmLabel: duplicateRecord || overlaps.length ? "Confirm & submit anyway" : "Confirm & submit",
+            cancelLabel: "Go back"
+          });
+          if (!confirmed) {
+            return toast(duplicateRecord || overlaps.length ? "Bulk entry paused. Review before submitting." : "Bulk entry not submitted.", "warn");
           }
           const submitSignature = signatureForBulk(integrityValues);
           submitClaim = claimSubmitAttempt("bulk", submitSignature);
@@ -13140,12 +13475,27 @@ tbody tr { transition: background .14s ease; }
             memberEntries
           };
           const duplicateRecord = await findExactGroupDuplicate(integrityValues);
-          if (duplicateRecord && !window.confirm(`A very similar group report already exists for ${displayDate(duplicateRecord)} and ${clientLabel(duplicateRecord)}.\n\nSubmit anyway?`)) {
-            return toast("Similar group entry already exists. Review pending or active group reports first.", "warn");
-          }
           const overlaps = await detectGroupOverlap(integrityValues);
-          if (overlaps.length && !window.confirm(`Some selected dates already have reporting for one or more group members.\n\n${overlaps.join("\n")}\n\nSubmit anyway?`)) {
-            return toast("Group entry paused. Review the overlapping dates first.", "warn");
+          const confirmed = await confirmOverlayModal({
+            title: "Confirm group entry",
+            copy: "Review the shared client, members, date setup, and member-wise time before sending for approval.",
+            summaryHtml: buildGroupSubmitSummary({
+              mode: modalState.mode,
+              from,
+              to,
+              dates,
+              client: modalState.selectedClient,
+              tasks: [...modalState.selectedTasks],
+              members,
+              memberEntries,
+              duplicateRecord,
+              overlaps
+            }),
+            confirmLabel: duplicateRecord || overlaps.length ? "Confirm & send anyway" : "Confirm & send for approval",
+            cancelLabel: "Go back"
+          });
+          if (!confirmed) {
+            return toast(duplicateRecord || overlaps.length ? "Group entry paused. Review before submitting." : "Group entry not submitted.", "warn");
           }
           const submitSignature = signatureForGroup(integrityValues);
           submitClaim = claimSubmitAttempt("group", submitSignature);
@@ -14155,12 +14505,144 @@ tbody tr { transition: background .14s ease; }
       });
     }
 
+    function confirmOverlayModal({ title, copy = "", summaryHtml = "", confirmLabel = "Confirm & submit", cancelLabel = "Go back" }) {
+      return new Promise((resolve) => {
+        let resolved = false;
+        const root = document.createElement("div");
+        root.className = "modal-root confirm-overlay-root";
+        root.innerHTML = `
+          <div class="modal-card">
+            <div class="modal-head">
+              <div>
+                <h3>${safe(title)}</h3>
+                <p class="modal-copy">${safe(copy)}</p>
+              </div>
+              <button class="modal-close" type="button" data-confirm-close>X</button>
+            </div>
+            <div>
+              ${summaryHtml}
+              <div class="button-row" style="justify-content:flex-end;margin-top:18px;">
+                <button class="btn btn-outline" type="button" data-confirm-cancel>${safe(cancelLabel)}</button>
+                <button class="btn btn-primary" type="button" data-confirm-go>${safe(confirmLabel)}</button>
+              </div>
+            </div>
+          </div>
+        `;
+        const finish = (ok) => {
+          if (resolved) return;
+          resolved = true;
+          root.remove();
+          resolve(Boolean(ok));
+        };
+        root.addEventListener("click", (event) => {
+          if (event.target === root || event.target.closest("[data-confirm-close], [data-confirm-cancel]")) {
+            finish(false);
+            return;
+          }
+          if (event.target.closest("[data-confirm-go]")) finish(true);
+        });
+        document.body.appendChild(root);
+        root.querySelector("[data-confirm-go]")?.focus();
+      });
+    }
+
+    function submitPreviewWarningHtml(warnings = []) {
+      const clean = (warnings || []).filter(Boolean);
+      if (!clean.length) return "";
+      return `<div style="display:grid;gap:8px;margin-top:12px;">${clean.join("")}</div>`;
+    }
+
+    function warningBoxHtml(tone, title, text) {
+      const styles = {
+        warn: "background:#fff7e3;border:1px solid #f0c87a;color:#7a4a00;",
+        info: "background:#eef6ff;border:1px solid #a5c8e8;color:#1d4f8c;",
+        danger: "background:#fff1f2;border:1px solid #f2a6ad;color:#9f1239;"
+      };
+      return `<div style="padding:12px 14px;border-radius:12px;${styles[tone] || styles.info}font-size:.88rem;line-height:1.5;"><strong>${safe(title)}:</strong> ${safe(text)}</div>`;
+    }
+
+    function dateHoursPreviewHtml(dates, hoursByDate = {}, fallbackHours = 0, maxRows = 10) {
+      const rows = (dates || []).slice(0, maxRows).map((date) => {
+        const hours = Number(hoursByDate?.[date] ?? fallbackHours ?? 0);
+        return `
+          <div class="day-hour-row">
+            <span>${safe(formatDate(date))}</span>
+            <strong>${safe(hours > 0 ? `${hours.toFixed(2)} h` : "-")}</strong>
+          </div>
+        `;
+      }).join("");
+      const more = (dates || []).length > maxRows
+        ? `<div class="subline" style="padding:4px 2px;">+${safe(String(dates.length - maxRows))} more day(s)</div>`
+        : "";
+      return `<div class="day-hour-list">${rows}${more}</div>`;
+    }
+
+    function buildBulkSubmitSummary({ from, to, dates, clients, tasks, hours, remarks, duplicateRecord, overlaps }) {
+      const warnings = [];
+      const total = Number(hours || 0) * (dates?.length || 0);
+      if (Number(hours || 0) > 12) warnings.push(warningBoxHtml("warn", "High daily time", `${Number(hours).toFixed(2)} hours per day is unusually high. Please confirm it is correct.`));
+      if (duplicateRecord) warnings.push(warningBoxHtml("info", "Similar bulk entry found", `Existing record: ${displayDate(duplicateRecord)} | ${clientLabel(duplicateRecord)}. Submit only if this is a separate work block.`));
+      if (overlaps?.length) warnings.push(warningBoxHtml("danger", "Date overlap found", `${overlaps.slice(0, 4).join(" | ")}${overlaps.length > 4 ? ` | +${overlaps.length - 4} more` : ""}`));
+      return `
+        ${submitPreviewWarningHtml(warnings)}
+        <div class="hub-card" style="margin-top:12px;">
+          <div class="grid two">
+            <div><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Range</span><strong style="display:block;margin-top:4px;">${safe(formatDate(from))} to ${safe(formatDate(to))}</strong></div>
+            <div><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Total time</span><strong style="display:block;margin-top:4px;">${safe(total.toFixed(2))} h</strong></div>
+            <div><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Selected days</span><strong style="display:block;margin-top:4px;">${safe(String(dates.length))}</strong></div>
+            <div><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Hours per day</span><strong style="display:block;margin-top:4px;">${safe(Number(hours || 0).toFixed(2))} h</strong></div>
+          </div>
+          <div style="margin-top:14px;"><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Clients</span><div class="chip-row" style="margin-top:6px;">${clients.map((client) => `<span class="chip">${safe(client)}</span>`).join("")}</div></div>
+          <div style="margin-top:14px;"><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Work types</span><div class="chip-row" style="margin-top:6px;">${tasks.map((task) => `<span class="chip">${safe(task)}</span>`).join("")}</div></div>
+          <div style="margin-top:14px;"><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Day-wise time</span><div style="margin-top:6px;">${dateHoursPreviewHtml(dates, {}, hours)}</div></div>
+          <div style="margin-top:14px;"><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Remarks</span><div class="note-block" style="margin-top:6px;">${safe(String(remarks || "").slice(0, 280))}${String(remarks || "").length > 280 ? "..." : ""}</div></div>
+        </div>
+      `;
+    }
+
+    function buildGroupSubmitSummary({ mode, from, to, dates, client, tasks, members, memberEntries, duplicateRecord, overlaps }) {
+      const warnings = [];
+      const total = Object.values(memberEntries || {}).reduce((sum, entry) => sum + Number(entry.totalHours || 0), 0);
+      const highMembers = Object.values(memberEntries || {}).filter((entry) => totalHoursFromMap(entry.dailyHours || {}) / Math.max(dates.length, 1) > 12);
+      if (highMembers.length) warnings.push(warningBoxHtml("warn", "High member time", `${highMembers.map((entry) => entry.name).join(", ")} has unusually high daily time. Please confirm.`));
+      if (duplicateRecord) warnings.push(warningBoxHtml("info", "Similar group entry found", `Existing record: ${displayDate(duplicateRecord)} | ${clientLabel(duplicateRecord)}. Submit only if this is separate.`));
+      if (overlaps?.length) warnings.push(warningBoxHtml("danger", "Member date overlap found", `${overlaps.slice(0, 4).join(" | ")}${overlaps.length > 4 ? ` | +${overlaps.length - 4} more` : ""}`));
+      return `
+        ${submitPreviewWarningHtml(warnings)}
+        <div class="hub-card" style="margin-top:12px;">
+          <div class="grid two">
+            <div><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Mode</span><strong style="display:block;margin-top:4px;">${safe(mode === "range" ? "Bulk-days group" : "Single-day group")}</strong></div>
+            <div><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Date</span><strong style="display:block;margin-top:4px;">${safe(mode === "range" ? `${formatDate(from)} to ${formatDate(to)}` : formatDate(from))}</strong></div>
+            <div><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Members</span><strong style="display:block;margin-top:4px;">${safe(String(members.length))}</strong></div>
+            <div><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Total time</span><strong style="display:block;margin-top:4px;">${safe(total.toFixed(2))} h</strong></div>
+          </div>
+          <div style="margin-top:14px;"><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Client</span><strong style="display:block;margin-top:4px;">${safe(client)}</strong></div>
+          <div style="margin-top:14px;"><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Work types</span><div class="chip-row" style="margin-top:6px;">${tasks.map((task) => `<span class="chip">${safe(task)}</span>`).join("")}</div></div>
+          <div style="margin-top:14px;"><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Member-wise summary</span>
+            <div class="entry-detail-grid" style="margin-top:6px;">
+              ${members.map((member) => {
+                const entry = memberEntries[member.id] || {};
+                return `
+                  <div class="entry-detail-card">
+                    <strong>${safe(entry.name || member.name)}</strong>
+                    <div class="subline">${safe(Number(entry.totalHours || 0).toFixed(2))} h total</div>
+                    ${dateHoursPreviewHtml(dates, entry.dailyHours || {}, 0, 6)}
+                    <div class="entry-detail-note" style="margin-top:8px;">${safe(String(entry.remarks || "").slice(0, 160))}${String(entry.remarks || "").length > 160 ? "..." : ""}</div>
+                  </div>
+                `;
+              }).join("")}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
     function openGuide() {
       const isAdminView = isAdmin();
       const isArticleView = isArticle();
       openModal(
         "Portal Guide",
-        "Quick visual guide for login, reporting, approvals, edits, filters, drafts, and private hub tools.",
+        "Simple guide for who can do what, how reporting works, what updates immediately, and how to read full entries.",
         `
           <div class="guide-shell">
             <section class="guide-hero">
@@ -14184,6 +14666,20 @@ tbody tr { transition: background .14s ease; }
                 <span class="guide-role-pill user">&#128100; Employee / Professional</span>
                 <span class="guide-role-pill article">&#128218; CA Article</span>
                 <span class="guide-role-pill admin">&#9881;&#65039; Admin</span>
+              </div>
+              <div class="guide-role-map">
+                <div class="guide-role-card">
+                  <strong>Normal user</strong>
+                  <span>Can submit work, see own timesheet, edit/delete own allowed entries, export/print own records, use calendar, and approve group entries involving them.</span>
+                </div>
+                <div class="guide-role-card">
+                  <strong>CA Article</strong>
+                  <span>Gets normal user features plus private My Hub tools for study hours, knowledge bank, case library, notes, and productivity.</span>
+                </div>
+                <div class="guide-role-card">
+                  <strong>Admin</strong>
+                  <span>Can approve users, reset PINs, manage clients, review all timesheets by range, open trails, delete/restore records, view logs, and monitor storage.</span>
+                </div>
               </div>
             </section>
 
@@ -14323,6 +14819,115 @@ tbody tr { transition: background .14s ease; }
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>${isAdminView ? "Timesheets:" : "Admin cannot edit entries:"}</strong> ${isAdminView ? "daily summary, all records, filters, exports, and trails." : "admin can review, recycle, restore, and audit, but not change your record content."}</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>${isAdminView ? "Approvals:" : "Public log stays limited:"}</strong> ${isAdminView ? "new registrations, lock handling, and PIN reset control update without waiting for timesheet records." : "it shows only safe activity with action and time, not private admin work."}</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>${isAdminView ? "Employees / Articles, Clients, Logs, Storage:" : "Shared device rule:"}</strong> ${isAdminView ? "master data, activity history, recycle control, and growth monitoring stay separate from entry loading." : "always log out when you leave a shared device."}</span></div>
+                </div>
+              </article>
+            </section>
+          </div>
+        `
+      );
+    }
+
+    function openGuide() {
+      const isAdminView = isAdmin();
+      const isArticleView = isArticle();
+      openModal(
+        "Portal Guide",
+        "Short, simple guide for daily use.",
+        `
+          <div class="guide-shell">
+            <section class="guide-hero">
+              <div class="guide-hero-title">
+                <span class="guide-hero-icon">&#128161;</span>
+                <span>How the portal works</span>
+              </div>
+              <p>Sign in, enter PIN, submit work, review entries, and export/print only after checking the list.</p>
+              <div class="guide-path">
+                <span class="guide-path-step">&#128275; Sign in</span>
+                <span class="guide-arrow">&rarr;</span>
+                <span class="guide-path-step">&#128274; PIN</span>
+                <span class="guide-arrow">&rarr;</span>
+                <span class="guide-path-step">&#128221; Report</span>
+                <span class="guide-arrow">&rarr;</span>
+                <span class="guide-path-step">&#128269; Review</span>
+                <span class="guide-arrow">&rarr;</span>
+                <span class="guide-path-step">&#128190; Export / Print</span>
+              </div>
+              <div class="guide-role-map">
+                <div class="guide-role-card">
+                  <strong>&#128100; User</strong>
+                  <span>Submit own work, see own timesheet, edit/delete allowed own entries, print/export, calendar, group approvals.</span>
+                </div>
+                <div class="guide-role-card">
+                  <strong>&#128218; CA Article</strong>
+                  <span>User features plus private My Hub for study, cases, knowledge bank, notes, and productivity.</span>
+                </div>
+                <div class="guide-role-card">
+                  <strong>&#9881;&#65039; Admin</strong>
+                  <span>Approvals, PIN reset, clients, all timesheets by range, trails, logs, recycle bin, storage.</span>
+                </div>
+              </div>
+            </section>
+
+            <section class="guide-grid">
+              <article class="guide-card">
+                <div class="guide-card-head"><span class="guide-card-icon">&#128221;</span><h4>Reporting</h4></div>
+                <div class="guide-step-list">
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Single:</strong> one date. Add many client boxes if one day has many clients.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Bulk:</strong> many dates for your own work. Day-wise time is saved.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Group:</strong> shared client, member-wise hours, member-wise approval.</span></div>
+                </div>
+              </article>
+
+              <article class="guide-card">
+                <div class="guide-card-head"><span class="guide-card-icon">&#128269;</span><h4>Reading Entries</h4></div>
+                <div class="guide-step-list">
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Table:</strong> compact view for fast scanning.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Double-click row:</strong> opens full entry with all remarks and day-wise time.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Trail:</strong> opens create/edit/delete/approval history.</span></div>
+                </div>
+              </article>
+
+              <article class="guide-card">
+                <div class="guide-card-head"><span class="guide-card-icon">&#9889;</span><h4>Updates</h4></div>
+                <div class="guide-step-list">
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Saved immediately:</strong> submitted entries go to the portal right away.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Smooth view:</strong> long timesheet lists may use a short cached view so the site stays fast.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Important items:</strong> approvals, clients, calendar refresh, audit, and trail open when needed.</span></div>
+                </div>
+              </article>
+
+              <article class="guide-card">
+                <div class="guide-card-head"><span class="guide-card-icon">&#128274;</span><h4>Safety</h4></div>
+                <div class="guide-step-list">
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>New user:</strong> waits for admin approval.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>PIN:</strong> 3 wrong tries lock the account until admin helps.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Delete:</strong> goes to recycle first; trail remains.</span></div>
+                </div>
+              </article>
+
+              <article class="guide-card">
+                <div class="guide-card-head"><span class="guide-card-icon">&#128197;</span><h4>Filters / Export</h4></div>
+                <div class="guide-step-list">
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Users:</strong> filter own timesheet by date, month, work type, or search.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Admin:</strong> choose date range/employee, then load older records only when needed.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Export/print:</strong> use after confirming the visible list is correct.</span></div>
+                </div>
+              </article>
+
+              <article class="guide-card">
+                <div class="guide-card-head"><span class="guide-card-icon">&#9881;&#65039;</span><h4>${isAdminView ? "Admin Quick Map" : "What Admin Can Do"}</h4></div>
+                <div class="guide-step-list">
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Approvals:</strong> approve users, unlock users, reset PIN.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Timesheets:</strong> review by month/range/employee, open full entry, open trail.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Tools:</strong> clients, logs, recycle bin, storage monitor.</span></div>
+                </div>
+              </article>
+
+              <article class="guide-card wide">
+                <div class="guide-card-head"><span class="guide-card-icon">&#128218;</span><h4>My Hub / CA Hub</h4></div>
+                <p>${isArticleView ? "Private space for study and work memory. Only you can see it." : "Appears for CA Article accounts. It is private to that user."}</p>
+                <div class="guide-step-list">
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span>Study hours, case library, knowledge bank, notes, and productivity stay separate from admin timesheet review.</span></div>
                 </div>
               </article>
             </section>
@@ -14846,6 +15451,20 @@ tbody tr { transition: background .14s ease; }
 
       document.addEventListener("mousedown", (e) => {
         if (e.target.closest(".suggestion-list")) e.preventDefault();
+      });
+      document.addEventListener("dblclick", async (event) => {
+        if (event.target.closest("button, input, select, textarea, a, label")) return;
+        const row = event.target.closest(".timesheet-row[data-collection][data-id]");
+        if (!row) return;
+        const collectionName = row.dataset.collection || "";
+        const id = row.dataset.id || "";
+        if (!collectionName || !id) return;
+        const record = findCachedRecord(collectionName, id) || (await fetchRecord(collectionName, id));
+        if (!record) {
+          toast("Record not found.", "error");
+          return;
+        }
+        openEntryDetailModal(record, Boolean(row.closest("#page-dashboard")));
       });
       document.addEventListener("click", async (event) => {
         const pageButton = event.target.closest("[data-page]");
