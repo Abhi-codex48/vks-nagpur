@@ -2138,23 +2138,22 @@ button.summary-card.clickable {
   color: rgba(249, 225, 214, 0.74);
 }
 
-.screen.app-screen #refresh-tab {
+.screen.app-screen .refresh-wrap {
   display: grid;
-  justify-items: start;
-  gap: 2px;
-  min-height: 44px;
-  padding-block: 8px;
+  gap: 3px;
+  justify-items: end;
 }
 
-.screen.app-screen .refresh-btn-label {
-  line-height: 1.1;
+.screen.app-screen .refresh-wrap[hidden] {
+  display: none;
 }
 
 .screen.app-screen .refresh-btn-meta {
   font-size: 0.66rem;
-  line-height: 1.1;
+  line-height: 1;
   color: rgba(255, 233, 224, 0.78);
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .screen.app-screen .tabbar,
@@ -3329,6 +3328,158 @@ button.summary-card.clickable {
   display: grid;
   gap: 4px;
 }
+
+/* Timesheet tables: compact, readable rows on desktop and mobile.
+   Long clients/remarks are capped so one record cannot stretch the full table. */
+.screen.app-screen #page-my .table-shell,
+.screen.app-screen #page-dashboard .table-shell {
+  overflow-x: auto;
+  overflow-y: visible;
+}
+
+.screen.app-screen #page-my table,
+.screen.app-screen #page-dashboard table {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.screen.app-screen #page-my table {
+  min-width: 1080px;
+}
+
+.screen.app-screen #page-dashboard table {
+  min-width: 1260px;
+}
+
+.screen.app-screen #page-my tbody tr,
+.screen.app-screen #page-dashboard tbody tr {
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+.screen.app-screen #page-my th,
+.screen.app-screen #page-my td,
+.screen.app-screen #page-dashboard th,
+.screen.app-screen #page-dashboard td {
+  padding: 8px 10px;
+  vertical-align: top;
+  line-height: 1.35;
+}
+
+.screen.app-screen #page-my td,
+.screen.app-screen #page-dashboard td {
+  background-clip: padding-box;
+}
+
+.screen.app-screen #page-my .person,
+.screen.app-screen #page-dashboard .person {
+  gap: 2px;
+}
+
+.screen.app-screen #page-my .person strong,
+.screen.app-screen #page-dashboard .person strong,
+.screen.app-screen #page-my .person .subline,
+.screen.app-screen #page-dashboard .person .subline {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.screen.app-screen #page-my td:nth-child(4),
+.screen.app-screen #page-dashboard td:nth-child(5) {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.screen.app-screen #page-my .chip-row,
+.screen.app-screen #page-dashboard .chip-row {
+  gap: 5px;
+  align-items: flex-start;
+}
+
+.screen.app-screen #page-my .chip-row .chip,
+.screen.app-screen #page-dashboard .chip-row .chip,
+.screen.app-screen #page-my .type-pill,
+.screen.app-screen #page-dashboard .type-pill {
+  padding: 5px 8px;
+  border-radius: 6px;
+  line-height: 1.15;
+}
+
+.screen.app-screen #page-my .note-block,
+.screen.app-screen #page-dashboard .note-block {
+  margin: 0;
+  padding: 6px 8px;
+  border-radius: 6px;
+  line-height: 1.35;
+  max-height: 5.4em;
+  overflow: auto;
+}
+
+.screen.app-screen #page-my .actions,
+.screen.app-screen #page-dashboard .actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px;
+  align-items: stretch;
+}
+
+.screen.app-screen #page-my .actions .btn,
+.screen.app-screen #page-dashboard .actions .btn {
+  width: 100%;
+  min-width: 0;
+  min-height: 28px;
+  padding: 0 7px;
+  font-size: 0.74rem;
+  white-space: nowrap;
+}
+
+.screen.app-screen #page-my .actions .btn-wa {
+  padding: 0;
+}
+
+.screen.app-screen #page-my th:nth-child(1),
+.screen.app-screen #page-my td:nth-child(1) { width: 44px; }
+.screen.app-screen #page-my th:nth-child(2),
+.screen.app-screen #page-my td:nth-child(2) { width: 108px; }
+.screen.app-screen #page-my th:nth-child(3),
+.screen.app-screen #page-my td:nth-child(3) { width: 88px; }
+.screen.app-screen #page-my th:nth-child(4),
+.screen.app-screen #page-my td:nth-child(4) { width: 230px; }
+.screen.app-screen #page-my th:nth-child(5),
+.screen.app-screen #page-my td:nth-child(5) { width: 150px; }
+.screen.app-screen #page-my th:nth-child(6),
+.screen.app-screen #page-my td:nth-child(6) { width: 88px; }
+.screen.app-screen #page-my th:nth-child(7),
+.screen.app-screen #page-my td:nth-child(7) { width: 62px; }
+.screen.app-screen #page-my th:nth-child(8),
+.screen.app-screen #page-my td:nth-child(8) { width: 250px; }
+.screen.app-screen #page-my th:nth-child(9),
+.screen.app-screen #page-my td:nth-child(9) { width: 170px; }
+
+.screen.app-screen #page-dashboard th:nth-child(1),
+.screen.app-screen #page-dashboard td:nth-child(1) { width: 108px; }
+.screen.app-screen #page-dashboard th:nth-child(2),
+.screen.app-screen #page-dashboard td:nth-child(2) { width: 90px; }
+.screen.app-screen #page-dashboard th:nth-child(3),
+.screen.app-screen #page-dashboard td:nth-child(3) { width: 220px; }
+.screen.app-screen #page-dashboard th:nth-child(4),
+.screen.app-screen #page-dashboard td:nth-child(4) { width: 105px; }
+.screen.app-screen #page-dashboard th:nth-child(5),
+.screen.app-screen #page-dashboard td:nth-child(5) { width: 260px; }
+.screen.app-screen #page-dashboard th:nth-child(6),
+.screen.app-screen #page-dashboard td:nth-child(6) { width: 150px; }
+.screen.app-screen #page-dashboard th:nth-child(7),
+.screen.app-screen #page-dashboard td:nth-child(7) { width: 90px; }
+.screen.app-screen #page-dashboard th:nth-child(8),
+.screen.app-screen #page-dashboard td:nth-child(8) { width: 62px; }
+.screen.app-screen #page-dashboard th:nth-child(9),
+.screen.app-screen #page-dashboard td:nth-child(9) { width: 240px; }
+.screen.app-screen #page-dashboard th:nth-child(10),
+.screen.app-screen #page-dashboard td:nth-child(10) { width: 140px; }
 
 .subline {
   font-size: 0.82rem;
@@ -4566,6 +4717,10 @@ tbody tr { transition: background .14s ease; }
    Hide chrome, force light backgrounds, page-break-friendly tables.
    ============================================================ */
 @media print {
+  @page {
+    size: A4 landscape;
+    margin: 8mm;
+  }
   .app-header, .tabbar, .subtabbar, .toolbar,
   .panel-actions, .toolbar-actions, .button-row,
   .bulk-bar, .filter-summary, .modal-root, .toast-root,
@@ -4579,7 +4734,7 @@ tbody tr { transition: background .14s ease; }
     color: #000 !important;
     overflow: visible !important;
   }
-  body { font-family: "DM Sans", "Segoe UI", sans-serif; font-size: 11pt; }
+  body { font-family: "DM Sans", "Segoe UI", sans-serif; font-size: 8pt; }
   .app-main { width: 100% !important; margin: 0 !important; padding: 0 !important; }
   .panel, .table-shell, .hub-card, .stat-card, .summary-card,
   .approval-card, .log-card, .recycle-card {
@@ -4589,19 +4744,22 @@ tbody tr { transition: background .14s ease; }
     background: #fff !important;
     page-break-inside: avoid;
   }
-  .panel { padding: 6pt 0; border: 0 !important; }
-  .panel-head { margin-bottom: 6pt; }
-  .panel-head h3 { font-size: 14pt; }
+  .panel { padding: 3pt 0; border: 0 !important; }
+  .panel-head { margin-bottom: 4pt; }
+  .panel-head h3 { font-size: 11pt; }
   .panel-kicker { color: #555 !important; font-size: 8pt; }
   .table-shell { overflow: visible !important; }
-  table { width: 100% !important; min-width: 0 !important; border-collapse: collapse; }
+  table { width: 100% !important; min-width: 0 !important; table-layout: fixed !important; border-collapse: collapse; }
   th, td {
-    padding: 4pt 6pt !important;
+    padding: 2.5pt 3.5pt !important;
     border: 1px solid #999 !important;
     background: #fff !important;
     color: #000 !important;
-    font-size: 10pt !important;
+    font-size: 7.2pt !important;
+    line-height: 1.2 !important;
     vertical-align: top !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
   }
   thead th {
     background: #f3f3f3 !important;
@@ -4609,8 +4767,32 @@ tbody tr { transition: background .14s ease; }
     font-weight: 700 !important;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    font-size: 8pt !important;
+    font-size: 6.6pt !important;
   }
+  #page-my th:nth-child(1),
+  #page-my td:nth-child(1),
+  #page-my th:nth-child(9),
+  #page-my td:nth-child(9),
+  #page-dashboard th:nth-child(10),
+  #page-dashboard td:nth-child(10) {
+    display: none !important;
+  }
+  #page-my th:nth-child(2), #page-my td:nth-child(2),
+  #page-dashboard th:nth-child(1), #page-dashboard td:nth-child(1) { width: 11% !important; }
+  #page-my th:nth-child(3), #page-my td:nth-child(3),
+  #page-dashboard th:nth-child(2), #page-dashboard td:nth-child(2) { width: 8% !important; }
+  #page-my th:nth-child(4), #page-my td:nth-child(4),
+  #page-dashboard th:nth-child(3), #page-dashboard td:nth-child(3) { width: 17% !important; }
+  #page-dashboard th:nth-child(4), #page-dashboard td:nth-child(4) { width: 9% !important; }
+  #page-my th:nth-child(5), #page-my td:nth-child(5),
+  #page-dashboard th:nth-child(6), #page-dashboard td:nth-child(6) { width: 13% !important; }
+  #page-my th:nth-child(6), #page-my td:nth-child(6),
+  #page-dashboard th:nth-child(7), #page-dashboard td:nth-child(7) { width: 8% !important; }
+  #page-my th:nth-child(7), #page-my td:nth-child(7),
+  #page-dashboard th:nth-child(8), #page-dashboard td:nth-child(8) { width: 5% !important; }
+  #page-my th:nth-child(8), #page-my td:nth-child(8),
+  #page-dashboard th:nth-child(9), #page-dashboard td:nth-child(9) { width: 25% !important; }
+  #page-dashboard th:nth-child(5), #page-dashboard td:nth-child(5) { width: 19% !important; }
   tbody tr { page-break-inside: avoid; }
   tbody tr:nth-child(even) td,
   tbody tr:hover td { background: #fff !important; }
@@ -4619,6 +4801,22 @@ tbody tr { transition: background .14s ease; }
     border: 1px solid #999 !important;
     color: #000 !important;
     box-shadow: none !important;
+  }
+  .note-block {
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    line-height: 1.2 !important;
+  }
+  .person {
+    gap: 1pt !important;
+  }
+  .subline {
+    font-size: 6.5pt !important;
+    line-height: 1.15 !important;
   }
   .summary-grid > *, .stat-grid > *,
   .log-card-grid > *, .approval-card-grid > * { page-break-inside: avoid; }
@@ -5170,10 +5368,12 @@ tbody tr { transition: background .14s ease; }
           <span class="notify-bell-icon" aria-hidden="true">&#128276;</span>
           <span id="header-notify-count" class="notify-bell-count" hidden>0</span>
         </button>
-        <button id="refresh-tab" class="btn btn-outline small" type="button">
-          <span class="refresh-btn-label">Refresh</span>
+        <div id="refresh-wrap" class="refresh-wrap" hidden>
+          <button id="refresh-tab" class="btn btn-outline small" type="button">
+            <span class="refresh-btn-label">Refresh</span>
+          </button>
           <span id="refresh-tab-meta" class="refresh-btn-meta">Last sync: -</span>
-        </button>
+        </div>
         <button id="open-guide" class="btn btn-outline small" type="button">Guide</button>
         <button id="logout-button" class="btn btn-ghost small" type="button">Log out</button>
       </div>
@@ -5993,7 +6193,7 @@ tbody tr { transition: background .14s ease; }
     const RECYCLE_RETENTION_MS = 7 * 24 * 60 * 60 * 1000;
     const MY_ENTRIES_CACHE_MS = 5 * 60 * 1000;
     const ADMIN_ENTRIES_CACHE_MS = 2 * 60 * 1000;
-    const AMBIENT_REFRESH_MS = 5 * 60 * 1000;
+    const AMBIENT_REFRESH_MS = 3 * 60 * 1000;
     const ADMIN_COLLECTION_READ_LIMIT = 500;
     const ADMIN_LOG_READ_LIMIT = 300;
     const ADMIN_RECYCLE_READ_LIMIT = 300;
@@ -6340,6 +6540,22 @@ tbody tr { transition: background .14s ease; }
       ].join("|");
     }
 
+    function allowedPageIds() {
+      if (!state.profile) return [];
+      return isAdmin()
+        ? ["page-dashboard", "page-approvals", "page-employees", "page-clients", "page-logs", "page-storage", ...(window.location.hash === "#setup" ? ["page-setup"] : [])]
+        : ["page-log", "page-my", ...(isArticle() ? ["page-cahub"] : [])];
+    }
+
+    function defaultPageId() {
+      return isAdmin() ? "page-dashboard" : "page-log";
+    }
+
+    function normalizePageForRole(pageId) {
+      const allowed = allowedPageIds();
+      return allowed.includes(pageId) ? pageId : defaultPageId();
+    }
+
     function syncBrowserHistory(mode = "push") {
       if (!state.historyReady || state.applyingHistory || !window.history?.replaceState) return;
       const route = currentRouteSnapshot();
@@ -6375,10 +6591,9 @@ tbody tr { transition: background .14s ease; }
       try {
         switchScreen(targetScreen, { historyMode: "replace" });
         if (targetScreen === "screen-app") {
-          if (route.page) {
-            setActivePage(route.page, { historyMode: "replace" });
-          }
-          if (route.page === "page-cahub") {
+          const targetPage = normalizePageForRole(route.page || state.currentPage || defaultPageId());
+          setActivePage(targetPage, { historyMode: "replace" });
+          if (targetPage === "page-cahub") {
             setHubTab(route.hub || "dashboard", { historyMode: "replace" });
           }
           if (!route.modalOpen) {
@@ -6543,6 +6758,8 @@ tbody tr { transition: background .14s ease; }
       byId("header-email").textContent = profileEmail();
       byId("header-role").textContent = roleLabel();
       byId("header-avatar").textContent = String(profileName()).trim().charAt(0).toUpperCase() || "V";
+      const refreshWrap = byId("refresh-wrap");
+      if (refreshWrap) refreshWrap.hidden = !isAdmin();
       renderHeaderNotificationBell();
       byId("single-entry-form")?.reset();
       state.entryDraftTasks = [];
@@ -6727,11 +6944,12 @@ tbody tr { transition: background .14s ease; }
     }
 
     function setActivePage(id, options = {}) {
-      state.currentPage = id;
+      const targetId = normalizePageForRole(id || defaultPageId());
+      state.currentPage = targetId;
       all(".page").forEach((page) => page.classList.remove("active"));
       all("#tabbar button").forEach((button) => button.classList.remove("active"));
-      const page = byId(id);
-      const tab = document.querySelector(`#tabbar button[data-page="${id}"]`);
+      const page = byId(targetId);
+      const tab = document.querySelector(`#tabbar button[data-page="${targetId}"]`);
       if (page) page.classList.add("active");
       if (tab) tab.classList.add("active");
       const historyMode = options.historyMode ?? "push";
@@ -8548,21 +8766,31 @@ tbody tr { transition: background .14s ease; }
     function openWhatsAppShare(record) {
       const name = profileName();
       const email = profileEmail();
-      const dateLabel = (() => {
+      const formatShareDate = (value) => {
         try {
-          const dates = recordDates(record);
-          const first = dates && dates.length ? dates[0] : record.date || "";
-          if (!first) return displayDate(record);
-          const d = new Date(first + "T00:00:00");
-          if (Number.isNaN(d.getTime())) return displayDate(record);
+          if (!value) return "-";
+          const d = new Date(`${value}T00:00:00`);
+          if (Number.isNaN(d.getTime())) return value;
           return d.toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "short", year: "numeric" });
         } catch (_e) {
-          return displayDate(record);
+          return value || "-";
         }
-      })();
+      };
+      const dates = recordDates(record);
+      const dateLabel = dates.length > 1
+        ? `${formatShareDate(dates[0])} to ${formatShareDate(dates[dates.length - 1])}`
+        : formatShareDate(dates[0] || record.date || "");
+      const reportingOn = formatShareDate(todayStr());
       const client = clientLabel(record) || "-";
-      const tasks = (normalizeTaskList(record) || []).join(", ") || "-";
       const remarksText = String(remarksTextForRecord(record) || "").trim() || "-";
+      const remarks = uniq(
+        remarksText
+          .split(/\s*(?:\||\n|;)\s*/g)
+          .map((item) => item.trim())
+          .filter(Boolean)
+      );
+      const remarksLines = (remarks.length ? remarks : ["-"]).map((item) => `- ${item}`);
+      const tasks = "";
 
       const lines = [
         "VKS Timesheet — Daily Update",
@@ -8579,7 +8807,24 @@ tbody tr { transition: background .14s ease; }
         "— Shared via VKS Timesheet portal"
       ].filter(Boolean);
 
-      const message = lines.join("\n");
+      const shareLines = [
+        "VKS Timesheet - Daily Update",
+        "",
+        `Name: ${name || "-"}`,
+        email && email !== name ? `Email: ${email}` : null,
+        "",
+        `Client name: ${client}`,
+        "",
+        `Reporting for date: ${dateLabel}`,
+        `Reporting on date: ${reportingOn}`,
+        "",
+        "Remarks:",
+        ...remarksLines,
+        "",
+        "Shared via portal"
+      ].filter(Boolean);
+
+      const message = shareLines.join("\n");
       const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
       const win = window.open(url, "_blank", "noopener,noreferrer");
       if (!win) {
@@ -9070,7 +9315,7 @@ tbody tr { transition: background .14s ease; }
       const host = byId("my-cache-note");
       if (!host) return;
       host.textContent = state.myEntriesLoaded
-        ? `Your entries are saved immediately. For smoother loading, this table is showing the cached version. ${cacheNextText(state.myEntriesLoadedAt, MY_ENTRIES_CACHE_MS)} Use Refresh for an immediate update.`
+        ? `Your entries are saved immediately. For smoother loading, this table is showing the cached version. ${cacheNextText(state.myEntriesLoadedAt, MY_ENTRIES_CACHE_MS)}`
         : "Your entries are saved immediately. Loading your timesheet now.";
     }
 
@@ -11083,7 +11328,7 @@ tbody tr { transition: background .14s ease; }
         try {
           await refreshCurrentPage();
         } catch (_refreshError) {
-          toast("Entry was submitted, but the page could not refresh. Use Refresh once.", "warn");
+          toast("Entry was submitted. The list will update automatically shortly.", "warn");
         }
       } catch (_error) {
         if (!submitted) {
@@ -12435,7 +12680,7 @@ tbody tr { transition: background .14s ease; }
           try {
             await refreshCurrentPage();
           } catch (_refreshError) {
-            toast("Bulk entry was submitted, but the page could not refresh. Use Refresh once.", "warn");
+            toast("Bulk entry was submitted. The list will update automatically shortly.", "warn");
           }
         } catch (_error) {
           if (!submitted) {
@@ -12931,7 +13176,7 @@ tbody tr { transition: background .14s ease; }
           try {
             await refreshCurrentPage();
           } catch (_refreshError) {
-            toast("Group entry was submitted, but the page could not refresh. Use Refresh once.", "warn");
+            toast("Group entry was submitted. The list will update automatically shortly.", "warn");
           }
         } catch (_error) {
           if (!submitted) {
@@ -13983,7 +14228,7 @@ tbody tr { transition: background .14s ease; }
               <div class="guide-step-list">
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Visible here:</strong> your single entries, your bulk entries, and your visible group entries.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Saved first:</strong> when you submit, the entry is saved immediately. The table may keep a short smooth-view copy so the page opens quickly.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Latest view:</strong> the note above the table shows when it will check again. Use Refresh if you want the latest view right now.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Latest view:</strong> the note above the table shows when it will check again. The portal checks again about every 3 minutes.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Calendar:</strong> use the Calendar button in My Timesheet to review your own day-wise reporting history month by month.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Edit rule:</strong> you can edit your own single/bulk entries. In group entries, the reporter edits shared fields and members edit only their own section.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Delete rule:</strong> delete moves the record to recycle first, and trails stay recorded.</span></div>
@@ -14028,7 +14273,7 @@ tbody tr { transition: background .14s ease; }
                 <div class="guide-step-list">
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Users:</strong> use the bell for group reminders and items waiting on you instead of looking for a separate notification card on the page.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Admin:</strong> check pending registrations, locked accounts, and recycle activity.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Refresh:</strong> use Refresh when you want the screen checked right away. When the website tab is not in use, it stops checking in the background.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>${isAdminView ? "Refresh:" : "Screen updates:"}</strong> ${isAdminView ? "admin can use Refresh when an immediate check is needed. Otherwise the portal checks again about every 3 minutes." : "normal user screens check again automatically about every 3 minutes."}</span></div>
                 </div>
               </article>
 
@@ -14984,19 +15229,11 @@ tbody tr { transition: background .14s ease; }
     bindStaticEvents();
     initBrowserHistory();
     document.addEventListener("visibilitychange", () => {
-      if (document.hidden) {
-        stopLiveRefresh();
-        stopAdminUserStatusWatch();
-        return;
-      }
-      if (state.user && state.profile && state.currentScreen === "screen-app") startLiveRefresh();
-      startAdminUserStatusWatch();
-      refreshAmbientState().catch(() => {});
+      if (document.hidden) stopAdminUserStatusWatch();
+      else startAdminUserStatusWatch();
     });
     window.addEventListener("focus", () => {
-      if (state.user && state.profile && state.currentScreen === "screen-app" && !state.liveRefreshTimer) startLiveRefresh();
       startAdminUserStatusWatch();
-      refreshAmbientState().catch(() => {});
     });
 
     getRedirectResult(auth).catch(() => {});
