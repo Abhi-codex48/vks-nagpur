@@ -3217,32 +3217,32 @@ button.summary-card.clickable {
   outline-offset: -2px;
 }
 
-.screen.app-screen .entry-detail-view {
+/* Entry-detail components live INSIDE the modal-card which mounts in
+   #modal-root at body root, not inside #screen-app. Selectors are unscoped
+   so they actually apply. */
+.entry-detail-view {
   display: grid;
   gap: var(--s5);
 }
 
-.screen.app-screen .entry-detail-grid {
+.entry-detail-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: var(--s3);
 }
 
-.screen.app-screen .entry-detail-card {
+.entry-detail-card {
   padding: var(--s4);
   border-radius: var(--radius-sm);
   border: 1px solid var(--line);
-  background:
-    linear-gradient(180deg, var(--white) 0%, var(--paper) 100%);
+  background: linear-gradient(180deg, var(--white) 0%, var(--paper) 100%);
   min-width: 0;
   box-shadow: var(--shadow-sm);
   transition: border-color .18s ease, box-shadow .18s ease;
 }
-.screen.app-screen .entry-detail-card:hover {
-  border-color: rgba(190, 142, 27, 0.32);
-}
+.entry-detail-card:hover { border-color: rgba(190, 142, 27, 0.32); }
 
-.screen.app-screen .entry-detail-card strong {
+.entry-detail-card strong {
   display: block;
   margin: 0 0 6px;
   font-size: 0.68rem;
@@ -3253,8 +3253,7 @@ button.summary-card.clickable {
   line-height: 1.2;
 }
 
-/* Card body text (the value that follows the label) */
-.screen.app-screen .entry-detail-card > div:not(.subline):not(.entry-detail-note):not(.day-hour-list) {
+.entry-detail-card > div:not(.subline):not(.entry-detail-note):not(.day-hour-list) {
   font-family: var(--font-sans);
   font-size: 0.95rem;
   font-weight: 600;
@@ -3262,7 +3261,7 @@ button.summary-card.clickable {
   line-height: 1.4;
   word-break: break-word;
 }
-.screen.app-screen .entry-detail-card .subline {
+.entry-detail-card .subline {
   font-family: var(--font-mono);
   font-feature-settings: "tnum";
   font-size: 0.82rem;
@@ -3270,11 +3269,8 @@ button.summary-card.clickable {
   margin-top: 2px;
 }
 
-.screen.app-screen .entry-detail-section {
-  display: grid;
-  gap: var(--s3);
-}
-.screen.app-screen .entry-detail-section h4 {
+.entry-detail-section { display: grid; gap: var(--s3); }
+.entry-detail-section h4 {
   display: block;
   margin: 0;
   padding-bottom: 8px;
@@ -3288,7 +3284,7 @@ button.summary-card.clickable {
   line-height: 1.25;
 }
 
-.screen.app-screen .entry-detail-note {
+.entry-detail-note {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   word-break: break-word;
@@ -3303,12 +3299,37 @@ button.summary-card.clickable {
   font-family: var(--font-sans);
 }
 
+/* Day-hour rows inside the entry detail (date · hours · pill) */
+.day-hour-list { display: grid; gap: 6px; margin-top: 6px; }
+.day-hour-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--paper-strong);
+  border: 1px solid var(--line-soft);
+  font-size: 0.88rem;
+}
+.day-hour-row strong {
+  display: inline;
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum";
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0;
+  text-transform: none;
+  margin: 0;
+}
+
 @media (max-width: 640px) {
-  .screen.app-screen .entry-detail-view { gap: var(--s4); }
-  .screen.app-screen .entry-detail-grid { grid-template-columns: 1fr; gap: var(--s2); }
-  .screen.app-screen .entry-detail-card { padding: var(--s3); }
-  .screen.app-screen .entry-detail-section h4 { font-size: 0.95rem; }
-  .screen.app-screen .entry-detail-note { font-size: 0.86rem; padding: 9px 11px; }
+  .entry-detail-view { gap: var(--s4); }
+  .entry-detail-grid { grid-template-columns: 1fr; gap: var(--s2); }
+  .entry-detail-card { padding: var(--s3); }
+  .entry-detail-section h4 { font-size: 0.95rem; }
+  .entry-detail-note { font-size: 0.86rem; padding: 9px 11px; }
 }
 
 .screen.app-screen .day-hour-list {
@@ -5021,19 +5042,31 @@ tbody tr { transition: background .14s ease; }
     background: #fff !important;
     color: #000 !important;
     overflow: visible !important;
-    width: 100% !important;
+    width: auto !important;
     max-width: 100% !important;
+    height: auto !important;
     margin: 0 !important;
     padding: 0 !important;
   }
   body { font-family: "DM Sans", "Segoe UI", sans-serif; font-size: 8pt; }
   .app-main { width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
-  /* Universal page-fit safety: nothing can exceed printable width */
-  * {
+  /* Page-fit safety on block-level containers ONLY — the previous universal
+     '* { max-width:100% }' was causing print preview to refuse to scroll in
+     some browsers because every nested inline element was being constrained. */
+  .page, .panel, .table-shell, table,
+  .panel-head, .print-header,
+  .stat-card, .summary-card, .approval-card, .log-card, .recycle-card,
+  .hub-card, .list-card, .calendar-shell, .calendar-head, .calendar-grid,
+  .entry-detail-view, .entry-detail-grid, .entry-detail-card,
+  .entry-detail-section, .entry-detail-note, .note-block, .remarks-stack {
     max-width: 100% !important;
     overflow-wrap: anywhere !important;
     word-break: break-word !important;
-    hyphens: auto !important;
+  }
+  /* Anything that could be a fixed/sticky overlay during print: kill it */
+  .modal-root, .toast-root, .busy-overlay {
+    display: none !important;
+    position: static !important;
   }
   .panel, .table-shell, .hub-card, .stat-card, .summary-card,
   .approval-card, .log-card, .recycle-card {
@@ -6362,6 +6395,170 @@ tbody tr { transition: background .14s ease; }
 }
 
 /* =====================================================================
+   REPORTING CHECK PAGE — overflow safety + mobile responsiveness.
+   The table has 7 columns and the missed-dates cell can hold many chips,
+   so we constrain widths and let the whole table-shell scroll on narrow
+   screens. Toolbar wraps. Summary cards stack. Nothing escapes.
+   ===================================================================== */
+#page-reporting .table-shell { min-width: 0; }
+#page-reporting table { table-layout: auto; }
+#page-reporting th, #page-reporting td {
+  vertical-align: top;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+/* Cap the missed-dates cell so it doesn't push the whole table wider */
+#page-reporting #reporting-tbody td:nth-child(4) {
+  max-width: 380px;
+}
+#page-reporting #reporting-tbody td:nth-child(4) .chip-row {
+  max-height: 110px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold-soft) transparent;
+}
+#page-reporting #reporting-tbody td:nth-child(4) .chip-row::-webkit-scrollbar { width: 4px; }
+#page-reporting #reporting-tbody td:nth-child(4) .chip-row::-webkit-scrollbar-thumb {
+  background: var(--gold-soft); border-radius: 4px;
+}
+#page-reporting #reporting-tbody td > div { word-break: break-word; }
+#page-reporting #reporting-tbody .chip {
+  white-space: nowrap;
+  background: linear-gradient(180deg, #fff5d8, #f8e8b8);
+  border-color: rgba(190, 142, 27, 0.32);
+  color: #5a3d0a;
+}
+
+/* Toolbar fields shrink instead of overflowing */
+#page-reporting .toolbar > .field {
+  min-width: 0;
+  flex: 1 1 160px;
+}
+#page-reporting .toolbar > .toolbar-actions {
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+/* Summary stat cards: more breathing room and never wider than parent */
+#page-reporting #reporting-summary {
+  margin-bottom: var(--s4);
+  margin-top: var(--s4);
+}
+
+@media (max-width: 760px) {
+  #page-reporting .panel-head { gap: 10px; }
+  #page-reporting .panel-actions { width: 100%; }
+  #page-reporting .panel-actions .btn { flex: 1 1 auto; }
+  #page-reporting .toolbar > .toolbar-actions { width: 100%; margin-left: 0; }
+  #page-reporting .toolbar > .toolbar-actions .btn { flex: 1 1 auto; }
+  #page-reporting #reporting-tbody td:nth-child(4) { max-width: 240px; }
+  #page-reporting #reporting-tbody td:nth-child(4) .chip-row { max-height: 90px; }
+  #page-reporting #reporting-summary .stat-card { padding: var(--s3); }
+  #page-reporting #reporting-summary .stat-card strong { font-size: 1.4rem; }
+}
+
+@media (max-width: 480px) {
+  #page-reporting .toolbar > .field { flex: 1 1 100%; }
+  #page-reporting #reporting-tbody td { font-size: 0.86rem; }
+}
+
+/* =====================================================================
+   CLICKABLE CALENDAR DAYS — visual cue + chooser list for multi-entry days
+   ===================================================================== */
+.calendar-day.is-clickable { cursor: pointer; }
+.calendar-day.is-clickable:hover {
+  transform: translateY(-1px);
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(190, 142, 27, 0.18), var(--shadow-sm);
+}
+.calendar-day.is-clickable:focus-visible {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(190, 142, 27, 0.32);
+}
+
+.entry-day-pick-list {
+  display: grid; gap: var(--s2);
+}
+.entry-day-pick {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  text-align: left;
+  padding: var(--s4);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, var(--white), var(--paper));
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform .14s ease, border-color .18s ease, box-shadow .18s ease;
+  box-shadow: var(--shadow-sm);
+}
+.entry-day-pick:hover {
+  transform: translateY(-1px);
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(190, 142, 27, 0.10), var(--shadow-sm);
+}
+.entry-day-pick:focus-visible { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(190, 142, 27, 0.28); }
+.entry-day-pick-head {
+  display: flex; align-items: center; gap: var(--s2);
+  flex-wrap: wrap;
+}
+.entry-day-pick-head strong {
+  flex: 1; min-width: 0;
+  font-family: var(--font-sans); font-weight: 700; font-size: 0.98rem;
+  color: var(--ink); letter-spacing: -0.005em;
+  word-break: break-word;
+}
+.entry-day-pick-hours {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum";
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+.entry-day-pick-meta {
+  font-size: 0.82rem;
+  color: var(--muted);
+  word-break: break-word;
+}
+@media (max-width: 480px) {
+  .entry-day-pick { padding: var(--s3); }
+  .entry-day-pick-head { gap: 6px; }
+}
+
+/* =====================================================================
+   WORK-TYPE MANDATORY — visual cue + soft pulse when empty.
+   Submit-time validation already exists in JS (single/bulk/group).
+   This makes it impossible for users to miss the requirement.
+   ===================================================================== */
+.logtime-task-field > span::after {
+  content: " *";
+  color: var(--rust);
+  font-weight: 800;
+  font-size: 1.1em;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.logtime-task-field:has(#entry-task-chips:empty) {
+  position: relative;
+}
+.logtime-task-field:has(#entry-task-chips:empty)::after {
+  content: "Required \2014 pick at least one work type";
+  display: block;
+  margin-top: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--rust);
+  opacity: 0.78;
+}
+.logtime-task-field:has(#entry-task-chips:empty) select#entry-task-picker {
+  border-color: rgba(183, 86, 43, 0.45);
+  box-shadow: 0 0 0 3px rgba(183, 86, 43, 0.08);
+}
+
+/* =====================================================================
    "DISCOVER ME" CALENDAR BUTTON — promotes #my-calendar from a quiet
    outline button into a distinctive gold-gradient feature button with
    a calendar emoji, "NEW" badge, and gentle pulse so users actually
@@ -7239,6 +7436,89 @@ tbody tr { transition: background .14s ease; }
           </div>
           <div id="storage-progress-card" class="storage-progress"></div>
           <div id="storage-stats" class="stat-grid"></div>
+        </div>
+      </section>
+
+      <section id="page-reporting" class="page">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-kicker">Admin</div>
+              <h3>Reporting check</h3>
+            </div>
+            <div class="panel-actions">
+              <button id="reporting-export-excel" class="btn btn-outline" type="button">Export Excel</button>
+              <button id="reporting-print" class="btn btn-outline" type="button">Print</button>
+            </div>
+          </div>
+
+          <p class="section-note">
+            Find out who didn't submit timesheet entries for the selected dates.
+            Today is never flagged as missed (the day is still in progress).
+            Sundays are skipped automatically. Saturday counts as a working day.
+          </p>
+
+          <div id="reporting-print-header" class="print-header"></div>
+
+          <div class="date-presets">
+            <span class="date-preset-label">Quick range</span>
+            <button class="date-preset" type="button" data-preset="yesterday" data-target="reporting">Yesterday only</button>
+            <button class="date-preset" type="button" data-preset="last-3" data-target="reporting">Last 3 days</button>
+            <button class="date-preset" type="button" data-preset="this-week" data-target="reporting">This week</button>
+            <button class="date-preset" type="button" data-preset="last-week" data-target="reporting">Last week</button>
+            <button class="date-preset" type="button" data-preset="this-month" data-target="reporting">This month</button>
+            <button class="date-preset" type="button" data-preset="last-month" data-target="reporting">Last month</button>
+          </div>
+
+          <div class="toolbar">
+            <label class="field compact">
+              <span>From</span>
+              <input id="reporting-from" type="date">
+            </label>
+            <label class="field compact">
+              <span>To</span>
+              <input id="reporting-to" type="date">
+            </label>
+            <label class="field compact grow">
+              <span>Employee / Article</span>
+              <select id="reporting-employee">
+                <option value="">All employees / articles</option>
+              </select>
+            </label>
+            <label class="field compact">
+              <span>Show</span>
+              <select id="reporting-filter-mode">
+                <option value="missed" selected>Only missed reports</option>
+                <option value="reported">Only reported</option>
+                <option value="all">All employees</option>
+              </select>
+            </label>
+            <div class="toolbar-actions">
+              <button id="reporting-refresh" class="btn btn-primary" type="button">Check now</button>
+              <button id="reporting-copy-nudges" class="btn btn-outline" type="button">Copy WhatsApp nudges</button>
+            </div>
+          </div>
+
+          <div id="reporting-summary" class="stat-grid"></div>
+
+          <div id="reporting-table-shell" class="table-shell">
+            <table>
+              <thead>
+                <tr>
+                  <th>Employee / Article</th>
+                  <th>Status</th>
+                  <th>Latest report</th>
+                  <th>Missed dates (in range)</th>
+                  <th class="numeric">Days missed</th>
+                  <th class="numeric">Days reported</th>
+                  <th>Nudge</th>
+                </tr>
+              </thead>
+              <tbody id="reporting-tbody">
+                <tr><td colspan="7" class="empty-state" style="text-align:center;padding:24px;">Pick a range and click <strong>Check now</strong>.</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
@@ -8332,6 +8612,7 @@ tbody tr { transition: background .14s ease; }
     function pageIconHtml(pageId) {
       const icons = {
         "page-dashboard": "&#128197;",
+        "page-reporting": "&#128270;",
         "page-approvals": "&#9989;",
         "page-employees": "&#128101;",
         "page-clients": "&#129309;",
@@ -8475,6 +8756,7 @@ tbody tr { transition: background .14s ease; }
       const tabs = isAdmin()
         ? [
             { id: "page-dashboard", label: "Timesheets" },
+            { id: "page-reporting", label: "Reporting check" },
             { id: "page-approvals", label: "Approvals" },
             { id: "page-employees", label: "Employees / Articles" },
             { id: "page-clients", label: "Clients" },
@@ -8510,6 +8792,8 @@ tbody tr { transition: background .14s ease; }
       if (tab) tab.classList.add("active");
       const historyMode = options.historyMode ?? "push";
       if (historyMode) syncBrowserHistory(historyMode);
+      // Page-specific bootstrap
+      if (targetId === "page-reporting") initReportingPage();
     }
 
     function setHubTab(id, options = {}) {
@@ -10981,6 +11265,12 @@ tbody tr { transition: background .14s ease; }
           const y = subDays(today, 1);
           return { from: isoLocalDate(y), to: isoLocalDate(y) };
         }
+        case "last-3": {
+          // Last 3 days BEFORE today (yesterday, day-before, two-before)
+          const start = subDays(today, 3);
+          const end = subDays(today, 1);
+          return { from: isoLocalDate(start), to: isoLocalDate(end) };
+        }
         case "this-week":
           return { from: isoLocalDate(startOfWeekMon(today)), to: todayStrLocal };
         case "last-week": {
@@ -11051,6 +11341,10 @@ tbody tr { transition: background .14s ease; }
         setFieldValue("all-from", from);
         setFieldValue("all-to", to);
         await loadAll(true);
+      } else if (target === "reporting") {
+        setFieldValue("reporting-from", from);
+        setFieldValue("reporting-to", to);
+        await runReportingCheck();
       }
     }
 
@@ -11860,7 +12154,8 @@ tbody tr { transition: background .14s ease; }
       for (let day = 1; day <= daysInMonth; day += 1) {
         const date = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
         const weekday = new Date(year, month, day).getDay();
-        const isWeekend = weekday === 0 || weekday === 6;
+        // Saturday IS a working day at VKS — only Sunday counts as weekend.
+        const isWeekend = weekday === 0;
         const isToday = date === today;
         const isFuture = date > today;
         const afterJoin = !joinDate || date >= joinDate;
@@ -11888,8 +12183,14 @@ tbody tr { transition: background .14s ease; }
             : missingWorkday
               ? "No report"
               : "";
+        // Days with any entry (reported / bulk) become clickable. The handler
+        // wired on the grid container reads data-date and opens the entries.
+        const isClickable = !!status;
+        const interactAttrs = isClickable
+          ? ` data-date="${date}" role="button" tabindex="0" aria-label="View entries for ${formatDate(date)}"`
+          : "";
         cells.push(`
-          <div class="${classes}">
+          <div class="${classes}${isClickable ? " is-clickable" : ""}"${interactAttrs}>
             <strong>${day}</strong>
             ${note ? `<div class="calendar-dot ${stateClass}">${safe(note)}</div>` : ""}
           </div>
@@ -11900,6 +12201,93 @@ tbody tr { transition: background .14s ease; }
         cells.push(`<div class="calendar-day other">${day}</div>`);
       }
       grid.innerHTML = cells.join("");
+      // Wire delegated click handler once per render — keyboard accessible too.
+      if (!grid.dataset.dayClickWired) {
+        grid.dataset.dayClickWired = "1";
+        const open = (evt) => {
+          const cell = evt.target.closest("[data-date]");
+          if (!cell || !grid.contains(cell)) return;
+          openEntriesForDateModal(cell.getAttribute("data-date"));
+        };
+        grid.addEventListener("click", open);
+        grid.addEventListener("keydown", (evt) => {
+          if (evt.key === "Enter" || evt.key === " ") {
+            const cell = evt.target.closest("[data-date]");
+            if (cell && grid.contains(cell)) {
+              evt.preventDefault();
+              openEntriesForDateModal(cell.getAttribute("data-date"));
+            }
+          }
+        });
+      }
+    }
+
+    /* Show all entries that cover a given date — single entries on that date,
+       bulk entries whose range includes the date, and group entries whose
+       member range includes the date. If exactly one, jumps straight to the
+       full entry detail. Otherwise renders a tidy chooser list. */
+    function openEntriesForDateModal(dateStr) {
+      if (!dateStr) return;
+      const records = Array.isArray(state.calendar?.records) ? state.calendar.records : [];
+      const matches = records.filter((r) => recordDates(r).includes(dateStr));
+      const adminView = state.calendar?.mode !== "self";
+      if (matches.length === 1) {
+        openEntryDetailModal(matches[0], adminView);
+        return;
+      }
+      if (matches.length === 0) {
+        openModal(
+          `Entries for ${formatDate(dateStr)}`,
+          "No entries found for this date.",
+          `<div class="empty-state" style="padding:18px;text-align:center;">No timesheet entry exists for ${safe(formatDate(dateStr))}.</div>`
+        );
+        return;
+      }
+      // Multiple entries — give the user a chooser. Each card opens the full
+      // detail when clicked. Includes a note for bulk/group entries that
+      // span more dates than just the one the user clicked on.
+      const cards = matches.map((rec, idx) => {
+        const kind = String(rec.entryKind || "single").toUpperCase();
+        const tasks = normalizeTaskList(rec).join(", ") || "-";
+        const client = clientLabel(rec) || "-";
+        const dates = recordDates(rec);
+        const spansMore = dates.length > 1;
+        const spanNote = spansMore
+          ? `<div class="subline" style="margin-top:6px;color:var(--rust);font-weight:700;">This ${kind === "BULK" ? "bulk" : "group"} entry covers ${dates.length} days (${formatDate(dates[0])} → ${formatDate(dates[dates.length - 1])}). The clicked date is one of them.</div>`
+          : "";
+        const hours = kind === "GROUP"
+          ? `${Number(rec.totalHours || rec.hours || 0).toFixed(1)} h (shared)`
+          : `${Number(rec.totalHours || rec.hours || 0).toFixed(1)} h`;
+        return `
+          <button type="button" class="entry-day-pick" data-idx="${idx}">
+            <div class="entry-day-pick-head">
+              <span class="type-pill ${kind.toLowerCase()}">${safe(kind)}</span>
+              <strong>${safe(client)}</strong>
+              <span class="entry-day-pick-hours">${safe(hours)}</span>
+            </div>
+            <div class="entry-day-pick-meta">${safe(tasks)}</div>
+            ${spanNote}
+          </button>
+        `;
+      }).join("");
+      openModal(
+        `Entries for ${formatDate(dateStr)}`,
+        `${matches.length} entries on this date. Click one to view full details.`,
+        `<div class="entry-day-pick-list">${cards}</div>`
+      );
+      // Wire chooser clicks
+      requestAnimationFrame(() => {
+        const list = document.querySelector(".entry-day-pick-list");
+        if (!list) return;
+        list.addEventListener("click", (evt) => {
+          const btn = evt.target.closest(".entry-day-pick");
+          if (!btn) return;
+          const idx = Number(btn.getAttribute("data-idx"));
+          if (Number.isFinite(idx) && matches[idx]) {
+            openEntryDetailModal(matches[idx], adminView);
+          }
+        });
+      });
     }
 
     function shiftAdminCalendar(delta) {
@@ -11970,7 +12358,7 @@ tbody tr { transition: background .14s ease; }
               <span class="calendar-legend-item"><span class="calendar-legend-swatch reported" aria-hidden="true"></span>Reported</span>
               <span class="calendar-legend-item"><span class="calendar-legend-swatch bulk" aria-hidden="true"></span>Bulk report</span>
               <span class="calendar-legend-item"><span class="calendar-legend-swatch no-report" aria-hidden="true"></span>No report</span>
-              <span class="calendar-legend-item"><span class="calendar-legend-swatch weekend" aria-hidden="true"></span>Weekend / inactive day</span>
+              <span class="calendar-legend-item"><span class="calendar-legend-swatch weekend" aria-hidden="true"></span>Sunday / inactive day</span>
             </div>
             <div class="selection-summary">
               <span>Available from Today's Summary and Employees / Articles</span>
@@ -12027,7 +12415,7 @@ tbody tr { transition: background .14s ease; }
               <span class="calendar-legend-item"><span class="calendar-legend-swatch reported" aria-hidden="true"></span>Reported</span>
               <span class="calendar-legend-item"><span class="calendar-legend-swatch bulk" aria-hidden="true"></span>Bulk report</span>
               <span class="calendar-legend-item"><span class="calendar-legend-swatch no-report" aria-hidden="true"></span>No report</span>
-              <span class="calendar-legend-item"><span class="calendar-legend-swatch weekend" aria-hidden="true"></span>Weekend / inactive day</span>
+              <span class="calendar-legend-item"><span class="calendar-legend-swatch weekend" aria-hidden="true"></span>Sunday / inactive day</span>
             </div>
             <div id="admin-calendar-grid" class="calendar-grid"></div>
           </div>
@@ -12122,6 +12510,375 @@ tbody tr { transition: background .14s ease; }
       renderStorageStats();
       renderHeaderNotificationBell();
       updateAdminLoadNote();
+    }
+
+    /* ==================================================================
+       REPORTING CHECK — admin-only feature.
+       For a chosen date range and employee filter, computes who reported
+       on which working day and who didn't. Today is never flagged as
+       missed (current day still in progress). Sundays are skipped.
+       Saturdays count as working days at VKS.
+       ================================================================== */
+    state.reporting = state.reporting || { rows: [], lastRunAt: 0 };
+
+    function reportingActiveEmployees() {
+      // Active = approved + not locked + not pre-join. Pre-join is handled
+      // per-date via afterJoin check below.
+      return (state.employees || []).filter((u) => u.approved !== false && u.locked !== true);
+    }
+
+    function populateReportingEmployeeDropdown() {
+      const sel = byId("reporting-employee");
+      if (!sel) return;
+      const previous = sel.value;
+      const list = reportingActiveEmployees()
+        .slice()
+        .sort((a, b) => String(a.name || a.email || "").localeCompare(String(b.name || b.email || "")));
+      const opts = ['<option value="">All employees / articles</option>'];
+      list.forEach((u) => {
+        const label = `${u.name || u.email || u.id}${u.role ? ` (${u.role})` : ""}`;
+        opts.push(`<option value="${safe(u.id)}">${safe(label)}</option>`);
+      });
+      sel.innerHTML = opts.join("");
+      if (previous) sel.value = previous;
+    }
+
+    function reportingDefaultDates() {
+      // Default = "Last 3 days" (yesterday + 2 days before)
+      return dateRangeForPreset("last-3");
+    }
+
+    async function initReportingPage() {
+      if (!isAdmin()) return;
+      // Set default date range only if both fields are empty
+      const fromEl = byId("reporting-from");
+      const toEl = byId("reporting-to");
+      if (fromEl && toEl && !fromEl.value && !toEl.value) {
+        const def = reportingDefaultDates();
+        fromEl.value = def.from;
+        toEl.value = def.to;
+      }
+      await ensureLookups(false);
+      populateReportingEmployeeDropdown();
+      // If we have entries cached, run immediately; otherwise prompt the user.
+      if (state.allEntriesLoaded) {
+        await runReportingCheck();
+      }
+    }
+
+    function enumerateReportingDates(fromIso, toIso) {
+      // Returns the working dates within [from, to] inclusive, EXCLUDING
+      // Sundays AND today (today still in progress).
+      if (!fromIso || !toIso) return [];
+      const out = [];
+      const today = todayStr();
+      const start = new Date(`${fromIso}T00:00:00`);
+      const end = new Date(`${toIso}T00:00:00`);
+      if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return [];
+      for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+        const iso = isoLocalDate(d);
+        if (d.getDay() === 0) continue; // skip Sunday
+        if (iso === today) continue;     // today is still in progress
+        out.push(iso);
+      }
+      return out;
+    }
+
+    function reportingRecordsForUid(uid) {
+      // Returns all records (single, bulk, active group) that involve this UID
+      const all = state.allEntries || [];
+      const out = [];
+      all.forEach((rec) => {
+        if (rec.entryKind === "group") {
+          const ids = visibleMemberIds(rec) || rec.memberIds || [];
+          if (ids.includes(uid)) out.push(rec);
+        } else if (rec.creatorUid === uid) {
+          out.push(rec);
+        }
+      });
+      return out;
+    }
+
+    function reportingDatesForUid(uid) {
+      // All ISO dates this user has reported on (across all their entries)
+      const set = new Set();
+      reportingRecordsForUid(uid).forEach((rec) => {
+        recordDates(rec).forEach((d) => set.add(d));
+      });
+      return set;
+    }
+
+    function reportingLatestEntryAt(uid) {
+      // Most recent createdAtMs / submittedAt timestamp from this user's entries
+      let latest = 0;
+      reportingRecordsForUid(uid).forEach((rec) => {
+        const t = Number(rec.createdAtMs || rec.updatedAtMs || rec.submittedAtMs || 0);
+        if (t > latest) latest = t;
+      });
+      return latest;
+    }
+
+    function reportingFormatRelative(ms) {
+      if (!ms) return "Never";
+      const diff = Date.now() - ms;
+      if (diff < 60000) return "Just now";
+      if (diff < 3600000) return `${Math.floor(diff / 60000)} min ago`;
+      if (diff < 86400000) return `${Math.floor(diff / 3600000)} h ago`;
+      const days = Math.floor(diff / 86400000);
+      return `${days} day${days === 1 ? "" : "s"} ago`;
+    }
+
+    function reportingFormatDateTime(ms) {
+      if (!ms) return "-";
+      try {
+        return new Date(ms).toLocaleString(undefined, {
+          day: "2-digit", month: "short", year: "numeric",
+          hour: "2-digit", minute: "2-digit"
+        });
+      } catch (_) { return "-"; }
+    }
+
+    async function runReportingCheck() {
+      if (!isAdmin()) return;
+      const fromIso = String(byId("reporting-from")?.value || "").trim();
+      const toIso = String(byId("reporting-to")?.value || "").trim();
+      const employeeId = String(byId("reporting-employee")?.value || "").trim();
+      if (!fromIso || !toIso) {
+        toast("Pick both From and To dates.", "warn");
+        return;
+      }
+      if (fromIso > toIso) {
+        toast("From date is after To date.", "warn");
+        return;
+      }
+
+      // Make sure entries cache covers this range
+      const cachedFrom = state.allEntriesLoadedFrom || "";
+      const cachedTo   = state.allEntriesLoadedTo || "";
+      const needLoad = !state.allEntriesLoaded
+                    || (cachedFrom && fromIso < cachedFrom)
+                    || (cachedTo   && toIso   > cachedTo);
+      if (needLoad) {
+        // Widen admin range to cover [fromIso, toIso] and reload
+        setFieldValue("all-from", fromIso < (cachedFrom || fromIso) ? fromIso : (cachedFrom || fromIso));
+        setFieldValue("all-to",   toIso   > (cachedTo   || toIso)   ? toIso   : (cachedTo   || toIso));
+        const btn = byId("reporting-refresh");
+        if (btn) { btn.disabled = true; btn.textContent = "Loading…"; }
+        try {
+          await loadAll(true);
+        } finally {
+          if (btn) { btn.disabled = false; btn.textContent = "Check now"; }
+        }
+      }
+
+      const workingDates = enumerateReportingDates(fromIso, toIso);
+      const everyone = reportingActiveEmployees();
+      const target = employeeId ? everyone.filter((u) => u.id === employeeId) : everyone;
+
+      const rows = target.map((u) => {
+        const reported = reportingDatesForUid(u.id);
+        // Exclude pre-join dates from "missed" calculation
+        const join = String(u.joinDate || u.dateOfJoining || "").trim();
+        const eligible = workingDates.filter((d) => !join || d >= join);
+        const missed = eligible.filter((d) => !reported.has(d));
+        const reportedInRange = eligible.filter((d) => reported.has(d));
+        const latestMs = reportingLatestEntryAt(u.id);
+        return {
+          uid: u.id,
+          name: u.name || u.email || u.id,
+          email: u.email || "",
+          phone: String(u.phone || u.mobile || u.whatsapp || "").trim(),
+          role: u.role || "",
+          eligibleCount: eligible.length,
+          reportedCount: reportedInRange.length,
+          missedCount: missed.length,
+          missedDates: missed,
+          latestMs,
+          status: missed.length === 0
+            ? (eligible.length === 0 ? "no-working" : "complete")
+            : (reportedInRange.length === 0 ? "none" : "partial")
+        };
+      });
+
+      state.reporting = {
+        from: fromIso,
+        to: toIso,
+        employeeId,
+        workingDates,
+        rows,
+        lastRunAt: Date.now()
+      };
+
+      renderReportingTable();
+      renderReportingSummary();
+    }
+
+    function renderReportingSummary() {
+      const host = byId("reporting-summary");
+      if (!host) return;
+      const r = state.reporting;
+      if (!r || !r.rows) { host.innerHTML = ""; return; }
+      const totalMissed = r.rows.reduce((s, x) => s + x.missedCount, 0);
+      const peopleWithGaps = r.rows.filter((x) => x.missedCount > 0).length;
+      const totalEmployees = r.rows.length;
+      const worst = r.rows.slice().sort((a, b) => b.missedCount - a.missedCount)[0];
+      host.innerHTML = `
+        <div class="stat-card">
+          <span class="card-icon" aria-hidden="true">&#128202;</span>
+          <span class="kicker">Working days checked</span>
+          <strong>${(r.workingDates || []).length}</strong>
+        </div>
+        <div class="stat-card">
+          <span class="card-icon" aria-hidden="true">&#9888;&#65039;</span>
+          <span class="kicker">People with gaps</span>
+          <strong>${peopleWithGaps} / ${totalEmployees}</strong>
+        </div>
+        <div class="stat-card">
+          <span class="card-icon" aria-hidden="true">&#128221;</span>
+          <span class="kicker">Total missed days</span>
+          <strong>${totalMissed}</strong>
+        </div>
+        <div class="stat-card">
+          <span class="card-icon" aria-hidden="true">&#128680;</span>
+          <span class="kicker">Worst</span>
+          <strong style="font-size:1.0rem;line-height:1.25;">${worst && worst.missedCount > 0 ? `${safe(worst.name)} · ${worst.missedCount}d` : "Everyone clear"}</strong>
+        </div>
+      `;
+    }
+
+    function renderReportingTable() {
+      const tbody = byId("reporting-tbody");
+      if (!tbody) return;
+      const r = state.reporting;
+      if (!r || !r.rows) { tbody.innerHTML = ""; return; }
+      const filterMode = String(byId("reporting-filter-mode")?.value || "missed");
+      let rows = r.rows;
+      if (filterMode === "missed") rows = rows.filter((x) => x.missedCount > 0);
+      else if (filterMode === "reported") rows = rows.filter((x) => x.missedCount === 0 && x.reportedCount > 0);
+      // Sort: missed-most first, then by name
+      rows = rows.slice().sort((a, b) => (b.missedCount - a.missedCount) || a.name.localeCompare(b.name));
+
+      if (!rows.length) {
+        tbody.innerHTML = `<tr><td colspan="7" class="empty-state" style="text-align:center;padding:24px;">No employees match this filter for the selected range.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = rows.map((row) => {
+        const statusPill = row.status === "complete"
+          ? `<span class="status-pill secure">All reported</span>`
+          : row.status === "none"
+            ? `<span class="status-pill locked">Nothing reported</span>`
+            : row.status === "no-working"
+              ? `<span class="status-pill secure">No working days</span>`
+              : `<span class="status-pill pending">${row.missedCount} day${row.missedCount === 1 ? "" : "s"} missed</span>`;
+        const missedDatesHtml = row.missedDates.length
+          ? row.missedDates.map((d) => `<span class="chip" style="font-family:var(--font-mono);font-size:0.74rem;">${safe(formatDate(d))}</span>`).join(" ")
+          : `<span class="muted" style="font-size:0.82rem;">—</span>`;
+        const latestText = row.latestMs
+          ? `<div style="font-family:var(--font-mono);font-size:0.84rem;font-feature-settings:'tnum';">${safe(reportingFormatDateTime(row.latestMs))}</div><div class="muted" style="font-size:0.74rem;">${safe(reportingFormatRelative(row.latestMs))}</div>`
+          : `<span class="muted" style="font-size:0.82rem;">Never</span>`;
+        return `
+          <tr>
+            <td>
+              <div style="font-weight:700;">${safe(row.name)}</div>
+              <div class="muted" style="font-size:0.78rem;">${safe(row.email)}${row.role ? ` · ${safe(row.role)}` : ""}</div>
+            </td>
+            <td>${statusPill}</td>
+            <td>${latestText}</td>
+            <td><div class="chip-row" style="gap:4px;">${missedDatesHtml}</div></td>
+            <td class="numeric">${row.missedCount}</td>
+            <td class="numeric">${row.reportedCount}</td>
+            <td>
+              ${row.missedCount > 0
+                ? `<button class="btn btn-outline small" type="button" data-uid="${safe(row.uid)}" data-action="reporting-nudge">Copy nudge</button>`
+                : `<span class="muted" style="font-size:0.82rem;">—</span>`}
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function reportingNudgeText(row) {
+      const dateList = row.missedDates.map((d) => formatDate(d)).join(", ");
+      const greeting = row.name.split(/\s+/)[0] || row.name;
+      return `Hi ${greeting} — your VKS timesheet is pending for ${row.missedCount} day${row.missedCount === 1 ? "" : "s"}:\n${dateList}\nPlease update at the earliest. — VKS Admin`;
+    }
+
+    async function copyReportingNudgeForUid(uid) {
+      const row = (state.reporting?.rows || []).find((x) => x.uid === uid);
+      if (!row || row.missedCount === 0) {
+        toast("Nothing to nudge — this person has no missed days.", "warn");
+        return;
+      }
+      const text = reportingNudgeText(row);
+      try {
+        await navigator.clipboard.writeText(text);
+        toast(`Nudge for ${row.name} copied.`, "success");
+      } catch (_) {
+        toast("Could not access clipboard.", "error");
+      }
+    }
+
+    async function copyAllReportingNudges() {
+      const rowsWithGaps = (state.reporting?.rows || []).filter((x) => x.missedCount > 0);
+      if (!rowsWithGaps.length) {
+        toast("No gaps to nudge — everyone is up to date.", "success");
+        return;
+      }
+      const text = rowsWithGaps.map((r) => reportingNudgeText(r)).join("\n\n———\n\n");
+      try {
+        await navigator.clipboard.writeText(text);
+        toast(`Copied ${rowsWithGaps.length} nudge${rowsWithGaps.length === 1 ? "" : "s"} — paste into WhatsApp Web.`, "success");
+      } catch (_) {
+        toast("Could not access clipboard.", "error");
+      }
+    }
+
+    function exportReportingExcel() {
+      const r = state.reporting;
+      if (!r || !r.rows || !r.rows.length) {
+        toast("Run a check first.", "warn");
+        return;
+      }
+      const fmtDate = (iso) => formatDate(iso) || iso;
+      const data = r.rows.map((row) => ({
+        Name: row.name,
+        Email: row.email,
+        Role: row.role,
+        Phone: row.phone,
+        "Eligible working days": row.eligibleCount,
+        "Days reported": row.reportedCount,
+        "Days missed": row.missedCount,
+        Status: row.status === "complete" ? "All reported" : row.status === "none" ? "Nothing reported" : row.status === "no-working" ? "No working days" : "Partial",
+        "Missed dates": row.missedDates.map(fmtDate).join(", "),
+        "Latest entry": reportingFormatDateTime(row.latestMs)
+      }));
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(data);
+      XLSX.utils.book_append_sheet(wb, ws, "Reporting check");
+      const fname = `VKS-Reporting-${r.from}-to-${r.to}.xlsx`;
+      XLSX.writeFile(wb, fname);
+      toast(`Exported ${data.length} rows.`, "success");
+    }
+
+    function printReporting() {
+      const r = state.reporting;
+      if (!r || !r.rows || !r.rows.length) {
+        toast("Run a check first.", "warn");
+        return;
+      }
+      const fmtDate = (iso) => formatDate(iso) || iso;
+      const rangeText = r.from === r.to ? fmtDate(r.from) : `${fmtDate(r.from)} – ${fmtDate(r.to)}`;
+      document.body.dataset.printTitle = `VKS Reporting Check — ${rangeText}`;
+      const host = byId("reporting-print-header");
+      if (host) {
+        host.innerHTML = `
+          <div><strong>Reporting check</strong></div>
+          <div>Range: <strong>${safe(rangeText)}</strong>  ·  Working days: <strong>${(r.workingDates || []).length}</strong></div>
+          <div>Printed on <strong>${safe(new Date().toLocaleString())}</strong> by <strong>${safe(profileName())}</strong></div>
+        `;
+      }
+      window.print();
     }
 
     function renderApprovalsList() {
@@ -16673,6 +17430,31 @@ tbody tr { transition: background .14s ease; }
         window.print();
       });
 
+      // Reporting check page bindings
+      bind("reporting-refresh", "click", runReportingCheck);
+      bind("reporting-employee", "change", runReportingCheck);
+      bind("reporting-filter-mode", "change", renderReportingTable);
+      bind("reporting-from", "change", () => {
+        if (state.reporting?.lastRunAt) runReportingCheck();
+      });
+      bind("reporting-to", "change", () => {
+        if (state.reporting?.lastRunAt) runReportingCheck();
+      });
+      bind("reporting-export-excel", "click", exportReportingExcel);
+      bind("reporting-print", "click", printReporting);
+      bind("reporting-copy-nudges", "click", copyAllReportingNudges);
+
+      // Per-row "Copy nudge" buttons (delegated)
+      const reportingTbody = byId("reporting-tbody");
+      if (reportingTbody) {
+        reportingTbody.addEventListener("click", (evt) => {
+          const btn = evt.target.closest('[data-action="reporting-nudge"]');
+          if (!btn) return;
+          const uid = btn.getAttribute("data-uid");
+          if (uid) copyReportingNudgeForUid(uid);
+        });
+      }
+
       bind("all-print", "click", () => {
         // Admin print: if a single user is selected via the All-timesheets
         // user filter, the header shows that user's name + email; otherwise
@@ -16707,11 +17489,11 @@ tbody tr { transition: background .14s ease; }
         window.print();
       });
 
-      // Idle-session auto-logout: warn after 25 min of inactivity, then
-      // sign the user out 60 s later if no action. Activity listeners only
-      // reset the timer while the warning is NOT showing (so typing inside
-      // the warning modal doesn't keep the session alive accidentally).
-      const IDLE_WARN_MS = 25 * 60 * 1000;
+      // Idle-session auto-logout: warn at 14 min of inactivity, sign the
+      // user out 60 s later. Total = 15 min to match the boot-time inactivity
+      // check, so the user always faces a strict 15-min idle policy whether
+      // they're actively in the tab or coming back later.
+      const IDLE_WARN_MS = 14 * 60 * 1000;
       const IDLE_LOGOUT_MS = 60 * 1000;
       let idleWarnTimer = null;
       let idleLogoutTimer = null;
