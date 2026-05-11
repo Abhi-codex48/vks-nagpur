@@ -186,10 +186,63 @@ button {
 .panel-meta,
 .message,
 .hero-card p,
-.section-note,
 .setup-item {
   line-height: 1.7;
   color: var(--muted);
+}
+
+/* Proper info-note treatment for cache hints, "double-click" tips, etc. */
+.section-note {
+  position: relative;
+  margin: 0 0 var(--s4);
+  padding: 12px 14px 12px 40px;
+  border-radius: var(--radius-sm);
+  background:
+    linear-gradient(180deg, rgba(255, 248, 236, 0.85), rgba(255, 253, 247, 0.95));
+  border: 1px solid var(--line-soft);
+  border-left: 3px solid var(--gold);
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  line-height: 1.55;
+  letter-spacing: 0.005em;
+  box-shadow: var(--shadow-sm);
+}
+.section-note::before {
+  content: "i";
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #f8e8b8, #d9a22a);
+  color: #14110d;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 0.78rem;
+  line-height: 1;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 2px 4px rgba(190,142,27,.30);
+}
+.section-note.timesheet-open-hint {
+  background:
+    linear-gradient(180deg, rgba(243, 233, 247, 0.50), rgba(255, 253, 247, 0.95));
+  border-left-color: #6b4dba;
+}
+.section-note.timesheet-open-hint::before {
+  content: "\21AA";
+  background: linear-gradient(180deg, #c8b6e6, #6b4dba);
+  color: #fff;
+  font-size: 0.85rem;
+  font-style: normal;
+  font-family: var(--font-sans);
+}
+@media (max-width: 640px) {
+  .section-note { font-size: 0.80rem; padding: 10px 12px 10px 36px; }
+  .section-note::before { width: 16px; height: 16px; font-size: 0.72rem; left: 10px; top: 11px; }
 }
 
 .hero-text {
@@ -2221,31 +2274,34 @@ button.summary-card.clickable {
 
 .activity-log-list {
   display: grid;
-  gap: 12px;
+  gap: var(--s3);
 }
 
 .activity-log-card {
   display: grid;
-  grid-template-columns: minmax(0, 1.7fr) minmax(220px, 0.9fr);
-  gap: 18px;
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 0.9fr);
+  gap: var(--s4);
   align-items: start;
 }
 
 .activity-log-main,
 .activity-log-side {
   display: grid;
-  gap: 8px;
+  gap: var(--s2);
   min-width: 0;
 }
 
 .activity-log-main strong {
-  line-height: 1.35;
+  line-height: 1.4;
+  font-size: 0.95rem;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .activity-log-head {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--s2);
   flex-wrap: wrap;
 }
 
@@ -2253,48 +2309,57 @@ button.summary-card.clickable {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 72px;
-  padding: 4px 9px;
+  min-width: 64px;
+  padding: 4px 10px;
   border-radius: 999px;
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   font-weight: 800;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.10em;
   text-transform: uppercase;
+  border: 1px solid transparent;
+  white-space: nowrap;
 }
 
 .log-type-badge.entry {
-  background: rgba(20, 184, 166, 0.12);
-  color: #0f766e;
+  background: rgba(75, 106, 74, 0.14);
+  color: #2f5530;
+  border-color: rgba(75, 106, 74, 0.28);
 }
 
 .log-type-badge.approval {
-  background: rgba(245, 158, 11, 0.14);
-  color: #b45309;
+  background: rgba(190, 142, 27, 0.16);
+  color: #7a5a0e;
+  border-color: rgba(190, 142, 27, 0.32);
 }
 
 .log-type-badge.user {
-  background: rgba(100, 116, 139, 0.12);
+  background: rgba(100, 116, 139, 0.14);
   color: #334155;
+  border-color: rgba(100, 116, 139, 0.28);
 }
 
 .log-type-badge.lock {
-  background: rgba(239, 68, 68, 0.12);
-  color: #b91c1c;
+  background: rgba(183, 86, 43, 0.14);
+  color: #8c3d1d;
+  border-color: rgba(183, 86, 43, 0.32);
 }
 
 .log-type-badge.export {
-  background: rgba(99, 102, 241, 0.12);
-  color: #4338ca;
+  background: rgba(49, 93, 150, 0.14);
+  color: #2c4a78;
+  border-color: rgba(49, 93, 150, 0.32);
 }
 
 .log-type-badge.delete {
-  background: rgba(249, 115, 22, 0.14);
-  color: #c2410c;
+  background: rgba(183, 86, 43, 0.16);
+  color: #8c3d1d;
+  border-color: rgba(183, 86, 43, 0.36);
 }
 
 .log-type-badge.admin {
-  background: rgba(100, 116, 139, 0.14);
-  color: #334155;
+  background: linear-gradient(180deg, #f8e8b8, #f0cb55);
+  color: #5a3d0a;
+  border-color: rgba(190, 142, 27, 0.32);
 }
 
 .activity-log-side {
@@ -2302,12 +2367,34 @@ button.summary-card.clickable {
   text-align: right;
 }
 
+.activity-log-side strong,
+.activity-log-side span {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
 .activity-log-label {
-  font-size: 0.72rem;
+  font-size: 0.66rem;
   font-weight: 800;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #64748b;
+  color: var(--gold);
+}
+
+@media (max-width: 760px) {
+  .activity-log-card {
+    grid-template-columns: 1fr;
+    gap: var(--s2);
+    padding-top: var(--s2);
+  }
+  .activity-log-side {
+    justify-items: start;
+    text-align: left;
+    padding-top: var(--s2);
+    border-top: 1px dashed var(--line);
+  }
+  .activity-log-head { gap: 6px; }
+  .log-type-badge { min-width: 0; padding: 3px 8px; font-size: 0.62rem; }
 }
 
 .compact-empty {
@@ -3132,39 +3219,96 @@ button.summary-card.clickable {
 
 .screen.app-screen .entry-detail-view {
   display: grid;
-  gap: 12px;
+  gap: var(--s5);
 }
 
 .screen.app-screen .entry-detail-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--s3);
 }
 
 .screen.app-screen .entry-detail-card {
-  padding: 10px 12px;
-  border-radius: 8px;
+  padding: var(--s4);
+  border-radius: var(--radius-sm);
   border: 1px solid var(--line);
-  background: var(--paper);
+  background:
+    linear-gradient(180deg, var(--white) 0%, var(--paper) 100%);
   min-width: 0;
+  box-shadow: var(--shadow-sm);
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+.screen.app-screen .entry-detail-card:hover {
+  border-color: rgba(190, 142, 27, 0.32);
 }
 
-.screen.app-screen .entry-detail-card strong,
-.screen.app-screen .entry-detail-section h4 {
+.screen.app-screen .entry-detail-card strong {
   display: block;
-  margin: 0 0 5px;
-  line-height: 1.25;
+  margin: 0 0 6px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  line-height: 1.2;
+}
+
+/* Card body text (the value that follows the label) */
+.screen.app-screen .entry-detail-card > div:not(.subline):not(.entry-detail-note):not(.day-hour-list) {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.4;
+  word-break: break-word;
+}
+.screen.app-screen .entry-detail-card .subline {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum";
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-top: 2px;
 }
 
 .screen.app-screen .entry-detail-section {
   display: grid;
-  gap: 8px;
+  gap: var(--s3);
+}
+.screen.app-screen .entry-detail-section h4 {
+  display: block;
+  margin: 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--gold-line);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--ink);
+  letter-spacing: -0.005em;
+  line-height: 1.25;
 }
 
 .screen.app-screen .entry-detail-note {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   word-break: break-word;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--paper-strong);
+  border: 1px solid var(--line-soft);
+  margin-top: 6px;
+  font-family: var(--font-sans);
+}
+
+@media (max-width: 640px) {
+  .screen.app-screen .entry-detail-view { gap: var(--s4); }
+  .screen.app-screen .entry-detail-grid { grid-template-columns: 1fr; gap: var(--s2); }
+  .screen.app-screen .entry-detail-card { padding: var(--s3); }
+  .screen.app-screen .entry-detail-section h4 { font-size: 0.95rem; }
+  .screen.app-screen .entry-detail-note { font-size: 0.86rem; padding: 9px 11px; }
 }
 
 .screen.app-screen .day-hour-list {
@@ -4877,9 +5021,20 @@ tbody tr { transition: background .14s ease; }
     background: #fff !important;
     color: #000 !important;
     overflow: visible !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
   body { font-family: "DM Sans", "Segoe UI", sans-serif; font-size: 8pt; }
-  .app-main { width: 100% !important; margin: 0 !important; padding: 0 !important; }
+  .app-main { width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+  /* Universal page-fit safety: nothing can exceed printable width */
+  * {
+    max-width: 100% !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+    hyphens: auto !important;
+  }
   .panel, .table-shell, .hub-card, .stat-card, .summary-card,
   .approval-card, .log-card, .recycle-card {
     box-shadow: none !important;
@@ -4903,7 +5058,18 @@ tbody tr { transition: background .14s ease; }
     line-height: 1.2 !important;
     vertical-align: top !important;
     overflow-wrap: anywhere !important;
-    word-break: normal !important;
+    word-break: break-word !important;
+    white-space: normal !important;
+    max-width: 0 !important;   /* allow table-layout: fixed columns to actually constrain */
+  }
+  /* Long pre-wrap blocks (remarks) keep newlines but wrap within column */
+  td .note-block,
+  td .remarks-stack,
+  td pre {
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+    max-width: 100% !important;
   }
   thead th {
     background: #f3f3f3 !important;
@@ -6138,6 +6304,142 @@ tbody tr { transition: background .14s ease; }
   .calendar-label { font-size: 0.62rem; padding: 6px 0; }
   .toast { min-width: 200px; padding: 10px 12px; font-size: 0.84rem; }
   .toast-root { right: 10px; bottom: 10px; }
+}
+
+/* =====================================================================
+   MOBILE OVERFLOW HARDENING — modals + activity log + edit-log content
+   No element should ever exceed the viewport width or push horizontal
+   scroll. Long URLs, emails, or pasted text wrap aggressively.
+   ===================================================================== */
+@media (max-width: 760px) {
+  .modal-root { padding: 10px; }
+  .modal-card {
+    width: calc(100% - 20px);
+    max-width: 100%;
+    padding: 16px;
+    border-radius: 18px;
+  }
+  .modal-card * {
+    max-width: 100%;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+  .modal-head { gap: 10px; padding-bottom: 10px; margin-bottom: 12px; }
+  .modal-head h3 { font-size: 1.15rem; }
+  .modal-copy { font-size: 0.85rem; }
+  .modal-close { width: 34px; height: 34px; font-size: 0.92rem; }
+
+  /* Entry-detail content stacks vertically */
+  .screen.app-screen .entry-detail-grid { grid-template-columns: 1fr; gap: 10px; }
+  .screen.app-screen .entry-detail-card { padding: 12px; }
+
+  /* Edit log / activity log — long emails and ids must wrap */
+  .activity-log-card,
+  .activity-log-card *,
+  .log-card,
+  .log-card * {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    min-width: 0;
+  }
+  .log-card { padding: 14px; }
+
+  /* Tables inside modals: horizontal scroll instead of viewport overflow */
+  .modal-card .table-shell {
+    margin-left: -16px;
+    margin-right: -16px;
+    width: calc(100% + 32px);
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+  }
+}
+
+@media (max-width: 380px) {
+  .modal-card { padding: 12px; }
+  .modal-head h3 { font-size: 1.05rem; }
+  .modal-card .table-shell { margin-left: -12px; margin-right: -12px; width: calc(100% + 24px); }
+}
+
+/* =====================================================================
+   "DISCOVER ME" CALENDAR BUTTON — promotes #my-calendar from a quiet
+   outline button into a distinctive gold-gradient feature button with
+   a calendar emoji, "NEW" badge, and gentle pulse so users actually
+   notice the calendar view of their own timesheet.
+   ===================================================================== */
+#my-calendar.btn.btn-outline {
+  position: relative;
+  overflow: visible;
+  background: linear-gradient(180deg, #fff8e6 0%, #fae3b3 100%);
+  border-color: var(--gold);
+  color: var(--ink);
+  font-weight: 800;
+  padding-left: 16px;
+  padding-right: 16px;
+  box-shadow:
+    0 8px 18px -8px rgba(190, 142, 27, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 0 0 0 rgba(217, 162, 42, 0.4);
+  animation: vks-calendar-pulse 2.6s ease-in-out infinite;
+}
+#my-calendar.btn.btn-outline:hover {
+  background: linear-gradient(180deg, #fae3b3 0%, #f0cb55 100%);
+  border-color: var(--gold);
+  transform: translateY(-1px);
+  animation-play-state: paused;
+  box-shadow:
+    0 14px 28px -10px rgba(190, 142, 27, 0.60),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+#my-calendar.btn.btn-outline::before {
+  content: "\1F4C5"; /* 📅 calendar emoji */
+  font-size: 1.05em;
+  margin-right: 4px;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.08));
+}
+#my-calendar.btn.btn-outline::after {
+  content: "NEW";
+  position: absolute;
+  top: -7px;
+  right: -8px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #d4683a 0%, #b7562b 100%);
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: 0.56rem;
+  font-weight: 800;
+  letter-spacing: 0.10em;
+  line-height: 1.4;
+  box-shadow:
+    0 4px 10px -2px rgba(183, 86, 43, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.20);
+  transform: rotate(-8deg);
+  animation: vks-calendar-badge-bounce 3s cubic-bezier(.4, 0, .2, 1) infinite;
+  pointer-events: none;
+}
+@keyframes vks-calendar-pulse {
+  0%, 100% {
+    box-shadow:
+      0 8px 18px -8px rgba(190, 142, 27, 0.45),
+      inset 0 1px 0 rgba(255, 255, 255, 0.55),
+      0 0 0 0 rgba(217, 162, 42, 0.45);
+  }
+  50% {
+    box-shadow:
+      0 12px 22px -8px rgba(190, 142, 27, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.55),
+      0 0 0 8px rgba(217, 162, 42, 0);
+  }
+}
+@keyframes vks-calendar-badge-bounce {
+  0%, 100% { transform: rotate(-8deg) scale(1); }
+  50%      { transform: rotate(-8deg) scale(1.10); }
+}
+/* Respect users with motion-reduced preference */
+@media (prefers-reduced-motion: reduce) {
+  #my-calendar.btn.btn-outline,
+  #my-calendar.btn.btn-outline::after { animation: none; }
 }
 
 /* =====================================================================
@@ -16159,6 +16461,9 @@ tbody tr { transition: background .14s ease; }
         const btn = byId("login-google");
         if (btn && btn.classList.contains("is-launching")) return;
         if (btn) btn.classList.add("is-launching");
+        // Mark this as a fresh sign-in so the boot inactivity check skips
+        // the user once OAuth completes. Survives signInWithRedirect.
+        try { sessionStorage.setItem("vks_fresh_login", "1"); } catch (_) {}
         // Run the slide animation first; only then kick off the OAuth flow.
         // Note: popup may be blocked because the user-gesture window has lapsed
         // by the time we call signInWithPopup — loginGoogle() already falls
@@ -17016,28 +17321,39 @@ tbody tr { transition: background .14s ease; }
        Inactivity logout — force Google sign-out after 15 min idle.
        A simple browser refresh inside the window does NOT count as
        inactivity; only wall-clock time since the last user gesture.
+
+       IMPORTANT: snapshot the timestamp at module-eval time, BEFORE
+       any activity listener runs. Otherwise the visibilitychange that
+       fires immediately on page load refreshes the stamp to "now" and
+       the inactivity check always passes.
        ============================================================ */
     const VKS_IDLE_LIMIT_MS = 15 * 60 * 1000; // 15 minutes
     const VKS_IDLE_KEY = "vks_last_active";
     const VKS_IDLE_THROTTLE_MS = 30 * 1000;   // write storage at most every 30s
 
+    // === BOOT SNAPSHOT — read once, before listeners attach ===
+    const VKS_BOOT_LAST_ACTIVE = (() => {
+      try { return Number(localStorage.getItem(VKS_IDLE_KEY)) || 0; } catch (_) { return 0; }
+    })();
+    // If a stamp exists AND it's older than the limit → forced re-auth.
+    // No stamp at all (first install / never touched) is also treated as stale
+    // when a Firebase user is being restored, so we don't grant a free pass.
+    const VKS_BOOT_INACTIVE = !VKS_BOOT_LAST_ACTIVE
+      || (Date.now() - VKS_BOOT_LAST_ACTIVE) > VKS_IDLE_LIMIT_MS;
+
     function vksMarkActive() {
       try { localStorage.setItem(VKS_IDLE_KEY, String(Date.now())); } catch (_) {}
-    }
-    function vksLastActive() {
-      try { return Number(localStorage.getItem(VKS_IDLE_KEY)) || 0; } catch (_) { return 0; }
     }
     function vksClearActive() {
       try { localStorage.removeItem(VKS_IDLE_KEY); } catch (_) {}
     }
-    function vksIsInactive() {
-      const last = vksLastActive();
-      if (!last) return false;                              // first ever load — don't punish
-      return (Date.now() - last) > VKS_IDLE_LIMIT_MS;
-    }
 
-    // Throttled activity tracker
-    (function () {
+    // Throttled activity tracker — only attached AFTER the auth state has
+    // been resolved, so it cannot accidentally refresh the boot stamp.
+    let vksActivityWired = false;
+    function wireActivityTracker() {
+      if (vksActivityWired) return;
+      vksActivityWired = true;
       let lastWrite = 0;
       const onActivity = () => {
         const now = Date.now();
@@ -17048,11 +17364,10 @@ tbody tr { transition: background .14s ease; }
       ["click", "keydown", "pointerdown", "touchstart", "wheel", "scroll"].forEach((ev) => {
         window.addEventListener(ev, onActivity, { passive: true });
       });
-      // Tab focus also counts — user came back to the tab
       window.addEventListener("visibilitychange", () => {
         if (document.visibilityState === "visible") onActivity();
       });
-    })();
+    }
 
     getRedirectResult(auth).catch(() => {});
     onAuthStateChanged(auth, async (user) => {
@@ -17066,15 +17381,21 @@ tbody tr { transition: background .14s ease; }
         switchScreen("screen-login", { historyMode: "replace" });
         return;
       }
-      // If the user has been idle past the 15-min cap, sign them out of
-      // Firebase entirely so the next visit demands a fresh Google login.
-      if (vksIsInactive()) {
+      // A fresh "Sign in with Google" click sets this sessionStorage flag.
+      // sessionStorage survives the redirect-style OAuth round-trip but not
+      // a tab close, so this lets us distinguish "user just signed in" from
+      // "Firebase restored a stale session from disk".
+      const justSignedIn = sessionStorage.getItem("vks_fresh_login") === "1";
+      sessionStorage.removeItem("vks_fresh_login");
+
+      if (VKS_BOOT_INACTIVE && !justSignedIn) {
         try { clearPinDone(user.uid); } catch (_) {}
         vksClearActive();
         await signOut(auth).catch(() => {});
         return; // onAuthStateChanged will fire again with user=null
       }
       vksMarkActive();
+      wireActivityTracker(); // start tracking now, after the boot decision is made
       await hydrateUser(user);
     });
   </script>
