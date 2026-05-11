@@ -6439,10 +6439,40 @@ tbody tr { transition: background .14s ease; }
   flex-wrap: wrap;
 }
 
-/* Summary stat cards: more breathing room and never wider than parent */
+/* Summary stat cards — compact version (default .stat-card is for hero
+   dashboard numbers; on the reporting page they only need to be small
+   metric tiles, not full hero cards). */
 #page-reporting #reporting-summary {
-  margin-bottom: var(--s4);
-  margin-top: var(--s4);
+  margin: var(--s4) 0;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--s2);
+}
+#page-reporting #reporting-summary .stat-card {
+  padding: 10px 14px;
+  border-radius: 12px;
+}
+#page-reporting #reporting-summary .stat-card .card-icon {
+  width: 28px; height: 28px;
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+  border-radius: 8px;
+}
+#page-reporting #reporting-summary .stat-card .kicker {
+  margin-bottom: 2px;
+  font-size: 0.60rem;
+  letter-spacing: 0.10em;
+}
+#page-reporting #reporting-summary .stat-card strong {
+  font-size: 1.15rem;
+  line-height: 1.15;
+}
+@media (max-width: 480px) {
+  #page-reporting #reporting-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  #page-reporting #reporting-summary .stat-card { padding: 8px 12px; }
+  #page-reporting #reporting-summary .stat-card strong { font-size: 1rem; }
+  #page-reporting #reporting-summary .stat-card .card-icon { width: 24px; height: 24px; margin-bottom: 4px; }
 }
 
 @media (max-width: 760px) {
@@ -8379,7 +8409,7 @@ tbody tr { transition: background .14s ease; }
     function allowedPageIds() {
       if (!state.profile) return [];
       return isAdmin()
-        ? ["page-dashboard", "page-approvals", "page-employees", "page-clients", "page-logs", "page-storage", ...(window.location.hash === "#setup" ? ["page-setup"] : [])]
+        ? ["page-dashboard", "page-reporting", "page-approvals", "page-employees", "page-clients", "page-logs", "page-storage", ...(window.location.hash === "#setup" ? ["page-setup"] : [])]
         : ["page-log", "page-my", ...(isArticle() ? ["page-cahub"] : [])];
     }
 
