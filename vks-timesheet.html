@@ -6429,55 +6429,64 @@ tbody tr { transition: background .14s ease; }
   color: #5a3d0a;
 }
 
-/* Prominent live search bar — sits ABOVE the toolbar so it can't be missed */
+/* Prominent live search bar — sits ABOVE the toolbar so it can't be missed.
+   Solid white background + strong border so it pops against the warm cream
+   panel. Gold focus halo. */
 #page-reporting .reporting-searchbar {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   margin: var(--s4) 0 var(--s3);
-  padding: 4px 12px 4px 14px;
-  background: linear-gradient(180deg, var(--white) 0%, var(--paper) 100%);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  box-shadow: var(--shadow-sm);
+  padding: 6px 14px 6px 16px;
+  background: #ffffff;
+  border: 2px solid var(--gold);
+  border-radius: 14px;
+  box-shadow: 0 6px 18px -8px rgba(190, 142, 27, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.85);
   transition: border-color .18s ease, box-shadow .18s ease;
 }
 #page-reporting .reporting-searchbar:focus-within {
   border-color: var(--gold);
-  box-shadow: 0 0 0 3px rgba(190, 142, 27, 0.16), var(--shadow-sm);
+  box-shadow: 0 0 0 4px rgba(190, 142, 27, 0.18), 0 6px 18px -8px rgba(190, 142, 27, 0.40);
 }
 #page-reporting .reporting-searchbar-icon {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   flex: none;
-  filter: grayscale(0.2);
+  color: var(--gold);
+  filter: none;
 }
 #page-reporting #reporting-search {
   flex: 1; min-width: 0;
-  height: 44px;
+  height: 46px;
   border: 0;
   outline: none;
   background: transparent;
   font-family: inherit;
-  font-size: 0.95rem;
-  color: var(--ink);
+  font-size: 0.98rem;
+  font-weight: 500;
+  color: #14110D;
+  letter-spacing: 0;
 }
-#page-reporting #reporting-search::placeholder { color: var(--muted); }
+#page-reporting #reporting-search::placeholder {
+  color: #8a8377;
+  font-style: italic;
+  opacity: 1;
+}
 #page-reporting .reporting-searchbar-clear {
   flex: none;
-  width: 28px; height: 28px;
+  width: 30px; height: 30px;
   border: 0;
   border-radius: 50%;
-  background: var(--line-soft);
-  color: var(--muted);
-  font-size: 0.75rem;
+  background: var(--ink);
+  color: #fff8eb;
+  font-size: 0.78rem;
   font-weight: 800;
   cursor: pointer;
   display: none;
   align-items: center;
   justify-content: center;
-  transition: background .15s ease, color .15s ease;
+  transition: background .15s ease, transform .12s ease;
 }
-#page-reporting .reporting-searchbar-clear:hover { background: var(--gold-soft); color: var(--ink); }
+#page-reporting .reporting-searchbar-clear:hover { background: var(--rust); transform: scale(1.08); }
 #page-reporting .reporting-searchbar.has-value .reporting-searchbar-clear { display: inline-flex; }
 
 /* Toolbar fields shrink instead of overflowing */
@@ -12765,15 +12774,31 @@ tbody tr { transition: background .14s ease; }
     }
 
     function reportingRecordsForUid(uid) {
-      // Returns all records (single, bulk, active group) that involve this UID
+      // Returns all records (single, bulk, active group) that involve this UID.
+      // Entries don't have a single canonical owner field — Firestore stores
+      // ownership across uid / userId / createdByUid / creatorUid depending on
+      // when the entry was written. The existing queryOwnerDocs() at line ~10169
+      // uses ["uid","userId","createdByUid"] for single + bulk, and
+      // ["uid","creatorUid"] for groups. We mirror that here so the reporting
+      // feature reads ownership the same way the rest of the site does.
+      if (!uid) return [];
       const all = state.allEntries || [];
       const out = [];
       all.forEach((rec) => {
         if (rec.entryKind === "group") {
           const ids = visibleMemberIds(rec) || rec.memberIds || [];
           if (ids.includes(uid)) out.push(rec);
-        } else if (rec.creatorUid === uid) {
-          out.push(rec);
+          else if (rec.uid === uid || rec.creatorUid === uid) out.push(rec);
+        } else {
+          // Match on ANY of the ownership aliases a single/bulk entry might use
+          if (rec.uid === uid
+              || rec.userId === uid
+              || rec.createdByUid === uid
+              || rec.creatorUid === uid
+              || rec.ownerUid === uid
+              || rec.reportedByUid === uid) {
+            out.push(rec);
+          }
         }
       });
       return out;
