@@ -6408,17 +6408,17 @@ tbody tr { transition: background .14s ease; }
   overflow-wrap: anywhere;
 }
 /* Cap the missed-dates cell so it doesn't push the whole table wider */
-#page-reporting #reporting-tbody td:nth-child(4) {
-  max-width: 380px;
+#page-reporting #reporting-tbody td:nth-child(3) {
+  max-width: 420px;
 }
-#page-reporting #reporting-tbody td:nth-child(4) .chip-row {
+#page-reporting #reporting-tbody td:nth-child(3) .chip-row {
   max-height: 110px;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--gold-soft) transparent;
 }
-#page-reporting #reporting-tbody td:nth-child(4) .chip-row::-webkit-scrollbar { width: 4px; }
-#page-reporting #reporting-tbody td:nth-child(4) .chip-row::-webkit-scrollbar-thumb {
+#page-reporting #reporting-tbody td:nth-child(3) .chip-row::-webkit-scrollbar { width: 4px; }
+#page-reporting #reporting-tbody td:nth-child(3) .chip-row::-webkit-scrollbar-thumb {
   background: var(--gold-soft); border-radius: 4px;
 }
 #page-reporting #reporting-tbody td > div { word-break: break-word; }
@@ -6481,8 +6481,8 @@ tbody tr { transition: background .14s ease; }
   #page-reporting .panel-actions .btn { flex: 1 1 auto; }
   #page-reporting .toolbar > .toolbar-actions { width: 100%; margin-left: 0; }
   #page-reporting .toolbar > .toolbar-actions .btn { flex: 1 1 auto; }
-  #page-reporting #reporting-tbody td:nth-child(4) { max-width: 240px; }
-  #page-reporting #reporting-tbody td:nth-child(4) .chip-row { max-height: 90px; }
+  #page-reporting #reporting-tbody td:nth-child(3) { max-width: 240px; }
+  #page-reporting #reporting-tbody td:nth-child(3) .chip-row { max-height: 90px; }
   #page-reporting #reporting-summary .stat-card { padding: var(--s3); }
   #page-reporting #reporting-summary .stat-card strong { font-size: 1.4rem; }
 }
@@ -7474,18 +7474,20 @@ tbody tr { transition: background .14s ease; }
           <div class="panel-head">
             <div>
               <div class="panel-kicker">Admin</div>
-              <h3>Reporting check</h3>
+              <h3>Who didn't report?</h3>
             </div>
             <div class="panel-actions">
               <button id="reporting-export-excel" class="btn btn-outline" type="button">Export Excel</button>
-              <button id="reporting-print" class="btn btn-outline" type="button">Print</button>
+              <button id="reporting-print" class="btn btn-outline" type="button">Print / PDF</button>
+              <button id="reporting-copy-nudges" class="btn btn-primary" type="button">Copy WhatsApp nudges</button>
             </div>
           </div>
 
           <p class="section-note">
-            Find out who didn't submit timesheet entries for the selected dates.
-            Today is never flagged as missed (the day is still in progress).
-            Sundays are skipped automatically. Saturday counts as a working day.
+            Pick a date or date range and see who hasn't reported yet.
+            Today is excluded (the day is still in progress). Sundays are skipped.
+            Saturday is a working day. The list refreshes whenever you change a filter
+            or click <strong>Check now</strong>.
           </p>
 
           <div id="reporting-print-header" class="print-header"></div>
@@ -7510,22 +7512,12 @@ tbody tr { transition: background .14s ease; }
               <input id="reporting-to" type="date">
             </label>
             <label class="field compact grow">
-              <span>Employee / Article</span>
-              <select id="reporting-employee">
-                <option value="">All employees / articles</option>
-              </select>
-            </label>
-            <label class="field compact">
-              <span>Show</span>
-              <select id="reporting-filter-mode">
-                <option value="missed" selected>Only missed reports</option>
-                <option value="reported">Only reported</option>
-                <option value="all">All employees</option>
-              </select>
+              <span>Search name or email</span>
+              <input id="reporting-search" type="text" placeholder="Type to filter the list...">
             </label>
             <div class="toolbar-actions">
               <button id="reporting-refresh" class="btn btn-primary" type="button">Check now</button>
-              <button id="reporting-copy-nudges" class="btn btn-outline" type="button">Copy WhatsApp nudges</button>
+              <button id="reporting-clear" class="btn btn-outline" type="button">Clear filters</button>
             </div>
           </div>
 
@@ -7536,16 +7528,13 @@ tbody tr { transition: background .14s ease; }
               <thead>
                 <tr>
                   <th>Employee / Article</th>
-                  <th>Status</th>
-                  <th>Latest report</th>
-                  <th>Missed dates (in range)</th>
                   <th class="numeric">Days missed</th>
-                  <th class="numeric">Days reported</th>
+                  <th>Missed dates</th>
                   <th>Nudge</th>
                 </tr>
               </thead>
               <tbody id="reporting-tbody">
-                <tr><td colspan="7" class="empty-state" style="text-align:center;padding:24px;">Pick a range and click <strong>Check now</strong>.</td></tr>
+                <tr><td colspan="4" class="empty-state" style="text-align:center;padding:24px;">Pick a date range above and click <strong>Check now</strong>.</td></tr>
               </tbody>
             </table>
           </div>
@@ -10455,6 +10444,100 @@ tbody tr { transition: background .14s ease; }
       }
     }
 
+    /* Build a human-readable summary of what changed between an existing
+       entry record and the new payload being written. Used by the trail
+       so admins/users can see WHAT was changed (client, hours, dates,
+       work types, remarks, day-wise breakdown), not just "Edited". */
+    function summarizeEntryChanges(oldRec, payload) {
+      if (!oldRec || !payload) return "";
+      const parts = [];
+      const fmtList = (arr) => (Array.isArray(arr) && arr.length ? arr.join(", ") : "—");
+      const sortedJoin = (arr) => (arr || []).slice().sort().join("|");
+
+      if (payload.date !== undefined && oldRec.date && payload.date !== oldRec.date) {
+        parts.push(`Date: ${formatDate(oldRec.date)} → ${formatDate(payload.date)}`);
+      }
+
+      const oldClients = (Array.isArray(oldRec.clients) && oldRec.clients.length ? oldRec.clients : [oldRec.client]).filter(Boolean);
+      const newClients = (Array.isArray(payload.clients) && payload.clients.length ? payload.clients : (payload.client ? [payload.client] : [])).filter(Boolean);
+      if (newClients.length && sortedJoin(oldClients) !== sortedJoin(newClients)) {
+        parts.push(`Client: "${fmtList(oldClients)}" → "${fmtList(newClients)}"`);
+      }
+
+      if (Array.isArray(payload.taskList)) {
+        const oldT = sortedJoin(oldRec.taskList || []);
+        const newT = sortedJoin(payload.taskList || []);
+        if (oldT !== newT) {
+          parts.push(`Work type: "${fmtList(oldRec.taskList)}" → "${fmtList(payload.taskList)}"`);
+        }
+      }
+
+      const oldH = Number(oldRec.totalHours || oldRec.hours || 0);
+      const newH = Number(payload.totalHours !== undefined ? payload.totalHours : payload.hours !== undefined ? payload.hours : oldH);
+      if (oldH.toFixed(2) !== newH.toFixed(2)) {
+        parts.push(`Hours: ${oldH.toFixed(1)} → ${newH.toFixed(1)}`);
+      }
+
+      if (Array.isArray(payload.dates)) {
+        const oldD = (oldRec.dates || []).slice().sort();
+        const newD = payload.dates.slice().sort();
+        if (oldD.join(",") !== newD.join(",")) {
+          parts.push(`Date range: ${oldD.length || 0} day(s) → ${newD.length || 0} day(s)` + (newD.length ? ` (${formatDate(newD[0])} → ${formatDate(newD[newD.length - 1])})` : ""));
+        }
+      }
+
+      if (payload.dailyHours) {
+        const oldDH = JSON.stringify(oldRec.dailyHours || {});
+        const newDH = JSON.stringify(payload.dailyHours || {});
+        if (oldDH !== newDH) parts.push("Day-wise hours: changed");
+      }
+
+      // Group: per-member edits
+      if (payload.memberEntries) {
+        const oldME = oldRec.memberEntries || {};
+        const newME = payload.memberEntries || {};
+        const allUids = uniq([...Object.keys(oldME), ...Object.keys(newME)]);
+        const memberChanges = [];
+        allUids.forEach((uid) => {
+          const o = oldME[uid] || {};
+          const n = newME[uid] || {};
+          const oh = Number(o.totalHours || o.hours || 0);
+          const nh = Number(n.totalHours || n.hours || 0);
+          const or = String(o.remarks || "").trim();
+          const nr = String(n.remarks || "").trim();
+          const odh = JSON.stringify(o.dailyHours || {});
+          const ndh = JSON.stringify(n.dailyHours || {});
+          if (oh.toFixed(2) !== nh.toFixed(2) || or !== nr || odh !== ndh) {
+            const who = (n.name || o.name || lookupUser(uid)?.name || uid);
+            const sub = [];
+            if (oh.toFixed(2) !== nh.toFixed(2)) sub.push(`hours ${oh.toFixed(1)}→${nh.toFixed(1)}`);
+            if (or !== nr) sub.push(`remarks (${or.length}→${nr.length} chars)`);
+            if (odh !== ndh) sub.push("day-wise");
+            memberChanges.push(`${who}: ${sub.join(", ")}`);
+          }
+        });
+        if (memberChanges.length) parts.push(`Members: ${memberChanges.join(" | ")}`);
+      }
+
+      // Remarks (single-string field on single/bulk entries)
+      if (payload.remarks !== undefined) {
+        const oldR = String(oldRec.remarks || "").trim();
+        const newR = String(payload.remarks || "").trim();
+        if (oldR !== newR) parts.push(`Remarks: changed (${oldR.length}→${newR.length} chars)`);
+      }
+
+      // Client breakdown (single entries with multiple clients)
+      if (Array.isArray(payload.clientBreakdown)) {
+        const oldB = JSON.stringify((oldRec.clientBreakdown || []).map((x) => ({ c: x.client, h: x.hours, r: x.remarks })));
+        const newB = JSON.stringify(payload.clientBreakdown.map((x) => ({ c: x.client, h: x.hours, r: x.remarks })));
+        if (oldB !== newB && !parts.some((p) => p.startsWith("Client:") || p.startsWith("Hours:") || p.startsWith("Remarks:"))) {
+          parts.push("Client breakdown: changed");
+        }
+      }
+
+      return parts.length ? parts.join(" · ") : "No field-level changes";
+    }
+
     async function fetchTrail(collectionName, id) {
       try {
         const snap = await getDocs(query(collection(db, "entry_trails"), where("recordKey", "==", `${collectionName}:${id}`)));
@@ -12552,30 +12635,51 @@ tbody tr { transition: background .14s ease; }
     state.reporting = state.reporting || { rows: [], lastRunAt: 0 };
 
     function reportingActiveEmployees() {
-      // Active = approved + not locked + not pre-join. Pre-join is handled
-      // per-date via afterJoin check below.
-      return (state.employees || []).filter((u) => u.approved !== false && u.locked !== true);
+      // Active = approved + not locked + NOT admin (admins don't report
+      // timesheet entries, so they would always show as "missed"). The
+      // forced admin email is also excluded for the same reason.
+      // Pre-join is handled per-date via afterJoin check.
+      return (state.employees || []).filter((u) => {
+        if (u.approved === false) return false;
+        if (u.locked === true) return false;
+        const role = String(u.role || "").toLowerCase();
+        if (role === "admin") return false;
+        const email = String(u.email || "").trim().toLowerCase();
+        if (email === FORCED_ADMIN_EMAIL) return false;
+        return true;
+      });
     }
 
-    function populateReportingEmployeeDropdown() {
-      const sel = byId("reporting-employee");
-      if (!sel) return;
-      const previous = sel.value;
-      const list = reportingActiveEmployees()
-        .slice()
-        .sort((a, b) => String(a.name || a.email || "").localeCompare(String(b.name || b.email || "")));
-      const opts = ['<option value="">All employees / articles</option>'];
-      list.forEach((u) => {
-        const label = `${u.name || u.email || u.id}${u.role ? ` (${u.role})` : ""}`;
-        opts.push(`<option value="${safe(u.id)}">${safe(label)}</option>`);
-      });
-      sel.innerHTML = opts.join("");
-      if (previous) sel.value = previous;
+    function reportingEmployeeStartDate(uid, employee) {
+      // Earliest date this employee is considered active for reporting purposes.
+      // Priority:
+      //   1. user.joinDate / user.dateOfJoining (explicit HR field)
+      //   2. earliest entry date (first ever timesheet they filed)
+      //   3. user.createdAtMs / user.createdAt (account creation)
+      const explicit = String(employee?.joinDate || employee?.dateOfJoining || "").trim();
+      if (explicit) return explicit;
+      const recs = reportingRecordsForUid(uid);
+      if (recs.length) {
+        let earliest = "";
+        recs.forEach((r) => {
+          recordDates(r).forEach((d) => {
+            if (!earliest || d < earliest) earliest = d;
+          });
+        });
+        if (earliest) return earliest;
+      }
+      const created = Number(employee?.createdAtMs || 0);
+      if (created) {
+        try { return isoLocalDate(new Date(created)); } catch (_) {}
+      }
+      const createdStr = String(employee?.createdAt || "").trim();
+      if (createdStr) return createdStr;
+      return ""; // unknown — count everything in range
     }
 
     function reportingDefaultDates() {
-      // Default = "Last 3 days" (yesterday + 2 days before)
-      return dateRangeForPreset("last-3");
+      // Default = "Yesterday only" — the typical admin morning check.
+      return dateRangeForPreset("yesterday");
     }
 
     async function initReportingPage() {
@@ -12589,7 +12693,6 @@ tbody tr { transition: background .14s ease; }
         toEl.value = def.to;
       }
       await ensureLookups(false);
-      populateReportingEmployeeDropdown();
       // If we have entries cached, run immediately; otherwise prompt the user.
       if (state.allEntriesLoaded) {
         await runReportingCheck();
@@ -12648,31 +12751,10 @@ tbody tr { transition: background .14s ease; }
       return latest;
     }
 
-    function reportingFormatRelative(ms) {
-      if (!ms) return "Never";
-      const diff = Date.now() - ms;
-      if (diff < 60000) return "Just now";
-      if (diff < 3600000) return `${Math.floor(diff / 60000)} min ago`;
-      if (diff < 86400000) return `${Math.floor(diff / 3600000)} h ago`;
-      const days = Math.floor(diff / 86400000);
-      return `${days} day${days === 1 ? "" : "s"} ago`;
-    }
-
-    function reportingFormatDateTime(ms) {
-      if (!ms) return "-";
-      try {
-        return new Date(ms).toLocaleString(undefined, {
-          day: "2-digit", month: "short", year: "numeric",
-          hour: "2-digit", minute: "2-digit"
-        });
-      } catch (_) { return "-"; }
-    }
-
     async function runReportingCheck() {
       if (!isAdmin()) return;
       const fromIso = String(byId("reporting-from")?.value || "").trim();
       const toIso = String(byId("reporting-to")?.value || "").trim();
-      const employeeId = String(byId("reporting-employee")?.value || "").trim();
       if (!fromIso || !toIso) {
         toast("Pick both From and To dates.", "warn");
         return;
@@ -12689,7 +12771,6 @@ tbody tr { transition: background .14s ease; }
                     || (cachedFrom && fromIso < cachedFrom)
                     || (cachedTo   && toIso   > cachedTo);
       if (needLoad) {
-        // Widen admin range to cover [fromIso, toIso] and reload
         setFieldValue("all-from", fromIso < (cachedFrom || fromIso) ? fromIso : (cachedFrom || fromIso));
         setFieldValue("all-to",   toIso   > (cachedTo   || toIso)   ? toIso   : (cachedTo   || toIso));
         const btn = byId("reporting-refresh");
@@ -12703,39 +12784,33 @@ tbody tr { transition: background .14s ease; }
 
       const workingDates = enumerateReportingDates(fromIso, toIso);
       const everyone = reportingActiveEmployees();
-      const target = employeeId ? everyone.filter((u) => u.id === employeeId) : everyone;
 
-      const rows = target.map((u) => {
+      // Build only the MISSED rows (people with at least one missed day in range)
+      const rows = [];
+      everyone.forEach((u) => {
         const reported = reportingDatesForUid(u.id);
-        // Exclude pre-join dates from "missed" calculation
-        const join = String(u.joinDate || u.dateOfJoining || "").trim();
-        const eligible = workingDates.filter((d) => !join || d >= join);
+        const startDate = reportingEmployeeStartDate(u.id, u);
+        const eligible = workingDates.filter((d) => !startDate || d >= startDate);
         const missed = eligible.filter((d) => !reported.has(d));
-        const reportedInRange = eligible.filter((d) => reported.has(d));
-        const latestMs = reportingLatestEntryAt(u.id);
-        return {
+        if (missed.length === 0) return; // skip — they're up to date
+        rows.push({
           uid: u.id,
           name: u.name || u.email || u.id,
           email: u.email || "",
           phone: String(u.phone || u.mobile || u.whatsapp || "").trim(),
           role: u.role || "",
-          eligibleCount: eligible.length,
-          reportedCount: reportedInRange.length,
+          startDate,
           missedCount: missed.length,
-          missedDates: missed,
-          latestMs,
-          status: missed.length === 0
-            ? (eligible.length === 0 ? "no-working" : "complete")
-            : (reportedInRange.length === 0 ? "none" : "partial")
-        };
+          missedDates: missed
+        });
       });
 
       state.reporting = {
         from: fromIso,
         to: toIso,
-        employeeId,
         workingDates,
         rows,
+        totalActiveEmployees: everyone.length,
         lastRunAt: Date.now()
       };
 
@@ -12748,32 +12823,37 @@ tbody tr { transition: background .14s ease; }
       if (!host) return;
       const r = state.reporting;
       if (!r || !r.rows) { host.innerHTML = ""; return; }
-      const totalMissed = r.rows.reduce((s, x) => s + x.missedCount, 0);
-      const peopleWithGaps = r.rows.filter((x) => x.missedCount > 0).length;
-      const totalEmployees = r.rows.length;
-      const worst = r.rows.slice().sort((a, b) => b.missedCount - a.missedCount)[0];
+      const peopleWithGaps = r.rows.length;
+      const totalActive = r.totalActiveEmployees || 0;
       host.innerHTML = `
         <div class="stat-card">
           <span class="card-icon" aria-hidden="true">&#128202;</span>
-          <span class="kicker">Working days checked</span>
+          <span class="kicker">Working days in range</span>
           <strong>${(r.workingDates || []).length}</strong>
         </div>
         <div class="stat-card">
           <span class="card-icon" aria-hidden="true">&#9888;&#65039;</span>
-          <span class="kicker">People with gaps</span>
-          <strong>${peopleWithGaps} / ${totalEmployees}</strong>
-        </div>
-        <div class="stat-card">
-          <span class="card-icon" aria-hidden="true">&#128221;</span>
-          <span class="kicker">Total missed days</span>
-          <strong>${totalMissed}</strong>
-        </div>
-        <div class="stat-card">
-          <span class="card-icon" aria-hidden="true">&#128680;</span>
-          <span class="kicker">Worst</span>
-          <strong style="font-size:1.0rem;line-height:1.25;">${worst && worst.missedCount > 0 ? `${safe(worst.name)} · ${worst.missedCount}d` : "Everyone clear"}</strong>
+          <span class="kicker">Pending reports</span>
+          <strong>${peopleWithGaps}${totalActive ? ` / ${totalActive}` : ""}</strong>
         </div>
       `;
+    }
+
+    function reportingFilteredRows() {
+      const r = state.reporting;
+      if (!r || !r.rows) return [];
+      const q = String(byId("reporting-search")?.value || "").trim().toLowerCase();
+      let rows = r.rows.slice();
+      if (q) {
+        rows = rows.filter((x) =>
+          String(x.name || "").toLowerCase().includes(q)
+          || String(x.email || "").toLowerCase().includes(q)
+          || String(x.role || "").toLowerCase().includes(q)
+        );
+      }
+      // Sort: most missed first, then alphabetical
+      rows.sort((a, b) => (b.missedCount - a.missedCount) || a.name.localeCompare(b.name));
+      return rows;
     }
 
     function renderReportingTable() {
@@ -12781,51 +12861,42 @@ tbody tr { transition: background .14s ease; }
       if (!tbody) return;
       const r = state.reporting;
       if (!r || !r.rows) { tbody.innerHTML = ""; return; }
-      const filterMode = String(byId("reporting-filter-mode")?.value || "missed");
-      let rows = r.rows;
-      if (filterMode === "missed") rows = rows.filter((x) => x.missedCount > 0);
-      else if (filterMode === "reported") rows = rows.filter((x) => x.missedCount === 0 && x.reportedCount > 0);
-      // Sort: missed-most first, then by name
-      rows = rows.slice().sort((a, b) => (b.missedCount - a.missedCount) || a.name.localeCompare(b.name));
+      const rows = reportingFilteredRows();
 
       if (!rows.length) {
-        tbody.innerHTML = `<tr><td colspan="7" class="empty-state" style="text-align:center;padding:24px;">No employees match this filter for the selected range.</td></tr>`;
+        const msg = (r.rows.length === 0)
+          ? `<strong>Nobody is pending</strong> &mdash; everyone reported in this range.`
+          : `No one matches your search.`;
+        tbody.innerHTML = `<tr><td colspan="4" class="empty-state" style="text-align:center;padding:24px;">${msg}</td></tr>`;
         return;
       }
 
       tbody.innerHTML = rows.map((row) => {
-        const statusPill = row.status === "complete"
-          ? `<span class="status-pill secure">All reported</span>`
-          : row.status === "none"
-            ? `<span class="status-pill locked">Nothing reported</span>`
-            : row.status === "no-working"
-              ? `<span class="status-pill secure">No working days</span>`
-              : `<span class="status-pill pending">${row.missedCount} day${row.missedCount === 1 ? "" : "s"} missed</span>`;
-        const missedDatesHtml = row.missedDates.length
-          ? row.missedDates.map((d) => `<span class="chip" style="font-family:var(--font-mono);font-size:0.74rem;">${safe(formatDate(d))}</span>`).join(" ")
-          : `<span class="muted" style="font-size:0.82rem;">—</span>`;
-        const latestText = row.latestMs
-          ? `<div style="font-family:var(--font-mono);font-size:0.84rem;font-feature-settings:'tnum';">${safe(reportingFormatDateTime(row.latestMs))}</div><div class="muted" style="font-size:0.74rem;">${safe(reportingFormatRelative(row.latestMs))}</div>`
-          : `<span class="muted" style="font-size:0.82rem;">Never</span>`;
+        const missedDatesHtml = row.missedDates
+          .map((d) => `<span class="chip" style="font-family:var(--font-mono);font-size:0.74rem;">${safe(formatDate(d))}</span>`)
+          .join(" ");
         return `
           <tr>
             <td>
               <div style="font-weight:700;">${safe(row.name)}</div>
-              <div class="muted" style="font-size:0.78rem;">${safe(row.email)}${row.role ? ` · ${safe(row.role)}` : ""}</div>
+              <div class="muted" style="font-size:0.78rem;">${safe(row.email)}${row.role ? ` &middot; ${safe(row.role)}` : ""}</div>
             </td>
-            <td>${statusPill}</td>
-            <td>${latestText}</td>
+            <td class="numeric"><strong style="font-size:1.05rem;">${row.missedCount}</strong></td>
             <td><div class="chip-row" style="gap:4px;">${missedDatesHtml}</div></td>
-            <td class="numeric">${row.missedCount}</td>
-            <td class="numeric">${row.reportedCount}</td>
             <td>
-              ${row.missedCount > 0
-                ? `<button class="btn btn-outline small" type="button" data-uid="${safe(row.uid)}" data-action="reporting-nudge">Copy nudge</button>`
-                : `<span class="muted" style="font-size:0.82rem;">—</span>`}
+              <button class="btn btn-outline small" type="button" data-uid="${safe(row.uid)}" data-action="reporting-nudge">Copy nudge</button>
             </td>
           </tr>
         `;
       }).join("");
+    }
+
+    function clearReportingFilters() {
+      const def = reportingDefaultDates();
+      setFieldValue("reporting-from", def.from);
+      setFieldValue("reporting-to", def.to);
+      setFieldValue("reporting-search", "");
+      runReportingCheck();
     }
 
     function reportingNudgeText(row) {
@@ -12850,9 +12921,9 @@ tbody tr { transition: background .14s ease; }
     }
 
     async function copyAllReportingNudges() {
-      const rowsWithGaps = (state.reporting?.rows || []).filter((x) => x.missedCount > 0);
+      const rowsWithGaps = reportingFilteredRows();
       if (!rowsWithGaps.length) {
-        toast("No gaps to nudge — everyone is up to date.", "success");
+        toast("No pending reports to nudge.", "success");
         return;
       }
       const text = rowsWithGaps.map((r) => reportingNudgeText(r)).join("\n\n———\n\n");
@@ -12867,26 +12938,22 @@ tbody tr { transition: background .14s ease; }
     function exportReportingExcel() {
       const r = state.reporting;
       if (!r || !r.rows || !r.rows.length) {
-        toast("Run a check first.", "warn");
+        toast("No pending reports to export.", "warn");
         return;
       }
       const fmtDate = (iso) => formatDate(iso) || iso;
-      const data = r.rows.map((row) => ({
+      const data = reportingFilteredRows().map((row) => ({
         Name: row.name,
         Email: row.email,
         Role: row.role,
         Phone: row.phone,
-        "Eligible working days": row.eligibleCount,
-        "Days reported": row.reportedCount,
         "Days missed": row.missedCount,
-        Status: row.status === "complete" ? "All reported" : row.status === "none" ? "Nothing reported" : row.status === "no-working" ? "No working days" : "Partial",
-        "Missed dates": row.missedDates.map(fmtDate).join(", "),
-        "Latest entry": reportingFormatDateTime(row.latestMs)
+        "Missed dates": row.missedDates.map(fmtDate).join(", ")
       }));
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.json_to_sheet(data);
-      XLSX.utils.book_append_sheet(wb, ws, "Reporting check");
-      const fname = `VKS-Reporting-${r.from}-to-${r.to}.xlsx`;
+      XLSX.utils.book_append_sheet(wb, ws, "Pending reports");
+      const fname = `VKS-Pending-Reports-${r.from}-to-${r.to}.xlsx`;
       XLSX.writeFile(wb, fname);
       toast(`Exported ${data.length} rows.`, "success");
     }
@@ -14460,7 +14527,7 @@ tbody tr { transition: background .14s ease; }
             };
           }
 
-          await updateDoc(doc(db, "group_entries", record.id), {
+          const __groupPayload = {
             client,
             clients: [client],
             taskList: tasks,
@@ -14469,7 +14536,9 @@ tbody tr { transition: background .14s ease; }
             updatedAt: Timestamp.now(),
             lastEditedByUid: state.user?.uid || "",
             lastEditedBy: profileName()
-          });
+          };
+          const __changeSummary = summarizeEntryChanges(record, __groupPayload);
+          await updateDoc(doc(db, "group_entries", record.id), __groupPayload);
           upsertMyEntryCache({
             ...record,
             client,
@@ -14479,7 +14548,7 @@ tbody tr { transition: background .14s ease; }
             memberEntries,
             updatedAt: Timestamp.now()
           });
-          await addTrail(record, "Edited", canEditShared ? "Group entry updated" : "Member section updated");
+          await addTrail(record, "Edited", `${canEditShared ? "Group entry updated" : "Member section updated"} — ${__changeSummary}`);
           await writeLog({
             action: `${profileName()} edited group entry`,
             actorName: profileName(),
@@ -14785,9 +14854,10 @@ tbody tr { transition: background .14s ease; }
               lastEditedByUid: state.user?.uid || "",
               lastEditedBy: profileName()
             };
+            const __changeSummary = summarizeEntryChanges(record, payload);
             await updateDoc(doc(db, "entries", record.id), payload);
             upsertMyEntryCache(normalizeSingleDoc({ ...record, ...payload }));
-            await addTrail(record, "Edited", "Single entry updated");
+            await addTrail(record, "Edited", `Single entry updated — ${__changeSummary}`);
             await writeLog({
               action: `${profileName()} edited time entry`,
               actorName: profileName(),
@@ -14963,9 +15033,10 @@ tbody tr { transition: background .14s ease; }
             lastEditedByUid: state.user?.uid || "",
             lastEditedBy: profileName()
           };
+          const __changeSummary = summarizeEntryChanges(record, payload);
           await updateDoc(doc(db, "bulk_entries", record.id), payload);
           upsertMyEntryCache(normalizeBulkDoc({ ...record, ...payload }));
-          await addTrail(record, "Edited", "Bulk entry updated");
+          await addTrail(record, "Edited", `Bulk entry updated — ${__changeSummary}`);
           await writeLog({
             action: `${profileName()} edited bulk entry`,
             actorName: profileName(),
@@ -17460,15 +17531,18 @@ tbody tr { transition: background .14s ease; }
         window.print();
       });
 
-      // Reporting check page bindings
+      // Reporting check page bindings (simplified)
       bind("reporting-refresh", "click", runReportingCheck);
-      bind("reporting-employee", "change", runReportingCheck);
-      bind("reporting-filter-mode", "change", renderReportingTable);
+      bind("reporting-clear", "click", clearReportingFilters);
       bind("reporting-from", "change", () => {
         if (state.reporting?.lastRunAt) runReportingCheck();
       });
       bind("reporting-to", "change", () => {
         if (state.reporting?.lastRunAt) runReportingCheck();
+      });
+      // Live search — re-render table only (no re-fetch)
+      bind("reporting-search", "input", () => {
+        if (state.reporting?.rows) renderReportingTable();
       });
       bind("reporting-export-excel", "click", exportReportingExcel);
       bind("reporting-print", "click", printReporting);
