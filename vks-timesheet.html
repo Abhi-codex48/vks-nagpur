@@ -6429,6 +6429,57 @@ tbody tr { transition: background .14s ease; }
   color: #5a3d0a;
 }
 
+/* Prominent live search bar — sits ABOVE the toolbar so it can't be missed */
+#page-reporting .reporting-searchbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: var(--s4) 0 var(--s3);
+  padding: 4px 12px 4px 14px;
+  background: linear-gradient(180deg, var(--white) 0%, var(--paper) 100%);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+#page-reporting .reporting-searchbar:focus-within {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(190, 142, 27, 0.16), var(--shadow-sm);
+}
+#page-reporting .reporting-searchbar-icon {
+  font-size: 1.1rem;
+  flex: none;
+  filter: grayscale(0.2);
+}
+#page-reporting #reporting-search {
+  flex: 1; min-width: 0;
+  height: 44px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+#page-reporting #reporting-search::placeholder { color: var(--muted); }
+#page-reporting .reporting-searchbar-clear {
+  flex: none;
+  width: 28px; height: 28px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--line-soft);
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s ease, color .15s ease;
+}
+#page-reporting .reporting-searchbar-clear:hover { background: var(--gold-soft); color: var(--ink); }
+#page-reporting .reporting-searchbar.has-value .reporting-searchbar-clear { display: inline-flex; }
+
 /* Toolbar fields shrink instead of overflowing */
 #page-reporting .toolbar > .field {
   min-width: 0;
@@ -7502,6 +7553,13 @@ tbody tr { transition: background .14s ease; }
             <button class="date-preset" type="button" data-preset="last-month" data-target="reporting">Last month</button>
           </div>
 
+          <!-- Prominent live search bar -->
+          <div class="reporting-searchbar">
+            <span class="reporting-searchbar-icon" aria-hidden="true">🔍</span>
+            <input id="reporting-search" type="text" placeholder="Search by name, email, or role — filters the list as you type" autocomplete="off">
+            <button class="reporting-searchbar-clear" type="button" id="reporting-search-clear" title="Clear search" aria-label="Clear search">✕</button>
+          </div>
+
           <div class="toolbar">
             <label class="field compact">
               <span>From</span>
@@ -7510,10 +7568,6 @@ tbody tr { transition: background .14s ease; }
             <label class="field compact">
               <span>To</span>
               <input id="reporting-to" type="date">
-            </label>
-            <label class="field compact grow">
-              <span>Search name or email</span>
-              <input id="reporting-search" type="text" placeholder="Type to filter the list...">
             </label>
             <div class="toolbar-actions">
               <button id="reporting-refresh" class="btn btn-primary" type="button">Check now</button>
@@ -12877,7 +12931,10 @@ tbody tr { transition: background .14s ease; }
             <td class="numeric"><strong style="font-size:1.05rem;">${row.missedCount}</strong></td>
             <td><div class="chip-row" style="gap:4px;">${missedDatesHtml}</div></td>
             <td>
-              <button class="btn btn-outline small" type="button" data-uid="${safe(row.uid)}" data-action="reporting-nudge">Copy nudge</button>
+              <div class="actions" style="display:flex;flex-wrap:wrap;gap:6px;">
+                <button class="btn btn-outline small" type="button" data-action="open-admin-calendar" data-id="${safe(row.uid)}" title="Open ${safe(row.name)}'s reporting calendar">📅 Calendar</button>
+                <button class="btn btn-outline small" type="button" data-uid="${safe(row.uid)}" data-action="reporting-nudge" title="Copy WhatsApp nudge for ${safe(row.name)}">Copy nudge</button>
+              </div>
             </td>
           </tr>
         `;
@@ -12889,6 +12946,7 @@ tbody tr { transition: background .14s ease; }
       setFieldValue("reporting-from", def.from);
       setFieldValue("reporting-to", def.to);
       setFieldValue("reporting-search", "");
+      byId("reporting-search")?.closest(".reporting-searchbar")?.classList.remove("has-value");
       runReportingCheck();
     }
 
@@ -17533,9 +17591,20 @@ tbody tr { transition: background .14s ease; }
       bind("reporting-to", "change", () => {
         if (state.reporting?.lastRunAt) runReportingCheck();
       });
-      // Live search — re-render table only (no re-fetch)
+      // Live search — re-render table only (no re-fetch). Also toggles the
+      // tiny "X" clear button visibility on the search bar.
       bind("reporting-search", "input", () => {
+        const wrap = byId("reporting-search")?.closest(".reporting-searchbar");
+        if (wrap) wrap.classList.toggle("has-value", !!byId("reporting-search").value);
         if (state.reporting?.rows) renderReportingTable();
+      });
+      bind("reporting-search-clear", "click", () => {
+        const inp = byId("reporting-search");
+        if (!inp) return;
+        inp.value = "";
+        inp.closest(".reporting-searchbar")?.classList.remove("has-value");
+        if (state.reporting?.rows) renderReportingTable();
+        inp.focus();
       });
       bind("reporting-export-excel", "click", exportReportingExcel);
       bind("reporting-print", "click", printReporting);
