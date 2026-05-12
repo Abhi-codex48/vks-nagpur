@@ -12651,30 +12651,23 @@ tbody tr { transition: background .14s ease; }
     }
 
     function reportingEmployeeStartDate(uid, employee) {
-      // Earliest date this employee is considered active for reporting purposes.
-      // Priority:
-      //   1. user.joinDate / user.dateOfJoining (explicit HR field)
-      //   2. earliest entry date (first ever timesheet they filed)
-      //   3. user.createdAtMs / user.createdAt (account creation)
+      // Earliest date this employee should be expected to report. Priority:
+      //   1. user.joinDate / user.dateOfJoining — explicit HR field (preferred)
+      //   2. user.createdAt — Firestore Timestamp of account creation
+      //      (this is what the existing calendar code uses as the join date)
+      // NOTE: We deliberately do NOT use "earliest entry date" as a fallback.
+      // That made users with a single recent entry look like they joined late
+      // and hid them from the missed list — the very people admin wants to
+      // catch. If joinDate + createdAt are both missing, return "" so every
+      // working day in the chosen range counts (admin can still set joinDate
+      // explicitly for accurate filtering).
       const explicit = String(employee?.joinDate || employee?.dateOfJoining || "").trim();
       if (explicit) return explicit;
-      const recs = reportingRecordsForUid(uid);
-      if (recs.length) {
-        let earliest = "";
-        recs.forEach((r) => {
-          recordDates(r).forEach((d) => {
-            if (!earliest || d < earliest) earliest = d;
-          });
-        });
-        if (earliest) return earliest;
+      const createdMs = tsMs(employee?.createdAt);
+      if (createdMs) {
+        try { return new Date(createdMs).toISOString().slice(0, 10); } catch (_) {}
       }
-      const created = Number(employee?.createdAtMs || 0);
-      if (created) {
-        try { return isoLocalDate(new Date(created)); } catch (_) {}
-      }
-      const createdStr = String(employee?.createdAt || "").trim();
-      if (createdStr) return createdStr;
-      return ""; // unknown — count everything in range
+      return "";
     }
 
     function reportingDefaultDates() {
