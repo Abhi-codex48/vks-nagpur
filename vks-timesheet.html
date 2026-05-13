@@ -6765,6 +6765,330 @@ tbody tr { transition: background .14s ease; }
       pointer;
   }
 }
+
+/* ============================================================
+   ENTRY-TYPE BUTTONS + NUMBERED STEPS (Log Time form)
+   ============================================================ */
+
+/* Top-right entry-type actions: Bulk + Group with icon and subtitle */
+.entry-type-actions { gap: 10px; flex-wrap: wrap; }
+.entry-type-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  min-height: 56px;
+  border-radius: 14px;
+  border: 1px solid rgba(190, 142, 27, 0.30);
+  background: linear-gradient(180deg, #fffaf0, #fbf2dc);
+  color: var(--ink);
+  text-align: left;
+  font-weight: 700;
+  transition: transform .14s ease, box-shadow .18s ease, border-color .16s ease, background .18s ease;
+}
+.entry-type-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(190, 142, 27, 0.65);
+  background: linear-gradient(180deg, #fff5dc, #fbe7b6);
+  box-shadow: 0 12px 24px rgba(190, 142, 27, 0.18);
+}
+.entry-type-bulk { border-color: rgba(49, 93, 150, 0.40); background: linear-gradient(180deg, #f4f7fb, #e2ecf7); }
+.entry-type-bulk:hover { border-color: rgba(49, 93, 150, 0.75); background: linear-gradient(180deg, #ebf2fa, #cfdef0); box-shadow: 0 12px 24px rgba(49, 93, 150, 0.18); }
+.entry-type-group { border-color: rgba(75, 106, 74, 0.42); background: linear-gradient(180deg, #f1f7f2, #dbeadf); }
+.entry-type-group:hover { border-color: rgba(75, 106, 74, 0.75); background: linear-gradient(180deg, #e6f0e8, #c5dccd); box-shadow: 0 12px 24px rgba(75, 106, 74, 0.18); }
+.entry-type-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.72);
+  font-size: 1.1rem;
+  flex: 0 0 36px;
+}
+.entry-type-text { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+.entry-type-text strong { font-size: 0.94rem; font-weight: 700; }
+.entry-type-text small { font-size: 0.72rem; color: var(--muted); font-weight: 500; letter-spacing: 0.01em; margin-top: 2px; }
+
+/* "Three entry types" explainer banner */
+.entry-type-helper {
+  margin: 12px 0 18px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px dashed rgba(190, 142, 27, 0.30);
+  background: rgba(255, 252, 246, 0.85);
+}
+.entry-type-helper-title {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--gold);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.entry-type-helper-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+.entry-type-helper-card {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(220, 207, 190, 0.65);
+  background: #fff;
+}
+.entry-type-helper-card strong {
+  display: block;
+  font-size: 0.86rem;
+  margin-bottom: 4px;
+  color: var(--ink);
+}
+.entry-type-helper-card span { font-size: 0.78rem; color: var(--muted); line-height: 1.55; }
+.entry-type-helper-card em { color: var(--gold); font-style: normal; font-weight: 700; }
+
+/* Numbered step layout */
+.entry-step {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  padding: 16px 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(220, 207, 190, 0.5);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(252, 248, 240, 0.65));
+  margin-bottom: 12px;
+}
+.entry-step-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f5cf66, #be8e1b);
+  color: #fff;
+  font-family: "Fraunces", serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  box-shadow: 0 6px 14px rgba(190, 142, 27, 0.30), inset 0 1px 0 rgba(255,255,255,0.35);
+}
+.entry-step-body { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+
+/* Client search + Add client button side by side */
+.entry-client-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+.entry-client-row input[type="text"] { flex: 1 1 auto; }
+.entry-client-row .btn { flex: 0 0 auto; }
+
+/* Step 3 title row with inline auto-total chip */
+.entry-step-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.entry-step-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.single-total-inline {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(190, 142, 27, 0.30);
+  background: linear-gradient(180deg, #fffdf6, #fbf2dc);
+}
+.single-total-inline .panel-kicker { margin: 0; font-size: 0.62rem; }
+.single-total-inline .single-total-hours { font-family: "Fraunces", serif; font-size: 1.05rem; line-height: 1; color: var(--ink); }
+
+/* Clubbed Save For Later strip below the form */
+.logtime-submit-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  margin-top: 8px;
+  border-radius: 16px;
+  border: 1px solid rgba(220, 207, 190, 0.5);
+  background: rgba(255, 252, 246, 0.95);
+}
+.logtime-draft-note {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+.logtime-draft-note strong { color: var(--ink); }
+
+@media (max-width: 640px) {
+  .entry-type-actions { width: 100%; }
+  .entry-type-btn { flex: 1 1 100%; }
+  .entry-step { padding: 12px 14px; grid-template-columns: 36px minmax(0, 1fr); gap: 10px; }
+  .entry-step-badge { width: 32px; height: 32px; font-size: 1rem; }
+  .entry-client-row { flex-direction: column; }
+  .entry-step-title-row { flex-direction: column; align-items: flex-start; }
+}
+
+/* Per-client work type picker inside each client card (Step 3 cards) */
+.single-client-card .client-task-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.single-client-card .client-task-row select {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--white);
+  padding: 13px 14px;
+}
+.single-client-card .client-task-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+.single-client-card .client-task-chips:empty { display: none; }
+
+/* ============================================================
+   MOBILE FIX — Audit / Activity logs become a swipeable row of cards
+   (like a table you scroll left/right). Text inside each card is
+   left-aligned, properly broken, never overflows.
+   - #my-audit-list (My activity log on My Timesheet)
+   - #logs-list (Admin activity logs)
+   - .recycle-card-grid (Recycle bin)
+   Entry tables stay as native <table> inside .table-shell, which
+   already swipes horizontally.
+   ============================================================ */
+@media (max-width: 720px) {
+  /* Plain horizontal scrolling row of cards (no snap, no fade) */
+  #my-audit-list .audit-card-grid,
+  #logs-list .activity-log-list,
+  #logs-list .audit-card-grid,
+  .audit-card-grid,
+  .activity-log-list,
+  .recycle-card-grid {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    grid-template-columns: none !important;
+    gap: 10px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+  }
+
+  /* Each card is a fixed-width column inside the scrollable row */
+  #my-audit-list .audit-card-grid > *,
+  #logs-list .activity-log-list > *,
+  #logs-list .audit-card-grid > *,
+  .audit-card-grid > *,
+  .activity-log-list > *,
+  .recycle-card-grid > * {
+    flex: 0 0 auto !important;
+    width: 80vw;
+    max-width: 320px;
+    min-width: 260px;
+  }
+
+  /* Card inner: clean left-aligned column layout */
+  #my-audit-list .log-card,
+  #logs-list .log-card,
+  .activity-log-card,
+  .recycle-card {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    text-align: left !important;
+    padding: 12px !important;
+    gap: 6px;
+    overflow: hidden;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  /* Force any internal grid (activity-log-card has main + side) to stack */
+  .activity-log-card {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+  .activity-log-side {
+    border-top: 1px solid rgba(220, 207, 190, 0.7);
+    padding-top: 8px;
+    justify-items: start !important;
+    text-align: left !important;
+  }
+
+  /* Long content (IDs, paths, file names) wraps inside the card */
+  #my-audit-list .log-card *,
+  #logs-list .log-card *,
+  .activity-log-card *,
+  .recycle-card * {
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+    white-space: normal !important;
+    text-align: left !important;
+  }
+
+  /* Entry table stays as a native horizontally-scrollable table */
+  .table-shell {
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  .screen.app-screen .table-shell td,
+  .screen.app-screen .table-shell th {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    text-align: left;
+  }
+}
+
+@media (max-width: 480px) {
+  #my-audit-list .audit-card-grid > *,
+  #logs-list .activity-log-list > *,
+  .audit-card-grid > *,
+  .activity-log-list > *,
+  .recycle-card-grid > * {
+    width: 84vw;
+    min-width: 240px;
+  }
+  #my-audit-list .log-card,
+  #logs-list .log-card,
+  .activity-log-card,
+  .recycle-card {
+    padding: 10px !important;
+    border-radius: 12px;
+  }
+  #my-audit-list .log-card strong,
+  #logs-list .log-card strong,
+  .activity-log-card strong {
+    font-size: 0.92rem;
+    line-height: 1.3;
+  }
+  #my-audit-list .log-card .subline,
+  #logs-list .log-card .subline,
+  .activity-log-card .subline {
+    font-size: 0.8rem;
+    line-height: 1.5;
+  }
+  #my-audit-list .log-card small,
+  #logs-list .log-card small,
+  .activity-log-card small {
+    font-size: 0.74rem;
+  }
+}
 </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
@@ -6989,8 +7313,8 @@ tbody tr { transition: background .14s ease; }
           <div class="vksl-quote">
             <div class="vksl-quote-mark">"</div>
             <div>
-              <p id="vksl-quote-text">Maintaining records of the work you do doesn't just help us manage — it helps <span class="vksl-hl">you grow</span>, reflect, and track your own journey. Every entry you make today is a milestone in your professional story.</p>
-              <div class="vksl-qmeta" id="vksl-quote-meta">VKS · Founder's Note</div>
+              <p id="vksl-quote-text">Excellence is not an act but a <span class="vksl-hl">habit</span>. We are what we repeatedly do.</p>
+              <div class="vksl-qmeta" id="vksl-quote-meta">Daily Reflection</div>
             </div>
           </div>
         </section>
@@ -7229,76 +7553,110 @@ tbody tr { transition: background .14s ease; }
               <div class="panel-kicker">Employee / Article</div>
               <h3>Log time</h3>
             </div>
-            <div class="panel-actions">
-              <button id="open-bulk-entry" class="btn btn-outline" type="button">Bulk entry</button>
-              <button id="open-group-entry" class="btn btn-outline" type="button">Group reporting</button>
+            <div class="panel-actions entry-type-actions">
+              <button id="open-bulk-entry" class="btn entry-type-btn entry-type-bulk" type="button" title="Same hours and remarks for ONE client across MANY days">
+                <span class="entry-type-icon" aria-hidden="true">&#128197;</span>
+                <span class="entry-type-text">
+                  <strong>Bulk entry</strong>
+                  <small>One client · Many days</small>
+                </span>
+              </button>
+              <button id="open-group-entry" class="btn entry-type-btn entry-type-group" type="button" title="Admin: assign work to MANY users — Single (one day) or Bulk (many days)">
+                <span class="entry-type-icon" aria-hidden="true">&#128101;</span>
+                <span class="entry-type-text">
+                  <strong>Group reporting</strong>
+                  <small>Many users · Single or Bulk</small>
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Entry-type explainer banner — clarifies the 3 entry kinds (4 paths) -->
+          <div class="entry-type-helper">
+            <div class="entry-type-helper-title">Three entry types</div>
+            <div class="entry-type-helper-grid">
+              <div class="entry-type-helper-card">
+                <strong>1 &middot; Single</strong>
+                <span>One person, one day, one or more clients. (Below)</span>
+              </div>
+              <div class="entry-type-helper-card">
+                <strong>2 &middot; Bulk</strong>
+                <span>One person, one client, many days. Use <em>Bulk entry</em> above.</span>
+              </div>
+              <div class="entry-type-helper-card">
+                <strong>3 &middot; Group</strong>
+                <span>Admin assigns to many users — <em>Group Single</em> (one day) or <em>Group Bulk</em> (many days). Use <em>Group reporting</em> above.</span>
+              </div>
             </div>
           </div>
 
           <form id="single-entry-form" class="single-entry-form-shell">
-            <div class="single-entry-layout logtime-hero-grid">
-              <div class="single-entry-col logtime-input-rail">
+            <!-- STEP 1: Date -->
+            <div class="entry-step">
+              <span class="entry-step-badge">1</span>
+              <div class="entry-step-body">
                 <label class="field">
-                  <span>Date</span>
+                  <span>Pick the date</span>
                   <input id="entry-date" type="date">
                 </label>
+              </div>
+            </div>
+
+            <!-- STEP 2: Client -->
+            <div class="entry-step">
+              <span class="entry-step-badge">2</span>
+              <div class="entry-step-body">
                 <div class="field">
-                  <span>Client</span>
-                  <input id="entry-client-search" type="text" autocomplete="off" placeholder="Search existing client or type a new one">
+                  <span>Add client(s)</span>
+                  <div class="entry-client-row">
+                    <input id="entry-client-search" type="text" autocomplete="off" placeholder="Search existing client or type a new one">
+                    <button id="entry-add-client" class="btn btn-outline small" type="button">Add client</button>
+                  </div>
                   <input id="entry-client" type="hidden">
                   <div id="entry-client-options" class="suggestions"></div>
-                  <div class="field-note"><span>Pick from the list, or just type a new client name and press <strong>Add client</strong>.</span></div>
+                  <div class="field-note"><span>Pick from the list, or type a new client name and press <strong>Add client</strong>. You can add multiple clients for the same day.</span></div>
                 </div>
+                <input id="entry-client-other" type="hidden">
+                <div id="entry-client-chips" class="chip-row"></div>
               </div>
-              <div class="single-entry-col logtime-summary-rail">
-                <div class="hub-card single-total-card">
-                  <span class="panel-kicker">Auto Total</span>
-                  <strong id="entry-total-hours-label" class="single-total-hours">0.0 h</strong>
-                  <div class="subline">Calculated from the client boxes below.</div>
-                  <div class="hrmin-wrap readonly-wrap">
-                    <input id="entry-hours-h" type="number" min="0" max="24" placeholder="0" aria-label="Hours" readonly>
-                    <span class="hrmin-unit">hr</span>
-                    <span class="hrmin-divider"></span>
-                    <input id="entry-hours-m" type="number" min="0" max="60" placeholder="0" aria-label="Minutes" readonly>
-                    <span class="hrmin-unit">min</span>
+            </div>
+
+            <!-- STEP 3: Hours + remarks + work type, per client -->
+            <div class="entry-step">
+              <span class="entry-step-badge">3</span>
+              <div class="entry-step-body">
+                <div class="entry-step-title-row">
+                  <div class="entry-step-title">Time, remarks and work type — for each client</div>
+                  <div class="single-total-inline">
+                    <span class="panel-kicker">Auto total</span>
+                    <strong id="entry-total-hours-label" class="single-total-hours">0.0 h</strong>
+                    <input id="entry-hours-h" type="hidden" value="0">
+                    <input id="entry-hours-m" type="hidden" value="0">
+                    <input id="entry-hours" type="hidden" value="">
                   </div>
-                  <input id="entry-hours" type="hidden" value="">
                 </div>
-                <label class="field">
-                  <span>Other client name</span>
-                  <input id="entry-client-other" type="text" placeholder="Type and add a custom client">
-                </label>
+                <div id="entry-client-breakdown" class="field-stack"></div>
               </div>
             </div>
 
-            <div class="button-row logtime-command-row">
-              <button id="entry-add-client" class="btn btn-outline small" type="button">Add client</button>
-              <div class="logtime-inline-note">Add a client to open a separate time and remarks block below.</div>
-            </div>
-            <div id="entry-client-chips" class="chip-row"></div>
-            <div id="entry-client-breakdown" class="field-stack"></div>
+            <!-- Hidden global task picker (kept for back-compat; not visually used) -->
+            <select id="entry-task-picker" hidden><option value="">Add work type</option></select>
+            <div id="entry-task-chips" class="chip-row" hidden></div>
 
-            <div class="logtime-footer-grid">
-              <label class="field logtime-task-field">
-                <span>Work types</span>
-                <select id="entry-task-picker">
-                  <option value="">Add work type</option>
-                </select>
-                <div id="entry-task-chips" class="chip-row"></div>
-              </label>
-
-              <div class="hub-card logtime-draft-card">
-                <strong>Save For Later</strong>
-                <div class="subline">This draft is saved on this local browser/device only. It is not sent to the database and is not visible to admin unless you submit it.</div>
-              </div>
-            </div>
             <div id="single-entry-error" class="message error" role="alert"></div>
             <div id="entry-last-saved" class="message success action-status" role="status" hidden></div>
-            <div class="button-row logtime-submit-row">
-              <button id="single-save-draft" class="btn btn-outline" type="button">Save For Later</button>
-              <button id="single-load-draft" class="btn btn-outline" type="button">Load Draft</button>
-              <button id="single-delete-draft" class="btn btn-ghost" type="button">Delete Saved Draft</button>
-              <button id="single-submit" class="btn btn-primary" type="submit">Submit single entry</button>
+
+            <!-- Submit row + clubbed Save For Later note -->
+            <div class="logtime-submit-row">
+              <div class="logtime-draft-note">
+                <strong>Save For Later</strong> keeps a draft on this device only. It is not sent to the database and admin cannot see it until you submit.
+              </div>
+              <div class="button-row">
+                <button id="single-save-draft" class="btn btn-outline" type="button">Save For Later</button>
+                <button id="single-load-draft" class="btn btn-outline" type="button">Load Draft</button>
+                <button id="single-delete-draft" class="btn btn-ghost" type="button">Delete Saved Draft</button>
+                <button id="single-submit" class="btn btn-primary" type="submit">Submit single entry</button>
+              </div>
             </div>
           </form>
         </div>
@@ -8622,7 +8980,7 @@ tbody tr { transition: background .14s ease; }
         clientSearch: byId("entry-client-search")?.value || "",
         clientHidden: byId("entry-client")?.value || "",
         clientOther: byId("entry-client-other")?.value || "",
-        tasks: [...(state.entryDraftTasks || [])],
+        tasks: uniq((state.entryClientDrafts || []).flatMap((c) => Array.isArray(c.tasks) ? c.tasks : [])),
         clientBreakdown: singleBreakdownPayload(state.entryClientDrafts || [])
       };
     }
@@ -9341,14 +9699,60 @@ tbody tr { transition: background .14s ease; }
       byId("employee-department-filter").innerHTML = `<option value="">All departments</option>${deptMarkup}`;
     }
 
+    // 50 hand-picked quotes \u2014 a mix of work ethic, CA profession, growth,
+    // Indian wisdom, reflection, integrity. Rotated by day-of-year so every
+    // user sees the same quote on the same calendar day.
     const VKSL_QUOTES = [
-      { text: "Maintaining records of the work you do doesn't just help us manage \u2014 it helps you grow, reflect, and track your own journey. Every entry you make today is a milestone in your professional story.", hl: "you grow", by: "VKS \u00B7 Founder's Note" },
-      { text: "Discipline is the bridge between ambition and accomplishment. Log the hours, and the years take care of themselves.", hl: "the hours", by: "Daily Reflection" },
-      { text: "Numbers tell the story; timesheets write the chapters. Be the author of your own professional book.", hl: "your own", by: "Daily Reflection" },
-      { text: "An accountant who logs honestly today becomes a partner who leads tomorrow. Small entries. Long careers.", hl: "leads tomorrow", by: "Daily Reflection" },
-      { text: "Audit your hours like you audit a balance sheet \u2014 diligently, honestly, and with curiosity for what they reveal.", hl: "honestly", by: "Daily Reflection" },
-      { text: "Today's work logged is tomorrow's evidence of progress. Make every minute count, then make every minute counted.", hl: "count", by: "Daily Reflection" },
-      { text: "The most valuable ledger you keep isn't a client's \u2014 it's your own. Of effort, of growth, of mastery earned hour by hour.", hl: "your own", by: "Daily Reflection" }
+      { text: "Excellence is not an act but a habit. We are what we repeatedly do.", hl: "habit" },
+      { text: "Discipline is the bridge between goals and accomplishment.", hl: "bridge" },
+      { text: "Numbers tell the story; timesheets write the chapters of your career.", hl: "your career" },
+      { text: "An accountant who logs honestly today becomes the partner who leads tomorrow.", hl: "leads tomorrow" },
+      { text: "The most valuable ledger you keep is your own \u2014 of effort, of growth, of hours mastered.", hl: "your own" },
+      { text: "Audit your hours like you audit a balance sheet \u2014 diligently, honestly, with curiosity for what they reveal.", hl: "curiosity" },
+      { text: "Trust is built one entry at a time. Earn it daily.", hl: "one entry" },
+      { text: "Quality is never an accident. It is always the result of intelligent effort.", hl: "intelligent effort" },
+      { text: "Slow progress is still progress. Small entries become long careers.", hl: "long careers" },
+      { text: "Continuous improvement is better than delayed perfection.", hl: "Continuous improvement" },
+      { text: "An investment in knowledge pays the best interest.", hl: "knowledge" },
+      { text: "The expert was once a beginner who kept showing up.", hl: "kept showing up" },
+      { text: "Success is the sum of small efforts repeated day in and day out.", hl: "day in and day out" },
+      { text: "Integrity is doing the right thing, even when no one is watching.", hl: "the right thing" },
+      { text: "Honesty is the first chapter in the book of wisdom.", hl: "first chapter" },
+      { text: "How we spend our days is, of course, how we spend our lives.", hl: "spend our lives" },
+      { text: "Knowing yourself is the beginning of all wisdom.", hl: "Knowing yourself" },
+      { text: "Lost time is never found again \u2014 so log what matters.", hl: "log what matters" },
+      { text: "Don't watch the clock; do what it does \u2014 keep going.", hl: "keep going" },
+      { text: "Patience and perseverance have a magical effect before which difficulties disappear.", hl: "Patience and perseverance" },
+      { text: "Arise, awake, and stop not until the goal is reached.", hl: "stop not" },
+      { text: "Be the change you wish to see in the world.", hl: "the change" },
+      { text: "An ounce of practice is worth a thousand pounds of theory.", hl: "ounce of practice" },
+      { text: "The greatest mistake is fearing you will make one.", hl: "fearing" },
+      { text: "Talent wins games, but teamwork wins championships.", hl: "teamwork" },
+      { text: "Alone we can do so little; together we can do so much.", hl: "together" },
+      { text: "If you want to go fast, go alone. If you want to go far, go together.", hl: "go far" },
+      { text: "Coming together is a beginning; keeping together is progress; working together is success.", hl: "working together" },
+      { text: "Yesterday is gone. Today is all we have. Begin.", hl: "Begin" },
+      { text: "Time and tide wait for no one \u2014 but a well-kept record waits forever.", hl: "waits forever" },
+      { text: "Strive not to be a success, but rather to be of value.", hl: "of value" },
+      { text: "The best way to predict the future is to create it, one entry at a time.", hl: "create it" },
+      { text: "A book read is a future shaped. A day logged is a career built.", hl: "a career built" },
+      { text: "Knowledge, like a tree, grows when it is shared.", hl: "shared" },
+      { text: "The little things are the big things. Show up for both.", hl: "Show up" },
+      { text: "What you do every day matters more than what you do once in a while.", hl: "every day" },
+      { text: "Your future is hidden in your daily routine. Make today count.", hl: "today count" },
+      { text: "Mastery is the result of staying when others have stopped.", hl: "staying" },
+      { text: "Articleship is not just learning \u2014 it is building the practitioner you will become.", hl: "practitioner you will become" },
+      { text: "An hour reflected on is worth a day lived without thought.", hl: "reflected on" },
+      { text: "The auditor's pen carries the weight of trust. Use it with care.", hl: "weight of trust" },
+      { text: "Compounding works in careers as it does in capital \u2014 daily and quiet.", hl: "daily and quiet" },
+      { text: "Every entry is a brick in the building you call your professional life.", hl: "professional life" },
+      { text: "Precision in small things prepares you for big responsibilities.", hl: "Precision" },
+      { text: "A quiet hour of focused work is louder than a noisy day of distractions.", hl: "focused work" },
+      { text: "Do today what others won't, so tomorrow you can do what others can't.", hl: "tomorrow" },
+      { text: "Make peace with the small. The small adds up to the great.", hl: "adds up" },
+      { text: "Standards are not something you reach; they're something you live.", hl: "you live" },
+      { text: "Don't count the days. Make the days count \u2014 then log them.", hl: "make the days count" },
+      { text: "Begin in the morning. Reflect at night. Repeat for a lifetime of mastery.", hl: "a lifetime" }
     ];
 
     function vkslPickQuoteOfDay() {
@@ -9375,7 +9779,7 @@ tbody tr { transition: background .14s ease; }
       } else {
         textEl.textContent = q.text;
       }
-      metaEl.textContent = q.by + " \u00B7 " + new Date().toLocaleDateString(undefined, { month: "long", day: "numeric" });
+      metaEl.textContent = "Daily Reflection";
     }
 
     function updateLoginGreeting() {
@@ -9764,11 +10168,14 @@ tbody tr { transition: background .14s ease; }
           const client = String(item?.client || "").trim();
           if (!client) return null;
           const hours = Number(item?.hours ?? item?.totalHours ?? 0);
+          const taskList = Array.isArray(item?.tasks) ? item.tasks : (Array.isArray(item?.taskList) ? item.taskList : []);
+          const tasks = uniq(taskList.map((t) => String(t || "").trim()).filter(Boolean));
           return {
             key: String(item?.key || makeSingleClientDraftKey(client, rawItems.slice(0, index).map((row) => row?.key))),
             client,
             hours: Number.isFinite(hours) && hours > 0 ? Number(hours.toFixed(2)) : 0,
-            remarks: String(item?.remarks || "").trim()
+            remarks: String(item?.remarks || "").trim(),
+            tasks
           };
         })
         .filter(Boolean)
@@ -9784,11 +10191,14 @@ tbody tr { transition: background .14s ease; }
       const fallbackClient = fallbackClients.length ? fallbackClients.join(", ") : String(source?.client || "").trim();
       if (!fallbackClient) return [];
       const hours = Number(source?.hours ?? source?.totalHours ?? 0);
+      const fallbackTaskList = Array.isArray(source?.tasks) ? source.tasks : (Array.isArray(source?.taskList) ? source.taskList : []);
+      const fallbackTasks = uniq(fallbackTaskList.map((t) => String(t || "").trim()).filter(Boolean));
       return [{
         key: makeSingleClientDraftKey(fallbackClient),
         client: fallbackClient,
         hours: Number.isFinite(hours) && hours > 0 ? Number(hours.toFixed(2)) : 0,
-        remarks: String(source?.remarks || "").trim()
+        remarks: String(source?.remarks || "").trim(),
+        tasks: fallbackTasks
       }];
     }
 
@@ -9796,7 +10206,8 @@ tbody tr { transition: background .14s ease; }
       return normalizeSingleClientBreakdown({ clientBreakdown: items }).map((item) => ({
         client: item.client,
         hours: Number(item.hours || 0),
-        remarks: String(item.remarks || "").trim()
+        remarks: String(item.remarks || "").trim(),
+        tasks: Array.isArray(item.tasks) ? [...item.tasks] : []
       }));
     }
 
@@ -11187,7 +11598,8 @@ tbody tr { transition: background .14s ease; }
           const monthOk = !month || dates.some((date) => date.startsWith(month));
           const dateOk = (!from || dates.some((date) => date >= from)) && (!to || dates.some((date) => date <= to));
           const taskOk = !task || normalizeTaskList(record).includes(task);
-          const searchBlob = [displayDate(record), clientLabel(record), normalizeTaskList(record).join(" "), remarksTextForRecord(record), memberNames(record).join(" ")].join(" ").toLowerCase();
+          const kind = String(record.entryKind || "single").toLowerCase();
+          const searchBlob = [displayDate(record), clientLabel(record), normalizeTaskList(record).join(" "), remarksTextForRecord(record), memberNames(record).join(" "), kind, kind === "single" ? "single entry" : kind === "bulk" ? "bulk entry" : "group entry group report"].join(" ").toLowerCase();
           return monthOk && dateOk && taskOk && (!q || searchBlob.includes(q));
         })
         .sort(sortRecords);
@@ -11210,7 +11622,8 @@ tbody tr { transition: background .14s ease; }
           const userOk = userId ? ownerFields(record).includes(userId) || memberIdList(record).includes(userId) : (!userText || userBlob.includes(userText));
           const roleOk = !role || String(record.creatorRole || record.role || "").toLowerCase() === String(role).toLowerCase();
           const taskOk = !task || normalizeTaskList(record).includes(task);
-          const searchBlob = [displayDate(record), clientLabel(record), normalizeTaskList(record).join(" "), remarksTextForRecord(record, { adminView: true }), record.name, record.email, record.creatorName, record.creatorEmail, memberNames(record).join(" ")].join(" ").toLowerCase();
+          const kind = String(record.entryKind || "single").toLowerCase();
+          const searchBlob = [displayDate(record), clientLabel(record), normalizeTaskList(record).join(" "), remarksTextForRecord(record, { adminView: true }), record.name, record.email, record.creatorName, record.creatorEmail, memberNames(record).join(" "), kind, kind === "single" ? "single entry" : kind === "bulk" ? "bulk entry" : "group entry group report"].join(" ").toLowerCase();
           return dateOk && userOk && roleOk && taskOk && (!q || searchBlob.includes(q));
         })
         .sort(sortRecords);
@@ -11660,7 +12073,7 @@ tbody tr { transition: background .14s ease; }
         return false;
       }
       const key = makeSingleClientDraftKey(client, (state.entryClientDrafts || []).map((item) => item.key));
-      state.entryClientDrafts = [...(state.entryClientDrafts || []), { key, client, hours: 0, remarks: "" }];
+      state.entryClientDrafts = [...(state.entryClientDrafts || []), { key, client, hours: 0, remarks: "", tasks: [] }];
       renderSingleEntryClientBreakdown();
       window.requestAnimationFrame(() => byId(`entry-client-hours-h-${key}`)?.focus());
       return true;
@@ -11691,12 +12104,14 @@ tbody tr { transition: background .14s ease; }
         .map((item) => `<span class="chip">${safe(item.client)}<button type="button" data-action="remove-entry-client" data-key="${encodeURIComponent(item.key)}">x</button></span>`)
         .join("");
       listHost.innerHTML = rows.length
-        ? rows.map((item) => `
+        ? rows.map((item) => {
+            const taskChipsHtml = (item.tasks || []).map((task) => `<span class="chip">${safe(shortTaskLabel ? shortTaskLabel(task) : task)}<button type="button" data-action="remove-client-task" data-key="${encodeURIComponent(item.key)}" data-task="${encodeURIComponent(task)}">x</button></span>`).join("");
+            return `
             <div class="hub-card single-client-card" data-entry-client-row="${safe(item.key)}">
               <div class="single-client-card-head">
                 <div>
                   <strong>${safe(item.client)}</strong>
-                  <div class="subline">Enter time worked and remarks for this client.</div>
+                  <div class="subline">Enter time, remarks and work type for this client.</div>
                 </div>
                 <button class="btn btn-ghost small" type="button" data-action="remove-entry-client" data-key="${encodeURIComponent(item.key)}">Remove</button>
               </div>
@@ -11721,8 +12136,17 @@ tbody tr { transition: background .14s ease; }
                   </div>
                 </label>
               </div>
+              <div class="field client-task-row">
+                <span>Work type(s) for this client</span>
+                <select id="entry-client-task-picker-${safe(item.key)}" data-action="pick-client-task" data-key="${encodeURIComponent(item.key)}">
+                  <option value="">Add work type for ${safe(item.client)}</option>
+                  ${TASK_OPTIONS.map((task) => `<option value="${safe(task)}">${safe(task)}</option>`).join("")}
+                </select>
+                <div class="client-task-chips" id="entry-client-task-chips-${safe(item.key)}">${taskChipsHtml}</div>
+              </div>
             </div>
-          `).join("")
+          `;
+          }).join("")
         : `
             <div class="hub-card single-client-empty">
               <strong>No clients added yet</strong>
@@ -11741,6 +12165,20 @@ tbody tr { transition: background .14s ease; }
         if (remarks) {
           bindRemarksCounter(remarks, remarks.dataset.counterId || "");
           remarks.addEventListener("input", () => updateSingleClientDraftFromInputs(item.key));
+        }
+        // Per-client work type picker — add task when user selects an option.
+        const taskPicker = byId(`entry-client-task-picker-${item.key}`);
+        if (taskPicker) {
+          taskPicker.addEventListener("change", () => {
+            const value = String(taskPicker.value || "").trim();
+            if (!value) return;
+            const row = (state.entryClientDrafts || []).find((x) => x.key === item.key);
+            if (!row) return;
+            if (!Array.isArray(row.tasks)) row.tasks = [];
+            if (!row.tasks.includes(value)) row.tasks.push(value);
+            taskPicker.value = "";
+            renderSingleEntryClientBreakdown();
+          });
         }
       });
       syncSingleEntryTotals();
@@ -13864,10 +14302,16 @@ tbody tr { transition: background .14s ease; }
           byId("entry-client-search")?.focus();
           return;
         }
-        if (!state.entryDraftTasks.length) {
-          if (error) error.textContent = "Select at least one work type.";
+        // Compute union of per-client tasks. Each client row must have at
+        // least one work type. This replaces the old global picker check.
+        const clientMissingTasks = clientRows.find((row) => !Array.isArray(row.tasks) || row.tasks.length === 0);
+        if (clientMissingTasks) {
+          if (error) error.textContent = `Select at least one work type for ${clientMissingTasks.client}.`;
+          focusSingleClientCard(clientMissingTasks.key);
           return;
         }
+        const unionTasks = uniq(clientRows.flatMap((row) => Array.isArray(row.tasks) ? row.tasks : []));
+        state.entryDraftTasks = unionTasks;
         const invalidHoursRow = clientRows.find((item) => !(Number(item.hours) > 0));
         if (invalidHoursRow) {
           if (error) error.textContent = `Enter valid time for ${invalidHoursRow.client}.`;
@@ -14646,14 +15090,23 @@ tbody tr { transition: background .14s ease; }
       }
       const dates = recordDates(record);
       if (record.entryKind === "single") {
+        // Ensure clientRows.tasks is seeded from per-client tasks if present;
+        // otherwise fall back to top-level taskList for old entries.
+        const initialRows = normalizeSingleClientBreakdown(record);
+        const fallbackTopLevel = normalizeTaskList(record);
+        initialRows.forEach((row) => {
+          if (!Array.isArray(row.tasks) || row.tasks.length === 0) {
+            row.tasks = [...fallbackTopLevel];
+          }
+        });
         const modalState = {
           date: dates[0] || "",
-          tasks: [...normalizeTaskList(record)],
-          clientRows: normalizeSingleClientBreakdown(record)
+          tasks: [...fallbackTopLevel],
+          clientRows: initialRows
         };
         openModal(
           "Edit Entry",
-          "Update the same single-entry record with client-wise time and remarks.",
+          "Update the same single-entry record. Each client has its own time, remarks and work type.",
           `
             <div class="field-stack">
               <div class="grid two">
@@ -14683,24 +15136,16 @@ tbody tr { transition: background .14s ease; }
                   <input id="edit-single-client-search" type="text" autocomplete="off" placeholder="Search client">
                   <div id="edit-single-client-options" class="suggestions"></div>
                 </div>
-                <label class="field">
-                  <span>Other client name</span>
-                  <input id="edit-single-client-other" type="text" placeholder="Type client name if not listed">
-                </label>
+                <input id="edit-single-client-other" type="hidden">
                 <div class="button-row">
                   <button class="btn btn-outline small" id="edit-single-add-client" type="button">Add client</button>
                 </div>
                 <div id="edit-single-client-chips" class="chip-row"></div>
                 <div id="edit-single-client-breakdown" class="field-stack"></div>
               </div>
-              <label class="field">
-                <span>Work Type</span>
-                <select id="edit-single-task-picker">
-                  <option value="">Add work type</option>
-                  ${TASK_OPTIONS.map((task) => `<option value="${safe(task)}">${safe(task)}</option>`).join("")}
-                </select>
-              </label>
-              <div id="edit-single-task-chips" class="chip-row"></div>
+              <!-- Hidden globals kept for back-compat; per-client picker is inside each client card -->
+              <select id="edit-single-task-picker" hidden><option value="">Add work type</option></select>
+              <div id="edit-single-task-chips" class="chip-row" hidden></div>
               <div class="button-row"><button class="btn btn-ghost" id="edit-cancel" type="button">Cancel</button><button class="btn btn-primary" id="edit-save" type="button">Save</button></div>
             </div>
           `
@@ -14742,12 +15187,14 @@ tbody tr { transition: background .14s ease; }
             .map((item) => `<span class="chip">${safe(item.client)}<button type="button" data-action="remove-edit-single-client" data-key="${encodeURIComponent(item.key)}">x</button></span>`)
             .join("");
           listHost.innerHTML = modalState.clientRows.length
-            ? modalState.clientRows.map((item) => `
+            ? modalState.clientRows.map((item) => {
+                const taskChipsHtml = (item.tasks || []).map((task) => `<span class="chip">${safe(shortTaskLabel ? shortTaskLabel(task) : task)}<button type="button" data-action="remove-edit-client-task" data-key="${encodeURIComponent(item.key)}" data-task="${encodeURIComponent(task)}">x</button></span>`).join("");
+                return `
                 <div class="hub-card single-client-card" data-edit-single-client-row="${safe(item.key)}">
                   <div class="single-client-card-head">
                     <div>
                       <strong>${safe(item.client)}</strong>
-                      <div class="subline">Edit time and remarks for this client.</div>
+                      <div class="subline">Edit time, remarks and work type for this client.</div>
                     </div>
                     <button class="btn btn-ghost small" type="button" data-action="remove-edit-single-client" data-key="${encodeURIComponent(item.key)}">Remove</button>
                   </div>
@@ -14772,8 +15219,17 @@ tbody tr { transition: background .14s ease; }
                       </div>
                     </label>
                   </div>
+                  <div class="field client-task-row">
+                    <span>Work type(s) for this client</span>
+                    <select id="edit-single-client-task-picker-${safe(item.key)}" data-key="${encodeURIComponent(item.key)}">
+                      <option value="">Add work type for ${safe(item.client)}</option>
+                      ${TASK_OPTIONS.map((task) => `<option value="${safe(task)}">${safe(task)}</option>`).join("")}
+                    </select>
+                    <div class="client-task-chips" id="edit-single-client-task-chips-${safe(item.key)}">${taskChipsHtml}</div>
+                  </div>
                 </div>
-              `).join("")
+              `;
+              }).join("")
             : `
                 <div class="hub-card single-client-empty">
                   <strong>No clients added yet</strong>
@@ -14792,6 +15248,20 @@ tbody tr { transition: background .14s ease; }
               bindRemarksCounter(remarksField, remarksField.dataset.counterId || "");
               remarksField.addEventListener("input", () => updateClientRow(item.key));
             }
+            // Per-client work-type picker (edit modal)
+            const taskPicker = byId(`edit-single-client-task-picker-${item.key}`);
+            if (taskPicker) {
+              taskPicker.addEventListener("change", () => {
+                const value = String(taskPicker.value || "").trim();
+                if (!value) return;
+                const row = modalState.clientRows.find((x) => x.key === item.key);
+                if (!row) return;
+                if (!Array.isArray(row.tasks)) row.tasks = [];
+                if (!row.tasks.includes(value)) row.tasks.push(value);
+                taskPicker.value = "";
+                renderClientRows();
+              });
+            }
           });
           syncTotal();
         };
@@ -14805,7 +15275,11 @@ tbody tr { transition: background .14s ease; }
             return false;
           }
           const key = makeSingleClientDraftKey(client, modalState.clientRows.map((item) => item.key));
-          modalState.clientRows = [...modalState.clientRows, { key, client, hours: 0, remarks: "" }];
+          // Seed with current top-level tasks as a sensible default for new
+          // clients added during edit (matches old behavior for entries that
+          // had a single global work-type list).
+          const seededTasks = Array.isArray(modalState.tasks) ? [...modalState.tasks] : [];
+          modalState.clientRows = [...modalState.clientRows, { key, client, hours: 0, remarks: "", tasks: seededTasks }];
           renderClientRows();
           window.requestAnimationFrame(() => byId(`edit-single-client-hours-h-${key}`)?.focus());
           return true;
@@ -14883,6 +15357,15 @@ tbody tr { transition: background .14s ease; }
             modalState.tasks = modalState.tasks.filter((item) => item !== task);
             renderTaskChipsLocal();
           }
+          if (actionEl.dataset.action === "remove-edit-client-task") {
+            const key = decodeURIComponent(actionEl.dataset.key || "");
+            const task = decodeURIComponent(actionEl.dataset.task || "");
+            const row = modalState.clientRows.find((item) => item.key === key);
+            if (row && Array.isArray(row.tasks)) {
+              row.tasks = row.tasks.filter((t) => t !== task);
+              renderClientRows();
+            }
+          }
         };
         modalRoot.addEventListener("click", modalClickHandler);
         state.modalCleanups.push(() => modalRoot.removeEventListener("click", modalClickHandler));
@@ -14898,8 +15381,15 @@ tbody tr { transition: background .14s ease; }
           try {
             const date = byId("edit-date")?.value || "";
             if (!date || date > todayStr()) return toast("Select a valid date.", "warn");
-            if (!modalState.tasks.length) return toast("Select at least one work type.", "warn");
             if (!modalState.clientRows.length) return toast("Add at least one client.", "warn");
+            // Every client must have at least one work type. Compute the
+            // union for top-level write (mirrors the create flow).
+            const clientMissingTasks = modalState.clientRows.find((row) => !Array.isArray(row.tasks) || row.tasks.length === 0);
+            if (clientMissingTasks) {
+              focusClientRow(clientMissingTasks.key);
+              return toast(`Select at least one work type for ${clientMissingTasks.client}.`, "warn");
+            }
+            modalState.tasks = uniq(modalState.clientRows.flatMap((row) => Array.isArray(row.tasks) ? row.tasks : []));
             const invalidHoursRow = modalState.clientRows.find((item) => !(Number(item.hours) > 0));
             if (invalidHoursRow) {
               focusClientRow(invalidHoursRow.key);
@@ -15136,7 +15626,7 @@ tbody tr { transition: background .14s ease; }
       const modalState = { clients: [], tasks: [], manualExcluded: new Set(), activeDates: [], submitting: false };
       openModal(
         "Bulk / Range Entry",
-        "Bulk entry is only for more than one day. Use single entry for a one-day report.",
+        "Bulk entry covers a date range for ONE client only. Same hours and remarks apply to every selected day. Use Single entry for one day, or Group reporting for multiple users.",
         `
           <div class="field-stack">
             <div class="grid two">
@@ -15144,7 +15634,7 @@ tbody tr { transition: background .14s ease; }
               <label class="field"><span>To</span><input id="bulk-to" type="date" value="${todayStr()}"></label>
             </div>
             <label class="field"><span>Working Days</span><select id="bulk-mode"><option value="no-sun">All days except Sundays</option><option value="yes">All days including Sundays</option></select></label>
-            <div class="field"><span>Client</span><input id="bulk-client-input" type="text" autocomplete="off" placeholder="Search client"><div id="bulk-client-suggestions" class="suggestions"></div></div>
+            <div class="field"><span>Client <small style="color:var(--muted);font-weight:500;letter-spacing:normal;text-transform:none;">(single client only)</small></span><input id="bulk-client-input" type="text" autocomplete="off" placeholder="Search client or type a new one"><div id="bulk-client-suggestions" class="suggestions"></div></div>
             <div id="bulk-client-chips" class="chip-row"></div>
             <label class="field"><span>Work Type</span><select id="bulk-task-picker"><option value="">Add work type</option>${TASK_OPTIONS.map((task) => `<option value="${safe(task)}">${safe(task)}</option>`).join("")}</select></label>
             <div id="bulk-task-chips" class="chip-row"></div>
@@ -15304,11 +15794,14 @@ tbody tr { transition: background .14s ease; }
           const remarks = String(byId("bulk-remarks")?.value || "").trim();
           const hours = Number(byId("bulk-hours")?.value || 0);
           const typedClient = String(byId("bulk-client-input")?.value || "").trim();
-          if (typedClient && !modalState.clients.includes(typedClient)) modalState.clients.push(typedClient);
+          // Bulk entry is for a SINGLE client only. If user typed a new name
+          // without picking from suggestions, use that as the (single) client.
+          if (typedClient) modalState.clients = [typedClient];
+          if (modalState.clients.length > 1) modalState.clients = [modalState.clients[0]];
           if (!from || !to || from > to) return toast("Select a valid date range.", "warn");
           if (from === to) return toast("Bulk entry is only for more than one day. Use single entry for one date.", "warn");
           if (to > todayStr()) return toast("Future dates are not allowed.", "warn");
-          if (!modalState.clients.length) return toast("Add at least one client.", "warn");
+          if (!modalState.clients.length) return toast("Select one client for the bulk entry.", "warn");
           if (!modalState.tasks.length) return toast("Add at least one work type.", "warn");
           if (!(hours > 0)) return toast("Enter valid hours.", "warn");
           if (remarks.length < 100) return toast("Remarks must be at least 100 characters.", "warn");
@@ -15411,14 +15904,15 @@ tbody tr { transition: background .14s ease; }
         const actionEl = event.target.closest("[data-action]");
         if (!actionEl || modalRoot.hidden || !modalRoot.contains(actionEl)) return;
         if (actionEl.dataset.action === "pick-bulk-client") {
+          // Bulk entry is for a SINGLE client only — replace instead of push.
           const value = decodeURIComponent(actionEl.dataset.value || "");
-          if (value && !modalState.clients.includes(value)) modalState.clients.push(value);
+          if (value) modalState.clients = [value];
           byId("bulk-client-input").value = "";
           renderBulkChips();
           clearSuggestions("bulk-client-suggestions");
         }
         if (actionEl.dataset.action === "remove-bulk-client") {
-          modalState.clients = modalState.clients.filter((client) => client !== decodeURIComponent(actionEl.dataset.value || ""));
+          modalState.clients = [];
           renderBulkChips();
         }
         if (actionEl.dataset.action === "remove-bulk-task") {
@@ -17054,16 +17548,18 @@ tbody tr { transition: background .14s ease; }
                 </div>
               </article>
 
-              <article class="guide-card">
+              <article class="guide-card wide">
                 <div class="guide-card-head">
                   <span class="guide-card-icon">&#128221;</span>
-                  <h4>Single, Bulk, and Group</h4>
+                  <h4>Three entry types — four reporting paths</h4>
                 </div>
-                <p>Use the reporting mode that matches the work. This keeps the timesheet clean and avoids correction work later.</p>
+                <p>There are three entry types, and Group has two sub-modes — Single and Bulk. Use the path that matches what really happened. Pick wrong and you'll need to correct later.</p>
                 <div class="guide-step-list">
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Single entry:</strong> one date only, with one or more client rows if the day was split across multiple clients.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Bulk entry:</strong> more than one day, only for your own work.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Group reporting:</strong> one shared client, shared work type(s), and separate hours/remarks for each member.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#128313;</span><span><strong>1. Single entry &mdash;</strong> ONE person, ONE day, ONE or MANY clients. This is the default form on the <em>Log time</em> page. For each client you add, enter its own <strong>time, remarks and work type</strong>. (Work type is now per-client, not for the whole day.)</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#128313;</span><span><strong>2. Bulk entry &mdash;</strong> ONE person, ONE client, MANY days. Same hours and remarks apply to every working day in the range. Use the <em>Bulk entry</em> button at the top of the <em>Log time</em> page. <strong>Only one client is allowed</strong> — if you worked on multiple clients in that range, submit each as a separate Bulk entry.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#128313;</span><span><strong>3a. Group Single &mdash;</strong> MANY users, ONE day, ONE shared client. Use the <em>Group reporting</em> button, then pick the &quot;Single day&quot; mode. The reporter enters separate hours and remarks for each member. Each member must approve their own section before it counts.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#128313;</span><span><strong>3b. Group Bulk &mdash;</strong> MANY users, MANY days, ONE shared client. Same as Group Single but covers a date range. Same approval flow — each member approves their own participation. Members can reject if hours don't match what they remember working.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>How to search by entry type:</strong> the search bar on My Timesheet / Dashboard accepts <em>single</em>, <em>bulk</em>, or <em>group</em> as a keyword. Type &quot;bulk&quot; to filter only bulk entries.</span></div>
                 </div>
               </article>
 
@@ -17949,6 +18445,17 @@ tbody tr { transition: background .14s ease; }
           const key = decodeURIComponent(actionEl.dataset.key || "");
           state.entryClientDrafts = (state.entryClientDrafts || []).filter((item) => item.key !== key);
           renderSingleEntryClientBreakdown();
+          return;
+        }
+
+        if (actionEl.dataset.action === "remove-client-task") {
+          const key = decodeURIComponent(actionEl.dataset.key || "");
+          const task = decodeURIComponent(actionEl.dataset.task || "");
+          const row = (state.entryClientDrafts || []).find((item) => item.key === key);
+          if (row && Array.isArray(row.tasks)) {
+            row.tasks = row.tasks.filter((t) => t !== task);
+            renderSingleEntryClientBreakdown();
+          }
           return;
         }
 
