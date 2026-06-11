@@ -2629,24 +2629,6 @@ button.summary-card.clickable {
   border-color: rgba(217, 119, 6, 0.26);
 }
 
-.screen.app-screen #hub-productivity .btn-outline[data-productivity="yes"] {
-  border-color: rgba(16, 185, 129, 0.22);
-  background: rgba(16, 185, 129, 0.07);
-  color: #0f766e;
-}
-
-.screen.app-screen #hub-productivity .btn-outline[data-productivity="okay"] {
-  border-color: rgba(245, 158, 11, 0.24);
-  background: rgba(245, 158, 11, 0.08);
-  color: #b45309;
-}
-
-.screen.app-screen #hub-productivity .btn-outline[data-productivity="no"] {
-  border-color: rgba(239, 68, 68, 0.22);
-  background: rgba(239, 68, 68, 0.08);
-  color: #b91c1c;
-}
-
 .screen.app-screen .app-header .btn-outline {
   color: #fff7f1;
   border-color: rgba(246, 221, 200, 0.22);
@@ -5050,6 +5032,24 @@ tbody tr { transition: background .14s ease; }
   }
   body { font-family: "DM Sans", "Segoe UI", sans-serif; font-size: 8pt; }
   .app-main { width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+  .page.active > .panel:not(:has(.table-shell)) {
+    display: none !important;
+  }
+  .stat-grid,
+  .summary-grid,
+  .date-presets,
+  .section-note,
+  .timesheet-open-hint,
+  .empty-state,
+  .actions,
+  input[type="checkbox"],
+  button {
+    display: none !important;
+  }
+  .table-shell,
+  .table-shell * {
+    box-sizing: border-box !important;
+  }
   /* Page-fit safety on block-level containers ONLY — the previous universal
      '* { max-width:100% }' was causing print preview to refuse to scroll in
      some browsers because every nested inline element was being constrained. */
@@ -5080,8 +5080,14 @@ tbody tr { transition: background .14s ease; }
   .panel-head { margin-bottom: 4pt; }
   .panel-head h3 { font-size: 11pt; }
   .panel-kicker { color: #555 !important; font-size: 8pt; }
-  .table-shell { overflow: visible !important; }
-  table { width: 100% !important; min-width: 0 !important; table-layout: fixed !important; border-collapse: collapse; }
+  .table-shell { overflow: visible !important; width: 100% !important; max-width: 100% !important; }
+  table {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    table-layout: fixed !important;
+    border-collapse: collapse;
+  }
   th, td {
     padding: 2.5pt 3.5pt !important;
     border: 1px solid #999 !important;
@@ -5093,7 +5099,9 @@ tbody tr { transition: background .14s ease; }
     overflow-wrap: anywhere !important;
     word-break: break-word !important;
     white-space: normal !important;
-    max-width: 0 !important;   /* allow table-layout: fixed columns to actually constrain */
+    max-width: none !important;
+    min-width: 0 !important;
+    hyphens: auto !important;
   }
   /* Long pre-wrap blocks (remarks) keep newlines but wrap within column */
   td .note-block,
@@ -5120,22 +5128,32 @@ tbody tr { transition: background .14s ease; }
   #page-dashboard td:nth-child(10) {
     display: none !important;
   }
-  #page-my th:nth-child(2), #page-my td:nth-child(2),
-  #page-dashboard th:nth-child(1), #page-dashboard td:nth-child(1) { width: 11% !important; }
-  #page-my th:nth-child(3), #page-my td:nth-child(3),
-  #page-dashboard th:nth-child(2), #page-dashboard td:nth-child(2) { width: 8% !important; }
-  #page-my th:nth-child(4), #page-my td:nth-child(4),
-  #page-dashboard th:nth-child(3), #page-dashboard td:nth-child(3) { width: 17% !important; }
-  #page-dashboard th:nth-child(4), #page-dashboard td:nth-child(4) { width: 9% !important; }
-  #page-my th:nth-child(5), #page-my td:nth-child(5),
-  #page-dashboard th:nth-child(6), #page-dashboard td:nth-child(6) { width: 13% !important; }
-  #page-my th:nth-child(6), #page-my td:nth-child(6),
+  #page-my th:nth-child(2), #page-my td:nth-child(2) { width: 10% !important; }
+  #page-my th:nth-child(3), #page-my td:nth-child(3) { width: 7% !important; }
+  #page-my th:nth-child(4), #page-my td:nth-child(4) { width: 17% !important; }
+  #page-my th:nth-child(5), #page-my td:nth-child(5) { width: 13% !important; }
+  #page-my th:nth-child(6), #page-my td:nth-child(6) { width: 8% !important; }
+  #page-my th:nth-child(7), #page-my td:nth-child(7) { width: 5% !important; }
+  #page-my th:nth-child(8), #page-my td:nth-child(8) { width: 40% !important; }
+
+  #page-dashboard th:nth-child(1), #page-dashboard td:nth-child(1) { width: 8% !important; }
+  #page-dashboard th:nth-child(2), #page-dashboard td:nth-child(2) { width: 6% !important; }
+  #page-dashboard th:nth-child(3), #page-dashboard td:nth-child(3) { width: 14% !important; }
+  #page-dashboard th:nth-child(4), #page-dashboard td:nth-child(4) { width: 7% !important; }
+  #page-dashboard th:nth-child(5), #page-dashboard td:nth-child(5) { width: 15% !important; }
+  #page-dashboard th:nth-child(6), #page-dashboard td:nth-child(6) { width: 12% !important; }
   #page-dashboard th:nth-child(7), #page-dashboard td:nth-child(7) { width: 8% !important; }
-  #page-my th:nth-child(7), #page-my td:nth-child(7),
   #page-dashboard th:nth-child(8), #page-dashboard td:nth-child(8) { width: 5% !important; }
-  #page-my th:nth-child(8), #page-my td:nth-child(8),
   #page-dashboard th:nth-child(9), #page-dashboard td:nth-child(9) { width: 25% !important; }
-  #page-dashboard th:nth-child(5), #page-dashboard td:nth-child(5) { width: 19% !important; }
+
+  #page-reporting th:nth-child(4),
+  #page-reporting td:nth-child(4),
+  #page-reporting .reporting-searchbar {
+    display: none !important;
+  }
+  #page-reporting th:nth-child(1), #page-reporting td:nth-child(1) { width: 36% !important; }
+  #page-reporting th:nth-child(2), #page-reporting td:nth-child(2) { width: 10% !important; }
+  #page-reporting th:nth-child(3), #page-reporting td:nth-child(3) { width: 54% !important; }
   tbody tr { page-break-inside: auto; break-inside: auto; }
   tbody tr:nth-child(even) td,
   tbody tr:hover td { background: #fff !important; }
@@ -5344,7 +5362,6 @@ tbody tr { transition: background .14s ease; }
   .calendar-dot { padding: 3px 6px; font-size: 0.6rem; }
   .calendar-head { padding: 12px; }
 
-  /* CA Hub — tab pills wrap nicely */
   .subtabbar { padding: 0; gap: 6px; }
   .subtab { padding: 10px 12px; font-size: 0.84rem; }
 
@@ -5909,96 +5926,6 @@ tbody tr { transition: background .14s ease; }
   width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; flex: none;
 }
 
-/* CA Articles hub — black + gold premium block, matching the left panel mood.
-   Compact: header row (eyebrow + privacy badge), one-line title, 4 inline pills. */
-.vksl-screen .vksl-ca-hub {
-  position: relative;
-  margin-top: 16px;
-  padding: 14px 16px;
-  border-radius: 16px;
-  background:
-    radial-gradient(120% 80% at 100% 0%, rgba(217,162,42,.18), transparent 60%),
-    linear-gradient(160deg, #1F1B16 0%, #14110D 60%, #0E0B07 100%);
-  color: #FFF8EC;
-  border: 1px solid rgba(217,162,42,.28);
-  box-shadow:
-    0 18px 40px -22px rgba(20,17,13,.6),
-    inset 0 1px 0 rgba(255,255,255,.06),
-    inset 0 0 0 1px rgba(217,162,42,.08);
-  overflow: hidden;
-}
-.vksl-screen .vksl-ca-hub-glow {
-  position: absolute; inset: -50% -10% auto auto;
-  width: 55%; height: 130%;
-  background: radial-gradient(closest-side, rgba(240,203,85,.18), transparent 70%);
-  pointer-events: none;
-}
-/* Header row: eyebrow on left, privacy badge on right */
-.vksl-screen .vksl-ca-hub-head {
-  position: relative;
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 10px; margin-bottom: 8px;
-}
-.vksl-screen .vksl-ca-hub-eyebrow {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 9.5px; font-weight: 700; letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--vksl-gold-2);
-  background: rgba(217,162,42,.10);
-  border: 1px solid rgba(217,162,42,.25);
-  padding: 3px 9px; border-radius: 999px;
-}
-.vksl-screen .vksl-ca-hub-star {
-  color: var(--vksl-gold-2);
-  text-shadow: 0 0 8px rgba(240,203,85,.55);
-  font-size: 10px;
-}
-.vksl-screen .vksl-ca-hub-priv {
-  display: inline-flex; align-items: center; gap: 5px;
-  font-size: 10px; font-weight: 600; letter-spacing: 0.04em;
-  color: rgba(217,162,42,.85);
-  white-space: nowrap;
-}
-.vksl-screen .vksl-ca-hub-title {
-  position: relative;
-  font-family: var(--vksl-sans);
-  font-weight: 700; font-size: 14.5px; line-height: 1.3;
-  color: #FFF8EC; margin-bottom: 12px;
-  letter-spacing: -0.005em;
-}
-.vksl-screen .vksl-ca-hub-title em {
-  font-family: var(--vksl-serif);
-  font-style: italic; font-weight: 400;
-  color: var(--vksl-gold-2);
-  font-size: 1.1em;
-  letter-spacing: 0;
-}
-/* Inline benefit pills — wrap if needed */
-.vksl-screen .vksl-ca-hub-pills {
-  position: relative;
-  display: flex; flex-wrap: wrap; gap: 6px;
-}
-.vksl-screen .vksl-ca-hub-pill {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 5px 10px;
-  background: rgba(255,248,236,.06);
-  border: 1px solid rgba(217,162,42,.18);
-  border-radius: 999px;
-  font-size: 11px; font-weight: 600; letter-spacing: 0.01em;
-  color: rgba(255,248,236,.82);
-  transition: background .2s ease, border-color .2s ease, color .2s ease;
-}
-.vksl-screen .vksl-ca-hub-pill:hover {
-  background: rgba(217,162,42,.10);
-  border-color: rgba(217,162,42,.4);
-  color: #FFF8EC;
-}
-.vksl-screen .vksl-ca-hub-pill-ico { font-size: 12px; line-height: 1; flex: none; }
-@media (max-width: 520px) {
-  .vksl-screen .vksl-ca-hub-title { font-size: 13.5px; }
-  .vksl-screen .vksl-ca-hub-priv { font-size: 9.5px; }
-}
-
 /* Login error */
 .vksl-screen #login-error { font-size: 13px; color: #c92a2a; margin-top: 6px; min-height: 1em; text-align: center; }
 .vksl-screen #login-error:empty { display: none; }
@@ -6041,6 +5968,39 @@ tbody tr { transition: background .14s ease; }
      before reaching the form — preferred over reversing the order. */
 }
 @media (max-width: 640px) {
+  #screen-login.vksl-screen,
+  #screen-pin.vksl-screen,
+  #screen-set-pin.vksl-screen {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .vksl-screen .vksl-app,
+  .vksl-screen .vksl-topbar,
+  .vksl-screen .vksl-main,
+  .vksl-screen .vksl-left,
+  .vksl-screen .vksl-right {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+  .vksl-screen .vksl-left,
+  .vksl-screen .vksl-right,
+  .vksl-screen .vksl-quote,
+  .vksl-screen .vksl-greet-pill,
+  .vksl-screen .vksl-btn,
+  .vksl-screen .vksl-features {
+    min-width: 0;
+    max-width: 100%;
+  }
+  .vksl-screen h1.vksl-title,
+  .vksl-screen .vksl-quote p,
+  .vksl-screen .vksl-feat,
+  .vksl-screen .vksl-shield-row,
+  .vksl-screen .vksl-brand-text {
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
   .vksl-screen .vksl-features { grid-template-columns: 1fr 1fr; gap: 8px; }
   .vksl-screen .vksl-feat { font-size: 11.5px; padding: 8px 10px; }
   .vksl-screen .vksl-feat .vksl-ico { width: 26px; height: 26px; }
@@ -6754,7 +6714,7 @@ tbody tr { transition: background .14s ease; }
   .tabbar button, .tabbar button *, .subtab, .subtab *,
   .pin-key, .pin-key *, .vksl-btn, .vksl-btn *,
   .vksl-activity-btn, .vksl-activity-btn *,
-  .vksl-feat, .vksl-ca-hub-pill,
+  .vksl-feat,
   .date-chip, .date-chip *, .date-preset,
   .calendar-day:not(.other):not(.future):not(.prejoin),
   .modal-close, .chip, .chip *, .filter-chip, .mode-chip,
@@ -6796,6 +6756,8 @@ tbody tr { transition: background .14s ease; }
 .entry-type-bulk:hover { border-color: rgba(49, 93, 150, 0.75); background: linear-gradient(180deg, #ebf2fa, #cfdef0); box-shadow: 0 12px 24px rgba(49, 93, 150, 0.18); }
 .entry-type-group { border-color: rgba(75, 106, 74, 0.42); background: linear-gradient(180deg, #f1f7f2, #dbeadf); }
 .entry-type-group:hover { border-color: rgba(75, 106, 74, 0.75); background: linear-gradient(180deg, #e6f0e8, #c5dccd); box-shadow: 0 12px 24px rgba(75, 106, 74, 0.18); }
+.entry-type-leave { border-color: rgba(180, 83, 9, 0.34); background: linear-gradient(180deg, #fff8e8, #f6e8bf); }
+.entry-type-leave:hover { border-color: rgba(180, 83, 9, 0.72); background: linear-gradient(180deg, #fff3d6, #ecd38f); box-shadow: 0 12px 24px rgba(180, 83, 9, 0.16); }
 .entry-type-icon {
   display: inline-flex;
   align-items: center;
@@ -7089,6 +7051,121 @@ tbody tr { transition: background .14s ease; }
     font-size: 0.74rem;
   }
 }
+.entry-mode-note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(196, 154, 26, .34);
+  border-radius: 12px;
+  background: #fff8e8;
+  color: var(--ink);
+}
+.entry-mode-note strong { font-size: .9rem; }
+.entry-mode-note span { color: var(--muted); font-size: .86rem; line-height: 1.45; }
+.bulk-client-add-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+.bulk-client-add-row .grow { flex: 1 1 280px; }
+.bulk-client-stack {
+  display: grid;
+  gap: 14px;
+}
+.bulk-client-card {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(15, 23, 42, .1);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, .06);
+}
+.bulk-client-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.bulk-client-index {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+  border-radius: 999px;
+  background: #7b2135;
+  color: #fff;
+  font-weight: 800;
+  font-size: .78rem;
+}
+.bulk-date-hours-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 10px;
+}
+.bulk-total-summary {
+  display: grid;
+  gap: 10px;
+}
+.bulk-total-card {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(22, 163, 74, .18);
+  border-radius: 12px;
+  background: #f0fdf4;
+}
+.bulk-total-card.warn {
+  border-color: rgba(180, 83, 9, .28);
+  background: #fff7e3;
+}
+.bulk-total-card div {
+  min-width: 0;
+}
+.bulk-total-card strong {
+  display: block;
+  font-family: "Fraunces", serif;
+  font-size: 1.02rem;
+  color: var(--ink);
+}
+.bulk-total-card span {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: .78rem;
+}
+.bulk-daily-total-list {
+  max-height: 220px;
+  overflow: auto;
+}
+.type-pill.leave,
+.screen.app-screen .type-pill.leave {
+  background: #fff7e3;
+  color: #92400e;
+  border-color: rgba(180, 83, 9, .28);
+}
+.calendar-day.leave {
+  background: #fff7e3;
+  border-color: rgba(180, 83, 9, .35);
+}
+.calendar-dot.leave {
+  background: #92400e;
+  color: #fff;
+}
+.calendar-legend-swatch.leave {
+  background: #92400e;
+}
+@media (max-width: 640px) {
+  .bulk-client-add-row { display: grid; }
+  .bulk-total-card { grid-template-columns: 1fr 1fr; }
+  .bulk-client-head { display: grid; }
+}
 </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
@@ -7364,27 +7441,6 @@ tbody tr { transition: background .14s ease; }
             <div class="vksl-feat"><div class="vksl-ico" style="background:#F3E5FF"><svg viewBox="0 0 24 24" fill="none" stroke="#A55EEA" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M5 19l3-3M16 8l3-3"/></svg></div> Smart daily insights</div>
           </div>
 
-          <!-- CA Articles hub — black + gold premium block -->
-          <div class="vksl-ca-hub" aria-label="CA Articles benefits">
-            <div class="vksl-ca-hub-glow" aria-hidden="true"></div>
-            <div class="vksl-ca-hub-head">
-              <div class="vksl-ca-hub-eyebrow">
-                <span class="vksl-ca-hub-star" aria-hidden="true">★</span>
-                For CA Articles Only
-              </div>
-              <div class="vksl-ca-hub-priv">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="11" height="11" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                100% private
-              </div>
-            </div>
-            <div class="vksl-ca-hub-title">More than a reporting portal — <em>your personal growth companion.</em></div>
-            <div class="vksl-ca-hub-pills">
-              <div class="vksl-ca-hub-pill"><span class="vksl-ca-hub-pill-ico">📚</span><span>Exposure tracker</span></div>
-              <div class="vksl-ca-hub-pill"><span class="vksl-ca-hub-pill-ico">⚖️</span><span>Study &amp; work balance</span></div>
-              <div class="vksl-ca-hub-pill"><span class="vksl-ca-hub-pill-ico">📂</span><span>Private case library</span></div>
-              <div class="vksl-ca-hub-pill"><span class="vksl-ca-hub-pill-ico">📝</span><span>Notes &amp; reminders</span></div>
-            </div>
-          </div>
         </section>
       </div>
 
@@ -7554,7 +7610,7 @@ tbody tr { transition: background .14s ease; }
               <h3>Log time</h3>
             </div>
             <div class="panel-actions entry-type-actions">
-              <button id="open-bulk-entry" class="btn entry-type-btn entry-type-bulk" type="button" title="Same hours and remarks for ONE client across MANY days">
+              <button id="open-bulk-entry" class="btn entry-type-btn entry-type-bulk" type="button" title="Client-wise and date-wise bulk reporting across MANY days">
                 <span class="entry-type-icon" aria-hidden="true">&#128197;</span>
                 <span class="entry-type-text">
                   <strong>Bulk entry</strong>
@@ -7581,7 +7637,7 @@ tbody tr { transition: background .14s ease; }
               </div>
               <div class="entry-type-helper-card">
                 <strong>2 &middot; Bulk</strong>
-                <span>One person, one client, many days. Use <em>Bulk entry</em> above.</span>
+                <span>One person, one or more clients, many days. Use <em>Bulk entry</em> above.</span>
               </div>
               <div class="entry-type-helper-card">
                 <strong>3 &middot; Group</strong>
@@ -7739,7 +7795,7 @@ tbody tr { transition: background .14s ease; }
               <button id="my-delete-selected" class="btn btn-ghost small" type="button">Delete selected</button>
             </div>
           </div>
-          <p id="my-cache-note" class="section-note">Timesheet data is saved immediately. The table may use a short cache for smoother loading.</p>
+          <p id="my-cache-note" class="section-note" hidden></p>
           <p class="section-note timesheet-open-hint">Double-click any row to read the full entry, including client-wise remarks and day-wise time.</p>
           <div id="my-filter-summary" class="filter-summary" hidden></div>
 
@@ -8183,201 +8239,6 @@ tbody tr { transition: background .14s ease; }
         </div>
       </section>
 
-      <section id="page-cahub" class="page">
-        <div class="panel">
-          <div class="panel-head">
-            <div>
-              <div class="panel-kicker">CA article private area</div>
-              <h3>My hub</h3>
-            </div>
-          </div>
-
-          <div class="subtabbar" id="hub-tabs">
-            <button class="subtab active" data-hub="dashboard" type="button">Dashboard</button>
-            <button class="subtab" data-hub="study" type="button">Study and work</button>
-            <button class="subtab" data-hub="kb" type="button">Knowledge bank</button>
-            <button class="subtab" data-hub="cases" type="button">Case library</button>
-            <button class="subtab" data-hub="notes" type="button">Notes board</button>
-            <button class="subtab" data-hub="productivity" type="button">Productivity</button>
-          </div>
-
-          <section id="hub-dashboard" class="hub-panel active">
-            <p class="section-note">Private work-study cockpit with today focus, subject progress, revision memory, and personal reminders.</p>
-            <div id="hub-dashboard-stats" class="stat-grid"></div>
-            <div class="grid two">
-              <div id="hub-dashboard-focus" class="hub-card empty-state">Loading dashboard.</div>
-              <div id="hub-dashboard-recent" class="hub-card empty-state">Loading latest activity.</div>
-            </div>
-            <div id="hub-dashboard-panels" class="summary-grid"></div>
-          </section>
-
-          <section id="hub-kb" class="hub-panel">
-            <p class="section-note">Built from your own timesheet records only. Search by client, work type, or any keyword from your remarks.</p>
-            <div class="toolbar hub-toolbar">
-              <label class="field compact grow">
-                <span>Search</span>
-                <input id="kb-search" type="text" placeholder="Client, work type, remark keyword">
-              </label>
-              <label class="field compact">
-                <span>Work type</span>
-                <select id="kb-task-filter"></select>
-              </label>
-              <div class="toolbar-actions">
-                <button id="kb-clear" class="btn btn-outline small" type="button">Clear filters</button>
-              </div>
-            </div>
-            <div id="hub-kb-stats" class="stat-grid"></div>
-            <div id="hub-kb-recent" class="summary-grid empty-state">No timesheet data yet.</div>
-          </section>
-
-          <section id="hub-study" class="hub-panel">
-            <div id="study-today-summary" class="summary-grid"></div>
-            <form id="study-form" class="field-stack hub-form-slab">
-              <div class="grid three">
-                <label class="field">
-                  <span>Date</span>
-                  <input id="study-date" type="date">
-                </label>
-                <label class="field">
-                  <span>Study hours</span>
-                  <input id="study-hours" type="number" min="0.25" max="16" step="0.25" placeholder="2.5">
-                </label>
-                <label class="field">
-                  <span>Subject</span>
-                  <select id="study-subject"></select>
-                </label>
-              </div>
-              <label class="field">
-                <span>What did you study today?</span>
-                <textarea id="study-note" rows="4" placeholder="Key topics, sections, questions, or revision notes"></textarea>
-              </label>
-              <div class="button-row">
-                <button class="btn btn-primary" type="submit">Save study log</button>
-              </div>
-            </form>
-            <div id="study-subject-stats" class="stat-grid"></div>
-            <div class="toolbar hub-toolbar">
-              <label class="field compact">
-                <span>Search</span>
-                <input id="study-search" type="text" placeholder="Subject or study note">
-              </label>
-              <label class="field compact">
-                <span>Subject</span>
-                <select id="study-filter-subject"></select>
-              </label>
-              <label class="field compact">
-                <span>Month</span>
-                <input id="study-filter-month" type="month">
-              </label>
-              <div class="toolbar-actions">
-                <button id="study-clear" class="btn btn-outline small" type="button">Clear filters</button>
-              </div>
-            </div>
-            <div id="study-weekly" class="stat-grid"></div>
-            <div id="study-list" class="stack-list empty-state">No study entries yet.</div>
-          </section>
-
-          <section id="hub-cases" class="hub-panel">
-            <form id="case-form" class="field-stack hub-form-slab">
-              <div class="grid two">
-                <label class="field">
-                  <span>Case title</span>
-                  <input id="case-title" type="text" placeholder="Short case title">
-                </label>
-                <label class="field">
-                  <span>Area / subject</span>
-                  <select id="case-category"></select>
-                </label>
-              </div>
-              <label class="field">
-                <span>Issue / Question</span>
-                <textarea id="case-issue" rows="3" placeholder="What was the issue, doubt, or fact pattern?"></textarea>
-              </label>
-              <label class="field">
-                <span>Finding / Conclusion</span>
-                <textarea id="case-note" rows="4" placeholder="Approach, conclusion, or final learning"></textarea>
-              </label>
-              <label class="field">
-                <span>Reference / Section / Act</span>
-                <input id="case-reference" type="text" placeholder="Optional reference, section, circular, or standard">
-              </label>
-              <div class="button-row">
-                <button class="btn btn-primary" type="submit">Add case</button>
-              </div>
-            </form>
-            <div class="toolbar hub-toolbar">
-              <label class="field compact grow">
-                <span>Search</span>
-                <input id="case-search" type="text" placeholder="Title, issue, conclusion, or reference">
-              </label>
-              <label class="field compact">
-                <span>Area</span>
-                <select id="case-filter"></select>
-              </label>
-              <div class="toolbar-actions">
-                <button id="case-clear" class="btn btn-outline small" type="button">Clear filters</button>
-              </div>
-            </div>
-            <div id="case-list" class="stack-list empty-state">No cases saved yet.</div>
-          </section>
-
-          <section id="hub-productivity" class="hub-panel">
-            <div class="hub-card">
-              <strong>How productive was today?</strong>
-              <div class="subline">Mark one daily mood. Your recent trend and streak update automatically.</div>
-              <div class="button-row">
-                <button class="btn btn-outline" data-productivity="yes" type="button">Productive</button>
-                <button class="btn btn-outline" data-productivity="okay" type="button">Average</button>
-                <button class="btn btn-outline" data-productivity="no" type="button">Not productive</button>
-              </div>
-            </div>
-            <div id="productivity-weekly" class="stat-grid"></div>
-            <div id="productivity-list" class="stack-list empty-state">No productivity records yet.</div>
-          </section>
-
-          <section id="hub-notes" class="hub-panel">
-            <form id="note-form" class="field-stack hub-form-slab">
-              <div class="grid two">
-                <label class="field">
-                  <span>Title</span>
-                  <input id="note-title" type="text" placeholder="Optional short heading">
-                </label>
-                <label class="field">
-                  <span>Type</span>
-                  <select id="note-type">
-                    <option value="note">Note</option>
-                    <option value="task">Task</option>
-                    <option value="reminder">Reminder</option>
-                    <option value="important">Important</option>
-                  </select>
-                </label>
-              </div>
-              <label class="field">
-                <span>Note</span>
-                <textarea id="note-body" rows="4" placeholder="Add a reminder, note, task, or important item"></textarea>
-              </label>
-              <div class="button-row">
-                <button class="btn btn-primary" type="submit">Save note</button>
-              </div>
-            </form>
-            <div class="toolbar hub-toolbar">
-              <label class="field compact grow">
-                <span>Search</span>
-                <input id="note-search" type="text" placeholder="Search note title or body">
-              </label>
-              <label class="field compact">
-                <span>Type</span>
-                <select id="note-filter"></select>
-              </label>
-              <div class="toolbar-actions">
-                <button id="note-clear" class="btn btn-outline small" type="button">Clear filters</button>
-              </div>
-            </div>
-            <div id="notes-list" class="stack-list empty-state">No notes yet.</div>
-          </section>
-        </div>
-      </section>
-
       <section id="page-setup" class="page">
         <div class="panel">
           <div class="panel-head">
@@ -8533,12 +8394,6 @@ tbody tr { transition: background .14s ease; }
         joinDate: "",
         records: [],
         mode: "admin"
-      },
-      hub: {
-        study: [],
-        cases: [],
-        productivity: [],
-        notes: []
       }
     };
 
@@ -8820,7 +8675,7 @@ tbody tr { transition: background .14s ease; }
       if (!state.profile) return [];
       return isAdmin()
         ? ["page-dashboard", "page-reporting", "page-approvals", "page-employees", "page-clients", "page-logs", "page-storage", ...(window.location.hash === "#setup" ? ["page-setup"] : [])]
-        : ["page-log", "page-my", ...(isArticle() ? ["page-cahub"] : [])];
+        : ["page-log", "page-my"];
     }
 
     function defaultPageId() {
@@ -8869,9 +8724,6 @@ tbody tr { transition: background .14s ease; }
         if (targetScreen === "screen-app") {
           const targetPage = normalizePageForRole(route.page || state.currentPage || defaultPageId());
           setActivePage(targetPage, { historyMode: "replace" });
-          if (targetPage === "page-cahub") {
-            setHubTab(route.hub || "dashboard", { historyMode: "replace" });
-          }
           if (!route.modalOpen) {
             closeModal({ historyMode: "replace" });
           }
@@ -9041,7 +8893,7 @@ tbody tr { transition: background .14s ease; }
       state.entryDraftTasks = [];
       state.entryClientDrafts = [];
       byId("entry-date").value = todayStr();
-      byId("study-date").value = todayStr();
+      if (byId("study-date")) byId("study-date").value = todayStr();
       byId("my-month").value = todayMonthStr();
       clearSuggestions("entry-client-options");
       renderEntryTaskChips();
@@ -9060,7 +8912,6 @@ tbody tr { transition: background .14s ease; }
         "page-storage": "&#128190;",
         "page-log": "&#9201;",
         "page-my": "&#128203;",
-        "page-cahub": "&#127891;",
         "page-setup": "&#9881;"
       };
       return icons[pageId] || "&#9679;";
@@ -9205,8 +9056,7 @@ tbody tr { transition: background .14s ease; }
           ]
         : [
             { id: "page-log", label: "Log Time" },
-            { id: "page-my", label: "My Timesheet" },
-            ...(isArticle() ? [{ id: "page-cahub", label: "My Hub" }] : [])
+            { id: "page-my", label: "My Timesheet" }
           ];
 
       if (isAdmin() && window.location.hash === "#setup") {
@@ -9234,16 +9084,6 @@ tbody tr { transition: background .14s ease; }
       if (historyMode) syncBrowserHistory(historyMode);
       // Page-specific bootstrap
       if (targetId === "page-reporting") initReportingPage();
-    }
-
-    function setHubTab(id, options = {}) {
-      state.currentHub = id;
-      all(".hub-panel").forEach((panel) => panel.classList.remove("active"));
-      all("#hub-tabs .subtab").forEach((button) => button.classList.remove("active"));
-      byId(`hub-${id}`)?.classList.add("active");
-      document.querySelector(`#hub-tabs .subtab[data-hub="${id}"]`)?.classList.add("active");
-      const historyMode = options.historyMode ?? "push";
-      if (historyMode) syncBrowserHistory(historyMode);
     }
 
     async function writeLog(payload) {
@@ -9402,7 +9242,6 @@ tbody tr { transition: background .14s ease; }
     function enterPortal() {
       resetHeader();
       buildTabs();
-      setHubTab("dashboard", { historyMode: "replace" });
       switchScreen("screen-app", { historyMode: "replace" });
       startLiveRefresh();
       startAdminUserStatusWatch();
@@ -10114,6 +9953,10 @@ tbody tr { transition: background .14s ease; }
     function normalizeTaskList(data) {
       if (Array.isArray(data?.taskList) && data.taskList.length) return uniq(data.taskList.map((item) => String(item || "").trim()));
       if (Array.isArray(data?.tasks) && data.tasks.length) return uniq(data.tasks.map((item) => String(item || "").trim()));
+      if (Array.isArray(data?.clientBreakdown) && data.clientBreakdown.length) {
+        const tasks = data.clientBreakdown.flatMap((item) => Array.isArray(item?.tasks) ? item.tasks : (Array.isArray(item?.taskList) ? item.taskList : []));
+        if (tasks.length) return uniq(tasks.map((item) => String(item || "").trim()).filter(Boolean));
+      }
       return uniq(splitKnownTasks(data?.task));
     }
 
@@ -10217,6 +10060,79 @@ tbody tr { transition: background .14s ease; }
 
     function singleBreakdownRemarks(items, includeClientLabel = null) {
       const payload = singleBreakdownPayload(items).filter((item) => item.remarks);
+      if (!payload.length) return "";
+      const showClientLabel = includeClientLabel === null ? payload.length > 1 : !!includeClientLabel;
+      return payload
+        .map((item) => showClientLabel ? `${item.client}: ${item.remarks}` : item.remarks)
+        .join(" | ");
+    }
+
+    function normalizeBulkClientBreakdown(source, dates = recordDates(source)) {
+      const rawItems = Array.isArray(source?.clientBreakdown) ? source.clientBreakdown : [];
+      const seen = new Set();
+      const items = rawItems
+        .map((item, index) => {
+          const client = String(item?.client || "").trim();
+          if (!client) return null;
+          const dailyHours = normalizeDailyHours(item?.dailyHours, dates, item?.hours);
+          const taskList = Array.isArray(item?.tasks) ? item.tasks : (Array.isArray(item?.taskList) ? item.taskList : []);
+          const tasks = uniq(taskList.map((t) => String(t || "").trim()).filter(Boolean));
+          const totalHours = totalHoursFromMap(dailyHours) || Number(item?.totalHours || 0);
+          return {
+            key: String(item?.key || makeSingleClientDraftKey(client, rawItems.slice(0, index).map((row) => row?.key))),
+            client,
+            tasks,
+            remarks: String(item?.remarks || "").trim(),
+            dailyHours,
+            totalHours: Number((Number.isFinite(totalHours) && totalHours > 0 ? totalHours : 0).toFixed(2))
+          };
+        })
+        .filter(Boolean)
+        .filter((item) => {
+          const clientKey = normalizeCompareText(item.client);
+          if (!clientKey || seen.has(clientKey)) return false;
+          seen.add(clientKey);
+          return true;
+        });
+      if (items.length) return items;
+
+      const fallbackClients = normalizeClientList(source);
+      const fallbackClient = fallbackClients.length ? fallbackClients.join(", ") : String(source?.client || "").trim();
+      if (!fallbackClient) return [];
+      const dailyHours = normalizeDailyHours(source?.dailyHours, dates, source?.hours);
+      const fallbackTaskList = Array.isArray(source?.tasks) ? source.tasks : (Array.isArray(source?.taskList) ? source.taskList : []);
+      const tasks = uniq(fallbackTaskList.map((t) => String(t || "").trim()).filter(Boolean));
+      return [{
+        key: makeSingleClientDraftKey(fallbackClient),
+        client: fallbackClient,
+        tasks,
+        remarks: String(source?.remarks || "").trim(),
+        dailyHours,
+        totalHours: Number((totalHoursFromMap(dailyHours) || Number(source?.totalHours || 0)).toFixed(2))
+      }];
+    }
+
+    function bulkBreakdownPayload(items, dates = []) {
+      return normalizeBulkClientBreakdown({ clientBreakdown: items }, dates).map((item) => ({
+        client: item.client,
+        tasks: Array.isArray(item.tasks) ? [...item.tasks] : [],
+        remarks: String(item.remarks || "").trim(),
+        dailyHours: normalizeDailyHours(item.dailyHours, dates),
+        totalHours: Number((totalHoursFromMap(item.dailyHours || {}) || Number(item.totalHours || 0)).toFixed(2))
+      }));
+    }
+
+    function bulkDailyTotals(items, dates = []) {
+      const out = {};
+      (dates || []).forEach((date) => {
+        const total = (items || []).reduce((sum, item) => sum + (Number(item?.dailyHours?.[date]) || 0), 0);
+        if (total > 0) out[date] = Number(total.toFixed(2));
+      });
+      return out;
+    }
+
+    function bulkBreakdownRemarks(items, includeClientLabel = null) {
+      const payload = bulkBreakdownPayload(items).filter((item) => item.remarks);
       if (!payload.length) return "";
       const showClientLabel = includeClientLabel === null ? payload.length > 1 : !!includeClientLabel;
       return payload
@@ -10379,6 +10295,27 @@ tbody tr { transition: background .14s ease; }
 
     function normalizeSingleDoc(docLike) {
       const raw = asDocData(docLike);
+      if (raw.entryKind === "leave") {
+        const date = String(raw.date || "").trim();
+        const dates = date ? [date] : [];
+        const leaveReason = String(raw.leaveReason || raw.remarks || "").trim();
+        return {
+          ...raw,
+          collection: "entries",
+          entryKind: "leave",
+          client: "Leave",
+          clients: ["Leave"],
+          task: "Leave",
+          taskList: ["Leave"],
+          clientBreakdown: [],
+          dates,
+          dailyHours: {},
+          hours: 0,
+          totalHours: 0,
+          remarks: leaveReason,
+          leaveReason
+        };
+      }
       const clientBreakdown = normalizeSingleClientBreakdown(raw);
       const totalHours = singleBreakdownTotalHours(clientBreakdown) || Number(raw.hours || 0);
       const dates = [raw.date].filter(Boolean);
@@ -10401,16 +10338,23 @@ tbody tr { transition: background .14s ease; }
     function normalizeBulkDoc(docLike) {
       const raw = asDocData(docLike);
       const dates = recordDates(raw);
-      const dailyHours = normalizeDailyHours(raw.dailyHours, dates, raw.hours);
+      const clientBreakdown = normalizeBulkClientBreakdown(raw, dates);
+      const breakdownDailyHours = bulkDailyTotals(clientBreakdown, dates);
+      const dailyHours = Object.keys(breakdownDailyHours).length
+        ? breakdownDailyHours
+        : normalizeDailyHours(raw.dailyHours, dates, raw.hours);
+      const totalHours = totalHoursFromMap(dailyHours) || Number(raw.totalHours || 0);
       return {
         ...raw,
         collection: "bulk_entries",
         entryKind: "bulk",
         taskList: normalizeTaskList(raw),
-        clients: normalizeClientList(raw),
+        clientBreakdown,
+        clients: normalizeClientList({ ...raw, clientBreakdown }),
         dates,
         dailyHours,
-        totalHours: Number(((raw.totalHours || totalHoursFromMap(dailyHours)) || 0).toFixed(2)),
+        remarks: bulkBreakdownRemarks(clientBreakdown, clientBreakdown.length > 1) || String(raw.remarks || "").trim(),
+        totalHours: Number((totalHours || 0).toFixed(2)),
         hours: Number(((raw.hours || avgHoursFromMap(dailyHours, dates)) || 0).toFixed(2))
       };
     }
@@ -10450,9 +10394,14 @@ tbody tr { transition: background .14s ease; }
     }
 
     function remarksTextForRecord(record, options = {}) {
+      if (record?.entryKind === "leave") return String(record?.leaveReason || record?.remarks || "").trim();
       if (record?.entryKind === "single") {
         const breakdown = normalizeSingleClientBreakdown(record);
         return singleBreakdownRemarks(breakdown, breakdown.length > 1) || String(record?.remarks || "").trim();
+      }
+      if (record?.entryKind === "bulk") {
+        const breakdown = normalizeBulkClientBreakdown(record, recordDates(record));
+        return bulkBreakdownRemarks(breakdown, breakdown.length > 1) || String(record?.remarks || "").trim();
       }
       if (record?.entryKind !== "group") return String(record?.remarks || "").trim();
       const ids = options.adminView ? visibleMemberIds(record) : [options.uid || state.user?.uid || ""].filter(Boolean);
@@ -10488,6 +10437,7 @@ tbody tr { transition: background .14s ease; }
     }
 
     function singleOrBulkHoursLabel(record) {
+      if (record.entryKind === "leave") return "Leave";
       if (record.entryKind === "single") {
         const breakdown = normalizeSingleClientBreakdown(record);
         const total = singleBreakdownTotalHours(breakdown) || Number(record.totalHours || record.hours || 0);
@@ -10496,7 +10446,8 @@ tbody tr { transition: background .14s ease; }
       const dates = recordDates(record);
       const total = totalHoursFromMap(record.dailyHours || {});
       if (dates.length <= 1) return `${Number(total || record.hours || 0).toFixed(1)} h`;
-      return `${Number(total || record.totalHours || 0).toFixed(1)} h total`;
+      const clientCount = record.entryKind === "bulk" ? normalizeBulkClientBreakdown(record, dates).length : 0;
+      return `${Number(total || record.totalHours || 0).toFixed(1)} h total${clientCount > 1 ? ` / ${clientCount} clients` : ""}`;
     }
 
     function groupHoursLabel(record, uid) {
@@ -10551,7 +10502,9 @@ tbody tr { transition: background .14s ease; }
                 name: user.name || user.email || user.id,
                 email: user.email || "",
                 role: user.role || "",
-                approved: user.approved !== false
+                approved: user.approved !== false,
+                googleLinked: user.googleLinked === true,
+                sourceUid: user.uid || user.sourceUid || user.id
               }))
               .sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
           } else {
@@ -10564,7 +10517,9 @@ tbody tr { transition: background .14s ease; }
                 name: user.name || user.email || user.id,
                 email: user.email || "",
                 role: user.role || "",
-                approved: user.approved !== false
+                approved: user.approved !== false,
+                googleLinked: user.googleLinked === true,
+                sourceUid: user.sourceUid || user.uid || user.id
               }))
               .sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
           }
@@ -10756,14 +10711,36 @@ tbody tr { transition: background .14s ease; }
     }
 
     function signatureForBulk(values) {
+      const dates = uniq(values.dates || []).sort();
+      const breakdown = normalizeBulkClientBreakdown(
+        Array.isArray(values?.clientBreakdown)
+          ? { clientBreakdown: values.clientBreakdown }
+          : {
+              clients: values?.clients,
+              client: Array.isArray(values?.clients) ? values.clients[0] : values?.client,
+              tasks: values?.tasks,
+              dailyHours: dates.reduce((map, date) => {
+                map[date] = values?.hours || 0;
+                return map;
+              }, {}),
+              hours: values?.hours,
+              remarks: values?.remarks
+            },
+        dates
+      );
       return JSON.stringify({
         from: values.from || "",
         to: values.to || "",
-        dates: uniq(values.dates || []).sort().join("|"),
-        clients: normalizeListKey(values.clients),
-        tasks: normalizeListKey(values.tasks),
-        hours: normalizeHoursValue(values.hours),
-        remarks: normalizeCompareText(values.remarks)
+        dates: dates.join("|"),
+        clientBreakdown: breakdown
+          .map((item) => [
+            normalizeCompareText(item.client),
+            normalizeListKey(item.tasks),
+            normalizeCompareText(item.remarks),
+            Object.entries(item.dailyHours || {}).sort(([a], [b]) => String(a).localeCompare(String(b))).map(([date, hours]) => `${date}:${normalizeHoursValue(hours)}`).join("|")
+          ].join("::"))
+          .sort()
+          .join("||")
       });
     }
 
@@ -10817,7 +10794,8 @@ tbody tr { transition: background .14s ease; }
         clients: normalizeClientList(record),
         tasks: normalizeTaskList(record),
         hours: record.hours,
-        remarks: record.remarks
+        remarks: record.remarks,
+        clientBreakdown: normalizeBulkClientBreakdown(record, recordDates(record))
       }) === target) || null;
     }
 
@@ -11224,6 +11202,23 @@ tbody tr { transition: background .14s ease; }
       }
       const workbook = XLSX.utils.book_new();
       const worksheet = XLSX.utils.json_to_sheet(rows);
+      const headers = Object.keys(rows[0] || {});
+      worksheet["!cols"] = headers.map((header) => {
+        const sampleMax = Math.max(
+          String(header || "").length,
+          ...rows.slice(0, 200).map((row) => String(row?.[header] ?? "").length)
+        );
+        const lower = String(header || "").toLowerCase();
+        const cap = lower.includes("remark") || lower.includes("missed") || lower.includes("detail") ? 70 : 34;
+        const min = lower.includes("date") ? 14 : lower.includes("hours") || lower.includes("days") ? 10 : 12;
+        return { wch: Math.max(min, Math.min(cap, sampleMax + 2)) };
+      });
+      Object.keys(worksheet).forEach((cellRef) => {
+        if (cellRef.startsWith("!")) return;
+        worksheet[cellRef].s = {
+          alignment: { wrapText: true, vertical: "top" }
+        };
+      });
       XLSX.utils.book_append_sheet(workbook, worksheet, sheetName || "Sheet1");
       XLSX.writeFile(workbook, fileName);
       return true;
@@ -11804,9 +11799,8 @@ tbody tr { transition: background .14s ease; }
     function updateMyCacheNote() {
       const host = byId("my-cache-note");
       if (!host) return;
-      host.textContent = state.myEntriesLoaded
-        ? `Your entries are saved immediately. For smoother loading, this table is showing the cached version. ${cacheNextText(state.myEntriesLoadedAt, MY_ENTRIES_CACHE_MS)}`
-        : "Your entries are saved immediately. Loading your timesheet now.";
+      host.hidden = true;
+      host.textContent = "";
     }
 
     // Format Date as YYYY-MM-DD using LOCAL time (not UTC) so day boundaries
@@ -12320,11 +12314,19 @@ tbody tr { transition: background .14s ease; }
     }
 
     function typeCell(record) {
-      const label = record.entryKind === "bulk" ? "BULK" : record.entryKind === "group" ? "GROUP" : "SINGLE";
+      const label = record.entryKind === "leave" ? "LEAVE" : record.entryKind === "bulk" ? "BULK" : record.entryKind === "group" ? "GROUP" : "SINGLE";
       return `<span class="type-pill ${safe(record.entryKind || "single")}">${label}</span>`;
     }
 
     function myClientCell(record) {
+      if (record.entryKind === "leave") {
+        return `
+          <div class="person">
+            <strong>Leave</strong>
+            <div class="subline">${safe(record.leaveType || "Leave day")}</div>
+          </div>
+        `;
+      }
       if (record.entryKind === "group") {
         return `
           <div class="person">
@@ -12353,6 +12355,7 @@ tbody tr { transition: background .14s ease; }
       const clients = new Set();
       let hours = 0;
       records.forEach((record) => {
+        if (record.entryKind === "leave") return;
         normalizeClientList(record).forEach((client) => clients.add(client));
         if (record.entryKind === "group") {
           hours += userEntryForGroup(record, state.user?.uid || "").totalHours || 0;
@@ -12484,6 +12487,14 @@ tbody tr { transition: background .14s ease; }
     }
 
     function entryDetailRemarksHtml(record, adminView = false) {
+      if (record.entryKind === "leave") {
+        return `
+          <div class="entry-detail-card">
+            <strong>${safe(record.leaveType || "Leave day")}</strong>
+            <div class="entry-detail-note">${safe(record.leaveReason || record.remarks || "-")}</div>
+          </div>
+        `;
+      }
       if (record.entryKind === "group") {
         const ids = adminView ? visibleMemberIds(record) : [state.user?.uid].filter(Boolean);
         return `
@@ -12518,6 +12529,23 @@ tbody tr { transition: background .14s ease; }
         }
       }
 
+      if (record.entryKind === "bulk") {
+        const breakdown = normalizeBulkClientBreakdown(record, recordDates(record));
+        if (breakdown.length > 1) {
+          return `
+            <div class="entry-detail-grid">
+              ${breakdown.map((item) => `
+                <div class="entry-detail-card">
+                  <strong>${safe(item.client || "Client")}</strong>
+                  <div class="subline">${safe(Number(item.totalHours || totalHoursFromMap(item.dailyHours || {}) || 0).toFixed(1))} h total</div>
+                  <div class="entry-detail-note">${safe(item.remarks || "-")}</div>
+                </div>
+              `).join("")}
+            </div>
+          `;
+        }
+      }
+
       return `
         <div class="entry-detail-card">
           <strong>${safe(clientLabel(record) || "Remarks")}</strong>
@@ -12528,6 +12556,14 @@ tbody tr { transition: background .14s ease; }
 
     function entryDetailHoursHtml(record, adminView = false) {
       const dates = recordDates(record);
+      if (record.entryKind === "leave") {
+        return `
+          <div class="entry-detail-card">
+            <strong>${safe(formatDate(dates[0] || record.date || ""))}</strong>
+            <div class="subline">Leave day - no work hours expected.</div>
+          </div>
+        `;
+      }
       if (record.entryKind === "group") {
         const ids = adminView ? visibleMemberIds(record) : [state.user?.uid].filter(Boolean);
         return `
@@ -12554,6 +12590,22 @@ tbody tr { transition: background .14s ease; }
                 <div class="entry-detail-card">
                   <strong>${safe(item.client || "Client")}</strong>
                   ${dayHourRowsHtml({}, dates, item.hours || 0)}
+                </div>
+              `).join("")}
+            </div>
+          `;
+        }
+      }
+
+      if (record.entryKind === "bulk") {
+        const breakdown = normalizeBulkClientBreakdown(record, dates);
+        if (breakdown.length > 1) {
+          return `
+            <div class="entry-detail-grid">
+              ${breakdown.map((item) => `
+                <div class="entry-detail-card">
+                  <strong>${safe(item.client || "Client")}</strong>
+                  ${dayHourRowsHtml(item.dailyHours || {}, dates, item.totalHours || 0)}
                 </div>
               `).join("")}
             </div>
@@ -12739,8 +12791,8 @@ tbody tr { transition: background .14s ease; }
         if (record.entryKind === "group" && record.status !== "active") return;
         recordDates(record).forEach((date) => {
           if (date < first || date > last) return;
-          const nextValue = record.entryKind === "bulk" ? "bulk" : "reported";
-          if (nextValue === "reported" || !map[date]) map[date] = nextValue;
+          const nextValue = record.entryKind === "leave" ? "leave" : record.entryKind === "bulk" ? "bulk" : "reported";
+          if (nextValue === "leave" || nextValue === "reported" || !map[date]) map[date] = nextValue;
         });
       });
       return map;
@@ -12775,7 +12827,9 @@ tbody tr { transition: background .14s ease; }
         const afterJoin = !joinDate || date >= joinDate;
         const status = statuses[date] || "";
         const missingWorkday = !status && !isFuture && !isWeekend && afterJoin;
-        const stateClass = status === "bulk"
+        const stateClass = status === "leave"
+          ? "leave"
+          : status === "bulk"
           ? "bulk"
           : status === "reported"
             ? "reported"
@@ -12790,7 +12844,9 @@ tbody tr { transition: background .14s ease; }
           stateClass,
           !afterJoin ? "prejoin" : ""
         ].filter(Boolean).join(" ");
-        const note = status === "bulk"
+        const note = status === "leave"
+          ? "Leave"
+          : status === "bulk"
           ? "Bulk"
           : status === "reported"
             ? "Reported"
@@ -12971,6 +13027,7 @@ tbody tr { transition: background .14s ease; }
             <div class="calendar-legend">
               <span class="calendar-legend-item"><span class="calendar-legend-swatch reported" aria-hidden="true"></span>Reported</span>
               <span class="calendar-legend-item"><span class="calendar-legend-swatch bulk" aria-hidden="true"></span>Bulk report</span>
+              <span class="calendar-legend-item"><span class="calendar-legend-swatch leave" aria-hidden="true"></span>Leave</span>
               <span class="calendar-legend-item"><span class="calendar-legend-swatch no-report" aria-hidden="true"></span>No report</span>
               <span class="calendar-legend-item"><span class="calendar-legend-swatch weekend" aria-hidden="true"></span>Sunday / inactive day</span>
             </div>
@@ -13028,6 +13085,7 @@ tbody tr { transition: background .14s ease; }
             <div class="calendar-legend">
               <span class="calendar-legend-item"><span class="calendar-legend-swatch reported" aria-hidden="true"></span>Reported</span>
               <span class="calendar-legend-item"><span class="calendar-legend-swatch bulk" aria-hidden="true"></span>Bulk report</span>
+              <span class="calendar-legend-item"><span class="calendar-legend-swatch leave" aria-hidden="true"></span>Leave</span>
               <span class="calendar-legend-item"><span class="calendar-legend-swatch no-report" aria-hidden="true"></span>No report</span>
               <span class="calendar-legend-item"><span class="calendar-legend-swatch weekend" aria-hidden="true"></span>Sunday / inactive day</span>
             </div>
@@ -13464,11 +13522,8 @@ tbody tr { transition: background .14s ease; }
         "Days missed": row.missedCount,
         "Missed dates": row.missedDates.map(fmtDate).join(", ")
       }));
-      const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.json_to_sheet(data);
-      XLSX.utils.book_append_sheet(wb, ws, "Pending reports");
       const fname = `VKS-Pending-Reports-${r.from}-to-${r.to}.xlsx`;
-      XLSX.writeFile(wb, fname);
+      if (!downloadRowsToExcel(data, fname, "Pending reports")) return;
       toast(`Exported ${data.length} rows.`, "success");
     }
 
@@ -13859,373 +13914,6 @@ tbody tr { transition: background .14s ease; }
       renderGroupApprovals();
     }
 
-    function hubEntryHours(record, uid = state.user?.uid || "") {
-      if (!record) return 0;
-      if (record.entryKind === "group") return Number(userEntryForGroup(record, uid).totalHours || 0);
-      if (record.entryKind === "bulk") return Number(totalHoursFromMap(record.dailyHours || {}) || record.totalHours || 0);
-      return Number(record.hours || 0);
-    }
-
-    function hubHoursText(value) {
-      return `${Number(value || 0).toFixed(1)} h`;
-    }
-
-    function hubTodayProductivity() {
-      return state.hub.productivity.find((item) => item.date === todayStr()) || null;
-    }
-
-    function hubSubjectTotals(items = state.hub.study) {
-      const bucket = {};
-      (items || []).forEach((item) => {
-        const subject = String(item.subject || "Unassigned").trim() || "Unassigned";
-        bucket[subject] = bucket[subject] || { hours: 0, count: 0 };
-        bucket[subject].hours += Number(item.hours || 0);
-        bucket[subject].count += 1;
-      });
-      return Object.entries(bucket).sort((a, b) => b[1].hours - a[1].hours);
-    }
-
-    function hubStudyFilters() {
-      return {
-        search: normalizeCompareText(byId("study-search")?.value || ""),
-        subject: String(byId("study-filter-subject")?.value || "").trim(),
-        month: String(byId("study-filter-month")?.value || "").trim()
-      };
-    }
-
-    function filteredStudyEntries() {
-      const filters = hubStudyFilters();
-      return (state.hub.study || []).filter((item) => {
-        if (filters.subject && String(item.subject || "") !== filters.subject) return false;
-        if (filters.month && !String(item.date || "").startsWith(filters.month)) return false;
-        if (!filters.search) return true;
-        const hay = normalizeCompareText([item.subject, item.note, item.date].join(" | "));
-        return hay.includes(filters.search);
-      });
-    }
-
-    function filteredKnowledgeEntries() {
-      const search = normalizeCompareText(byId("kb-search")?.value || "");
-      const task = String(byId("kb-task-filter")?.value || "").trim();
-      return (state.myEntries || []).filter((record) => {
-        const tasks = normalizeTaskList(record);
-        if (task && !tasks.includes(task)) return false;
-        if (!search) return true;
-        const hay = normalizeCompareText([
-          clientLabel(record),
-          tasks.join(" | "),
-          remarksTextForRecord(record),
-          displayDate(record)
-        ].join(" | "));
-        return hay.includes(search);
-      });
-    }
-
-    function filteredCases() {
-      const search = normalizeCompareText(byId("case-search")?.value || "");
-      const category = String(byId("case-filter")?.value || "").trim();
-      return (state.hub.cases || []).filter((item) => {
-        if (category && String(item.category || "") !== category) return false;
-        if (!search) return true;
-        const hay = normalizeCompareText([item.title, item.category, item.issue, item.note, item.reference].join(" | "));
-        return hay.includes(search);
-      });
-    }
-
-    function filteredNotes() {
-      const search = normalizeCompareText(byId("note-search")?.value || "");
-      const type = String(byId("note-filter")?.value || "").trim();
-      return (state.hub.notes || []).filter((item) => {
-        if (type && String(item.type || "") !== type) return false;
-        if (!search) return true;
-        const hay = normalizeCompareText([item.title, item.body, item.type].join(" | "));
-        return hay.includes(search);
-      });
-    }
-
-    function renderHubDashboard() {
-      const today = todayStr();
-      const todayWork = (state.myEntries || []).filter((record) => recordDates(record).includes(today)).reduce((sum, record) => sum + hubEntryHours(record), 0);
-      const todayStudy = (state.hub.study || []).filter((item) => item.date === today).reduce((sum, item) => sum + Number(item.hours || 0), 0);
-      const weekStart = new Date(`${today}T12:00:00`);
-      weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-      const weekStartStr = `${weekStart.getFullYear()}-${String(weekStart.getMonth() + 1).padStart(2, "0")}-${String(weekStart.getDate()).padStart(2, "0")}`;
-      const monthPrefix = today.slice(0, 7);
-      const weeklyStudy = (state.hub.study || []).filter((item) => String(item.date || "") >= weekStartStr).reduce((sum, item) => sum + Number(item.hours || 0), 0);
-      const monthlyStudy = (state.hub.study || []).filter((item) => String(item.date || "").startsWith(monthPrefix)).reduce((sum, item) => sum + Number(item.hours || 0), 0);
-      const topSubject = hubSubjectTotals()[0];
-      const focusHost = byId("hub-dashboard-focus");
-      const recentHost = byId("hub-dashboard-recent");
-      const panelHost = byId("hub-dashboard-panels");
-      renderStatCards("hub-dashboard-stats", [
-        { label: "Today's work", value: hubHoursText(todayWork), note: "Auto-read from your timesheet", icon: "&#128188;" },
-        { label: "Today's study", value: hubHoursText(todayStudy), note: "Saved in your private study log", icon: "&#128218;" },
-        { label: "This week", value: hubHoursText(weeklyStudy), note: "Study hours from Sunday onward", icon: "&#128197;" },
-        { label: "This month", value: hubHoursText(monthlyStudy), note: monthLabel(Number(monthPrefix.slice(0, 4)), Number(monthPrefix.slice(5, 7)) - 1), icon: "&#128200;" }
-      ]);
-      if (focusHost) {
-        const studyShare = todayWork + todayStudy > 0 ? Math.min(100, (todayStudy / (todayWork + todayStudy)) * 100) : 0;
-        const productivity = hubTodayProductivity();
-        focusHost.innerHTML = `
-          <div class="hub-dashboard-note">
-            <strong>Today's focus balance</strong>
-            <div class="subline">${todayWork > 0 ? `You have already worked ${safe(hubHoursText(todayWork))} today.` : "No work entry logged for today yet."}</div>
-            <div class="hub-tag-row">
-              <span class="hub-tag work">&#128188; Work ${safe(hubHoursText(todayWork))}</span>
-              <span class="hub-tag study">&#128218; Study ${safe(hubHoursText(todayStudy))}</span>
-              <span class="hub-tag ${todayStudy >= todayWork && todayStudy > 0 ? "study" : "warn"}">&#9889; Study share ${safe(studyShare.toFixed(0))}%</span>
-              <span class="hub-tag note">&#127919; ${safe(topSubject ? `${topSubject[0]} leads this month` : "Pick a subject and start logging")}</span>
-              <span class="hub-tag ${productivity?.value === "yes" ? "study" : productivity?.value === "no" ? "warn" : "note"}">&#9203; ${safe(productivity ? `Today's mood: ${String(productivity.value).toUpperCase()}` : "No productivity mark for today")}</span>
-            </div>
-            <div class="hub-progress-rail"><span class="hub-progress-fill study" style="width:${safe(studyShare.toFixed(2))}%"></span></div>
-          </div>
-        `;
-      }
-      if (recentHost) {
-        const latestStudy = state.hub.study[0];
-        const latestCase = state.hub.cases[0];
-        const latestNote = state.hub.notes[0];
-        recentHost.innerHTML = `
-          <div class="hub-dashboard-note">
-            <strong>Latest private activity</strong>
-            <div class="hub-highlight-grid">
-              <div class="hub-highlight-card">
-                <div class="hub-mini-metric">&#128218; Study</div>
-                <div class="subline">${safe(latestStudy ? `${formatDate(latestStudy.date)} | ${latestStudy.subject || "No subject"}` : "No study session saved yet.")}</div>
-              </div>
-              <div class="hub-highlight-card">
-                <div class="hub-mini-metric">&#128193; Case</div>
-                <div class="subline">${safe(latestCase ? `${latestCase.title || "-"} | ${latestCase.category || "No area"}` : "No case saved yet.")}</div>
-              </div>
-              <div class="hub-highlight-card">
-                <div class="hub-mini-metric">&#128221; Note</div>
-                <div class="subline">${safe(latestNote ? `${latestNote.title || noteTypeUiMeta(latestNote.type).label} | ${nowTimestampText(latestNote.updatedAt || latestNote.createdAt)}` : "No note saved yet.")}</div>
-              </div>
-            </div>
-          </div>
-        `;
-      }
-      if (panelHost) {
-        const pendingNotes = (state.hub.notes || []).filter((item) => ["task", "reminder", "important"].includes(String(item.type || "").toLowerCase()));
-        panelHost.innerHTML = `
-          <div class="summary-card">
-            <span class="card-icon" aria-hidden="true">&#127891;</span>
-            <strong>${safe(topSubject ? topSubject[0] : "No subject logged yet")}</strong>
-            <small>${safe(topSubject ? `${hubHoursText(topSubject[1].hours)} across ${topSubject[1].count} session(s)` : "Your top study subject for this month will appear here.")}</small>
-          </div>
-          <div class="summary-card">
-            <span class="card-icon" aria-hidden="true">&#9203;</span>
-            <strong>${safe(String(pendingNotes.length))} reminder/task item(s)</strong>
-            <small>${pendingNotes.length ? "Open Notes Board to clear tasks, reminders, and important items." : "No reminder or task pressure right now."}</small>
-          </div>
-          <div class="summary-card">
-            <span class="card-icon" aria-hidden="true">&#128214;</span>
-            <strong>${safe(String((state.hub.cases || []).length))} case note(s)</strong>
-            <small>${state.hub.cases.length ? "Case Library is ready for revision." : "Start capturing important audit/tax situations for revision."}</small>
-          </div>
-        `;
-      }
-    }
-
-    function renderKnowledgeBank() {
-      const entries = filteredKnowledgeEntries();
-      const clients = new Set();
-      const tasks = {};
-      let totalHours = 0;
-      entries.forEach((record) => {
-        totalHours += hubEntryHours(record);
-        normalizeClientList(record).forEach((client) => clients.add(client));
-        normalizeTaskList(record).forEach((task) => {
-          tasks[task] = (tasks[task] || 0) + 1;
-        });
-      });
-      renderStatCards("hub-kb-stats", [
-        { label: "Visible records", value: String(entries.length), note: "Filtered knowledge cards" },
-        { label: "Visible hours", value: hubHoursText(totalHours), note: "Hours across the filtered record set" },
-        { label: "Clients", value: String(clients.size), note: "Client contexts covered" },
-        { label: "Work types", value: String(Object.keys(tasks).length), note: "Distinct work categories" }
-      ]);
-      const host = byId("hub-kb-recent");
-      if (!host) return;
-      host.innerHTML = entries.length
-        ? entries.slice(0, 18).map((record) => `
-            <div class="hub-card hub-record-card">
-              <div class="hub-record-head">
-                <div class="hub-record-title">
-                  <strong>${safe(clientLabel(record))}</strong>
-                  <div class="subline">${safe(displayDate(record))}</div>
-                </div>
-                <span class="hub-mini-metric">${safe(hubHoursText(hubEntryHours(record)))}</span>
-              </div>
-              <div class="hub-tag-row">${normalizeTaskList(record).map((task) => `<span class="hub-tag work">${safe(shortTaskLabel(task))}</span>`).join("")}</div>
-              <div class="hub-record-body">${safe(remarksTextForRecord(record).slice(0, 220) || "No remarks recorded.")}</div>
-            </div>
-          `).join("")
-        : "No timesheet knowledge matches the current filters.";
-    }
-
-    function renderStudySection() {
-      if (byId("study-date") && !byId("study-date").value) byId("study-date").value = todayStr();
-      const today = todayStr();
-      const todayWork = (state.myEntries || []).filter((record) => recordDates(record).includes(today)).reduce((sum, record) => sum + hubEntryHours(record), 0);
-      const todayStudy = (state.hub.study || []).filter((item) => item.date === today).reduce((sum, item) => sum + Number(item.hours || 0), 0);
-      const filtered = filteredStudyEntries();
-      const subjectTotals = hubSubjectTotals();
-      renderStatCards("study-weekly", [
-        { label: "Study entries", value: String(filtered.length), note: "Visible sessions after filters" },
-        { label: "Visible hours", value: hubHoursText(filtered.reduce((sum, item) => sum + Number(item.hours || 0), 0)), note: "Hours in the filtered study list" },
-        { label: "Today's work", value: hubHoursText(todayWork), note: "Auto-read from your timesheet" },
-        { label: "Today's study", value: hubHoursText(todayStudy), note: "Private study log for today" }
-      ]);
-      renderStatCards("study-subject-stats", subjectTotals.slice(0, 4).map(([subject, data]) => ({
-        label: subject,
-        value: hubHoursText(data.hours),
-        note: `${data.count} session(s)`
-      })) || [{ label: "Subjects", value: "0", note: "Start your first study session." }]);
-      const todaySummary = byId("study-today-summary");
-      if (todaySummary) {
-        const combined = todayWork + todayStudy;
-        todaySummary.innerHTML = `
-          <div class="summary-card">
-            <span class="card-icon" aria-hidden="true">&#128188;</span>
-            <strong>You have worked ${safe(hubHoursText(todayWork))} today</strong>
-            <small>${todayWork > 0 ? "Your work hours are pulled from the timesheet automatically." : "No work entry is recorded for today yet."}</small>
-          </div>
-          <div class="summary-card">
-            <span class="card-icon" aria-hidden="true">&#128218;</span>
-            <strong>${safe(hubHoursText(todayStudy))} study logged today</strong>
-            <small>${todayStudy > 0 ? "Add another study session below if you continue later." : "Save today's study hours and subject below."}</small>
-          </div>
-          <div class="summary-card">
-            <span class="card-icon" aria-hidden="true">&#128200;</span>
-            <strong>${safe(hubHoursText(combined))} productive total</strong>
-            <small>${combined > 0 ? `Study is ${(todayStudy / combined * 100 || 0).toFixed(0)}% of today's tracked effort.` : "Work and study together will appear here."}</small>
-          </div>
-        `;
-      }
-      const host = byId("study-list");
-      if (!host) return;
-      host.innerHTML = filtered.length
-        ? filtered.map((item) => `
-            <div class="hub-card hub-record-card">
-              <div class="hub-record-head">
-                <div class="hub-record-title">
-                  <strong>${safe(item.subject || "No subject")}</strong>
-                  <div class="subline">${safe(formatDate(item.date))}</div>
-                </div>
-                <span class="hub-mini-metric">${safe(hubHoursText(item.hours))}</span>
-              </div>
-              <div class="hub-record-body">${safe(item.note || "No study note recorded.")}</div>
-              <div class="actions"><button class="btn btn-ghost small" type="button" data-action="delete-private" data-collection="cahub_study" data-id="${item.id}">Delete</button></div>
-            </div>
-          `).join("")
-        : "No study entries match the current filters.";
-    }
-
-    function renderCaseSection() {
-      const items = filteredCases();
-      const host = byId("case-list");
-      if (!host) return;
-      host.innerHTML = items.length
-        ? items.map((item) => `
-            <div class="hub-card hub-record-card">
-              <div class="hub-record-head">
-                <div class="hub-record-title">
-                  <strong>${safe(item.title || "-")}</strong>
-                  <div class="subline">${safe(item.category || "No area selected")}</div>
-                </div>
-                <span class="hub-mini-metric">${safe(nowTimestampText(item.updatedAt || item.createdAt))}</span>
-              </div>
-              ${item.issue ? `<div class="hub-record-body"><strong>Issue:</strong> ${safe(item.issue)}</div>` : ""}
-              <div class="hub-record-body"><strong>Conclusion:</strong> ${safe(item.note || "No conclusion saved.")}</div>
-              ${item.reference ? `<div class="hub-tag-row"><span class="hub-tag note">${safe(item.reference)}</span></div>` : ""}
-              <div class="actions"><button class="btn btn-ghost small" type="button" data-action="delete-private" data-collection="cahub_cases" data-id="${item.id}">Delete</button></div>
-            </div>
-          `).join("")
-        : "No cases match the current filters.";
-    }
-
-    function renderProductivitySection() {
-      const counts = {
-        yes: state.hub.productivity.filter((item) => item.value === "yes").length,
-        okay: state.hub.productivity.filter((item) => item.value === "okay").length,
-        no: state.hub.productivity.filter((item) => item.value === "no").length
-      };
-      let streak = 0;
-      const ordered = [...state.hub.productivity].sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
-      for (let i = 0; i < ordered.length; i += 1) {
-        if (ordered[i].value !== "yes") break;
-        streak += 1;
-      }
-      renderStatCards("productivity-weekly", [
-        { label: "Productive", value: String(counts.yes), note: "Strong focus days" },
-        { label: "Average", value: String(counts.okay), note: "Moderate days" },
-        { label: "Not productive", value: String(counts.no), note: "Low focus days" },
-        { label: "Current streak", value: String(streak), note: "Consecutive productive days" }
-      ]);
-      const host = byId("productivity-list");
-      if (!host) return;
-      host.innerHTML = ordered.length
-        ? ordered.slice(0, 12).map((item) => `
-            <div class="hub-card hub-record-card">
-              <div class="hub-record-head">
-                <div class="hub-record-title">
-                  <strong>${safe(formatDate(item.date))}</strong>
-                  <div class="subline">${safe(item.value === "yes" ? "Productive day" : item.value === "okay" ? "Average day" : "Not productive")}</div>
-                </div>
-                <span class="hub-tag ${item.value === "yes" ? "study" : item.value === "okay" ? "warn" : "note"}">${safe(String(item.value || "").toUpperCase())}</span>
-              </div>
-              <div class="actions"><button class="btn btn-ghost small" type="button" data-action="delete-private" data-collection="cahub_productivity" data-id="${item.id}">Delete</button></div>
-            </div>
-          `).join("")
-        : "No productivity records yet.";
-    }
-
-    function renderNotesSection() {
-      const items = filteredNotes();
-      const host = byId("notes-list");
-      if (!host) return;
-      host.innerHTML = items.length
-        ? items.map((item) => {
-            const meta = noteTypeUiMeta(item.type);
-            return `
-              <div class="hub-card hub-record-card">
-                <div class="note-type-row">
-                  <span class="note-type-pill ${safe(meta.className)}"><span>${safe(meta.icon)}</span><span>${safe(meta.label)}</span></span>
-                  <div class="subline">${safe(nowTimestampText(item.updatedAt || item.createdAt))}</div>
-                </div>
-                ${item.title ? `<strong>${safe(item.title)}</strong>` : ""}
-                <div class="note-block">${safe(item.body || "")}</div>
-                <div class="actions"><button class="btn btn-ghost small" type="button" data-action="delete-private" data-collection="cahub_notes" data-id="${item.id}">Delete</button></div>
-              </div>
-            `;
-          }).join("")
-        : "No notes match the current filters.";
-    }
-
-    async function loadHubData() {
-      if (!isArticle()) return;
-      syncNoteTypeOptions();
-      await loadMyEntries();
-      const [study, cases, productivity, notes] = await Promise.all([
-        fetchPrivateCollection("cahub_study"),
-        fetchPrivateCollection("cahub_cases"),
-        fetchPrivateCollection("cahub_productivity"),
-        fetchPrivateCollection("cahub_notes")
-      ]);
-      state.hub.study = study;
-      state.hub.cases = cases;
-      state.hub.productivity = productivity;
-      state.hub.notes = notes;
-      if (byId("study-date") && !byId("study-date").value) byId("study-date").value = todayStr();
-      renderHubDashboard();
-      renderKnowledgeBank();
-      renderStudySection();
-      renderCaseSection();
-      renderProductivitySection();
-      renderNotesSection();
-    }
-
     async function refreshCurrentPage(options = {}) {
       if (!state.user || !state.profile) return;
       if (state.currentPage === "page-log") {
@@ -14269,10 +13957,6 @@ tbody tr { transition: background .14s ease; }
         await loadAll(!!options.force);
         updateRefreshButtonMeta();
         return;
-      }
-      if (state.currentPage === "page-cahub") {
-        await loadHubData();
-        updateRefreshButtonMeta();
       }
     }
 
@@ -14840,6 +14524,10 @@ tbody tr { transition: background .14s ease; }
       }
       if (!canEditRecord(record)) {
         toast("You can edit only records available to you for editing.", "warn");
+        return;
+      }
+      if (record.entryKind === "leave") {
+        openLeaveEntryModal(record);
         return;
       }
       if (record.entryKind === "group") {
@@ -15622,11 +15310,165 @@ tbody tr { transition: background .14s ease; }
       });
     }
 
-    function openBulkEntryModal() {
+    function openLeaveEntryModal(record = null) {
+      const isEdit = !!record?.id;
+      const initialDate = String(record?.date || recordDates(record || {})[0] || todayStr());
+      const initialType = String(record?.leaveType || "Full day leave");
+      const initialReason = String(record?.leaveReason || record?.remarks || "").trim();
+      openModal(
+        isEdit ? "Edit Leave Day" : "Add Leave Day",
+        "Mark a leave day so your calendar and reporting check show leave instead of no report.",
+        `
+          <div class="field-stack">
+            <div class="grid two">
+              <label class="field">
+                <span>Date</span>
+                <input id="leave-date" type="date" value="${safe(initialDate)}">
+              </label>
+              <label class="field">
+                <span>Leave type</span>
+                <select id="leave-type">
+                  ${["Full day leave", "Half day leave", "Sick leave", "Casual leave", "Other leave"].map((item) => `<option value="${safe(item)}" ${item === initialType ? "selected" : ""}>${safe(item)}</option>`).join("")}
+                </select>
+              </label>
+            </div>
+            <label class="field">
+              <span>Reason / note</span>
+              <textarea id="leave-reason" rows="4" placeholder="Optional reason or note">${safe(initialReason)}</textarea>
+            </label>
+            <div class="hub-card">
+              <strong>Calendar effect</strong>
+              <div class="subline">This saves as a zero-hour leave record. Admin reporting check and your calendar will treat this date as accounted for, not missed.</div>
+            </div>
+            <div class="button-row">
+              <button class="btn btn-ghost" id="leave-cancel" type="button">Cancel</button>
+              <button class="btn btn-primary" id="leave-save" type="button">${isEdit ? "Save Leave Day" : "Add Leave Day"}</button>
+            </div>
+          </div>
+        `
+      );
+      applyDateLimits(byId("modal-root"));
+      enforceDateInputRules(byId("leave-date"));
+      byId("leave-cancel")?.addEventListener("click", closeModal);
+      byId("leave-save")?.addEventListener("click", async () => {
+        const saveButton = byId("leave-save");
+        const cancelButton = byId("leave-cancel");
+        const date = byId("leave-date")?.value || "";
+        const leaveType = String(byId("leave-type")?.value || "Full day leave").trim();
+        const leaveReason = String(byId("leave-reason")?.value || "").trim();
+        if (!date || date > todayStr()) return toast("Select a valid leave date.", "warn");
+        setButtonBusy(saveButton, true, "Saving...");
+        if (cancelButton) cancelButton.disabled = true;
+        try {
+          const payload = {
+            entryKind: "leave",
+            entryType: "leave",
+            date,
+            dates: [date],
+            leaveType,
+            leaveReason,
+            client: "Leave",
+            clients: ["Leave"],
+            task: "Leave",
+            taskList: ["Leave"],
+            clientBreakdown: [],
+            dailyHours: {},
+            hours: 0,
+            totalHours: 0,
+            remarks: leaveReason,
+            updatedAt: Timestamp.now()
+          };
+          if (isEdit) {
+            const updated = {
+              ...payload,
+              lastEditedByUid: state.user?.uid || "",
+              lastEditedBy: profileName()
+            };
+            const changeSummary = summarizeEntryChanges(record, updated);
+            await updateDoc(doc(db, "entries", record.id), updated);
+            const normalized = normalizeSingleDoc({ ...record, ...updated });
+            upsertMyEntryCache(normalized);
+            await addTrail(normalized, "Edited", `Leave day updated - ${changeSummary}`);
+            await writeUserAudit("Edited leave day", `${formatDate(date)} | ${leaveType}`);
+          } else {
+            const createdPayload = withOwnershipAliases({
+              ...payload,
+              name: profileName(),
+              email: profileEmail(),
+              role: state.profile?.role || "Employee / Professional",
+              department: state.profile?.department || "",
+              createdAt: Timestamp.now()
+            });
+            const ref = await addDoc(collection(db, "entries"), createdPayload);
+            const normalized = normalizeSingleDoc({ id: ref.id, ...createdPayload });
+            upsertMyEntryCache(normalized);
+            await addTrail(normalized, "Submitted", "Leave day created");
+            await writeUserAudit("Added leave day", `${formatDate(date)} | ${leaveType}`);
+          }
+          await writeLog({
+            action: `${profileName()} ${isEdit ? "edited" : "added"} a leave day`,
+            actorName: profileName(),
+            actorEmail: profileEmail(),
+            type: "entry",
+            detail: `${formatDate(date)} | ${leaveType}`,
+            detailAdmin: date
+          });
+          closeModal();
+          toast(isEdit ? "Leave day updated." : "Leave day added.", "success");
+          await refreshCurrentPage({ force: true });
+        } catch (error) {
+          toast(error?.message || "Could not save leave day right now.", "error");
+        } finally {
+          setButtonBusy(saveButton, false);
+          if (cancelButton) cancelButton.disabled = false;
+        }
+      });
+    }
+
+    function ensureLeaveEntryButton() {
+      const bulkButton = byId("open-bulk-entry");
+      const bulkSmall = bulkButton?.querySelector("small");
+      if (bulkButton) bulkButton.title = "Client-wise and date-wise bulk reporting across MANY days";
+      if (bulkSmall) bulkSmall.textContent = "Many clients - Many days";
+      const helperTitle = document.querySelector(".entry-type-helper-title");
+      if (helperTitle) helperTitle.textContent = "Four entry types";
+      const helperGrid = document.querySelector(".entry-type-helper-grid");
+      const bulkHelper = [...document.querySelectorAll(".entry-type-helper-card")].find((card) => card.textContent.includes("2") && card.textContent.toLowerCase().includes("bulk"));
+      const bulkHelperText = bulkHelper?.querySelector("span");
+      if (bulkHelperText) bulkHelperText.innerHTML = 'One person, one or more clients, many days. Use <em>Bulk entry</em> above.';
+      if (helperGrid && !helperGrid.querySelector("[data-helper='leave']")) {
+        const card = document.createElement("div");
+        card.className = "entry-type-helper-card";
+        card.dataset.helper = "leave";
+        card.innerHTML = `
+          <strong>4 &middot; Leave</strong>
+          <span>Mark an approved leave day so calendar and non-reporting checks do not treat it as missed.</span>
+        `;
+        helperGrid.appendChild(card);
+      }
+      if (byId("open-leave-entry")) return;
+      const groupButton = byId("open-group-entry");
+      if (!groupButton?.parentElement) return;
+      const button = document.createElement("button");
+      button.id = "open-leave-entry";
+      button.className = "btn entry-type-btn entry-type-leave";
+      button.type = "button";
+      button.title = "Mark a leave day so the reporting calendar does not show it as missed";
+      button.innerHTML = `
+        <span class="entry-type-icon" aria-hidden="true">&#127973;</span>
+        <span class="entry-type-text">
+          <strong>Add leave day</strong>
+          <small>No work report due</small>
+        </span>
+      `;
+      groupButton.parentElement.appendChild(button);
+    }
+
+    function openLegacySingleClientBulkEntryModal() {
       const modalState = { clients: [], tasks: [], manualExcluded: new Set(), activeDates: [], submitting: false };
       openModal(
         "Bulk / Range Entry",
-        "Bulk entry covers a date range for ONE client only. Same hours and remarks apply to every selected day. Use Single entry for one day, or Group reporting for multiple users.",
+        "Legacy bulk entry helper retained for backwards compatibility. The active bulk entry flow supports multiple clients with date-wise time.",
         `
           <div class="field-stack">
             <div class="grid two">
@@ -15634,7 +15476,7 @@ tbody tr { transition: background .14s ease; }
               <label class="field"><span>To</span><input id="bulk-to" type="date" value="${todayStr()}"></label>
             </div>
             <label class="field"><span>Working Days</span><select id="bulk-mode"><option value="no-sun">All days except Sundays</option><option value="yes">All days including Sundays</option></select></label>
-            <div class="field"><span>Client <small style="color:var(--muted);font-weight:500;letter-spacing:normal;text-transform:none;">(single client only)</small></span><input id="bulk-client-input" type="text" autocomplete="off" placeholder="Search client or type a new one"><div id="bulk-client-suggestions" class="suggestions"></div></div>
+            <div class="field"><span>Client</span><input id="bulk-client-input" type="text" autocomplete="off" placeholder="Search client or type a new one"><div id="bulk-client-suggestions" class="suggestions"></div></div>
             <div id="bulk-client-chips" class="chip-row"></div>
             <label class="field"><span>Work Type</span><select id="bulk-task-picker"><option value="">Add work type</option>${TASK_OPTIONS.map((task) => `<option value="${safe(task)}">${safe(task)}</option>`).join("")}</select></label>
             <div id="bulk-task-chips" class="chip-row"></div>
@@ -15801,7 +15643,7 @@ tbody tr { transition: background .14s ease; }
           if (!from || !to || from > to) return toast("Select a valid date range.", "warn");
           if (from === to) return toast("Bulk entry is only for more than one day. Use single entry for one date.", "warn");
           if (to > todayStr()) return toast("Future dates are not allowed.", "warn");
-          if (!modalState.clients.length) return toast("Select one client for the bulk entry.", "warn");
+          if (!modalState.clients.length) return toast("Add at least one client for the bulk entry.", "warn");
           if (!modalState.tasks.length) return toast("Add at least one work type.", "warn");
           if (!(hours > 0)) return toast("Enter valid hours.", "warn");
           if (remarks.length < 100) return toast("Remarks must be at least 100 characters.", "warn");
@@ -15936,6 +15778,433 @@ tbody tr { transition: background .14s ease; }
       syncBulkDates();
     }
 
+    function openBulkEntryModal() {
+      const modalState = { clientRows: [], manualExcluded: new Set(), activeDates: [], submitting: false };
+      openModal(
+        "Bulk Entry",
+        "One person, many dates, one or more clients. Record client-wise and date-wise time before submitting.",
+        `
+          <div class="field-stack bulk-entry-modal">
+            <div class="entry-mode-note">
+              <strong>Bulk recording model</strong>
+              <span>Range is common. Each client gets work type, remarks, and date-wise hours.</span>
+            </div>
+            <div class="grid two">
+              <label class="field"><span>From</span><input id="bulk-from" type="date" value="${todayStr()}"></label>
+              <label class="field"><span>To</span><input id="bulk-to" type="date" value="${todayStr()}"></label>
+            </div>
+            <label class="field"><span>Working Days</span><select id="bulk-mode"><option value="no-sun">All days except Sundays</option><option value="yes">All days including Sundays</option></select></label>
+            <div class="hub-card">
+              <strong>Working Date Selection</strong>
+              <div id="bulk-date-summary" class="selection-summary"></div>
+              <div id="bulk-date-grid"></div>
+            </div>
+            <div class="bulk-client-add-row">
+              <div class="field grow"><span>Add Client</span><input id="bulk-client-input" type="text" autocomplete="off" placeholder="Search client or type a new one"><div id="bulk-client-suggestions" class="suggestions"></div></div>
+              <button id="bulk-add-client" class="btn btn-outline" type="button">Add client</button>
+            </div>
+            <div id="bulk-client-sections" class="bulk-client-stack"></div>
+            <div id="bulk-total-summary" class="bulk-total-summary"></div>
+            <div class="hub-card">
+              <strong>Save For Later</strong>
+              <div class="subline">This draft is saved on this local browser/device only. It is not sent to the database and is not visible to admin unless you submit it.</div>
+            </div>
+            <div class="button-row">
+              <button class="btn btn-outline" id="bulk-save-draft" type="button">Save For Later</button>
+              <button class="btn btn-outline" id="bulk-load-draft" type="button">Load Draft</button>
+              <button class="btn btn-ghost" id="bulk-delete-draft" type="button">Delete Saved Draft</button>
+            </div>
+            <div class="button-row"><button class="btn btn-ghost" id="bulk-cancel" type="button">Cancel</button><button class="btn btn-primary" id="bulk-save" type="button">Submit Bulk Entry</button></div>
+          </div>
+        `
+      );
+
+      const rowKey = (client) => makeSingleClientDraftKey(client, modalState.clientRows.map((row) => row.key));
+      const makeRow = (client, seed = {}) => ({
+        key: seed.key || rowKey(client),
+        client,
+        tasks: uniq(Array.isArray(seed.tasks) ? seed.tasks.map((item) => String(item || "").trim()).filter(Boolean) : []),
+        remarks: String(seed.remarks || "").trim(),
+        dailyHours: { ...(seed.dailyHours || {}) }
+      });
+
+      const syncClientRows = () => {
+        all("#bulk-client-sections [data-bulk-client-hours]").forEach((input) => {
+          const row = modalState.clientRows.find((item) => item.key === input.dataset.bulkClientHours);
+          const date = input.dataset.date || "";
+          if (!row || !date) return;
+          const value = Number(input.value || 0);
+          row.dailyHours = row.dailyHours || {};
+          if (Number.isFinite(value) && value > 0) row.dailyHours[date] = Number(value.toFixed(2));
+          else delete row.dailyHours[date];
+        });
+        all("#bulk-client-sections [data-bulk-client-remarks]").forEach((input) => {
+          const row = modalState.clientRows.find((item) => item.key === input.dataset.bulkClientRemarks);
+          if (row) row.remarks = input.value || "";
+        });
+      };
+
+      const renderTotals = () => {
+        const host = byId("bulk-total-summary");
+        if (!host) return;
+        const dates = modalState.activeDates || [];
+        const totals = bulkDailyTotals(modalState.clientRows, dates);
+        const grand = totalHoursFromMap(totals);
+        const overLimit = dates.filter((date) => Number(totals[date] || 0) > 24);
+        host.innerHTML = `
+          <div class="bulk-total-card ${overLimit.length ? "warn" : ""}">
+            <div><strong>${safe(grand.toFixed(2))} h</strong><span>Grand total</span></div>
+            <div><strong>${safe(String(modalState.clientRows.length))}</strong><span>Client(s)</span></div>
+            <div><strong>${safe(String(dates.length))}</strong><span>Selected day(s)</span></div>
+            <div><strong>${safe(overLimit.length ? "Check" : "OK")}</strong><span>24h daily cap</span></div>
+          </div>
+          ${dates.length ? `<div class="day-hour-list bulk-daily-total-list">${dates.map((date) => `<div class="day-hour-row"><span>${safe(formatDate(date))}</span><strong>${safe(Number(totals[date] || 0).toFixed(2))} h</strong></div>`).join("")}</div>` : ""}
+        `;
+      };
+
+      const renderClientRows = () => {
+        const host = byId("bulk-client-sections");
+        if (!host) return;
+        const dates = modalState.activeDates || [];
+        host.innerHTML = modalState.clientRows.length
+          ? modalState.clientRows.map((row, index) => `
+              <div class="bulk-client-card" data-client-key="${safe(row.key)}">
+                <div class="bulk-client-head">
+                  <div>
+                    <span class="bulk-client-index">${safe(String(index + 1))}</span>
+                    <strong>${safe(row.client)}</strong>
+                    <div class="subline">${safe(totalHoursFromMap(row.dailyHours || {}).toFixed(2))} h total for this client</div>
+                  </div>
+                  <button class="btn btn-ghost small" type="button" data-action="remove-bulk-client-row" data-key="${encodeURIComponent(row.key)}">Remove</button>
+                </div>
+                <label class="field">
+                  <span>Work Type</span>
+                  <select data-bulk-task-picker="${safe(row.key)}">
+                    <option value="">Add work type</option>
+                    ${TASK_OPTIONS.map((task) => `<option value="${safe(task)}">${safe(task)}</option>`).join("")}
+                  </select>
+                </label>
+                <div class="chip-row">${(row.tasks || []).map((task) => `<span class="chip">${safe(shortTaskLabel(task))}<button type="button" data-action="remove-bulk-client-task" data-key="${encodeURIComponent(row.key)}" data-task="${encodeURIComponent(task)}">x</button></span>`).join("")}</div>
+                <div class="bulk-date-hours-grid">
+                  ${dates.map((date) => `
+                    <label class="member-hour-card">
+                      <span>${safe(formatDate(date))}</span>
+                      <input type="number" min="0" max="24" step="0.25" data-bulk-client-hours="${safe(row.key)}" data-date="${safe(date)}" value="${safe(String(row.dailyHours?.[date] || ""))}" placeholder="0">
+                    </label>
+                  `).join("") || `<div class="subline">Select the bulk date range first.</div>`}
+                </div>
+                <label class="field">
+                  <span>Remarks</span>
+                  <textarea rows="4" data-bulk-client-remarks="${safe(row.key)}" data-counter-id="bulk-remarks-count-${safe(row.key)}" placeholder="Minimum 100 characters for ${safe(row.client)}">${safe(row.remarks || "")}</textarea>
+                  <div class="field-note"><span id="bulk-remarks-count-${safe(row.key)}">0 characters</span><span>Minimum 100 characters required.</span></div>
+                </label>
+              </div>
+            `).join("")
+          : `
+              <div class="compact-empty">
+                <span class="card-icon" aria-hidden="true">&#129309;</span>
+                <div>
+                  <strong>No clients added yet</strong>
+                  <small>Add one or more clients, then fill date-wise time, work type, and remarks for each.</small>
+                </div>
+              </div>
+            `;
+        all("#bulk-client-sections [data-bulk-client-remarks]").forEach((input) => {
+          bindRemarksCounter(input, input.dataset.counterId || "");
+          updateRemarksCounter(input.dataset.counterId || "", input.value || "");
+        });
+        renderTotals();
+      };
+
+      const syncDates = () => {
+        const from = byId("bulk-from")?.value || "";
+        const to = byId("bulk-to")?.value || "";
+        const includeSunday = byId("bulk-mode")?.value === "yes";
+        const baseDates = allDatesBetween(from, to, includeSunday);
+        pruneDateSet(modalState.manualExcluded, baseDates);
+        modalState.activeDates = baseDates.filter((date) => !modalState.manualExcluded.has(date));
+        modalState.clientRows.forEach((row) => {
+          row.dailyHours = Object.fromEntries(Object.entries(row.dailyHours || {}).filter(([date]) => modalState.activeDates.includes(date)));
+        });
+        const summary = byId("bulk-date-summary");
+        const grid = byId("bulk-date-grid");
+        if (summary) {
+          summary.innerHTML = baseDates.length
+            ? `<span>${safe(String(modalState.activeDates.length))} selected day(s)</span><span>${safe(String(baseDates.length - modalState.activeDates.length))} excluded day(s)</span><span>Click a date to include or exclude it</span>`
+            : `<span>Select a valid range to preview working dates.</span>`;
+        }
+        if (grid) grid.innerHTML = dateChipGridHtml(baseDates, modalState.manualExcluded, "toggle-bulk-date", "No working dates found for this range.");
+      };
+
+      const addClient = (clientName, seed = {}) => {
+        const client = String(clientName || "").trim();
+        if (!client) return false;
+        if (modalState.clientRows.some((item) => normalizeCompareText(item.client) === normalizeCompareText(client))) {
+          toast("That client is already added.", "warn");
+          return false;
+        }
+        modalState.clientRows.push(makeRow(client, seed));
+        renderClientRows();
+        return true;
+      };
+
+      const addClientFromInput = () => {
+        const client = String(byId("bulk-client-input")?.value || "").trim();
+        if (!client) return toast("Select or type a client name first.", "warn");
+        if (!addClient(client)) return;
+        byId("bulk-client-input").value = "";
+        clearSuggestions("bulk-client-suggestions");
+      };
+
+      const renderClientSuggestions = async (forceRefresh = false) => {
+        await ensureLookups(forceRefresh);
+        const input = byId("bulk-client-input");
+        const q = String(input?.value || "").trim().toLowerCase();
+        const selected = new Set(modalState.clientRows.map((item) => normalizeCompareText(item.client)));
+        const options = state.lookups.clients.filter((client) => client.toLowerCase().includes(q) && !selected.has(normalizeCompareText(client)));
+        if (!input?.matches(":focus")) return clearSuggestions("bulk-client-suggestions");
+        if (!options.length) {
+          setSuggestions("bulk-client-suggestions", suggestionEmptyHtml("No matching client was found. You can still type a client name manually."), { inputId: "bulk-client-input" });
+          return;
+        }
+        setSuggestions(
+          "bulk-client-suggestions",
+          `<div class="suggestion-list">${options.map((client) => `<button class="suggestion-item" type="button" data-action="pick-bulk-client" data-value="${encodeURIComponent(client)}">${safe(client)}</button>`).join("")}</div>`,
+          { inputId: "bulk-client-input" }
+        );
+      };
+
+      const saveDraft = () => {
+        syncClientRows();
+        const ok = saveLocalDraft("bulk", {
+          from: byId("bulk-from")?.value || "",
+          to: byId("bulk-to")?.value || "",
+          weekendMode: byId("bulk-mode")?.value || "no-sun",
+          clientInput: byId("bulk-client-input")?.value || "",
+          clientRows: bulkBreakdownPayload(modalState.clientRows, modalState.activeDates),
+          manualExcludedDates: [...modalState.manualExcluded]
+        });
+        toast(ok ? "Bulk-entry draft saved on this device." : "Could not save the draft on this device.", ok ? "success" : "error");
+      };
+
+      const loadDraft = () => {
+        const draft = loadLocalDraft("bulk");
+        if (!draft) return toast("No saved bulk-entry draft found on this device.", "warn");
+        if (byId("bulk-from")) byId("bulk-from").value = String(draft.from || todayStr());
+        if (byId("bulk-to")) byId("bulk-to").value = String(draft.to || todayStr());
+        if (byId("bulk-mode")) byId("bulk-mode").value = String(draft.weekendMode || "no-sun");
+        if (byId("bulk-client-input")) byId("bulk-client-input").value = String(draft.clientInput || "");
+        modalState.manualExcluded = new Set(Array.isArray(draft.manualExcludedDates) ? draft.manualExcludedDates.map((item) => String(item || "")) : []);
+        syncDates();
+        const rows = Array.isArray(draft.clientRows) && draft.clientRows.length
+          ? normalizeBulkClientBreakdown({ clientBreakdown: draft.clientRows }, modalState.activeDates)
+          : normalizeBulkClientBreakdown({
+              clients: draft.clients || [],
+              taskList: draft.tasks || [],
+              dailyHours: modalState.activeDates.reduce((map, date) => {
+                map[date] = Number(draft.hours || 0);
+                return map;
+              }, {}),
+              remarks: draft.remarks || ""
+            }, modalState.activeDates);
+        modalState.clientRows = rows.map((row) => makeRow(row.client, row));
+        renderClientRows();
+        toast("Bulk-entry draft loaded from this device.", "success");
+      };
+
+      const setSubmitting = (isBusy) => {
+        modalState.submitting = !!isBusy;
+        setButtonBusy(byId("bulk-save"), !!isBusy, "Submitting...");
+        ["bulk-cancel", "bulk-save-draft", "bulk-load-draft", "bulk-delete-draft", "bulk-add-client"].forEach((id) => {
+          const button = byId(id);
+          if (button) button.disabled = !!isBusy;
+        });
+      };
+
+      byId("bulk-client-input")?.addEventListener("input", renderClientSuggestions);
+      byId("bulk-client-input")?.addEventListener("focus", () => renderClientSuggestions(true));
+      byId("bulk-client-input")?.addEventListener("blur", () => window.setTimeout(() => clearSuggestions("bulk-client-suggestions"), 250));
+      byId("bulk-client-input")?.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") return;
+        if (byId("bulk-client-suggestions")?.classList.contains("open")) return;
+        event.preventDefault();
+        addClientFromInput();
+      });
+      setSuggestionInput("bulk-client-input", "bulk-client-suggestions");
+      byId("bulk-add-client")?.addEventListener("click", addClientFromInput);
+      byId("bulk-from")?.addEventListener("change", () => { syncDates(); renderClientRows(); });
+      byId("bulk-to")?.addEventListener("change", () => { syncDates(); renderClientRows(); });
+      byId("bulk-mode")?.addEventListener("change", () => { syncDates(); renderClientRows(); });
+      byId("bulk-save-draft")?.addEventListener("click", saveDraft);
+      byId("bulk-load-draft")?.addEventListener("click", loadDraft);
+      byId("bulk-delete-draft")?.addEventListener("click", () => {
+        const hadDraft = !!loadLocalDraft("bulk");
+        deleteLocalDraft("bulk");
+        toast(hadDraft ? "Saved bulk-entry draft deleted from this device." : "No saved bulk-entry draft found on this device.", "warn");
+      });
+      byId("bulk-cancel")?.addEventListener("click", closeModal);
+      byId("bulk-save")?.addEventListener("click", async () => {
+        if (modalState.submitting) return;
+        setSubmitting(true);
+        let submitted = false;
+        let submitClaim = null;
+        try {
+          const from = byId("bulk-from")?.value || "";
+          const to = byId("bulk-to")?.value || "";
+          const includeSunday = byId("bulk-mode")?.value === "yes";
+          const typedClient = String(byId("bulk-client-input")?.value || "").trim();
+          if (typedClient) {
+            addClient(typedClient);
+            byId("bulk-client-input").value = "";
+          }
+          syncDates();
+          syncClientRows();
+          const dates = [...modalState.activeDates];
+          if (!from || !to || from > to) return toast("Select a valid date range.", "warn");
+          if (from === to) return toast("Bulk entry is only for more than one day. Use single entry for one date.", "warn");
+          if (to > todayStr()) return toast("Future dates are not allowed.", "warn");
+          if (dates.length < 2) return toast("Bulk entry must still cover more than one day after exclusions.", "warn");
+          if (!modalState.clientRows.length) return toast("Add at least one client.", "warn");
+          const missingTasks = modalState.clientRows.find((row) => !row.tasks?.length);
+          if (missingTasks) return toast(`Add at least one work type for ${missingTasks.client}.`, "warn");
+          const missingRemarks = modalState.clientRows.find((row) => trimmedRemarkLength(row.remarks) < 100);
+          if (missingRemarks) return toast(`Remarks for ${missingRemarks.client} must be at least 100 characters.`, "warn");
+          const emptyClient = modalState.clientRows.find((row) => !(totalHoursFromMap(row.dailyHours || {}) > 0));
+          if (emptyClient) return toast(`Enter date-wise time for ${emptyClient.client}.`, "warn");
+          const dailyHours = bulkDailyTotals(modalState.clientRows, dates);
+          const emptyDate = dates.find((date) => !(Number(dailyHours[date] || 0) > 0));
+          if (emptyDate) return toast(`Enter time for at least one client on ${formatDate(emptyDate)}.`, "warn");
+          const overDate = dates.find((date) => Number(dailyHours[date] || 0) > 24);
+          if (overDate) return toast(`Total time on ${formatDate(overDate)} cannot exceed 24 hours.`, "warn");
+
+          const clientBreakdown = bulkBreakdownPayload(modalState.clientRows, dates);
+          const clients = clientBreakdown.map((item) => item.client);
+          const tasks = uniq(clientBreakdown.flatMap((item) => item.tasks || []));
+          const remarks = bulkBreakdownRemarks(clientBreakdown, clientBreakdown.length > 1);
+          const hours = avgHoursFromMap(dailyHours, dates);
+          const integrityValues = { from, to, dates, clients, tasks, hours, remarks, clientBreakdown };
+          const duplicateRecord = await findExactBulkDuplicate(integrityValues);
+          const overlaps = await detectBulkOverlap({ dates });
+          const confirmed = await confirmOverlayModal({
+            title: "Confirm bulk entry",
+            copy: "Review the range, client-wise daily time, and daily totals before submitting.",
+            summaryHtml: buildBulkSubmitSummary({ from, to, dates, clients, tasks, hours, remarks, clientBreakdown, dailyHours, duplicateRecord, overlaps }),
+            confirmLabel: duplicateRecord || overlaps.length ? "Confirm & submit anyway" : "Confirm & submit",
+            cancelLabel: "Go back"
+          });
+          if (!confirmed) return toast(duplicateRecord || overlaps.length ? "Bulk entry paused. Review before submitting." : "Bulk entry not submitted.", "warn");
+          const submitSignature = signatureForBulk(integrityValues);
+          submitClaim = claimSubmitAttempt("bulk", submitSignature);
+          if (!submitClaim.ok) return toast(duplicateBlockMessage(submitClaim.status), "warn");
+          const payload = withOwnershipAliases({
+            name: profileName(),
+            email: profileEmail(),
+            role: state.profile?.role || "Employee / Professional",
+            department: state.profile?.department || "",
+            dates,
+            daysCount: dates.length,
+            bulkFrom: from,
+            bulkTo: to,
+            clients,
+            client: clients[0] || "",
+            clientBreakdown,
+            taskList: tasks,
+            task: tasks.join(", "),
+            weekendOpt: includeSunday ? "yes" : "no-sun",
+            manualExcludedDates: [...modalState.manualExcluded],
+            dailyHours,
+            totalHours: Number(totalHoursFromMap(dailyHours).toFixed(2)),
+            hours: Number(hours.toFixed(2)),
+            remarks,
+            clientSubmitHash: simpleHash(submitSignature),
+            clientSubmitAtMs: Date.now(),
+            entryType: "bulk",
+            createdAt: Timestamp.now(),
+            updatedAt: Timestamp.now()
+          });
+          const ref = await addDoc(collection(db, "bulk_entries"), payload);
+          const record = normalizeBulkDoc({ id: ref.id, ...payload });
+          await addTrail(record, "Submitted", "Bulk entry created with client-wise daily time");
+          await writeLog({ action: `${profileName()} submitted bulk entry`, actorName: profileName(), actorEmail: profileEmail(), type: "entry", detail: `${from} to ${to} | ${clients.join(", ")}` });
+          await writeUserAudit("Submitted bulk entry", `${displayDate(record)} | ${clients.join(", ")}`);
+          deleteLocalDraft("bulk");
+          upsertMyEntryCache(record);
+          submitted = true;
+          completeSubmitAttempt(submitClaim?.key);
+          setEntryLastSaved(`Last saved: Bulk entry for ${displayDate(record)} at ${timeOnlyText(Date.now())}`);
+          closeModal();
+          toast("Bulk entry submitted.", "success");
+          await refreshCurrentPage().catch(() => toast("Bulk entry was submitted. The list will update automatically shortly.", "warn"));
+        } catch (error) {
+          if (!submitted) {
+            releaseSubmitAttempt(submitClaim?.key);
+            toast(error?.message || "Could not submit the bulk entry right now.", "error");
+          }
+        } finally {
+          setSubmitting(false);
+        }
+      });
+
+      const modalRoot = byId("modal-root");
+      const clickHandler = (event) => {
+        const actionEl = event.target.closest("[data-action]");
+        if (!actionEl || modalRoot.hidden || !modalRoot.contains(actionEl)) return;
+        if (actionEl.dataset.action === "pick-bulk-client") {
+          addClient(decodeURIComponent(actionEl.dataset.value || ""));
+          byId("bulk-client-input").value = "";
+          clearSuggestions("bulk-client-suggestions");
+          return;
+        }
+        if (actionEl.dataset.action === "remove-bulk-client-row") {
+          const key = decodeURIComponent(actionEl.dataset.key || "");
+          modalState.clientRows = modalState.clientRows.filter((row) => row.key !== key);
+          renderClientRows();
+          return;
+        }
+        if (actionEl.dataset.action === "remove-bulk-client-task") {
+          const key = decodeURIComponent(actionEl.dataset.key || "");
+          const task = decodeURIComponent(actionEl.dataset.task || "");
+          const row = modalState.clientRows.find((item) => item.key === key);
+          if (row) row.tasks = (row.tasks || []).filter((item) => item !== task);
+          renderClientRows();
+          return;
+        }
+        if (actionEl.dataset.action === "toggle-bulk-date") {
+          syncClientRows();
+          const date = decodeURIComponent(actionEl.dataset.value || "");
+          if (!date) return;
+          if (modalState.manualExcluded.has(date)) modalState.manualExcluded.delete(date);
+          else modalState.manualExcluded.add(date);
+          syncDates();
+          renderClientRows();
+        }
+      };
+      const inputHandler = (event) => {
+        if (!modalRoot.contains(event.target)) return;
+        if (event.target.matches("[data-bulk-client-hours], [data-bulk-client-remarks]")) {
+          syncClientRows();
+          renderTotals();
+        }
+      };
+      const changeHandler = (event) => {
+        const picker = event.target.closest("[data-bulk-task-picker]");
+        if (!picker || !modalRoot.contains(picker)) return;
+        const row = modalState.clientRows.find((item) => item.key === (picker.dataset.bulkTaskPicker || ""));
+        const value = picker.value || "";
+        if (row && value && !(row.tasks || []).includes(value)) row.tasks = [...(row.tasks || []), value];
+        picker.value = "";
+        renderClientRows();
+      };
+      modalRoot.addEventListener("click", clickHandler);
+      modalRoot.addEventListener("input", inputHandler);
+      modalRoot.addEventListener("change", changeHandler);
+      state.modalCleanups.push(() => modalRoot.removeEventListener("click", clickHandler));
+      state.modalCleanups.push(() => modalRoot.removeEventListener("input", inputHandler));
+      state.modalCleanups.push(() => modalRoot.removeEventListener("change", changeHandler));
+      syncDates();
+      renderClientRows();
+    }
+
     function openGroupEntryModal() {
       const modalState = {
         mode: "single",
@@ -15949,12 +16218,16 @@ tbody tr { transition: background .14s ease; }
       let groupLookupWarmup = null;
       openModal(
         "Group Reporting",
-        "One shared client for the whole group. Use single-day mode for one date or bulk-days mode for more than one day.",
+        "Group Single records one shared client for one date. Group Bulk records one shared client across many dates, with member-wise approval.",
         `
           <div class="field-stack">
+            <div class="entry-mode-note">
+              <strong>Group recording model</strong>
+              <span>Reporter chooses the shared client and work type. Each member gets their own date-wise hours and remarks, then approves their own section.</span>
+            </div>
             <div class="mode-switch">
-              <label class="mode-chip"><input type="radio" name="group-mode" value="single" checked> Single Day</label>
-              <label class="mode-chip"><input type="radio" name="group-mode" value="range"> Bulk Days</label>
+              <label class="mode-chip"><input type="radio" name="group-mode" value="single" checked> Group Single</label>
+              <label class="mode-chip"><input type="radio" name="group-mode" value="range"> Group Bulk</label>
             </div>
             <div id="group-mode-fields" class="field-stack"></div>
             <div class="field"><span>Add Users</span><input id="group-user-input" type="text" autocomplete="off" placeholder="Search employee / article"><div id="group-user-suggestions" class="suggestions"></div></div>
@@ -16189,7 +16462,16 @@ tbody tr { transition: background .14s ease; }
         const input = byId("group-user-input");
         const q = String(input?.value || "").trim().toLowerCase();
         const options = state.lookups.users
-          .filter((user) => user.approved && String(user.role || "").toLowerCase() !== "admin" && user.id !== state.user?.uid && !modalState.selectedUsers.some((item) => item.id === user.id) && `${user.name} ${user.email}`.toLowerCase().includes(q))
+          .filter((user) =>
+            user.approved &&
+            user.googleLinked === true &&
+            !String(user.id || "").startsWith("pre_") &&
+            String(user.sourceUid || user.id || "") === String(user.id || "") &&
+            String(user.role || "").toLowerCase() !== "admin" &&
+            user.id !== state.user?.uid &&
+            !modalState.selectedUsers.some((item) => item.id === user.id) &&
+            `${user.name} ${user.email}`.toLowerCase().includes(q)
+          )
           .slice(0, 20);
         if (!input?.matches(":focus")) {
           clearSuggestions("group-user-suggestions");
@@ -16401,10 +16683,10 @@ tbody tr { transition: background .14s ease; }
           } catch (_refreshError) {
             toast("Group entry was submitted. The list will update automatically shortly.", "warn");
           }
-        } catch (_error) {
+        } catch (error) {
           if (!submitted) {
             releaseSubmitAttempt(submitClaim?.key);
-            toast("Could not submit the group entry right now.", "error");
+            toast(error?.message || "Could not submit the group entry right now.", "error");
           }
         } finally {
           setGroupSubmitting(false);
@@ -17203,93 +17485,6 @@ tbody tr { transition: background .14s ease; }
       });
     }
 
-    async function saveStudyEntry(event) {
-      event.preventDefault();
-      const date = byId("study-date")?.value || "";
-      const hours = Number(byId("study-hours")?.value || 0);
-      const subject = String(byId("study-subject")?.value || "").trim();
-      const note = String(byId("study-note")?.value || "").trim();
-      if (!date || date > todayStr() || !(hours > 0) || !subject) return toast("Date, subject, and valid study hours are required.", "warn");
-      await addDoc(collection(db, "users", state.user.uid, "cahub_study"), {
-        date,
-        hours: Number(hours.toFixed(2)),
-        subject,
-        note,
-        createdAt: Timestamp.now(),
-        updatedAt: Timestamp.now()
-      });
-      byId("study-form")?.reset();
-      byId("study-date").value = todayStr();
-      toast("Study entry saved.", "success");
-      await loadHubData();
-    }
-
-    async function saveCaseEntry(event) {
-      event.preventDefault();
-      const title = String(byId("case-title")?.value || "").trim();
-      const category = String(byId("case-category")?.value || "").trim();
-      const issue = String(byId("case-issue")?.value || "").trim();
-      const note = String(byId("case-note")?.value || "").trim();
-      const reference = String(byId("case-reference")?.value || "").trim();
-      if (!title || !category || !note) return toast("Case title, area, and conclusion are required.", "warn");
-      await addDoc(collection(db, "users", state.user.uid, "cahub_cases"), {
-        title,
-        category,
-        issue,
-        note,
-        reference,
-        createdAt: Timestamp.now(),
-        updatedAt: Timestamp.now()
-      });
-      byId("case-form")?.reset();
-      toast("Case saved.", "success");
-      await loadHubData();
-    }
-
-    async function saveNoteEntry(event) {
-      event.preventDefault();
-      const title = String(byId("note-title")?.value || "").trim();
-      const body = String(byId("note-body")?.value || "").trim();
-      const type = byId("note-type")?.value || "note";
-      if (!body) return toast("Note text is required.", "warn");
-      await addDoc(collection(db, "users", state.user.uid, "cahub_notes"), {
-        title,
-        body,
-        type,
-        createdAt: Timestamp.now(),
-        updatedAt: Timestamp.now()
-      });
-      byId("note-form")?.reset();
-      toast("Note saved.", "success");
-      await loadHubData();
-    }
-
-    async function saveProductivity(value) {
-      const today = todayStr();
-      const existing = state.hub.productivity.find((item) => item.date === today);
-      if (existing) {
-        await updateDoc(doc(db, "users", state.user.uid, "cahub_productivity", existing.id), {
-          value,
-          updatedAt: Timestamp.now()
-        });
-      } else {
-        await addDoc(collection(db, "users", state.user.uid, "cahub_productivity"), {
-          date: today,
-          value,
-          createdAt: Timestamp.now(),
-          updatedAt: Timestamp.now()
-        });
-      }
-      toast("Productivity updated.", "success");
-      await loadHubData();
-    }
-
-    async function deletePrivateDoc(collectionName, id) {
-      await deleteDoc(doc(db, "users", state.user.uid, collectionName, id));
-      toast("Item deleted.", "warn");
-      await loadHubData();
-    }
-
     function openModal(title, copy, bodyHtml, options = {}) {
       const root = byId("modal-root");
       cleanupModalEvents();
@@ -17428,10 +17623,13 @@ tbody tr { transition: background .14s ease; }
       return `<div class="day-hour-list">${rows}${more}</div>`;
     }
 
-    function buildBulkSubmitSummary({ from, to, dates, clients, tasks, hours, remarks, duplicateRecord, overlaps }) {
+    function buildBulkSubmitSummary({ from, to, dates, clients, tasks, hours, remarks, clientBreakdown = [], dailyHours = {}, duplicateRecord, overlaps }) {
       const warnings = [];
-      const total = Number(hours || 0) * (dates?.length || 0);
-      if (Number(hours || 0) > 12) warnings.push(warningBoxHtml("warn", "High daily time", `${Number(hours).toFixed(2)} hours per day is unusually high. Please confirm it is correct.`));
+      const breakdown = bulkBreakdownPayload(clientBreakdown, dates);
+      const totalsByDate = Object.keys(dailyHours || {}).length ? dailyHours : bulkDailyTotals(breakdown, dates);
+      const total = totalHoursFromMap(totalsByDate) || (Number(hours || 0) * (dates?.length || 0));
+      const highDates = Object.entries(totalsByDate).filter(([, value]) => Number(value) > 12).map(([date]) => formatDate(date));
+      if (highDates.length) warnings.push(warningBoxHtml("warn", "High daily time", `${highDates.slice(0, 4).join(", ")} ${highDates.length > 4 ? `and ${highDates.length - 4} more day(s)` : ""} have more than 12 hours. Please confirm this is correct.`));
       if (duplicateRecord) warnings.push(warningBoxHtml("info", "Similar bulk entry found", `Existing record: ${displayDate(duplicateRecord)} | ${clientLabel(duplicateRecord)}. Submit only if this is a separate work block.`));
       if (overlaps?.length) warnings.push(warningBoxHtml("danger", "Date overlap found", `${overlaps.slice(0, 4).join(" | ")}${overlaps.length > 4 ? ` | +${overlaps.length - 4} more` : ""}`));
       return `
@@ -17441,11 +17639,20 @@ tbody tr { transition: background .14s ease; }
             <div><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Range</span><strong style="display:block;margin-top:4px;">${safe(formatDate(from))} to ${safe(formatDate(to))}</strong></div>
             <div><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Total time</span><strong style="display:block;margin-top:4px;">${safe(total.toFixed(2))} h</strong></div>
             <div><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Selected days</span><strong style="display:block;margin-top:4px;">${safe(String(dates.length))}</strong></div>
-            <div><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Hours per day</span><strong style="display:block;margin-top:4px;">${safe(Number(hours || 0).toFixed(2))} h</strong></div>
+            <div><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Clients</span><strong style="display:block;margin-top:4px;">${safe(String(clients.length))}</strong></div>
           </div>
           <div style="margin-top:14px;"><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Clients</span><div class="chip-row" style="margin-top:6px;">${clients.map((client) => `<span class="chip">${safe(client)}</span>`).join("")}</div></div>
           <div style="margin-top:14px;"><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Work types</span><div class="chip-row" style="margin-top:6px;">${tasks.map((task) => `<span class="chip">${safe(task)}</span>`).join("")}</div></div>
-          <div style="margin-top:14px;"><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Day-wise time</span><div style="margin-top:6px;">${dateHoursPreviewHtml(dates, {}, hours)}</div></div>
+          <div style="margin-top:14px;"><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Daily total</span><div style="margin-top:6px;">${dateHoursPreviewHtml(dates, totalsByDate, 0)}</div></div>
+          <div style="margin-top:14px;"><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Client-wise time</span><div class="stack-list" style="margin-top:6px;">
+            ${breakdown.map((item) => `
+              <div class="hub-card" style="padding:10px 12px;">
+                <strong>${safe(item.client)}</strong>
+                <div class="subline">${safe(Number(item.totalHours || totalHoursFromMap(item.dailyHours || {}) || 0).toFixed(2))} h total</div>
+                ${dateHoursPreviewHtml(dates, item.dailyHours || {}, 0, 6)}
+              </div>
+            `).join("")}
+          </div></div>
           <div style="margin-top:14px;"><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Remarks</span><div class="note-block" style="margin-top:6px;">${safe(String(remarks || "").slice(0, 280))}${String(remarks || "").length > 280 ? "..." : ""}</div></div>
         </div>
       `;
@@ -17525,7 +17732,7 @@ tbody tr { transition: background .14s ease; }
                 </div>
                 <div class="guide-role-card">
                   <strong>CA Article</strong>
-                  <span>Gets normal user features plus private My Hub tools for study hours, knowledge bank, case library, notes, and productivity.</span>
+                  <span>Gets the same reporting, calendar, approval, edit, export, and print features as a normal user.</span>
                 </div>
                 <div class="guide-role-card">
                   <strong>Admin</strong>
@@ -17556,7 +17763,7 @@ tbody tr { transition: background .14s ease; }
                 <p>There are three entry types, and Group has two sub-modes — Single and Bulk. Use the path that matches what really happened. Pick wrong and you'll need to correct later.</p>
                 <div class="guide-step-list">
                   <div class="guide-step"><span class="guide-step-icon">&#128313;</span><span><strong>1. Single entry &mdash;</strong> ONE person, ONE day, ONE or MANY clients. This is the default form on the <em>Log time</em> page. For each client you add, enter its own <strong>time, remarks and work type</strong>. (Work type is now per-client, not for the whole day.)</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#128313;</span><span><strong>2. Bulk entry &mdash;</strong> ONE person, ONE client, MANY days. Same hours and remarks apply to every working day in the range. Use the <em>Bulk entry</em> button at the top of the <em>Log time</em> page. <strong>Only one client is allowed</strong> — if you worked on multiple clients in that range, submit each as a separate Bulk entry.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#128313;</span><span><strong>2. Bulk entry &mdash;</strong> ONE person, ONE or MANY clients, MANY days. Each client keeps its own work type, remarks, and date-wise hours.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#128313;</span><span><strong>3a. Group Single &mdash;</strong> MANY users, ONE day, ONE shared client. Use the <em>Group reporting</em> button, then pick the &quot;Single day&quot; mode. The reporter enters separate hours and remarks for each member. Each member must approve their own section before it counts.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#128313;</span><span><strong>3b. Group Bulk &mdash;</strong> MANY users, MANY days, ONE shared client. Same as Group Single but covers a date range. Same approval flow — each member approves their own participation. Members can reject if hours don't match what they remember working.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>How to search by entry type:</strong> the search bar on My Timesheet / Dashboard accepts <em>single</em>, <em>bulk</em>, or <em>group</em> as a keyword. Type &quot;bulk&quot; to filter only bulk entries.</span></div>
@@ -17648,20 +17855,6 @@ tbody tr { transition: background .14s ease; }
                 </div>
               </article>
 
-              <article class="guide-card">
-                <div class="guide-card-head">
-                  <span class="guide-card-icon">&#128218;</span>
-                  <h4>My Hub / CA Hub</h4>
-                </div>
-                <p>${isArticleView ? "Your article tools stay private inside My Hub. Only you can see your dashboard, study, cases, productivity, and notes." : "CA Hub appears only for approved CA Article accounts. When enabled, it adds a private work-and-study area."}</p>
-                <div class="guide-step-list">
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Dashboard:</strong> see today's work hours from timesheet, today's study hours, and your current private summary first.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Study and Work:</strong> select a fixed subject, add study hours, and compare study against today's work instantly.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Knowledge Bank and Case Library:</strong> use them for revision, client recall, issue tracking, and conclusions.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Notes Board:</strong> save items as Note, Task, Reminder, or Important.</span></div>
-                </div>
-              </article>
-
               <article class="guide-card wide">
                 <div class="guide-card-head">
                   <span class="guide-card-icon">&#9881;&#65039;</span>
@@ -17712,7 +17905,7 @@ tbody tr { transition: background .14s ease; }
                 </div>
                 <div class="guide-role-card">
                   <strong>&#128218; CA Article</strong>
-                  <span>User features plus private My Hub for study, cases, knowledge bank, notes, and productivity.</span>
+                  <span>Same reporting, calendar, approval, edit, export, and print features as other users.</span>
                 </div>
                 <div class="guide-role-card">
                   <strong>&#9881;&#65039; Admin</strong>
@@ -17726,8 +17919,9 @@ tbody tr { transition: background .14s ease; }
                 <div class="guide-card-head"><span class="guide-card-icon">&#128221;</span><h4>Reporting</h4></div>
                 <div class="guide-step-list">
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Single:</strong> one date. Add many client boxes if one day has many clients.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Bulk:</strong> many dates for your own work. Day-wise time is saved.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Bulk:</strong> many dates for your own work. Client-wise and day-wise time is saved.</span></div>
                   <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Group:</strong> shared client, member-wise hours, member-wise approval.</span></div>
+                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Leave:</strong> mark a date as leave so calendar and reporting checks do not show it as missed.</span></div>
                 </div>
               </article>
 
@@ -17776,13 +17970,6 @@ tbody tr { transition: background .14s ease; }
                 </div>
               </article>
 
-              <article class="guide-card wide">
-                <div class="guide-card-head"><span class="guide-card-icon">&#128218;</span><h4>My Hub / CA Hub</h4></div>
-                <p>${isArticleView ? "Private space for study and work memory. Only you can see it." : "Appears for CA Article accounts. It is private to that user."}</p>
-                <div class="guide-step-list">
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span>Study hours, case library, knowledge bank, notes, and productivity stay separate from admin timesheet review.</span></div>
-                </div>
-              </article>
             </section>
           </div>
         `
@@ -17886,6 +18073,7 @@ tbody tr { transition: background .14s ease; }
           window.setTimeout(() => clearSuggestions(hostId), 250);
         });
       };
+      ensureLeaveEntryButton();
 
       bind("login-google", "click", () => {
         const btn = byId("login-google");
@@ -17952,6 +18140,7 @@ tbody tr { transition: background .14s ease; }
       });
       bind("open-bulk-entry", "click", openBulkEntryModal);
       bind("open-group-entry", "click", openGroupEntryModal);
+      bind("open-leave-entry", "click", () => openLeaveEntryModal());
       bind("entry-task-picker", "change", () => {
         const value = byId("entry-task-picker")?.value || "";
         if (value && !state.entryDraftTasks.includes(value)) state.entryDraftTasks.push(value);
@@ -18325,35 +18514,6 @@ tbody tr { transition: background .14s ease; }
           }
         }
       });
-      bind("study-form", "submit", saveStudyEntry);
-      bind("case-form", "submit", saveCaseEntry);
-      bind("note-form", "submit", saveNoteEntry);
-      bindFilters(["kb-search", "kb-task-filter"], renderKnowledgeBank);
-      bindFilters(["study-search", "study-filter-subject", "study-filter-month"], renderStudySection);
-      bindFilters(["case-search", "case-filter"], renderCaseSection);
-      bindFilters(["note-search", "note-filter"], renderNotesSection);
-      bind("kb-clear", "click", () => {
-        setFieldValue("kb-search", "");
-        setFieldValue("kb-task-filter", "");
-        renderKnowledgeBank();
-      });
-      bind("study-clear", "click", () => {
-        setFieldValue("study-search", "");
-        setFieldValue("study-filter-subject", "");
-        setFieldValue("study-filter-month", "");
-        renderStudySection();
-      });
-      bind("case-clear", "click", () => {
-        setFieldValue("case-search", "");
-        setFieldValue("case-filter", "");
-        renderCaseSection();
-      });
-      bind("note-clear", "click", () => {
-        setFieldValue("note-search", "");
-        setFieldValue("note-filter", "");
-        renderNotesSection();
-      });
-
       all("#pin-pad [data-pin]").forEach((button) => {
         button.addEventListener("click", () => addPinDigit(button.dataset.pin));
       });
@@ -18377,8 +18537,6 @@ tbody tr { transition: background .14s ease; }
       });
       document.addEventListener("click", async (event) => {
         const pageButton = event.target.closest("[data-page]");
-        const hubButton = event.target.closest("[data-hub]");
-        const productButton = event.target.closest("[data-productivity]");
         const actionEl = event.target.closest("[data-action]");
         const selectableCard = event.target.closest(".approval-card.selectable[data-select-kind], .recycle-card.selectable[data-select-kind]");
 
@@ -18386,16 +18544,6 @@ tbody tr { transition: background .14s ease; }
           if (!byId("modal-root")?.hidden) closeModal({ historyMode: "replace" });
           setActivePage(pageButton.dataset.page);
           await refreshCurrentPage();
-          return;
-        }
-
-        if (hubButton) {
-          setHubTab(hubButton.dataset.hub);
-          return;
-        }
-
-        if (productButton) {
-          await saveProductivity(productButton.dataset.productivity);
           return;
         }
 
@@ -18694,9 +18842,6 @@ tbody tr { transition: background .14s ease; }
           return;
         }
 
-        if (actionEl.dataset.action === "delete-private") {
-          await deletePrivateDoc(actionEl.dataset.collection, actionEl.dataset.id);
-        }
       });
 
       document.addEventListener("change", (event) => {
