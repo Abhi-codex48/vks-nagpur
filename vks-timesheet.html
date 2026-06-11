@@ -3940,6 +3940,14 @@ button.summary-card.clickable {
   overflow: visible;
 }
 
+.screen.app-screen #page-my .remarks-text,
+.screen.app-screen #page-dashboard .remarks-text {
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+}
+
 .screen.app-screen #page-my .note-block + .note-block,
 .screen.app-screen #page-dashboard .note-block + .note-block {
   margin-top: 0;
@@ -12293,6 +12301,21 @@ tbody tr { transition: background .14s ease; }
 
       if (record.entryKind === "single") {
         const breakdown = normalizeSingleClientBreakdown(record);
+        if (breakdown.length > 1) {
+          const html = breakdown
+            .map((item) => `
+              <div class="note-block">
+                <strong>${safe(item.client)}</strong>
+                <div>${safe(item.remarks || "-")}</div>
+              </div>
+            `)
+            .join("");
+          return `<div class="remarks-stack">${html}</div>`;
+        }
+      }
+
+      if (record.entryKind === "bulk") {
+        const breakdown = normalizeBulkClientBreakdown(record, recordDates(record));
         if (breakdown.length > 1) {
           const html = breakdown
             .map((item) => `
