@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -22,7 +22,7 @@
 <meta name="theme-color" content="#7b1d2e"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700&display=swap"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@200..800&display=swap"/>
 <link rel="stylesheet" href="style.css"/>
 <style>
 /* Insights layout */
@@ -36,7 +36,7 @@ body{background:#fbf7ef}
 .insights-art-card{position:relative;background:#fff;border:1px solid rgba(138,35,56,.12);border-radius:18px;padding:1.25rem;overflow:hidden}
 .insights-art-card::before{content:'';position:absolute;right:-1.8rem;top:-1.8rem;width:6.4rem;height:6.4rem;border-radius:50%;background:rgba(176,28,46,.06)}
 .insights-art-kicker{font-size:.58rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#8a2338;margin-bottom:.65rem}
-.insights-art-title{font-family:'Cormorant Garamond',serif;font-size:2rem;line-height:1;color:#201313;margin-bottom:.35rem}
+.insights-art-title{font-family:'Fraunces',serif;font-size:2rem;line-height:1;color:#201313;margin-bottom:.35rem}
 .insights-art-lead{font-size:.76rem;line-height:1.65;color:#786b62;margin:0 0 1rem;max-width:275px}
 .insights-art-bottom{display:flex;flex-wrap:wrap;gap:.45rem}
 .insights-art-chip{border:1px solid rgba(138,35,56,.13);border-radius:999px;background:#fff7ed;padding:.34rem .62rem;font-size:.56rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#8a2338}
@@ -445,18 +445,68 @@ const articleReader = document.getElementById('article-reader');
 const articleContent = document.getElementById('article-reader-content');
 const articleBack = document.getElementById('article-back');
 
-fetch('publications.json?v=' + Date.now())
-  .then(r => r.json())
-  .then(data => {
-    allPubs = data.map(normalizePublication);
-    buildFilters(allPubs);
-    renderCards(allPubs, 'all');
-    openArticleFromHash(false);
-  })
-  .catch(() => {
-    document.getElementById('pub-grid').innerHTML =
-      '<p style="color:var(--ink4);font-size:.88rem">Publications could not be loaded right now.</p>';
+/* Publications load from Firestore (editable via admin.html) when Firebase is
+   configured; otherwise — or if Firestore is unreachable — they fall back to
+   the publications.json file in this repo. */
+function showPubs(data) {
+  allPubs = data.map(normalizePublication);
+  buildFilters(allPubs);
+  renderCards(allPubs, 'all');
+  openArticleFromHash(false);
+}
+
+function showPubsError() {
+  document.getElementById('pub-grid').innerHTML =
+    '<p style="color:var(--ink4);font-size:.88rem">Publications could not be loaded right now.</p>';
+}
+
+function loadPubsFromJson() {
+  fetch('publications.json?v=' + Date.now())
+    .then(r => r.json())
+    .then(showPubs)
+    .catch(showPubsError);
+}
+
+function parsePubDoc(doc) {
+  const f = doc.fields || {};
+  const str = k => (f[k] && f[k].stringValue) || '';
+  const num = k => f[k] ? Number(f[k].integerValue ?? f[k].doubleValue ?? 0) : 0;
+  const content = ((f.content && f.content.arrayValue && f.content.arrayValue.values) || []).map(v => {
+    const m = (v.mapValue && v.mapValue.fields) || {};
+    const block = { type: (m.type && m.type.stringValue) || 'paragraph' };
+    if (block.type === 'list') {
+      block.items = ((m.items && m.items.arrayValue && m.items.arrayValue.values) || []).map(i => i.stringValue || '');
+    } else {
+      block.text = (m.text && m.text.stringValue) || '';
+    }
+    return block;
   });
+  return {
+    slug: str('slug'),
+    title: str('title'),
+    tag: str('tag'),
+    excerpt: str('excerpt'),
+    date: str('date'),
+    read: str('read'),
+    author: str('author'),
+    content: content,
+    order: num('order')
+  };
+}
+
+const pubFbConf = window.VKS_FIREBASE;
+if (pubFbConf && pubFbConf.projectId) {
+  fetch(`https://firestore.googleapis.com/v1/projects/${pubFbConf.projectId}/databases/(default)/documents/publications?pageSize=300&key=${pubFbConf.apiKey}`)
+    .then(r => { if (!r.ok) throw new Error('firestore unavailable'); return r.json(); })
+    .then(data => {
+      const docs = (data.documents || []).map(parsePubDoc).sort((a, b) => (a.order || 0) - (b.order || 0));
+      if (!docs.length) { loadPubsFromJson(); return; }
+      showPubs(docs);
+    })
+    .catch(loadPubsFromJson);
+} else {
+  loadPubsFromJson();
+}
 
 function normalizePublication(pub) {
   return {

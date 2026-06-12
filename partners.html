@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -22,7 +22,7 @@
 <meta name="theme-color" content="#7b1d2e"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Outfit:wght@300;400;500;600;700&display=swap"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@200..800&display=swap"/>
 <link rel="stylesheet" href="style.css"/>
 <style>
 /* Partners page - feature sections */
@@ -379,58 +379,8 @@
       <p style="max-width:min(520px,100%);margin:0 auto">A team of Chartered Accountants, Advocates and domain professionals working together across all practice areas.</p>
     </div>
 
-    <div class="tm-grid">
-      <div class="tm-card rv rv-d1">
-        <div class="tm-av" style="background:#7b3a70">SP</div>
-        <div class="tm-name">Adv. Sejal Parashar</div>
-        <div class="tm-spec">Consultancy &amp; Advisory</div>
-      </div>
-      <div class="tm-card rv rv-d2">
-        <div class="tm-av" style="background:var(--navy)">CA</div>
-        <div class="tm-name">CA Ankita</div>
-        <div class="tm-spec">Audit &amp; Compliance</div>
-      </div>
-      <div class="tm-card rv rv-d3">
-        <div class="tm-av" style="background:var(--red)">CR</div>
-        <div class="tm-name">CA Rohan</div>
-        <div class="tm-spec">Direct Tax &amp; TDS</div>
-      </div>
-      <div class="tm-card rv rv-d1">
-        <div class="tm-av" style="background:var(--navy2)">CN</div>
-        <div class="tm-name">CA Neha</div>
-        <div class="tm-spec">GST &amp; Refunds</div>
-      </div>
-      <div class="tm-card rv rv-d2">
-        <div class="tm-av" style="background:#2a5070">CR</div>
-        <div class="tm-name">CA Ronit</div>
-        <div class="tm-spec">Statutory Audit</div>
-      </div>
-      <div class="tm-card rv rv-d3">
-        <div class="tm-av" style="background:#8a7567">RS</div>
-        <div class="tm-name">CA Raj Singh</div>
-        <div class="tm-spec">Tax &amp; Advisory</div>
-      </div>
-      <div class="tm-card rv rv-d1">
-        <div class="tm-av" style="background:#7b3a50">CS</div>
-        <div class="tm-name">CA Supriya</div>
-        <div class="tm-spec">GST &amp; Customs</div>
-      </div>
-      <div class="tm-card rv rv-d2">
-        <div class="tm-av" style="background:var(--navy)">CA</div>
-        <div class="tm-name">CA Aman</div>
-        <div class="tm-spec">Debt &amp; Finance</div>
-      </div>
-      <div class="tm-card rv rv-d3">
-        <div class="tm-av" style="background:#3a5c3a">CP</div>
-        <div class="tm-name">CA Pooja</div>
-        <div class="tm-spec">Due Diligence</div>
-      </div>
-      <div class="tm-card rv rv-d1">
-        <div class="tm-av" style="background:var(--red)">AS</div>
-        <div class="tm-name">Adv. Shilpa</div>
-        <div class="tm-spec">GST &amp; Tax Disputes</div>
-      </div>
-    </div>
+    <!-- Rendered by JS from Firestore (admin.html) with team.json as fallback -->
+    <div class="tm-grid" id="tm-grid"></div>
 
     <div class="article-banner rv" style="margin-top:3rem">
       <div class="ab-num">25+</div>
@@ -573,6 +523,58 @@
   </div>
 </nav>
 <script src="main.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+/* The Team grid loads from Firestore (editable by HR via admin.html) when
+   Firebase is configured, falling back to team.json in this repo. */
+(function(){
+  const grid = document.getElementById('tm-grid');
+  if(!grid) return;
+  const palette = ['#7b3a70','#7b1d2e','#8a2338','#5a1322','#2a5070','#8a7567','#7b3a50','#3a5c3a'];
+  const esc = v => String(v||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+
+  function autoInitials(name){
+    const words = String(name||'').replace(/^(CA|CS|Adv\.?|Mr\.?|Mrs\.?|Ms\.?)\s+/i,'').trim().split(/\s+/);
+    const first = (words[0]||'')[0]||'';
+    const second = (words[1]||'')[0]||(words[0]||'')[1]||'';
+    return (first+second).toUpperCase()||'VK';
+  }
+
+  function render(members){
+    const active = members.filter(m => (m.status||'active') !== 'hidden');
+    if(!active.length){ grid.innerHTML = ''; return; }
+    grid.innerHTML = active.map((m,i) => `
+      <div class="tm-card rv vis rv-d${(i%3)+1}">
+        <div class="tm-av" style="background:${palette[i%palette.length]}">${esc(m.initials||autoInitials(m.name))}</div>
+        <div class="tm-name">${esc(m.name)}</div>
+        <div class="tm-spec">${esc(m.spec)}</div>
+      </div>`).join('');
+  }
+
+  function fromJson(){
+    fetch('team.json?v=' + Date.now()).then(r=>r.json()).then(render).catch(()=>{ grid.innerHTML=''; });
+  }
+
+  function parseDoc(doc){
+    const f = doc.fields||{};
+    const str = k => (f[k] && f[k].stringValue)||'';
+    const num = k => f[k] ? Number(f[k].integerValue ?? f[k].doubleValue ?? 0) : 0;
+    return { name:str('name'), spec:str('spec'), initials:str('initials'), status:str('status')||'active', order:num('order') };
+  }
+
+  const conf = window.VKS_FIREBASE;
+  if(conf && conf.projectId){
+    fetch(`https://firestore.googleapis.com/v1/projects/${conf.projectId}/databases/(default)/documents/team?pageSize=300&key=${conf.apiKey}`)
+      .then(r => { if(!r.ok) throw new Error('unavailable'); return r.json(); })
+      .then(data => {
+        const docs = (data.documents||[]).map(parseDoc).sort((a,b)=>(a.order||0)-(b.order||0));
+        if(!docs.length){ fromJson(); return; }
+        render(docs);
+      })
+      .catch(fromJson);
+  } else { fromJson(); }
+})();
+</script>
 </body>
 </html>
 

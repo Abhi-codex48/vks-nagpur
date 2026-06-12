@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>VK&amp;S Content Admin</title>
+<meta name="robots" content="noindex,nofollow"/>
+<link rel="icon" type="image/jpeg" href="images/logo.jpg"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600&family=Inter:wght@400;500;600;700;800&display=swap"/>
+<style>
+:root{--maroon:#8a2338;--maroon-d:#6f1d2d;--ink:#251817;--ink2:#655b55;--line:rgba(123,33,53,.12);--bg:#fbf7ef;--card:#fff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;padding-bottom:4rem}
+.wrap{max-width:880px;margin:0 auto;padding:0 1rem}
+header{background:#fff;border-bottom:1px solid var(--line);padding:.8rem 0;margin-bottom:1.5rem}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+header h1{font-family:'Fraunces',serif;font-size:1.25rem;font-weight:600;color:var(--maroon)}
+.user-chip{display:flex;align-items:center;gap:.6rem;font-size:.78rem;color:var(--ink2)}
+.user-chip img{width:28px;height:28px;border-radius:50%}
+button{font-family:inherit;cursor:pointer}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;border:none;border-radius:999px;padding:.6rem 1.3rem;font-size:.82rem;font-weight:700;transition:all .15s}
+.btn-primary{background:var(--maroon);color:#fff}
+.btn-primary:hover{background:var(--maroon-d)}
+.btn-quiet{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn-quiet:hover{border-color:var(--maroon)}
+.btn-danger{background:#fff;color:#a02020;border:1px solid rgba(160,32,32,.3)}
+.btn-danger:hover{background:#a02020;color:#fff}
+.btn-sm{padding:.42rem .85rem;font-size:.74rem}
+.notice{background:#fff8e8;border:1px solid rgba(196,154,26,.35);border-radius:14px;padding:1rem 1.2rem;font-size:.85rem;margin-bottom:1.2rem}
+.notice.err{background:#fdf0f0;border-color:rgba(160,32,32,.3)}
+.center-card{max-width:430px;margin:4rem auto;background:#fff;border:1px solid var(--line);border-radius:20px;padding:2rem;text-align:center;box-shadow:0 18px 44px rgba(80,51,26,.07)}
+.center-card h2{font-family:'Fraunces',serif;font-weight:600;font-size:1.45rem;margin-bottom:.5rem;color:var(--maroon)}
+.center-card p{font-size:.86rem;color:var(--ink2);margin-bottom:1.4rem}
+.tabs{display:flex;gap:.5rem;margin-bottom:1.2rem;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:#fff;border-radius:999px;padding:.55rem 1.2rem;font-size:.8rem;font-weight:700;color:var(--ink2)}
+.tab.active{background:var(--maroon);border-color:var(--maroon);color:#fff}
+.item{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:1.1rem;margin-bottom:.9rem;box-shadow:0 8px 22px rgba(80,51,26,.04)}
+.item summary{cursor:pointer;font-weight:700;font-size:.95rem;display:flex;align-items:center;justify-content:space-between;gap:.8rem;list-style:none}
+.item summary::-webkit-details-marker{display:none}
+.item .chip{font-size:.62rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:.22rem .6rem;background:#eee;color:#555;flex-shrink:0}
+.item .chip.open,.item .chip.active{background:#e8f5e9;color:#1b5e20}
+.item .chip.closed,.item .chip.hidden{background:#fdf0f0;color:#a02020}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:1rem}
+.fgrid .full{grid-column:1/-1}
+label{display:block;font-size:.64rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--maroon);margin-bottom:.25rem}
+input,select,textarea{width:100%;font-family:inherit;font-size:.86rem;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:10px;padding:.55rem .7rem;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--maroon);box-shadow:0 0 0 3px rgba(138,35,56,.08)}
+textarea{resize:vertical;min-height:80px}
+.hint{font-size:.7rem;color:#8a7567;margin-top:.25rem}
+.row-actions{display:flex;gap:.6rem;margin-top:1rem;flex-wrap:wrap;align-items:center}
+.save-state{font-size:.74rem;font-weight:700}
+.save-state.ok{color:#1b5e20}
+.save-state.err{color:#a02020}
+.toolbar{display:flex;gap:.6rem;margin:1.2rem 0 2rem;flex-wrap:wrap}
+.empty{font-size:.85rem;color:var(--ink2);padding:1.2rem;border:1px dashed var(--line);border-radius:14px;background:rgba(255,255,255,.6);margin-bottom:.9rem}
+.gbtn{display:inline-flex;align-items:center;gap:.6rem;background:#fff;border:1px solid #dadce0;border-radius:999px;padding:.65rem 1.4rem;font-size:.86rem;font-weight:600;color:#3c4043}
+.gbtn:hover{box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.gbtn svg{width:18px;height:18px}
+@media(max-width:640px){.fgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>VK&amp;S Content Admin</h1>
+    <div class="user-chip" id="user-chip" style="display:none">
+      <img id="user-photo" alt=""/>
+      <span id="user-email"></span>
+      <button class="btn btn-quiet btn-sm" id="signout-btn">Sign out</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div id="view-setup" style="display:none">
+    <div class="center-card">
+      <h2>Not configured yet</h2>
+      <p>Firebase has not been connected. Follow <strong>HR-ADMIN-SETUP.md</strong> in the website repository, then fill in <strong>firebase-config.js</strong>. Until then, content is managed through the JSON files on GitHub (see STAFF-GUIDE.md).</p>
+    </div>
+  </div>
+
+  <div id="view-signin" style="display:none">
+    <div class="center-card">
+      <h2>Sign in</h2>
+      <p>This page is for the VK&amp;S team. Sign in with your authorised Google account to edit job openings, articles and team members.</p>
+      <button class="gbtn" id="signin-btn">
+        <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.5l6.7-6.7C35.6 2.4 30.2 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.8 6C12.3 13.4 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.4 28.8c-.5-1.5-.8-3.1-.8-4.8s.3-3.3.8-4.8l-7.8-6C.9 16.5 0 20.1 0 24s.9 7.5 2.6 10.8l7.8-6z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2.1 1.4-4.7 2.2-7.7 2.2-6.3 0-11.7-3.9-13.6-9.3l-7.8 6C6.5 42.6 14.6 48 24 48z"/></svg>
+        Sign in with Google
+      </button>
+      <p id="signin-error" class="notice err" style="display:none;margin-top:1rem;text-align:left"></p>
+    </div>
+  </div>
+
+  <div id="view-admin" style="display:none">
+    <div class="notice">Changes go live on the website within a few seconds of saving. If saving fails with a <strong>permission error</strong>, your Google account is not on the allowed list — contact the website developer.</div>
+    <div class="tabs">
+      <button class="tab active" data-tab="jobs">Job Openings</button>
+      <button class="tab" data-tab="publications">Articles &amp; Alerts</button>
+      <button class="tab" data-tab="team">The Team</button>
+    </div>
+    <div id="panel"></div>
+    <div class="toolbar">
+      <button class="btn btn-primary" id="add-btn">+ Add new</button>
+      <button class="btn btn-quiet" id="import-btn" style="display:none">Import current website data</button>
+    </div>
+  </div>
+</div>
+
+<script src="firebase-config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+(function(){
+'use strict';
+const conf = window.VKS_FIREBASE;
+const show = id => { ['view-setup','view-signin','view-admin'].forEach(v => document.getElementById(v).style.display = v===id?'':'none'); };
+if(!conf || !conf.projectId){ show('view-setup'); return; }
+
+firebase.initializeApp(conf);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+/* ── Schemas ── */
+const SCHEMAS = {
+  jobs: {
+    label: 'job', fallback: 'job-openings.json',
+    title: d => d.role || '(untitled role)',
+    chip: d => d.status || 'open',
+    fields: [
+      {k:'role', l:'Job title', t:'text'},
+      {k:'status', l:'Status', t:'select', opts:['open','closed'], hint:'closed = hidden from the website but kept here'},
+      {k:'practice', l:'Practice area', t:'text'},
+      {k:'priority', l:'Priority chip (e.g. Immediate)', t:'text'},
+      {k:'location', l:'Location', t:'text'},
+      {k:'type', l:'Type (e.g. Full-time)', t:'text'},
+      {k:'experience', l:'Experience', t:'text'},
+      {k:'order', l:'Order (lower = higher on page)', t:'number'},
+      {k:'summary', l:'Summary paragraph', t:'textarea', full:true},
+      {k:'responsibilities', l:'Role work (one point per line)', t:'lines', full:true},
+      {k:'requirements', l:'Expected profile (one point per line)', t:'lines', full:true}
+    ]
+  },
+  publications: {
+    label: 'article', fallback: 'publications.json',
+    title: d => d.title || '(untitled article)',
+    chip: d => d.tag || '',
+    fields: [
+      {k:'title', l:'Title', t:'text', full:true},
+      {k:'tag', l:'Category tag (filter button)', t:'text'},
+      {k:'date', l:'Display date (e.g. June 2026)', t:'text'},
+      {k:'read', l:'Read time (e.g. 6 min read)', t:'text'},
+      {k:'author', l:'Author', t:'text'},
+      {k:'slug', l:'Link name (leave blank = auto)', t:'text'},
+      {k:'order', l:'Order (lower = higher on page)', t:'number'},
+      {k:'excerpt', l:'Card excerpt (1–2 lines)', t:'textarea', full:true},
+      {k:'content', l:'Article body', t:'body', full:true,
+       hint:'Plain paragraphs separated by blank lines. Start a line with "## " for a section heading, or "- " for a bullet point.'}
+    ]
+  },
+  team: {
+    label: 'team member', fallback: 'team.json',
+    title: d => d.name || '(unnamed)',
+    chip: d => d.status || 'active',
+    fields: [
+      {k:'name', l:'Name (e.g. CA Neha Sharma)', t:'text'},
+      {k:'spec', l:'Specialisation (e.g. GST & Refunds)', t:'text'},
+      {k:'initials', l:'Avatar initials (blank = auto)', t:'text'},
+      {k:'status', l:'Status', t:'select', opts:['active','hidden']},
+      {k:'order', l:'Order (lower = first)', t:'number'}
+    ]
+  }
+};
+
+/* body text <-> content blocks */
+function contentToText(blocks){
+  return (blocks||[]).map(b => {
+    if(b.type==='heading') return '## ' + (b.text||'');
+    if(b.type==='list') return (b.items||[]).map(i => '- ' + i).join('\n');
+    return b.text||'';
+  }).join('\n\n');
+}
+function textToContent(text){
+  const blocks = [];
+  String(text||'').split(/\n\s*\n/).forEach(chunk => {
+    chunk = chunk.trim();
+    if(!chunk) return;
+    const lines = chunk.split('\n').map(s => s.trim()).filter(Boolean);
+    let bullets = [];
+    const flush = () => { if(bullets.length){ blocks.push({type:'list', items:bullets}); bullets = []; } };
+    lines.forEach(line => {
+      if(line.startsWith('- ')){ bullets.push(line.slice(2)); }
+      else { flush(); if(line.startsWith('## ')) blocks.push({type:'heading', text:line.slice(3)}); else blocks.push({type:'paragraph', text:line}); }
+    });
+    flush();
+  });
+  return blocks;
+}
+const slugify = t => String(t||'').toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+const esc = v => String(v==null?'':v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+
+/* ── Auth ── */
+document.getElementById('signin-btn').addEventListener('click', () => {
+  auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e => {
+    const el = document.getElementById('signin-error');
+    el.style.display = ''; el.textContent = 'Sign-in failed: ' + e.message;
+  });
+});
+document.getElementById('signout-btn').addEventListener('click', () => auth.signOut());
+auth.onAuthStateChanged(user => {
+  const chip = document.getElementById('user-chip');
+  if(user){
+    chip.style.display = '';
+    document.getElementById('user-email').textContent = user.email;
+    document.getElementById('user-photo').src = user.photoURL || '';
+    show('view-admin');
+    loadTab(currentTab);
+  } else {
+    chip.style.display = 'none';
+    show('view-signin');
+  }
+});
+
+/* ── Tabs + rendering ── */
+let currentTab = 'jobs';
+let cache = [];
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+  t.classList.add('active');
+  currentTab = t.dataset.tab;
+  loadTab(currentTab);
+}));
+
+function loadTab(tab){
+  const panel = document.getElementById('panel');
+  panel.innerHTML = '<div class="empty">Loading…</div>';
+  db.collection(tab).get().then(snap => {
+    cache = snap.docs.map(d => ({id:d.id, data:d.data()})).sort((a,b)=>(a.data.order||0)-(b.data.order||0));
+    document.getElementById('import-btn').style.display = cache.length ? 'none' : '';
+    renderList();
+  }).catch(e => { panel.innerHTML = '<div class="empty">Could not load: ' + esc(e.message) + '</div>'; });
+}
+
+function fieldInput(f, val){
+  if(f.t==='select') return `<select data-k="${f.k}">` + f.opts.map(o => `<option${o===val?' selected':''}>${o}</option>`).join('') + '</select>';
+  if(f.t==='textarea') return `<textarea data-k="${f.k}">${esc(val)}</textarea>`;
+  if(f.t==='lines') return `<textarea data-k="${f.k}">${esc((val||[]).join('\n'))}</textarea>`;
+  if(f.t==='body') return `<textarea data-k="${f.k}" style="min-height:200px">${esc(contentToText(val))}</textarea>`;
+  if(f.t==='number') return `<input data-k="${f.k}" type="number" value="${esc(val||0)}"/>`;
+  return `<input data-k="${f.k}" type="text" value="${esc(val)}"/>`;
+}
+
+function renderList(){
+  const s = SCHEMAS[currentTab];
+  const panel = document.getElementById('panel');
+  if(!cache.length){
+    panel.innerHTML = `<div class="empty">Nothing here yet. Use <strong>+ Add new</strong>, or <strong>Import current website data</strong> to bring in what is on the site today.</div>`;
+    return;
+  }
+  panel.innerHTML = cache.map(item => `
+    <details class="item" data-id="${item.id}">
+      <summary><span>${esc(s.title(item.data))}</span><span class="chip ${esc(s.chip(item.data))}">${esc(s.chip(item.data))||'&nbsp;'}</span></summary>
+      <div class="fgrid">
+        ${s.fields.map(f => `<div class="${f.full?'full':''}"><label>${f.l}</label>${fieldInput(f, item.data[f.k])}${f.hint?`<div class="hint">${f.hint}</div>`:''}</div>`).join('')}
+      </div>
+      <div class="row-actions">
+        <button class="btn btn-primary btn-sm" data-act="save">Save changes</button>
+        <button class="btn btn-danger btn-sm" data-act="delete">Delete</button>
+        <span class="save-state"></span>
+      </div>
+    </details>`).join('');
+
+  panel.querySelectorAll('[data-act="save"]').forEach(btn => btn.addEventListener('click', () => saveItem(btn.closest('.item'))));
+  panel.querySelectorAll('[data-act="delete"]').forEach(btn => btn.addEventListener('click', () => {
+    const el = btn.closest('.item');
+    const name = el.querySelector('summary span').textContent;
+    if(confirm('Delete "' + name + '" permanently? (To hide it temporarily, use status instead.)')){
+      db.collection(currentTab).doc(el.dataset.id).delete().then(() => loadTab(currentTab))
+        .catch(e => setState(el, 'err', e.code==='permission-denied' ? 'No permission — account not on allowed list.' : e.message));
+    }
+  }));
+}
+
+function readForm(el){
+  const s = SCHEMAS[currentTab];
+  const out = {};
+  s.fields.forEach(f => {
+    const input = el.querySelector(`[data-k="${f.k}"]`);
+    let v = input.value;
+    if(f.t==='lines') v = v.split('\n').map(x=>x.trim()).filter(Boolean);
+    else if(f.t==='body') v = textToContent(v);
+    else if(f.t==='number') v = Number(v)||0;
+    else v = v.trim();
+    out[f.k] = v;
+  });
+  if(currentTab==='publications' && !out.slug) out.slug = slugify(out.title);
+  return out;
+}
+
+function setState(el, cls, msg){
+  const st = el.querySelector('.save-state');
+  st.className = 'save-state ' + cls; st.textContent = msg;
+  if(cls==='ok') setTimeout(() => { st.textContent=''; }, 2500);
+}
+
+function saveItem(el){
+  const data = readForm(el);
+  db.collection(currentTab).doc(el.dataset.id).set(data)
+    .then(() => { setState(el,'ok','Saved — live on the website.'); el.querySelector('summary span').textContent = SCHEMAS[currentTab].title(data); })
+    .catch(e => setState(el,'err', e.code==='permission-denied' ? 'No permission — your account is not on the allowed list.' : e.message));
+}
+
+document.getElementById('add-btn').addEventListener('click', () => {
+  const maxOrder = cache.reduce((m,i) => Math.max(m, i.data.order||0), 0);
+  const blank = {order: maxOrder + 10};
+  if(currentTab==='jobs') Object.assign(blank, {status:'open', location:'Nagpur', type:'Full-time', responsibilities:[], requirements:[]});
+  if(currentTab==='publications') Object.assign(blank, {author:'VK&S Team', content:[]});
+  if(currentTab==='team') Object.assign(blank, {status:'active'});
+  db.collection(currentTab).add(blank).then(() => loadTab(currentTab))
+    .catch(e => alert(e.code==='permission-denied' ? 'No permission — your account is not on the allowed list.' : e.message));
+});
+
+document.getElementById('import-btn').addEventListener('click', () => {
+  const s = SCHEMAS[currentTab];
+  if(!confirm('Import the data currently shown on the website into this editor?')) return;
+  fetch(s.fallback + '?v=' + Date.now()).then(r => r.json()).then(rows => {
+    const batch = db.batch();
+    rows.forEach((row, i) => {
+      row.order = (i+1)*10;
+      batch.set(db.collection(currentTab).doc(), row);
+    });
+    return batch.commit();
+  }).then(() => loadTab(currentTab))
+    .catch(e => alert('Import failed: ' + (e.code==='permission-denied' ? 'no permission — your account is not on the allowed list.' : e.message)));
+});
+})();
+</script>
+</body>
+</html>

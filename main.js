@@ -234,8 +234,12 @@
     if(!navLinks.length) return;
     const navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h'))||76;
     const sections = document.querySelectorAll('.svc-section');
-    let current = '';
-    sections.forEach(s=>{ if(window.scrollY >= s.offsetTop - navH - 60) current = '#' + s.id; });
+    let current = sections.length ? '#' + sections[0].id : '';
+    sections.forEach(s=>{
+      // offsetTop is relative to the positioned .svc-layout; use document coords
+      const top = s.getBoundingClientRect().top + window.scrollY;
+      if(window.scrollY >= top - navH - 90) current = '#' + s.id;
+    });
     navLinks.forEach(a=>{ a.classList.toggle('active', a.getAttribute('href')===current); });
   }
 
@@ -350,6 +354,25 @@
     });
     wrap.addEventListener('mouseleave', ()=>{ isDragging=false; });
   });
+})();
+
+/* ── SCROLL PROGRESS BAR ── */
+(function(){
+  const bar = document.createElement('div');
+  bar.className = 'scroll-progress';
+  bar.setAttribute('aria-hidden','true');
+  document.body.appendChild(bar);
+  let ticking = false;
+  function update(){
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const ratio = max > 0 ? Math.min(window.scrollY / max, 1) : 0;
+    bar.style.transform = `scaleX(${ratio})`;
+    ticking = false;
+  }
+  window.addEventListener('scroll', ()=>{
+    if(!ticking){ ticking = true; requestAnimationFrame(update); }
+  }, {passive:true});
+  update();
 })();
 
 /* ── ACHIEVEMENT COUNTERS ── */

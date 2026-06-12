@@ -1,5 +1,12 @@
 # VK&S Website — Staff Content Guide
 
+> **Easier option now available:** once the one-time setup in
+> **HR-ADMIN-SETUP.md** is completed, Job Openings, Articles & Alerts and
+> The Team can be edited at **www.cavks.in/admin.html** — sign in with an
+> authorised Google account and edit simple forms. No JSON, no GitHub.
+> The GitHub method below still works and remains the fallback.
+> (Monthly bulletin PDFs are still uploaded via GitHub — Section 1.)
+
 This guide is for whoever updates content on **www.cavks.in**.
 You do not need to know how to code. Everything below can be done from
 your web browser at **github.com**.

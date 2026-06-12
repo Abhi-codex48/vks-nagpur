@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -22,7 +22,7 @@
 <meta name="theme-color" content="#7b1d2e"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700&display=swap"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@200..800&display=swap"/>
 <link rel="stylesheet" href="style.css"/>
 <style>
 /* Services page extras */
@@ -30,7 +30,7 @@
 .services-ph::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(138,35,56,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(138,35,56,.035) 1px,transparent 1px);background-size:68px 68px;mask-image:linear-gradient(180deg,rgba(0,0,0,.72),transparent 82%)}
 .services-ph .ph-inner{position:relative;z-index:1}
 .services-ph h1{color:#241612}
-.services-ph h1 em{color:#b58914}
+.services-ph h1 em{color:#8a2338}
 .services-ph p{color:#67564f}
 .services-ph .eyebrow{color:#8a2338}
 .services-ph .eyebrow::before{background:#8a2338}
@@ -46,7 +46,8 @@
 .svc-sidebar-title{position:sticky;top:0;z-index:2;font-size:.6rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#8a2338;margin:0;padding:1rem 1.05rem .75rem;background:linear-gradient(180deg,#fffdf8 0%,#fbf3e8 100%);border-bottom:1px solid rgba(138,35,56,.1)}
 .svc-nav{display:flex;flex-direction:column;gap:.25rem;padding:.7rem}
 .svc-nav a{font-size:.77rem;font-weight:600;color:#594a43;padding:.68rem .8rem;border-radius:10px;border-left:2px solid transparent;transition:all .2s var(--ease);display:flex;align-items:center;gap:.58rem;white-space:normal;line-height:1.35}
-.svc-nav a svg{width:14px;height:14px;flex-shrink:0;opacity:.58;transition:opacity .2s;color:#8a2338}
+.svc-nav a svg{width:15px;height:15px;flex-shrink:0;opacity:.72;transition:opacity .2s,transform .2s;color:#8a2338}
+.svc-nav a:hover svg,.svc-nav a.active svg{transform:translateX(1px)}
 .svc-nav a svg,.svc-icon-box svg{stroke-linecap:round;stroke-linejoin:round}
 .svc-nav a:hover,.svc-nav a.active{color:#7b2135;background:#fff4df;border-left-color:#c49a1a}
 .svc-nav a:hover svg,.svc-nav a.active svg{opacity:1}
@@ -68,9 +69,9 @@
 .svc-section-inner.flip .svc-visual-col{order:1}
 .svc-section-inner.flip .svc-text{order:2}
 .svc-text{scroll-margin-top:calc(var(--nav-h) + 18px)}
-.svc-num{font-family:'Cormorant Garamond',serif;font-size:3.9rem;font-weight:300;color:rgba(138,35,56,.12);line-height:1;margin-bottom:.65rem}
-.svc-icon-box{width:44px;height:44px;border:1.5px solid rgba(196,154,26,.34);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#8a2338;background:#fff7e8;margin-bottom:1rem;transition:all var(--t)}
-.svc-section:hover .svc-icon-box{background:#8a2338;border-color:#8a2338;color:var(--white)}
+.svc-num{font-family:'Fraunces',serif;font-size:3.9rem;font-weight:300;color:rgba(138,35,56,.12);line-height:1;margin-bottom:.65rem}
+.svc-icon-box{width:44px;height:44px;border:1px solid rgba(196,154,26,.4);border-radius:12px;display:grid;place-items:center;color:#8a2338;background:linear-gradient(160deg,#fff4df 0%,#fffdf8 72%);box-shadow:inset 0 1px 0 rgba(255,255,255,.85), 0 6px 14px rgba(154,116,23,.08);margin-bottom:1rem;transition:all var(--t)}
+.svc-section:hover .svc-icon-box{background:#8a2338;border-color:#8a2338;color:var(--white);box-shadow:0 10px 22px rgba(138,35,56,.22);transform:translateY(-1px)}
 .svc-list{display:flex;flex-direction:column;gap:.42rem;margin:1.12rem 0 0}
 .svc-list li{display:flex;align-items:flex-start;gap:.72rem;font-size:.86rem;color:#5c514d;line-height:1.58}
 .svc-list li::before{content:'';width:5px;height:5px;border-radius:1px;background:#c49a1a;flex-shrink:0;margin-top:.58rem;transform:rotate(45deg);box-shadow:0 0 0 3px rgba(196,154,26,.12)}
@@ -82,7 +83,7 @@
 .svc-visual-kicker{font-size:.58rem;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:#8a2338}
 .svc-visual-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:12px;background:#8a2338;color:#fff;font-size:.78rem;font-weight:900;letter-spacing:.08em;box-shadow:0 12px 26px rgba(138,35,56,.18)}
 .svc-visual-icon svg{width:24px;height:24px;display:block;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.svc-visual-card h3{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;line-height:1.16;color:#321d18;margin:0}
+.svc-visual-card h3{font-family:'Fraunces',serif;font-size:1.35rem;font-weight:600;line-height:1.16;color:#321d18;margin:0}
 .svc-visual-card p{font-size:.78rem;line-height:1.58;color:#6c5a52;margin:0}
 .svc-visual-marks{display:flex;flex-wrap:wrap;gap:.42rem}
 .svc-visual-marks span{font-size:.58rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#8a2338;background:#fff8ea;border:1px solid rgba(196,154,26,.28);padding:.34rem .55rem;border-radius:999px}
@@ -263,7 +264,7 @@
     <div class="breadcrumb"><a href="index.html">Home</a><span>/</span>Services</div>
     <span class="eyebrow">Practice Areas</span>
     <h1>Service <em>Portfolio</em></h1>
-    <p style="max-width:min(620px,100%);margin-top:.75rem">A factual overview of the firm's work across audit, taxation, representation, IBC, finance, incentives and compliance support.</p>
+    <p style="max-width:min(620px,100%);margin-top:.75rem">Nine coordinated practice areas &mdash; audit, taxation, representation, insolvency, debt advisory, incentives and reporting support &mdash; delivered by one professional team.</p>
   </div>
 </div>
 
@@ -274,12 +275,12 @@
       <a href="#audit">Audit</a>
       <a href="#direct-tax">Direct Tax</a>
       <a href="#indirect-tax">GST</a>
-      <a href="#legal">Tax Repr.</a>
+      <a href="#legal">Representation</a>
       <a href="#insolvency">IBC</a>
       <a href="#debt">Debt</a>
       <a href="#incentives">Incentives</a>
       <a href="#indas">Ind AS</a>
-      <a href="#listing">Listed Reporting</a>
+      <a href="#listing">Listed Entity</a>
     </nav>
     <div class="svc-layout">
 
@@ -289,39 +290,39 @@
           <div class="svc-sidebar-title">Practice Areas</div>
           <nav class="svc-nav">
           <a href="#audit" class="active">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="4" width="11" height="16" rx="2"/><path d="M8 8h5M8 12h4M14 16l2 2 4-5"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 5.5v5c0 4.5 3 7.9 7 9.5 4-1.6 7-5 7-9.5v-5L12 3Z"/><path d="m9 11.5 2 2 4-4.5"/></svg>
             Audit &amp; Assurance
           </a>
           <a href="#direct-tax">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 5h10M6 8h9M6 5c5 0 8 2 8 6s-3 6-8 6h3l7 4"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5h12"/><path d="M6 8h12"/><path d="M9 13.5c6.5 0 6.5-10 0-10"/><path d="M6 13.5h3"/><path d="m6 13.5 8.5 8"/></svg>
             Direct Taxation
           </a>
           <a href="#indirect-tax">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="10" height="8" rx="1"/><path d="M13 10h4l4 4v1h-8M6 4h6v3M6 10h4"/><circle cx="6" cy="17" r="2"/><circle cx="18" cy="17" r="2"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="m15 9-6 6"/><path d="M9.5 9.5h.01"/><path d="M14.5 14.5h.01"/></svg>
             Indirect Tax &amp; GST
           </a>
           <a href="#legal">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v14M6 6h12"/><path d="M6 6l-3 7h6L6 6ZM18 6l-3 7h6l-3-7ZM8 21h8M10 17h4"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>
             Tax Representation
           </a>
           <a href="#insolvency">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3 4 7h16L12 3ZM6 9h12M8 9v7M12 9v7M16 9v7M5 16h14M4 20h16"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22h18"/><path d="M6 18v-7"/><path d="M10 18v-7"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="m12 2 8 5H4l8-5Z"/><path d="M4 18h16"/></svg>
             Insolvency &amp; IBC
           </a>
           <a href="#debt">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4 4 8h16L12 4Z"/><path d="M6.5 10.5v5"/><path d="M10 10.5v5"/><path d="M14 10.5v5"/><path d="M17.5 10.5v5"/><path d="M4.5 17.5h15"/><path d="M3 20h18"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01"/><path d="M18 12h.01"/></svg>
             Debt Syndication
           </a>
           <a href="#incentives">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M9 12l-2 8 5-3 5 3-2-8M10 8l1.5 1.5L15 6"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="5.5"/><path d="m15.4 12.9 1.6 8.1-5-3-5 3 1.6-8.1"/></svg>
             State Incentives
           </a>
           <a href="#indas">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="10" height="15" rx="2"/><path d="M7 7h4M7 10h4M7 13h3"/><circle cx="16" cy="16" r="4"/><path d="M19 19l3 3"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M19 8.5V7l-4-4H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4.5"/><circle cx="16.5" cy="16.5" r="3.2"/><path d="m21.5 21.5-2.2-2.2"/></svg>
             Ind AS &amp; Reporting
           </a>
           <a href="#listing">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18.5h16"/><path d="M7 15.5v-3.5"/><path d="M12 15.5V9"/><path d="M17 15.5v-5.5"/><path d="M6 13.5 9.75 10l2.75 2 5-5"/><path d="M15.5 7h2.5v2.5"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m7 14 4-4 3 3 5.5-6"/><path d="M16.5 7H20v3.5"/></svg>
             Listed Entity Reporting
           </a>
           </nav>
@@ -338,9 +339,9 @@
               <div class="svc-heading-row">
                 <div class="svc-num rv">01</div>
                 <div class="svc-icon-box rv rv-d1">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="4" width="11" height="16" rx="2"/><path d="M8 8h5M8 12h4M14 16l2 2 4-5"/></svg>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 5.5v5c0 4.5 3 7.9 7 9.5 4-1.6 7-5 7-9.5v-5L12 3Z"/><path d="m9 11.5 2 2 4-4.5"/></svg>
                 </div>
-                <h2 class="rv rv-d2">Audit &amp; <em style="color:var(--gold)">Assurance</em></h2>
+                <h2 class="rv rv-d2">Audit &amp; <em style="color:#8a2338">Assurance</em></h2>
               </div>
               <div class="rule rv rv-d2"></div>
               <p class="rv rv-d3">VK&amp;S supports statutory, tax, internal and compliance audit assignments through structured planning, documentation review and reporting assistance. The work covers listed companies, banks, NBFCs, PSUs and MSMEs based on engagement scope.</p>
@@ -358,7 +359,7 @@
             <div class="svc-visual-col rv-scale">
               <div class="svc-visual-card">
                 <span class="svc-visual-kicker">Audit &amp; Assurance</span>
-                <div class="svc-visual-icon">A&amp;A</div>
+                <div class="svc-visual-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 5.5v5c0 4.5 3 7.9 7 9.5 4-1.6 7-5 7-9.5v-5L12 3Z"/><path d="m9 11.5 2 2 4-4.5"/></svg></div>
                 <h3>Audit planning, documentation review and reporting support</h3>
                 <p>Workpaper discipline, audit schedules, reconciliations and reporting assistance based on the agreed engagement scope.</p>
                 <div class="svc-visual-marks"><span>Planning</span><span>Review</span><span>Reporting</span></div>
@@ -373,7 +374,7 @@
             <div class="svc-visual-col rv-scale">
               <div class="svc-visual-card">
                 <span class="svc-visual-kicker">Direct Tax</span>
-                <div class="svc-visual-icon">DT</div>
+                <div class="svc-visual-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5h12"/><path d="M6 8h12"/><path d="M9 13.5c6.5 0 6.5-10 0-10"/><path d="M6 13.5h3"/><path d="m6 13.5 8.5 8"/></svg></div>
                 <h3>Tax compliance, filings and representation</h3>
                 <p>Support for return filing, assessment proceedings, appeals and advisory under direct tax law.</p>
                 <div class="svc-visual-marks"><span>Returns</span><span>Appeals</span><span>TDS</span></div>
@@ -383,14 +384,14 @@
               <div class="svc-heading-row">
                 <div class="svc-num rv">02</div>
                 <div class="svc-icon-box rv rv-d1">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 5h10M6 8h9M6 5c5 0 8 2 8 6s-3 6-8 6h3l7 4"/></svg>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5h12"/><path d="M6 8h12"/><path d="M9 13.5c6.5 0 6.5-10 0-10"/><path d="M6 13.5h3"/><path d="m6 13.5 8.5 8"/></svg>
                 </div>
                 <div class="svc-title-wrap">
-                  <h2 class="rv rv-d2">Direct <em style="color:var(--gold)">Taxation</em></h2>
+                  <h2 class="rv rv-d2">Direct <em style="color:#8a2338">Taxation</em></h2>
                 </div>
               </div>
               <div class="rule rv rv-d2"></div>
-              <p class="rv rv-d3">The direct tax practice supports return filing, assessment proceedings, appeals, TDS compliance, transfer pricing documentation and advisory for individuals, HUFs, partnerships and corporate entities.</p>
+              <p class="rv rv-d3">The direct tax practice supports return filing, assessment proceedings, appeals, TDS compliance, transfer pricing documentation and advisory for individuals, HUFs, partnerships, trusts and corporate entities.</p>
               <ul class="svc-list rv rv-d3">
                 <li>Corporate Tax Planning &amp; Advisory</li>
                 <li>Tax Return Preparation &amp; Filing</li>
@@ -412,10 +413,10 @@
               <div class="svc-heading-row">
                 <div class="svc-num rv">03</div>
                 <div class="svc-icon-box rv rv-d1">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="7" width="10" height="8" rx="1"/><path d="M13 10h4l4 4v1h-8M6 4h6v3M6 10h4"/><circle cx="6" cy="17" r="2"/><circle cx="18" cy="17" r="2"/></svg>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="m15 9-6 6"/><path d="M9.5 9.5h.01"/><path d="M14.5 14.5h.01"/></svg>
                 </div>
                 <div class="svc-title-wrap">
-                  <h2 class="rv rv-d2">Indirect Tax <em style="color:var(--gold)">&amp; GST</em></h2>
+                  <h2 class="rv rv-d2">Indirect Tax <em style="color:#8a2338">&amp; GST</em></h2>
                 </div>
               </div>
               <div class="rule rv rv-d2"></div>
@@ -437,7 +438,7 @@
             <div class="svc-visual-col rv-scale">
               <div class="svc-visual-card">
                 <span class="svc-visual-kicker">IDT &amp; GST</span>
-                <div class="svc-visual-icon">IDT</div>
+                <div class="svc-visual-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="m15 9-6 6"/><path d="M9.5 9.5h.01"/><path d="M14.5 14.5h.01"/></svg></div>
                 <h3>Indirect tax advisory, compliance and representation</h3>
                 <p>Coverage for GST returns, audits, refund claims, Customs matters and legacy indirect tax issues.</p>
                 <div class="svc-visual-marks"><span>IDT</span><span>GST</span><span>Customs</span></div>
@@ -452,7 +453,7 @@
             <div class="svc-visual-col rv-scale">
               <div class="svc-visual-card">
                 <span class="svc-visual-kicker">Tax Representation</span>
-                <div class="svc-visual-icon">TR</div>
+                <div class="svc-visual-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg></div>
                 <h3>Tax representation and case-file assistance</h3>
                 <p>Support for tax notices, appeal papers, financial workings, case records and hearing preparation.</p>
                 <div class="svc-visual-marks"><span>Appeals</span><span>Notices</span><span>Records</span></div>
@@ -462,10 +463,10 @@
               <div class="svc-heading-row">
                 <div class="svc-num rv">04</div>
                 <div class="svc-icon-box rv rv-d1">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v14M6 6h12"/><path d="M6 6l-3 7h6L6 6ZM18 6l-3 7h6l-3-7ZM8 21h8M10 17h4"/></svg>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>
                 </div>
                 <div class="svc-title-wrap">
-                  <h2 class="rv rv-d2">Tax <em style="color:var(--gold)">Representation</em></h2>
+                  <h2 class="rv rv-d2">Tax <em style="color:#8a2338">Representation</em></h2>
                 </div>
               </div>
               <div class="rule rv rv-d2"></div>
@@ -491,10 +492,10 @@
               <div class="svc-heading-row">
                 <div class="svc-num rv">05</div>
                 <div class="svc-icon-box rv rv-d1">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 4 7h16L12 3ZM6 9h12M8 9v7M12 9v7M16 9v7M5 16h14M4 20h16"/></svg>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22h18"/><path d="M6 18v-7"/><path d="M10 18v-7"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="m12 2 8 5H4l8-5Z"/><path d="M4 18h16"/></svg>
                 </div>
                 <div class="svc-title-wrap">
-                  <h2 class="rv rv-d2">Insolvency &amp; <em style="color:var(--gold)">IBC</em></h2>
+                  <h2 class="rv rv-d2">Insolvency &amp; <em style="color:#8a2338">IBC</em></h2>
                 </div>
               </div>
               <div class="rule rv rv-d2"></div>
@@ -513,7 +514,7 @@
             <div class="svc-visual-col rv-scale">
               <div class="svc-visual-card">
                 <span class="svc-visual-kicker">IBC</span>
-                <div class="svc-visual-icon">IBC</div>
+                <div class="svc-visual-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22h18"/><path d="M6 18v-7"/><path d="M10 18v-7"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="m12 2 8 5H4l8-5Z"/><path d="M4 18h16"/></svg></div>
                 <h3>Insolvency process and creditor advisory</h3>
                 <p>Support for CIRP, liquidation, resolution applicant advisory and IRP/RP-related workstreams.</p>
                 <div class="svc-visual-marks"><span>CIRP</span><span>IRP / RP</span><span>Liquidation</span></div>
@@ -528,7 +529,7 @@
             <div class="svc-visual-col rv-scale">
               <div class="svc-visual-card">
                 <span class="svc-visual-kicker">Debt Advisory</span>
-                <div class="svc-visual-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 4 4 8h16L12 4Z"/><path d="M6.5 10.5v5"/><path d="M10 10.5v5"/><path d="M14 10.5v5"/><path d="M17.5 10.5v5"/><path d="M4.5 17.5h15"/><path d="M3 20h18"/></svg></div>
+                <div class="svc-visual-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01"/><path d="M18 12h.01"/></svg></div>
                 <h3>Debt advisory and bank proposal support</h3>
                 <p>Assistance for project finance, working capital proposals, rating advisory and restructuring.</p>
                 <div class="svc-visual-marks"><span>Project</span><span>CMA</span><span>Rating</span></div>
@@ -538,10 +539,10 @@
               <div class="svc-heading-row">
                 <div class="svc-num rv">06</div>
                 <div class="svc-icon-box rv rv-d1">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4 4 8h16L12 4Z"/><path d="M6.5 10.5v5"/><path d="M10 10.5v5"/><path d="M14 10.5v5"/><path d="M17.5 10.5v5"/><path d="M4.5 17.5h15"/><path d="M3 20h18"/></svg>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01"/><path d="M18 12h.01"/></svg>
                 </div>
                 <div class="svc-title-wrap">
-                  <h2 class="rv rv-d2">Debt <em style="color:var(--gold)">Syndication</em></h2>
+                  <h2 class="rv rv-d2">Debt <em style="color:#8a2338">Syndication</em></h2>
                 </div>
               </div>
               <div class="rule rv rv-d2"></div>
@@ -567,10 +568,10 @@
               <div class="svc-heading-row">
                 <div class="svc-num rv">07</div>
                 <div class="svc-icon-box rv rv-d1">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M9 12l-2 8 5-3 5 3-2-8M10 8l1.5 1.5L15 6"/></svg>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="5.5"/><path d="m15.4 12.9 1.6 8.1-5-3-5 3 1.6-8.1"/><path d="m9.8 8.6 1.5 1.5 3-3.2"/></svg>
                 </div>
                 <div class="svc-title-wrap">
-                  <h2 class="rv rv-d2">State Incentives <em style="color:var(--gold)">&amp; PSI</em></h2>
+                  <h2 class="rv rv-d2">State Incentives <em style="color:#8a2338">&amp; PSI</em></h2>
                 </div>
               </div>
               <div class="rule rv rv-d2"></div>
@@ -589,7 +590,7 @@
             <div class="svc-visual-col rv-scale">
               <div class="svc-visual-card">
                 <span class="svc-visual-kicker">Incentives</span>
-                <div class="svc-visual-icon">PSI</div>
+                <div class="svc-visual-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="5.5"/><path d="m15.4 12.9 1.6 8.1-5-3-5 3 1.6-8.1"/><path d="m9.8 8.6 1.5 1.5 3-3.2"/></svg></div>
                 <h3>Incentive claim and certification support</h3>
                 <p>Financial documentation, subsidy claim workings and CA-certification assistance where applicable.</p>
                 <div class="svc-visual-marks"><span>PSI</span><span>Claims</span><span>Certificates</span></div>
@@ -604,7 +605,7 @@
             <div class="svc-visual-col rv-scale">
               <div class="svc-visual-card">
                 <span class="svc-visual-kicker">Ind AS Reporting</span>
-                <div class="svc-visual-icon">IND</div>
+                <div class="svc-visual-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M19 8.5V7l-4-4H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4.5"/><circle cx="16.5" cy="16.5" r="3.2"/><path d="m21.5 21.5-2.2-2.2"/></svg></div>
                 <h3>Ind AS reporting and diligence assistance</h3>
                 <p>Accounting impact assessment, reporting schedules and transaction diligence support.</p>
                 <div class="svc-visual-marks"><span>Ind AS</span><span>PPA</span><span>DD</span></div>
@@ -614,10 +615,10 @@
               <div class="svc-heading-row">
                 <div class="svc-num rv">08</div>
                 <div class="svc-icon-box rv rv-d1">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3" width="10" height="15" rx="2"/><path d="M7 7h4M7 10h4M7 13h3"/><circle cx="16" cy="16" r="4"/><path d="M19 19l3 3"/></svg>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M19 8.5V7l-4-4H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4.5"/><circle cx="16.5" cy="16.5" r="3.2"/><path d="m21.5 21.5-2.2-2.2"/></svg>
                 </div>
                 <div class="svc-title-wrap">
-                  <h2 class="rv rv-d2">Ind AS &amp; <em style="color:var(--gold)">Reporting Support</em></h2>
+                  <h2 class="rv rv-d2">Ind AS &amp; <em style="color:#8a2338">Reporting Support</em></h2>
                 </div>
               </div>
               <div class="rule rv rv-d2"></div>
@@ -643,10 +644,10 @@
               <div class="svc-heading-row">
                 <div class="svc-num rv">09</div>
                 <div class="svc-icon-box rv rv-d1">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 18.5h16"/><path d="M7 15.5v-3.5"/><path d="M12 15.5V9"/><path d="M17 15.5v-5.5"/><path d="M6 13.5 9.75 10l2.75 2 5-5"/><path d="M15.5 7h2.5v2.5"/></svg>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m7 14 4-4 3 3 5.5-6"/><path d="M16.5 7H20v3.5"/></svg>
                 </div>
                 <div class="svc-title-wrap">
-                  <h2 class="rv rv-d2">Listed Entity <em style="color:var(--gold)">CA Support</em></h2>
+                  <h2 class="rv rv-d2">Listed Entity <em style="color:#8a2338">CA Support</em></h2>
                 </div>
               </div>
               <div class="rule rv rv-d2"></div>
@@ -664,7 +665,7 @@
             <div class="svc-visual-col rv-scale">
               <div class="svc-visual-card">
                 <span class="svc-visual-kicker">Financial Reporting</span>
-                <div class="svc-visual-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 18.5h16"/><path d="M7 15.5v-3.5"/><path d="M12 15.5V9"/><path d="M17 15.5v-5.5"/><path d="M6 13.5 9.75 10l2.75 2 5-5"/><path d="M15.5 7h2.5v2.5"/></svg></div>
+                <div class="svc-visual-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m7 14 4-4 3 3 5.5-6"/><path d="M16.5 7H20v3.5"/></svg></div>
                 <h3>Listed entity financial reporting support</h3>
                 <p>Financial-result schedules, audit/limited-review coordination and CA certification assistance.</p>
                 <div class="svc-visual-marks"><span>Financials</span><span>CA Cert.</span><span>Review</span></div>
@@ -836,10 +837,13 @@
     sidebar.classList.add('is-fixed');
   }
   function onScroll(){
-    var scrollY = window.scrollY + 120;
+    var scrollY = window.scrollY + 160;
     var current = sections[0];
     sections.forEach(function(s){
-      if(s.offsetTop <= scrollY) current = s;
+      /* offsetTop is relative to the positioned .svc-layout, so use
+         document coordinates instead */
+      var top = s.getBoundingClientRect().top + window.scrollY;
+      if(top <= scrollY) current = s;
     });
     links.forEach(function(l){
       l.classList.toggle('active', l.getAttribute('href') === '#' + current.id);

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -22,7 +22,7 @@
 <meta name="theme-color" content="#7b1d2e"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700&display=swap"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@200..800&display=swap"/>
 <link rel="stylesheet" href="style.css"/>
 <style>
 body{background:#fbf7ef}
@@ -54,7 +54,7 @@ body{background:#fbf7ef}
 .job-row:hover{transform:translateY(-2px);box-shadow:0 18px 44px rgba(80,51,26,.08);border-color:rgba(138,35,56,.22)}
 .job-row-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.75rem}
 .job-practice{display:inline-flex;align-items:center;gap:.35rem;font-size:.6rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#8a2338;background:#fff1e2;border:1px solid rgba(138,35,56,.12);border-radius:999px;padding:.28rem .62rem;margin-bottom:.48rem}
-.job-row h3{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:#1f1412;line-height:1.1;margin:0}
+.job-row h3{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:600;color:#1f1412;line-height:1.1;margin:0}
 .job-status{font-size:.58rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#fff;background:#8a2338;border-radius:999px;padding:.34rem .62rem;white-space:nowrap}
 .job-summary{font-size:.88rem;line-height:1.72;color:#655b55;margin:0 0 .9rem}
 .job-meta{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:1rem}
@@ -90,23 +90,24 @@ body{background:#fbf7ef}
 .jobs-general .kicker{font-size:.62rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#8a2338;margin-bottom:.55rem}
 .jobs-general-spacer{flex:1}
 .hr-profile-head{display:flex;align-items:center;gap:.9rem;margin-bottom:1rem}
-.hr-avatar{width:58px;height:58px;border-radius:18px;background:linear-gradient(145deg,#8a2338,#b01c2e);color:#fff;display:grid;place-items:center;font-size:1.15rem;font-weight:800;letter-spacing:.06em;box-shadow:0 12px 28px rgba(138,35,56,.22)}
+.hr-avatar{width:58px;height:58px;border-radius:18px;background:linear-gradient(145deg,#8a2338,#5f1828);color:#fff;display:grid;place-items:center;font-size:1.15rem;font-weight:800;letter-spacing:.06em;box-shadow:0 12px 28px rgba(138,35,56,.22)}
 .hr-profile-head h4{font-size:1.1rem;font-weight:700;color:#251817;margin:0}
 .hr-profile-head span{display:block;font-size:.68rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#9a7a64;margin-top:.1rem}
 .jobs-profile-actions{display:grid;gap:.62rem;margin-top:1.1rem}
-.jobs-profile-actions a{display:flex;align-items:center;justify-content:center;gap:.5rem;border-radius:14px;padding:.78rem .9rem;font-size:.82rem;font-weight:850;letter-spacing:.03em;transition:all var(--tf)}
+.jobs-profile-actions a{display:flex;align-items:center;justify-content:center;gap:.5rem;border-radius:999px;padding:.78rem .9rem;font-size:.82rem;font-weight:850;letter-spacing:.03em;transition:all var(--tf)}
 .jobs-profile-actions a:hover{transform:translateY(-1px)}
 .jobs-profile-actions .form{background:#fff;border:1px solid rgba(123,33,53,.14);color:#251817}
 .jobs-profile-actions .email{background:#8a2338;color:#fff}
 .jobs-profile-actions .linkedin{background:#0a66c2;color:#fff}
-.jobs-values{background:#281615;color:#fff;padding:64px 0;position:relative;overflow:hidden}
+.jobs-values{background:linear-gradient(145deg,#5a1322 0%,#7b1d2e 100%);color:#fff;padding:64px 0;position:relative;overflow:hidden}
+.jobs-values .eyebrow{color:#d8b358}
 .jobs-values::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:52px 52px}
 .jobs-values-inner{position:relative;z-index:1;display:grid;grid-template-columns:.9fr 1.1fr;gap:2rem;align-items:start}
 .jobs-values h2{color:#fff}
 .jobs-values p{color:rgba(255,255,255,.62)}
 .jobs-value-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
 .jobs-value{border:1px solid rgba(255,255,255,.1);border-radius:18px;background:rgba(255,255,255,.055);padding:1rem}
-.jobs-value strong{display:block;font-family:'Cormorant Garamond',serif;font-size:1.45rem;color:#f0c45a;margin-bottom:.35rem}
+.jobs-value strong{display:block;font-family:'Fraunces',serif;font-size:1.45rem;color:#d8b358;margin-bottom:.35rem}
 .jobs-value span{font-size:.82rem;color:rgba(255,255,255,.68);line-height:1.6}
 @media (max-width:980px){
   .jobs-hero-inner,.jobs-layout,.jobs-values-inner,.jobs-section-head{grid-template-columns:1fr}
@@ -477,20 +478,64 @@ body{background:#fbf7ef}
   </div>
 </nav>
 <script src="main.js"></script>
+<script src="firebase-config.js"></script>
 <script>
 let allJobs = [];
 
-fetch('job-openings.json?v=' + Date.now())
-  .then(response => response.json())
-  .then(data => {
-    allJobs = Array.isArray(data) ? data.filter(job => (job.status || 'open') === 'open') : [];
-    document.getElementById('jobs-open-count').textContent = allJobs.length;
-    renderJobs(allJobs);
-  })
-  .catch(() => {
-    document.getElementById('jobs-open-count').textContent = '0';
-    document.getElementById('jobs-list').innerHTML = '<div class="job-empty show">Current openings could not be loaded. Please email your CV to info@cavks.in.</div>';
-  });
+/* Jobs load from Firestore (editable by HR via admin.html) when Firebase is
+   configured; otherwise — or if Firestore is unreachable — they fall back to
+   the job-openings.json file in this repo. */
+function showJobs(data) {
+  allJobs = Array.isArray(data) ? data.filter(job => (job.status || 'open') === 'open') : [];
+  document.getElementById('jobs-open-count').textContent = allJobs.length;
+  renderJobs(allJobs);
+}
+
+function showJobsError() {
+  document.getElementById('jobs-open-count').textContent = '0';
+  document.getElementById('jobs-list').innerHTML = '<div class="job-empty show">Current openings could not be loaded. Please email your CV to info@cavks.in.</div>';
+}
+
+function loadJobsFromJson() {
+  fetch('job-openings.json?v=' + Date.now())
+    .then(response => response.json())
+    .then(showJobs)
+    .catch(showJobsError);
+}
+
+function parseFirestoreDoc(doc) {
+  const f = doc.fields || {};
+  const str = k => (f[k] && f[k].stringValue) || '';
+  const list = k => ((f[k] && f[k].arrayValue && f[k].arrayValue.values) || []).map(v => v.stringValue || '');
+  const num = k => f[k] ? Number(f[k].integerValue ?? f[k].doubleValue ?? 0) : 0;
+  return {
+    status: str('status') || 'open',
+    role: str('role'),
+    practice: str('practice'),
+    location: str('location'),
+    type: str('type'),
+    experience: str('experience'),
+    priority: str('priority'),
+    summary: str('summary'),
+    responsibilities: list('responsibilities'),
+    requirements: list('requirements'),
+    order: num('order')
+  };
+}
+
+const fbConf = window.VKS_FIREBASE;
+if (fbConf && fbConf.projectId) {
+  fetch(`https://firestore.googleapis.com/v1/projects/${fbConf.projectId}/databases/(default)/documents/jobs?pageSize=200&key=${fbConf.apiKey}`)
+    .then(r => { if (!r.ok) throw new Error('firestore unavailable'); return r.json(); })
+    .then(data => {
+      const docs = (data.documents || []).map(parseFirestoreDoc).sort((a, b) => (a.order || 0) - (b.order || 0));
+      if (!docs.length) { loadJobsFromJson(); return; }
+      showJobs(docs);
+    })
+    .catch(loadJobsFromJson);
+} else {
+  loadJobsFromJson();
+}
 
 function escapeHTML(value) {
   return String(value || '').replace(/[&<>"']/g, char => ({

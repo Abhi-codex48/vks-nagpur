@@ -1,0 +1,12 @@
+[
+  { "name": "Adv. Sejal Parashar", "spec": "Consultancy & Advisory", "initials": "SP" },
+  { "name": "CA Ankita", "spec": "Audit & Compliance", "initials": "CA" },
+  { "name": "CA Rohan", "spec": "Direct Tax & TDS", "initials": "CR" },
+  { "name": "CA Neha", "spec": "GST & Refunds", "initials": "CN" },
+  { "name": "CA Ronit", "spec": "Statutory Audit", "initials": "CR" },
+  { "name": "CA Raj Singh", "spec": "Tax & Advisory", "initials": "RS" },
+  { "name": "CA Supriya", "spec": "GST & Customs", "initials": "CS" },
+  { "name": "CA Aman", "spec": "Debt & Finance", "initials": "CA" },
+  { "name": "CA Pooja", "spec": "Due Diligence", "initials": "CP" },
+  { "name": "Adv. Shilpa", "spec": "GST & Tax Disputes", "initials": "AS" }
+]
