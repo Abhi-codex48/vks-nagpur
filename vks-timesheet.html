@@ -10475,7 +10475,10 @@ tbody tr { transition: background .14s ease; }
 
     function canEditRecord(record) {
       if (isAdmin()) return false;
-      if (record.entryKind === "group") return memberIdList(record).includes(state.user?.uid || "");
+      if (record.entryKind === "group") {
+        // Only the reporter who created the group entry may edit it.
+        return String(record.creatorUid || record.uid || "") === String(state.user?.uid || "");
+      }
       return isOwner(record);
     }
 
@@ -14769,6 +14772,7 @@ tbody tr { transition: background .14s ease; }
             lastEditedBy: profileName()
           };
           const __changeSummary = summarizeEntryChanges(record, __groupPayload);
+          // Only the reporter (creator) can reach this; passes via isOwnerByExistingDoc.
           await updateDoc(doc(db, "group_entries", record.id), __groupPayload);
           upsertMyEntryCache({
             ...record,
@@ -15338,11 +15342,18 @@ tbody tr { transition: background .14s ease; }
       const initialDate = String(record?.date || recordDates(record || {})[0] || todayStr());
       const initialType = String(record?.leaveType || "Full day leave");
       const initialReason = String(record?.leaveReason || record?.remarks || "").trim();
+      const leaveTypeOptions = ["Full day leave", "Half day leave", "Sick leave", "Casual leave", "Other leave"]
+        .map((item) => `<option value="${safe(item)}" ${item === initialType ? "selected" : ""}>${safe(item)}</option>`)
+        .join("");
       openModal(
         isEdit ? "Edit Leave Day" : "Add Leave Day",
-        "Mark a leave day so your calendar and reporting check show leave instead of no report.",
+        isEdit
+          ? "Mark a leave day so your calendar and reporting check show leave instead of no report."
+          : "Mark one leave day, or a date range (From - To) to record many leave days at once.",
         `
           <div class="field-stack">
+            ${isEdit
+              ? `
             <div class="grid two">
               <label class="field">
                 <span>Date</span>
@@ -15350,18 +15361,31 @@ tbody tr { transition: background .14s ease; }
               </label>
               <label class="field">
                 <span>Leave type</span>
-                <select id="leave-type">
-                  ${["Full day leave", "Half day leave", "Sick leave", "Casual leave", "Other leave"].map((item) => `<option value="${safe(item)}" ${item === initialType ? "selected" : ""}>${safe(item)}</option>`).join("")}
-                </select>
+                <select id="leave-type">${leaveTypeOptions}</select>
+              </label>
+            </div>`
+              : `
+            <div class="grid two">
+              <label class="field">
+                <span>From date</span>
+                <input id="leave-date" type="date" value="${safe(initialDate)}">
+              </label>
+              <label class="field">
+                <span>To date (optional)</span>
+                <input id="leave-date-to" type="date" value="">
               </label>
             </div>
+            <label class="field">
+              <span>Leave type</span>
+              <select id="leave-type">${leaveTypeOptions}</select>
+            </label>`}
             <label class="field">
               <span>Reason / note</span>
               <textarea id="leave-reason" rows="4" placeholder="Optional reason or note">${safe(initialReason)}</textarea>
             </label>
             <div class="hub-card">
               <strong>Calendar effect</strong>
-              <div class="subline">This saves as a zero-hour leave record. Admin reporting check and your calendar will treat this date as accounted for, not missed.</div>
+              <div class="subline">Each chosen day saves as its own zero-hour leave record. Admin reporting check and your calendar will treat those dates as accounted for, not missed. Days already on leave are skipped.</div>
             </div>
             <div class="button-row">
               <button class="btn btn-ghost" id="leave-cancel" type="button">Cancel</button>
@@ -15372,38 +15396,56 @@ tbody tr { transition: background .14s ease; }
       );
       applyDateLimits(byId("modal-root"));
       enforceDateInputRules(byId("leave-date"));
+      if (byId("leave-date-to")) enforceDateInputRules(byId("leave-date-to"));
       byId("leave-cancel")?.addEventListener("click", closeModal);
       byId("leave-save")?.addEventListener("click", async () => {
         const saveButton = byId("leave-save");
         const cancelButton = byId("leave-cancel");
-        const date = byId("leave-date")?.value || "";
+        const fromDate = byId("leave-date")?.value || "";
         const leaveType = String(byId("leave-type")?.value || "Full day leave").trim();
         const leaveReason = String(byId("leave-reason")?.value || "").trim();
-        if (!date || date > todayStr()) return toast("Select a valid leave date.", "warn");
+        if (!fromDate || fromDate > todayStr()) return toast("Select a valid leave date.", "warn");
+
+        const buildLeavePayload = (forDate) => ({
+          entryKind: "leave",
+          entryType: "leave",
+          date: forDate,
+          dates: [forDate],
+          leaveType,
+          leaveReason,
+          client: "Leave",
+          clients: ["Leave"],
+          task: "Leave",
+          taskList: ["Leave"],
+          clientBreakdown: [],
+          dailyHours: {},
+          hours: 0,
+          totalHours: 0,
+          remarks: leaveReason,
+          updatedAt: Timestamp.now()
+        });
+
+        // Dates on which this user already has reported (non-leave) work. A full
+        // leave day cannot bury reported work; only "Half day leave" may coexist.
+        const myWorkDates = new Set(
+          (state.myEntries || [])
+            .filter((item) => item.entryKind !== "leave")
+            .flatMap((item) => recordOverlapDates(item, state.user?.uid || ""))
+        );
+        const blocksFullLeave = (day) => leaveType !== "Half day leave" && myWorkDates.has(day);
+
         setButtonBusy(saveButton, true, "Saving...");
         if (cancelButton) cancelButton.disabled = true;
         try {
-          const payload = {
-            entryKind: "leave",
-            entryType: "leave",
-            date,
-            dates: [date],
-            leaveType,
-            leaveReason,
-            client: "Leave",
-            clients: ["Leave"],
-            task: "Leave",
-            taskList: ["Leave"],
-            clientBreakdown: [],
-            dailyHours: {},
-            hours: 0,
-            totalHours: 0,
-            remarks: leaveReason,
-            updatedAt: Timestamp.now()
-          };
           if (isEdit) {
+            if (blocksFullLeave(fromDate)) {
+              return toast(
+                `A work entry has already been reported for ${formatDate(fromDate)}, so it cannot be a full leave day. Please delete that entry first, or choose "Half day leave" if you worked only part of the day.`,
+                "error"
+              );
+            }
             const updated = {
-              ...payload,
+              ...buildLeavePayload(fromDate),
               lastEditedByUid: state.user?.uid || "",
               lastEditedBy: profileName()
             };
@@ -15412,10 +15454,54 @@ tbody tr { transition: background .14s ease; }
             const normalized = normalizeSingleDoc({ ...record, ...updated });
             upsertMyEntryCache(normalized);
             await addTrail(normalized, "Edited", `Leave day updated - ${changeSummary}`);
-            await writeUserAudit("Edited leave day", `${formatDate(date)} | ${leaveType}`);
-          } else {
+            await writeUserAudit("Edited leave day", `${formatDate(fromDate)} | ${leaveType}`);
+            await writeLog({
+              action: `${profileName()} edited a leave day`,
+              actorName: profileName(),
+              actorEmail: profileEmail(),
+              type: "entry",
+              detail: `${formatDate(fromDate)} | ${leaveType}`,
+              detailAdmin: fromDate
+            });
+            closeModal();
+            toast("Leave day updated.", "success");
+            await refreshCurrentPage({ force: true });
+            return;
+          }
+
+          // New leave: a single day, or every day in an inclusive From - To range.
+          const toRaw = byId("leave-date-to")?.value || "";
+          const toDate = toRaw && toRaw >= fromDate ? toRaw : fromDate;
+          if (toDate > todayStr()) return toast("Leave dates cannot be in the future.", "warn");
+          const requestedDates = allDatesBetween(fromDate, toDate, true);
+          if (!requestedDates.length) return toast("Select a valid leave date range.", "warn");
+          if (requestedDates.length > 90) return toast("Please record at most 90 leave days in one go.", "warn");
+
+          // Block full-leave on any requested date that already has reported work.
+          if (leaveType !== "Half day leave") {
+            const conflictDates = requestedDates.filter((day) => myWorkDates.has(day));
+            if (conflictDates.length) {
+              const shown = conflictDates.slice(0, 5).map((day) => formatDate(day)).join(", ");
+              const more = conflictDates.length > 5 ? ` and ${conflictDates.length - 5} more` : "";
+              const many = conflictDates.length > 1;
+              return toast(
+                `A work entry has already been reported for ${shown}${more}, so ${many ? "these dates cannot" : "this date cannot"} be marked as a full leave day. Please delete the relevant ${many ? "entries for those dates" : "entry for that date"} first to add a leave, or choose "Half day leave" if you worked only part of the day.`,
+                "error"
+              );
+            }
+          }
+
+          const existingLeaveDates = new Set(
+            (state.myEntries || [])
+              .filter((item) => item.entryKind === "leave")
+              .flatMap((item) => recordDates(item))
+          );
+          const newDates = requestedDates.filter((day) => !existingLeaveDates.has(day));
+          if (!newDates.length) return toast("Leave is already recorded for the selected date(s).", "warn");
+
+          for (const forDate of newDates) {
             const createdPayload = withOwnershipAliases({
-              ...payload,
+              ...buildLeavePayload(forDate),
               name: profileName(),
               email: profileEmail(),
               role: state.profile?.role || "Employee / Professional",
@@ -15426,18 +15512,24 @@ tbody tr { transition: background .14s ease; }
             const normalized = normalizeSingleDoc({ id: ref.id, ...createdPayload });
             upsertMyEntryCache(normalized);
             await addTrail(normalized, "Submitted", "Leave day created");
-            await writeUserAudit("Added leave day", `${formatDate(date)} | ${leaveType}`);
           }
+
+          const rangeLabel = newDates.length > 1
+            ? `${formatDate(newDates[0])} -> ${formatDate(newDates[newDates.length - 1])}`
+            : formatDate(newDates[0]);
+          await writeUserAudit("Added leave day(s)", `${newDates.length} day(s) | ${leaveType} | ${rangeLabel}`);
           await writeLog({
-            action: `${profileName()} ${isEdit ? "edited" : "added"} a leave day`,
+            action: `${profileName()} added ${newDates.length} leave day(s)`,
             actorName: profileName(),
             actorEmail: profileEmail(),
             type: "entry",
-            detail: `${formatDate(date)} | ${leaveType}`,
-            detailAdmin: date
+            detail: `${rangeLabel} | ${leaveType}`,
+            detailAdmin: newDates.join(", ")
           });
           closeModal();
-          toast(isEdit ? "Leave day updated." : "Leave day added.", "success");
+          const skipped = requestedDates.length - newDates.length;
+          const skipNote = skipped ? ` (${skipped} already recorded)` : "";
+          toast(`${newDates.length} leave day${newDates.length > 1 ? "s" : ""} added${skipNote}.`, "success");
           await refreshCurrentPage({ force: true });
         } catch (error) {
           toast(error?.message || "Could not save leave day right now.", "error");
