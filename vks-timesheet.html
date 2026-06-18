@@ -14249,10 +14249,20 @@ tbody tr { transition: background .14s ease; }
           toast("Reason is required.", "warn");
           return;
         }
-        await recycleRecord(record, reason, context);
-        closeModal();
-        toast("Moved to Recycle Bin.", "warn");
-        await refreshCurrentPage();
+        const confirmBtn = byId("delete-confirm");
+        const cancelBtn = byId("delete-cancel");
+        setButtonBusy(confirmBtn, true, "Deleting...");
+        if (cancelBtn) cancelBtn.disabled = true;
+        try {
+          await recycleRecord(record, reason, context);
+          closeModal();
+          toast("Moved to Recycle Bin.", "warn");
+          await refreshCurrentPage();
+        } catch (error) {
+          toast(error?.message || "Could not delete this entry — it was not removed.", "error");
+          setButtonBusy(confirmBtn, false);
+          if (cancelBtn) cancelBtn.disabled = false;
+        }
       });
     }
 
@@ -14281,13 +14291,26 @@ tbody tr { transition: background .14s ease; }
       byId("delete-selected-confirm")?.addEventListener("click", async () => {
         const reason = String(byId("delete-selected-reason")?.value || "").trim();
         if (!reason) return toast("Reason is required.", "warn");
-        for (const record of records) {
-          await recycleRecord(record, reason, "my");
+        const confirmBtn = byId("delete-selected-confirm");
+        const cancelBtn = byId("delete-selected-cancel");
+        setButtonBusy(confirmBtn, true, "Deleting...");
+        if (cancelBtn) cancelBtn.disabled = true;
+        let done = 0;
+        try {
+          for (const record of records) {
+            await recycleRecord(record, reason, "my");
+            done += 1;
+          }
+          state.selectedMy.clear();
+          closeModal();
+          toast("Selected entries moved to Recycle Bin.", "warn");
+          await refreshCurrentPage();
+        } catch (error) {
+          toast(`${error?.message || "Could not delete some entries."} (${done}/${records.length} done)`, "error");
+          setButtonBusy(confirmBtn, false);
+          if (cancelBtn) cancelBtn.disabled = false;
+          await refreshCurrentPage().catch(() => {});
         }
-        state.selectedMy.clear();
-        closeModal();
-        toast("Selected entries moved to Recycle Bin.", "warn");
-        await refreshCurrentPage();
       });
     }
 
@@ -15163,184 +15186,10 @@ tbody tr { transition: background .14s ease; }
         return;
       }
 
-      const modalState = {
-        clients: [...normalizeClientList(record)],
-        tasks: [...normalizeTaskList(record)]
-      };
-      openModal(
-        "Edit Bulk Entry",
-        "Update the existing bulk record and save it back to the same Firestore document.",
-        `
-          <div class="field-stack">
-            <div class="hub-card"><strong>${safe(displayDate(record))}</strong><div class="subline">Edit covered dates using the same parent record.</div></div>
-            <div class="field">
-              <span>Client</span>
-              <input id="edit-bulk-client-input" type="text" autocomplete="off" placeholder="Search client">
-              <div id="edit-bulk-client-suggestions" class="suggestions"></div>
-            </div>
-            <div class="button-row">
-              <button class="btn btn-outline small" id="edit-bulk-add-client" type="button">Add client</button>
-            </div>
-            <div id="edit-bulk-client-chips" class="chip-row"></div>
-            <label class="field">
-              <span>Work Type</span>
-              <select id="edit-bulk-task-picker">
-                <option value="">Add work type</option>
-                ${TASK_OPTIONS.map((task) => `<option value="${safe(task)}">${safe(task)}</option>`).join("")}
-              </select>
-            </label>
-            <div id="edit-bulk-task-chips" class="chip-row"></div>
-            <label class="field"><span>Hours Per Day</span><div class="hrmin-wrap"><input id="edit-hours-h" type="number" min="0" max="24" placeholder="0" value="${Math.floor(Number(record.hours || avgHoursFromMap(record.dailyHours || {}, dates) || 0))}"><span class="hrmin-unit">hr</span><span class="hrmin-divider"></span><input id="edit-hours-m" type="number" min="0" max="60" placeholder="0" value="${Math.round((Number(record.hours || avgHoursFromMap(record.dailyHours || {}, dates) || 0) % 1) * 60)}"><span class="hrmin-unit">min</span></div><input id="edit-hours" type="hidden" value="${safe(String(record.hours || avgHoursFromMap(record.dailyHours || {}, dates) || ""))}"></label>
-            <label class="field"><span>Remarks</span><textarea id="edit-remarks" rows="5">${safe(record.remarks || "")}</textarea><div class="field-note"><span id="edit-remarks-count">0 characters</span><span>Minimum 100 characters required.</span></div></label>
-            <div class="button-row"><button class="btn btn-ghost" id="edit-cancel" type="button">Cancel</button><button class="btn btn-primary" id="edit-save" type="button">Save</button></div>
-          </div>
-        `
-      );
-      const modalRoot = byId("modal-root");
-      const renderBulkEditChips = () => {
-        byId("edit-bulk-client-chips").innerHTML = modalState.clients.map((client) => `<span class="chip">${safe(client)}<button type="button" data-action="remove-edit-bulk-client" data-value="${encodeURIComponent(client)}">x</button></span>`).join("");
-        byId("edit-bulk-task-chips").innerHTML = modalState.tasks.map((task) => `<span class="chip">${safe(shortTaskLabel(task))}<button type="button" data-action="remove-edit-bulk-task" data-value="${encodeURIComponent(task)}">x</button></span>`).join("");
-      };
-      const addBulkClient = (clientName) => {
-        const client = String(clientName || "").trim();
-        if (!client) return false;
-        if (modalState.clients.some((item) => normalizeCompareText(item) === normalizeCompareText(client))) {
-          toast("That client is already added.", "warn");
-          return false;
-        }
-        modalState.clients.push(client);
-        renderBulkEditChips();
-        return true;
-      };
-      const addBulkClientFromInput = () => {
-        const client = String(byId("edit-bulk-client-input")?.value || "").trim();
-        if (!client) {
-          toast("Select or type a client name first.", "warn");
-          return;
-        }
-        if (!addBulkClient(client)) return;
-        if (byId("edit-bulk-client-input")) byId("edit-bulk-client-input").value = "";
-        clearSuggestions("edit-bulk-client-suggestions");
-      };
-      const renderBulkClientSuggestions = async (forceRefresh = false) => {
-        await ensureLookups(forceRefresh);
-        const input = byId("edit-bulk-client-input");
-        const q = String(input?.value || "").trim().toLowerCase();
-        const selected = new Set(modalState.clients.map((item) => normalizeCompareText(item)));
-        const options = state.lookups.clients.filter((client) => client.toLowerCase().includes(q) && !selected.has(normalizeCompareText(client)));
-        if (!input?.matches(":focus")) {
-          clearSuggestions("edit-bulk-client-suggestions");
-          return;
-        }
-        if (!options.length) {
-          setSuggestions("edit-bulk-client-suggestions", suggestionEmptyHtml("No matching client was found. You can still type a client name manually."), { inputId: "edit-bulk-client-input" });
-          return;
-        }
-        setSuggestions(
-          "edit-bulk-client-suggestions",
-          `<div class="suggestion-list">${options.map((client) => `<button class="suggestion-item" type="button" data-action="pick-edit-bulk-client" data-value="${encodeURIComponent(client)}">${safe(client)}</button>`).join("")}</div>`,
-          { inputId: "edit-bulk-client-input" }
-        );
-      };
-      byId("edit-cancel")?.addEventListener("click", closeModal);
-      bindHrmPair("edit-hours-h", "edit-hours-m", "edit-hours");
-      syncHrmHidden("edit-hours-h", "edit-hours-m", "edit-hours");
-      bindRemarksCounter("edit-remarks", "edit-remarks-count");
-      byId("edit-bulk-add-client")?.addEventListener("click", addBulkClientFromInput);
-      byId("edit-bulk-client-input")?.addEventListener("input", renderBulkClientSuggestions);
-      byId("edit-bulk-client-input")?.addEventListener("focus", () => renderBulkClientSuggestions(true));
-      byId("edit-bulk-client-input")?.addEventListener("blur", () => window.setTimeout(() => clearSuggestions("edit-bulk-client-suggestions"), 250));
-      byId("edit-bulk-client-input")?.addEventListener("keydown", (event) => {
-        if (event.key !== "Enter") return;
-        if (byId("edit-bulk-client-suggestions")?.classList.contains("open")) return;
-        event.preventDefault();
-        addBulkClientFromInput();
-      });
-      byId("edit-bulk-task-picker")?.addEventListener("change", () => {
-        const value = byId("edit-bulk-task-picker")?.value || "";
-        if (value && !modalState.tasks.includes(value)) modalState.tasks.push(value);
-        byId("edit-bulk-task-picker").value = "";
-        renderBulkEditChips();
-      });
-      setSuggestionInput("edit-bulk-client-input", "edit-bulk-client-suggestions");
-      const bulkModalClickHandler = (event) => {
-        const actionEl = event.target.closest("[data-action]");
-        if (!actionEl || !modalRoot.contains(actionEl)) return;
-        if (actionEl.dataset.action === "pick-edit-bulk-client") {
-          addBulkClient(decodeURIComponent(actionEl.dataset.value || ""));
-          if (byId("edit-bulk-client-input")) byId("edit-bulk-client-input").value = "";
-          clearSuggestions("edit-bulk-client-suggestions");
-        }
-        if (actionEl.dataset.action === "remove-edit-bulk-client") {
-          const client = decodeURIComponent(actionEl.dataset.value || "");
-          modalState.clients = modalState.clients.filter((item) => normalizeCompareText(item) !== normalizeCompareText(client));
-          renderBulkEditChips();
-        }
-        if (actionEl.dataset.action === "remove-edit-bulk-task") {
-          const task = decodeURIComponent(actionEl.dataset.value || "");
-          modalState.tasks = modalState.tasks.filter((item) => item !== task);
-          renderBulkEditChips();
-        }
-      };
-      modalRoot.addEventListener("click", bulkModalClickHandler);
-      state.modalCleanups.push(() => modalRoot.removeEventListener("click", bulkModalClickHandler));
-      renderBulkEditChips();
-      let saving = false;
-      byId("edit-save")?.addEventListener("click", async () => {
-        if (saving) return;
-        saving = true;
-        setButtonBusy(byId("edit-save"), true, "Saving...");
-        const cancelButton = byId("edit-cancel");
-        if (cancelButton) cancelButton.disabled = true;
-        try {
-          const remarks = String(byId("edit-remarks")?.value || "").trim();
-          const hours = Number(byId("edit-hours")?.value || 0);
-          if (!modalState.tasks.length) return toast("Select at least one work type.", "warn");
-          if (!modalState.clients.length) return toast("Add at least one client.", "warn");
-          if (remarks.length < 100) return toast("Remarks must be at least 100 characters.", "warn");
-          if (!(hours > 0)) return toast("Enter valid hours.", "warn");
-
-          const dailyHours = {};
-          dates.forEach((date) => {
-            dailyHours[date] = Number(hours.toFixed(2));
-          });
-          const updatedAt = Timestamp.now();
-          const payload = {
-            client: modalState.clients[0],
-            clients: [...modalState.clients],
-            taskList: [...modalState.tasks],
-            task: modalState.tasks.join(", "),
-            hours: Number(hours.toFixed(2)),
-            dailyHours,
-            totalHours: Number(totalHoursFromMap(dailyHours).toFixed(2)),
-            remarks,
-            updatedAt,
-            lastEditedByUid: state.user?.uid || "",
-            lastEditedBy: profileName()
-          };
-          const __changeSummary = summarizeEntryChanges(record, payload);
-          await updateDoc(doc(db, "bulk_entries", record.id), payload);
-          upsertMyEntryCache(normalizeBulkDoc({ ...record, ...payload }));
-          await addTrail(record, "Edited", `Bulk entry updated — ${__changeSummary}`);
-          await writeLog({
-            action: `${profileName()} edited bulk entry`,
-            actorName: profileName(),
-            actorEmail: profileEmail(),
-            type: "entry",
-            detail: `${modalState.clients.join(", ")} | ${displayDate(record)}`,
-            detailAdmin: record.id
-          });
-          closeModal();
-          toast("Entry updated.", "success");
-          await refreshCurrentPage();
-        } catch (error) {
-          toast(error?.message || "Could not update this entry — your change was not saved.", "error");
-        } finally {
-          saving = false;
-          setButtonBusy(byId("edit-save"), false);
-          if (cancelButton) cancelButton.disabled = false;
-        }
-      });
+      // Bulk entries open the full client-wise editor so the WHOLE entry is
+      // editable (each client's date-wise hours, work types and remarks).
+      openBulkEntryModal(record);
+      return;
     }
 
     function openLeaveEntryModal(record = null) {
@@ -15899,11 +15748,14 @@ tbody tr { transition: background .14s ease; }
       syncBulkDates();
     }
 
-    function openBulkEntryModal() {
+    function openBulkEntryModal(record = null) {
+      const isEdit = !!record?.id;
       const modalState = { clientRows: [], manualExcluded: new Set(), activeDates: [], submitting: false };
       openModal(
-        "Bulk Entry",
-        "One person, many dates, one or more clients. Record client-wise and date-wise time before submitting.",
+        isEdit ? "Edit Bulk Entry" : "Bulk Entry",
+        isEdit
+          ? "Update this bulk entry. Edit each client's date-wise hours, work types and remarks — the whole entry is editable."
+          : "One person, many dates, one or more clients. Record client-wise and date-wise time before submitting.",
         `
           <div class="field-stack bulk-entry-modal">
             <div class="entry-mode-note">
@@ -15911,10 +15763,10 @@ tbody tr { transition: background .14s ease; }
               <span>Range is common. Each client gets work type, remarks, and date-wise hours.</span>
             </div>
             <div class="grid two">
-              <label class="field"><span>From</span><input id="bulk-from" type="date" value="${todayStr()}"></label>
-              <label class="field"><span>To</span><input id="bulk-to" type="date" value="${todayStr()}"></label>
+              <label class="field"><span>From</span><input id="bulk-from" type="date" value="${safe(isEdit ? (record.bulkFrom || recordDates(record)[0] || todayStr()) : todayStr())}"></label>
+              <label class="field"><span>To</span><input id="bulk-to" type="date" value="${safe(isEdit ? (record.bulkTo || recordDates(record)[recordDates(record).length - 1] || todayStr()) : todayStr())}"></label>
             </div>
-            <label class="field"><span>Working Days</span><select id="bulk-mode"><option value="no-sun">All days except Sundays</option><option value="yes">All days including Sundays</option></select></label>
+            <label class="field"><span>Working Days</span><select id="bulk-mode"><option value="no-sun"${isEdit && record.weekendOpt !== "yes" ? " selected" : ""}>All days except Sundays</option><option value="yes"${isEdit && record.weekendOpt === "yes" ? " selected" : ""}>All days including Sundays</option></select></label>
             <div class="hub-card">
               <strong>Working Date Selection</strong>
               <div id="bulk-date-summary" class="selection-summary"></div>
@@ -16203,6 +16055,40 @@ tbody tr { transition: background .14s ease; }
           const tasks = uniq(clientBreakdown.flatMap((item) => item.tasks || []));
           const remarks = bulkBreakdownRemarks(clientBreakdown, clientBreakdown.length > 1);
           const hours = avgHoursFromMap(dailyHours, dates);
+          if (isEdit) {
+            const editPayload = {
+              dates,
+              daysCount: dates.length,
+              bulkFrom: from,
+              bulkTo: to,
+              clients,
+              client: clients[0] || "",
+              clientBreakdown,
+              taskList: tasks,
+              task: tasks.join(", "),
+              weekendOpt: includeSunday ? "yes" : "no-sun",
+              manualExcludedDates: [...modalState.manualExcluded],
+              dailyHours,
+              totalHours: Number(totalHoursFromMap(dailyHours).toFixed(2)),
+              hours: Number(hours.toFixed(2)),
+              remarks,
+              updatedAt: Timestamp.now(),
+              lastEditedByUid: state.user?.uid || "",
+              lastEditedBy: profileName()
+            };
+            const changeSummary = summarizeEntryChanges(record, editPayload);
+            await updateDoc(doc(db, "bulk_entries", record.id), editPayload);
+            const updatedRecord = normalizeBulkDoc({ ...record, ...editPayload });
+            upsertMyEntryCache(updatedRecord);
+            await addTrail(updatedRecord, "Edited", `Bulk entry updated — ${changeSummary}`);
+            await writeLog({ action: `${profileName()} edited bulk entry`, actorName: profileName(), actorEmail: profileEmail(), type: "entry", detail: `${clients.join(", ")} | ${displayDate(updatedRecord)}`, detailAdmin: record.id });
+            await writeUserAudit("Edited bulk entry", `${displayDate(updatedRecord)} | ${clients.join(", ")}`);
+            submitted = true;
+            closeModal();
+            toast("Bulk entry updated.", "success");
+            await refreshCurrentPage().catch(() => toast("Bulk entry was updated. The list will refresh shortly.", "warn"));
+            return;
+          }
           const integrityValues = { from, to, dates, clients, tasks, hours, remarks, clientBreakdown };
           const duplicateRecord = await findExactBulkDuplicate(integrityValues);
           const overlaps = await detectBulkOverlap({ dates });
@@ -16322,8 +16208,15 @@ tbody tr { transition: background .14s ease; }
       state.modalCleanups.push(() => modalRoot.removeEventListener("click", clickHandler));
       state.modalCleanups.push(() => modalRoot.removeEventListener("input", inputHandler));
       state.modalCleanups.push(() => modalRoot.removeEventListener("change", changeHandler));
-      syncDates();
-      renderClientRows();
+      if (isEdit) {
+        modalState.manualExcluded = new Set(Array.isArray(record.manualExcludedDates) ? record.manualExcludedDates.map((item) => String(item || "")) : []);
+        syncDates();
+        modalState.clientRows = normalizeBulkClientBreakdown(record, modalState.activeDates).map((row) => makeRow(row.client, row));
+        renderClientRows();
+      } else {
+        syncDates();
+        renderClientRows();
+      }
     }
 
     function openGroupEntryModal() {
