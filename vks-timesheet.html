@@ -16130,15 +16130,15 @@ tbody tr { transition: background .14s ease; }
             updatedAt: Timestamp.now()
           });
           const ref = await addDoc(collection(db, "bulk_entries"), payload);
-          const record = normalizeBulkDoc({ id: ref.id, ...payload });
-          await addTrail(record, "Submitted", "Bulk entry created with client-wise daily time");
+          const createdRecord = normalizeBulkDoc({ id: ref.id, ...payload });
+          await addTrail(createdRecord, "Submitted", "Bulk entry created with client-wise daily time");
           await writeLog({ action: `${profileName()} submitted bulk entry`, actorName: profileName(), actorEmail: profileEmail(), type: "entry", detail: `${from} to ${to} | ${clients.join(", ")}` });
-          await writeUserAudit("Submitted bulk entry", `${displayDate(record)} | ${clients.join(", ")}`);
+          await writeUserAudit("Submitted bulk entry", `${displayDate(createdRecord)} | ${clients.join(", ")}`);
           deleteLocalDraft("bulk");
-          upsertMyEntryCache(record);
+          upsertMyEntryCache(createdRecord);
           submitted = true;
           completeSubmitAttempt(submitClaim?.key);
-          setEntryLastSaved(`Last saved: Bulk entry for ${displayDate(record)} at ${timeOnlyText(Date.now())}`);
+          setEntryLastSaved(`Last saved: Bulk entry for ${displayDate(createdRecord)} at ${timeOnlyText(Date.now())}`);
           closeModal();
           toast("Bulk entry submitted.", "success");
           await refreshCurrentPage().catch(() => toast("Bulk entry was submitted. The list will update automatically shortly.", "warn"));
