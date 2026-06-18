@@ -14795,6 +14795,8 @@ tbody tr { transition: background .14s ease; }
           closeModal();
           toast("Group entry updated.", "success");
           await refreshCurrentPage();
+          } catch (error) {
+            toast(error?.message || "Could not update this group entry — your change was not saved.", "error");
           } finally {
             saving = false;
             setButtonBusy(byId("edit-save"), false);
@@ -15150,6 +15152,8 @@ tbody tr { transition: background .14s ease; }
             closeModal();
             toast("Entry updated.", "success");
             await refreshCurrentPage();
+          } catch (error) {
+            toast(error?.message || "Could not update this entry — your change was not saved.", "error");
           } finally {
             saving = false;
             setButtonBusy(byId("edit-save"), false);
@@ -15329,6 +15333,8 @@ tbody tr { transition: background .14s ease; }
           closeModal();
           toast("Entry updated.", "success");
           await refreshCurrentPage();
+        } catch (error) {
+          toast(error?.message || "Could not update this entry — your change was not saved.", "error");
         } finally {
           saving = false;
           setButtonBusy(byId("edit-save"), false);
