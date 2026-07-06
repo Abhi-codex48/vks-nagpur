@@ -3886,6 +3886,24 @@ button.summary-card.clickable {
   line-height: 1.35;
 }
 
+/* Indirect Tax Analysis: the Category cell shows the FULL category name in a
+   pill. The shared pill uses white-space:nowrap (fine for short Employees-page
+   pills), which here overflowed the fixed column into Work Type / Hours. Scope
+   a wrapping override so the category stays inside its own column. */
+.screen.app-screen #page-indirect-tax td .employee-table-pill {
+  white-space: normal;
+  word-break: break-word;
+  max-width: 100%;
+  justify-content: flex-start;
+  text-align: left;
+}
+
+/* Keep every indirect-tax cell's content clipped to its own column so nothing
+   can visually spill over a neighbour, even on very long values. */
+.screen.app-screen #page-indirect-tax td {
+  overflow-wrap: anywhere;
+}
+
 .screen.app-screen #page-my td,
 .screen.app-screen #page-dashboard td {
   background-clip: padding-box;
@@ -8002,6 +8020,13 @@ tbody tr { transition: background .14s ease; }
           <div id="indirect-tax-stats" class="stat-grid"></div>
 
           <div class="toolbar">
+            <label class="field compact">
+              <span>Show</span>
+              <select id="indirect-tax-scope">
+                <option value="gst">GST / Indirect Tax only</option>
+                <option value="all">All team work</option>
+              </select>
+            </label>
             <label class="field compact grow">
               <span>Search</span>
               <input id="indirect-tax-search" type="text" placeholder="Employee, client, task, category, remarks">
@@ -8029,7 +8054,7 @@ tbody tr { transition: background .14s ease; }
               <button id="indirect-tax-clear" class="btn btn-outline small" type="button">Clear filters</button>
             </div>
           </div>
-          <p class="section-note">Shows only entries from <strong>Employee / Professional - Varun Sir Team</strong> where the client work type includes GST &amp; Indirect Taxes.</p>
+          <p class="section-note"><strong>Indirect Tax Team</strong> work (confidential — shown only here). Use <strong>Show</strong> to view GST / Indirect Tax entries only, or all of the team's work.</p>
           <div id="indirect-tax-filter-summary" class="filter-summary" hidden></div>
 
           <div class="table-shell indirect-tax-table-shell">
@@ -8452,6 +8477,10 @@ tbody tr { transition: background .14s ease; }
     ];
     const INDIRECT_TAX_TASK = "GST & Indirect Taxes";
     const VARUN_TEAM_ROLE = "Employee / Professional - Varun Sir Team";
+    // Professional display label shown in the UI. The stored role value above is
+    // kept unchanged for data/backward compatibility; only the on-screen text
+    // uses this label. Change this one line to re-brand the team everywhere.
+    const VARUN_TEAM_DISPLAY = "Indirect Tax Team";
     const INDIRECT_TAX_OTHER_CATEGORY = "Others";
     const DEFAULT_INDIRECT_TAX_CATEGORIES = [
       "Retainer / Hand Holding Services",
@@ -8599,6 +8628,22 @@ tbody tr { transition: background .14s ease; }
       return normalizeCompareText(role) === normalizeCompareText(VARUN_TEAM_ROLE);
     }
 
+    // A record belongs to Varun Sir Team if its creator/owner role is that team.
+    // Such records are confidential and are shown to admin ONLY on the Indirect
+    // Tax Analysis page — hidden from All Timesheets, public log, and Reporting.
+    function isVarunTeamRecord(record) {
+      return isVarunTeamRole(record?.creatorRole || record?.role || "");
+    }
+
+    // Map an internal role value to the professional label shown in the UI.
+    // Only the display text changes; stored role values stay the same.
+    function roleDisplayLabel(role) {
+      const value = String(role || "").trim();
+      if (!value) return "";
+      if (isVarunTeamRole(value)) return VARUN_TEAM_DISPLAY;
+      return value;
+    }
+
     function isIndirectTaxTaskList(tasks = []) {
       return (Array.isArray(tasks) ? tasks : [tasks]).some((task) => normalizeCompareText(task) === normalizeCompareText(INDIRECT_TAX_TASK));
     }
@@ -8657,7 +8702,7 @@ tbody tr { transition: background .14s ease; }
               <option value="">Select category</option>
               ${indirectTaxCategoryOptions().map((item) => `<option value="${safe(item)}" ${item === category ? "selected" : ""}>${safe(item)}</option>`).join("")}
             </select>
-            <div class="field-note"><span>Visible only for Varun Sir Team GST / Indirect Tax work.</span></div>
+            <div class="field-note"><span>Visible only for Indirect Tax Team GST / Indirect Tax work.</span></div>
           </label>
           <label class="field ${normalizeCompareText(category) === normalizeCompareText(INDIRECT_TAX_OTHER_CATEGORY) ? "" : "hidden-field"}">
             <span>Other category detail</span>
@@ -8991,7 +9036,7 @@ tbody tr { transition: background .14s ease; }
     function roleLabel() {
       const raw = String(state.profile?.role || "Employee / Professional");
       if (raw.toLowerCase() === "admin") return "Admin";
-      return raw;
+      return roleDisplayLabel(raw);
     }
 
     function setHasAll(selectionSet, ids, enabled) {
@@ -9334,7 +9379,9 @@ tbody tr { transition: background .14s ease; }
           createdAt: Timestamp.now()
         };
         await addDoc(collection(db, "logs"), entry);
-        if (isPublicSafeLog(entry)) {
+        // Varun Sir Team work is confidential: never publish it to the public
+        // lock-screen activity log. (The full log still records it for admin.)
+        if (isPublicSafeLog(entry) && !isVarunTeamRole(state.profile?.role)) {
           await addDoc(collection(db, "public_logs"), {
             action: entry.action || "",
             actorUid: entry.actorUid || "",
@@ -9867,7 +9914,7 @@ tbody tr { transition: background .14s ease; }
         `;
       }
 
-      const roleMarkup = ROLE_OPTIONS.map((role) => `<option value="${role === "Admin" ? "admin" : role}">${role}</option>`).join("");
+      const roleMarkup = ROLE_OPTIONS.map((role) => `<option value="${role === "Admin" ? "admin" : role}">${roleDisplayLabel(role)}</option>`).join("");
       ["all-role-filter", "employee-role-filter"].forEach((id) => {
         const element = byId(id);
         if (!element) return;
@@ -11587,7 +11634,7 @@ tbody tr { transition: background .14s ease; }
         Type: String(record.entryKind || "single").toUpperCase(),
         "Employee / Article": record.creatorName || record.name || "-",
         Email: record.creatorEmail || record.email || "-",
-        Role: record.creatorRole || record.role || "-",
+        Role: roleDisplayLabel(record.creatorRole || record.role) || "-",
         Client: clientLabel(record),
         Members: record.entryKind === "group" ? memberNames(record, visibleMemberIds(record)).join(", ") : "",
         WorkType: normalizeTaskList(record).join(" | "),
@@ -12029,6 +12076,9 @@ tbody tr { transition: background .14s ease; }
 
       return (state.allEntries || [])
         .filter((record) => {
+          // Varun Sir Team work is confidential — it is reviewed only on the
+          // Indirect Tax Analysis page, never in the general All Timesheets view.
+          if (isVarunTeamRecord(record)) return false;
           const dates = recordDates(record);
           const dateOk = (!from || dates.some((date) => date >= from)) && (!to || dates.some((date) => date <= to));
           const userBlob = [record.name, record.email, record.creatorName, record.creatorEmail, memberNames(record).join(" ")].join(" ").toLowerCase();
@@ -13581,7 +13631,7 @@ tbody tr { transition: background .14s ease; }
                   <td>${safe(displayDate(record))}</td>
                   <td>${typeCell(record)}</td>
                   <td>${employeeCell(record)}</td>
-                  <td>${safe(record.creatorRole || record.role || "-")}</td>
+                  <td>${safe(roleDisplayLabel(record.creatorRole || record.role) || "-")}</td>
                   <td>${safe(clientLabel(record))}</td>
                   <td><div class="chip-row">${workTypeHtml(normalizeTaskList(record))}</div></td>
                   <td>${safe(record.entryKind === "group" ? `${visibleMemberIds(record).length} member(s)` : singleOrBulkHoursLabel(record))}</td>
@@ -13661,11 +13711,14 @@ tbody tr { transition: background .14s ease; }
 
     function indirectTaxAnalysisRows() {
       const rows = [];
+      // "gst" (default) = only GST / Indirect Tax rows; "all" = every entry by
+      // the Indirect Tax Team (so their non-GST work also has an admin home).
+      const scopeAll = (byId("indirect-tax-scope")?.value || "gst") === "all";
       (state.allEntries || []).forEach((record) => {
         const role = record.creatorRole || record.role || "";
         if (!isVarunTeamRole(role)) return;
         if (record.entryKind === "group") {
-          if (!isIndirectTaxTaskList(normalizeTaskList(record))) return;
+          if (!scopeAll && !isIndirectTaxTaskList(normalizeTaskList(record))) return;
           const categoryText = indirectTaxCategoryLabel(record);
           const entered = enteredIsoDate(record);
           const dates = recordDates(record);
@@ -13702,7 +13755,7 @@ tbody tr { transition: background .14s ease; }
           ? normalizeBulkClientBreakdown(record, dates)
           : normalizeSingleClientBreakdown(record);
         breakdown.forEach((item, index) => {
-          if (!isIndirectTaxTaskList(item.tasks || [])) return;
+          if (!scopeAll && !isIndirectTaxTaskList(item.tasks || [])) return;
           const categoryText = indirectTaxCategoryLabel(item);
           const entered = enteredIsoDate(record);
           rows.push({
@@ -13762,11 +13815,13 @@ tbody tr { transition: background .14s ease; }
 
     function renderIndirectTaxFilterSummary() {
       const chips = [];
+      const scope = byId("indirect-tax-scope")?.value || "gst";
       const q = String(byId("indirect-tax-search")?.value || "").trim();
       const from = byId("indirect-tax-from")?.value || "";
       const to = byId("indirect-tax-to")?.value || "";
       const category = byId("indirect-tax-category-filter")?.value || "";
       const entered = byId("indirect-tax-entered")?.value || "";
+      if (scope === "all") chips.push(filterChip("Show", "All team work"));
       if (q) chips.push(filterChip("Search", q));
       if (from) chips.push(filterChip("From", formatDate(from)));
       if (to) chips.push(filterChip("To", formatDate(to)));
@@ -13818,7 +13873,7 @@ tbody tr { transition: background .14s ease; }
               </tr>
             `;
           }).join("")
-        : `<tr><td colspan="9" class="muted">No Varun Sir Team indirect-tax records found.</td></tr>`;
+        : `<tr><td colspan="9" class="muted">No Indirect Tax Team records found in this range.</td></tr>`;
     }
 
     function getFilteredIndirectTaxCategories() {
@@ -13866,6 +13921,7 @@ tbody tr { transition: background .14s ease; }
     }
 
     function clearIndirectTaxFilters() {
+      setFieldValue("indirect-tax-scope", "gst");
       setFieldValue("indirect-tax-search", "");
       setFieldValue("indirect-tax-from", `${todayMonthStr()}-01`);
       setFieldValue("indirect-tax-to", todayStr());
@@ -13901,7 +13957,7 @@ tbody tr { transition: background .14s ease; }
     function openIndirectTaxCategoryModal(categoryDoc = null) {
       openModal(
         categoryDoc ? "Edit Indirect Tax Category" : "Add Indirect Tax Category",
-        "Categories saved here appear in the Varun Sir Team indirect-tax dropdown.",
+        "Categories saved here appear in the Indirect Tax Team indirect-tax dropdown.",
         `
           <form id="indirect-category-form" class="field-stack">
             <label class="field"><span>Category name</span><input id="indirect-category-name" type="text" value="${safe(categoryDoc?.name || "")}" placeholder="Category name"></label>
@@ -13990,6 +14046,9 @@ tbody tr { transition: background .14s ease; }
         if (u.locked === true) return false;
         const role = String(u.role || "").toLowerCase();
         if (role === "admin") return false;
+        // Varun Sir Team is confidential and reviewed only via Indirect Tax
+        // Analysis, so it is excluded from the Reporting Check roster.
+        if (isVarunTeamRole(u.role)) return false;
         const email = String(u.email || "").trim().toLowerCase();
         if (email === FORCED_ADMIN_EMAIL) return false;
         return true;
@@ -14371,7 +14430,7 @@ tbody tr { transition: background .14s ease; }
                   <label class="field compact">
                     <span>Role on approval</span>
                     <select id="pending-role-${user.id}">
-                      ${ROLE_OPTIONS.filter((item) => item !== "Admin").map((item) => `<option value="${safe(item)}" ${role === item ? "selected" : ""}>${safe(item)}</option>`).join("")}
+                      ${ROLE_OPTIONS.filter((item) => item !== "Admin").map((item) => `<option value="${safe(item)}" ${role === item ? "selected" : ""}>${safe(roleDisplayLabel(item))}</option>`).join("")}
                     </select>
                   </label>
                   <div class="actions">
@@ -14467,7 +14526,7 @@ tbody tr { transition: background .14s ease; }
                 <tr>
                   <td>${safe(user.name || "-")}</td>
                   <td>${safe(user.email || "-")}</td>
-                  <td><span class="employee-table-pill role ${safe(roleClass)}">${safe(role)}</span></td>
+                  <td><span class="employee-table-pill role ${safe(roleClass)}">${safe(roleDisplayLabel(role))}</span></td>
                   <td>${safe(user.department || "-")}</td>
                   <td><span class="employee-table-pill status ${safe(statusClass)}">${safe(status)}</span></td>
                   <td><span class="employee-table-pill pin ${safe(pinClass)}">${safe(pinState)}</span></td>
@@ -17594,7 +17653,7 @@ tbody tr { transition: background .14s ease; }
       const currentDept = user.department || defaultDepartmentForRole(currentRole);
       const roleOptions = ROLE_OPTIONS
         .filter((role) => role !== "Admin")
-        .map((role) => `<option value="${safe(role)}" ${role === currentRole ? "selected" : ""}>${safe(role)}</option>`)
+        .map((role) => `<option value="${safe(role)}" ${role === currentRole ? "selected" : ""}>${safe(roleDisplayLabel(role))}</option>`)
         .join("");
       const deptOptions = DEPARTMENT_OPTIONS
         .map((dept) => `<option value="${safe(dept)}" ${dept === currentDept ? "selected" : ""}>${safe(dept)}</option>`)
@@ -17635,8 +17694,8 @@ tbody tr { transition: background .14s ease; }
       const impactText = () => {
         const role = normalizeRoleValue(byId("role-change-role")?.value || currentRole);
         if (role === "CA Article") return "User keeps normal article timesheet access. Indirect-tax category fields and Indirect Tax Analysis inclusion stay hidden, even if GST & Indirect Taxes is selected.";
-        if (role === "Employee / Professional") return "User gets normal employee/professional timesheet access. Indirect-tax category fields stay hidden unless later moved to Varun Sir Team.";
-        if (role === VARUN_TEAM_ROLE) return "User gets normal employee/professional timesheet access plus indirect-tax category fields for GST & Indirect Taxes. Their qualifying entries appear in Admin Indirect Tax Analysis.";
+        if (role === "Employee / Professional") return "User gets normal employee/professional timesheet access. Indirect-tax category fields stay hidden unless later moved to the Indirect Tax Team.";
+        if (role === VARUN_TEAM_ROLE) return "User joins the Indirect Tax Team: normal timesheet access plus indirect-tax category fields for GST & Indirect Taxes. Their work is confidential and appears only under Admin › Indirect Tax Analysis.";
         return "Role controls the user's next portal interface after refresh or next login.";
       };
       const syncImpact = () => {
@@ -17996,7 +18055,7 @@ tbody tr { transition: background .14s ease; }
           <form id="employee-create-form" class="field-stack">
             <label class="field"><span>Name</span><input id="employee-create-name" type="text" placeholder="Full name"></label>
             <label class="field"><span>Email</span><input id="employee-create-email" type="email" placeholder="work email"></label>
-            <label class="field"><span>Role</span><select id="employee-create-role">${ROLE_OPTIONS.filter((role) => role !== "Admin").map((role) => `<option value="${safe(role)}">${safe(role)}</option>`).join("")}</select></label>
+            <label class="field"><span>Role</span><select id="employee-create-role">${ROLE_OPTIONS.filter((role) => role !== "Admin").map((role) => `<option value="${safe(role)}">${safe(roleDisplayLabel(role))}</option>`).join("")}</select></label>
             <label class="field"><span>Department</span><select id="employee-create-department">${DEPARTMENT_OPTIONS.map((item) => `<option value="${safe(item)}">${safe(item)}</option>`).join("")}</select></label>
             <div class="button-row"><button class="btn btn-ghost" id="employee-create-cancel" type="button">Cancel</button><button id="employee-create-submit" class="btn btn-primary" type="submit">Create</button></div>
           </form>
@@ -18890,7 +18949,7 @@ tbody tr { transition: background .14s ease; }
       bindFilters(["all-search", "all-from", "all-to", "all-role-filter", "all-task-filter"], renderAllTable);
       bindFilters(["employee-search", "employee-role-filter", "employee-department-filter", "employee-status-filter"], renderEmployeesTable);
       bindFilters(["client-search"], renderClientsTable);
-      bindFilters(["indirect-tax-search", "indirect-tax-from", "indirect-tax-to", "indirect-tax-category-filter", "indirect-tax-entered"], renderIndirectTaxTable);
+      bindFilters(["indirect-tax-scope", "indirect-tax-search", "indirect-tax-from", "indirect-tax-to", "indirect-tax-category-filter", "indirect-tax-entered"], renderIndirectTaxTable);
       bindFilters(["indirect-tax-category-search"], renderIndirectTaxCategoryTable);
       bindFilters(["log-search", "log-from", "log-to", "log-type-filter"], renderLogsPage);
 
