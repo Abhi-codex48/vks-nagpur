@@ -3904,6 +3904,147 @@ button.summary-card.clickable {
   overflow-wrap: anywhere;
 }
 
+/* ============================================================
+   Indirect Tax Team workspace — team cards, task board,
+   assigned-work cards, mark-done animation, collapsible master.
+   ============================================================ */
+.it-panel { position: relative; }
+
+.it-inline-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  user-select: none;
+}
+.it-inline-toggle input { accent-color: var(--brand, #0f766e); }
+
+/* Team member cards */
+.it-team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 14px;
+}
+.it-team-card {
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 18px;
+  padding: 16px;
+  background: linear-gradient(160deg, rgba(255,255,255,0.9), rgba(248,250,252,0.75));
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+.it-team-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(15, 118, 110, 0.12);
+  border-color: rgba(15, 118, 110, 0.35);
+}
+.it-team-card-head { display: flex; align-items: center; gap: 12px; }
+.it-team-avatar {
+  width: 42px; height: 42px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-weight: 800; color: #fff; font-size: 1rem;
+  background: linear-gradient(135deg, #0f766e, #14b8a6);
+  flex: 0 0 auto;
+}
+.it-team-card-name { font-weight: 700; line-height: 1.2; }
+.it-team-card-email { font-size: 0.74rem; color: #64748b; overflow-wrap: anywhere; }
+.it-team-metrics { display: flex; gap: 10px; }
+.it-team-metric {
+  flex: 1; text-align: center; padding: 8px 6px; border-radius: 12px;
+  background: rgba(15, 118, 110, 0.07);
+}
+.it-team-metric strong { display: block; font-size: 1.15rem; color: #0f766e; }
+.it-team-metric span { font-size: 0.68rem; text-transform: uppercase; letter-spacing: .04em; color: #64748b; }
+
+/* Task / assigned-work cards */
+.it-tasks-list { display: flex; flex-direction: column; gap: 12px; }
+.it-task-card {
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-left: 4px solid var(--brand, #0f766e);
+  border-radius: 14px;
+  padding: 14px 16px;
+  background: #fff;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  transition: opacity .35s ease, transform .35s ease, background .35s ease;
+}
+.it-task-card.overdue { border-left-color: #dc2626; }
+.it-task-card.status-done { border-left-color: #16a34a; background: rgba(22, 163, 74, 0.06); }
+.it-task-main { flex: 1 1 260px; min-width: 0; }
+.it-task-title { font-weight: 700; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+.it-task-card.status-done .it-task-title { text-decoration: line-through; color: #64748b; }
+.it-task-desc { margin-top: 4px; color: #475569; font-size: 0.86rem; overflow-wrap: anywhere; white-space: pre-wrap; }
+.it-task-meta { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
+.it-task-chip {
+  font-size: 0.72rem; font-weight: 600; padding: 3px 9px; border-radius: 999px;
+  background: rgba(148,163,184,0.16); color: #475569;
+}
+.it-task-chip.assignee { background: rgba(15,118,110,0.12); color: #0f766e; }
+.it-task-chip.due { background: rgba(245,158,11,0.14); color: #b45309; }
+.it-task-chip.due.overdue { background: rgba(220,38,38,0.14); color: #b91c1c; }
+.it-task-chip.done { background: rgba(22,163,74,0.16); color: #15803d; }
+.it-task-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+/* Mark-done animation */
+.it-task-card.just-done { animation: itTaskDone .55s ease; }
+@keyframes itTaskDone {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.015); box-shadow: 0 10px 30px rgba(22,163,74,0.25); }
+  100% { transform: scale(1); }
+}
+.it-done-burst {
+  display: inline-grid; place-items: center;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #16a34a; color: #fff; font-size: 0.7rem;
+  animation: itBurst .5s ease;
+}
+@keyframes itBurst {
+  0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+  60% { transform: scale(1.25) rotate(0); opacity: 1; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+/* Empty state for team / tasks */
+.it-empty {
+  text-align: center; padding: 26px 16px; color: #64748b;
+  border: 1px dashed rgba(148,163,184,0.4); border-radius: 16px;
+  background: rgba(248,250,252,0.6);
+}
+.it-empty strong { display: block; color: #334155; margin-bottom: 4px; }
+
+/* Collapsible category master */
+.it-collapsible { border-radius: 12px; }
+.it-collapsible-summary {
+  list-style: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 4px 2px;
+}
+.it-collapsible-summary::-webkit-details-marker { display: none; }
+.it-collapsible-titles { display: flex; flex-direction: column; }
+.it-collapsible-title { font-size: 1.1rem; font-weight: 700; }
+.it-collapsible-hint {
+  font-size: 0.78rem; color: #0f766e; font-weight: 600;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.it-collapsible-hint::after { content: "▾"; transition: transform .2s ease; }
+.it-collapsible[open] .it-collapsible-hint::after { transform: rotate(180deg); }
+.it-collapsible-body { margin-top: 14px; }
+.it-collapsible-actions { display: flex; justify-content: flex-end; margin-bottom: 10px; }
+
+@media (max-width: 640px) {
+  .it-team-grid { grid-template-columns: 1fr; }
+  .it-task-card { flex-direction: column; }
+  .it-task-actions { width: 100%; }
+}
+
 .screen.app-screen #page-my td,
 .screen.app-screen #page-dashboard td {
   background-clip: padding-box;
@@ -7664,6 +7805,21 @@ tbody tr { transition: background .14s ease; }
 
     <main class="app-main">
       <section id="page-log" class="page">
+        <!-- Work assigned to this user by admin (auto-hidden when there is none) -->
+        <div class="panel my-tasks-panel" id="my-tasks-panel" hidden>
+          <div class="panel-head">
+            <div>
+              <div class="panel-kicker">Assigned to you</div>
+              <h3>Your active work</h3>
+            </div>
+            <div class="panel-actions">
+              <button id="my-tasks-refresh" class="btn btn-outline small" type="button">Refresh</button>
+            </div>
+          </div>
+          <p class="section-note">Work assigned to you by admin. These stay here until admin marks them done.</p>
+          <div id="my-tasks-list" class="it-tasks-list"></div>
+        </div>
+
         <div class="panel">
           <div class="panel-head">
             <div>
@@ -8077,38 +8233,75 @@ tbody tr { transition: background .14s ease; }
           </div>
         </div>
 
-        <div class="panel">
+        <!-- Team overview: members, time invested, quick calendar access -->
+        <div class="panel it-panel">
           <div class="panel-head">
             <div>
-              <div class="panel-kicker">Admin master</div>
-              <h3>Indirect tax categories</h3>
+              <div class="panel-kicker">Indirect Tax Team</div>
+              <h3>Team &amp; time invested</h3>
             </div>
             <div class="panel-actions">
-              <button id="indirect-tax-category-add" class="btn btn-primary" type="button">Add category</button>
+              <button id="it-team-refresh" class="btn btn-outline small" type="button">Refresh</button>
             </div>
           </div>
-          <div class="toolbar">
-            <label class="field compact grow">
-              <span>Search</span>
-              <input id="indirect-tax-category-search" type="text" placeholder="Search categories">
-            </label>
-            <div class="toolbar-actions">
-              <button id="indirect-tax-category-clear" class="btn btn-outline small" type="button">Clear</button>
+          <p class="section-note">Effort by each team member in the loaded date range. Open a calendar to review day-by-day reporting.</p>
+          <div id="it-team-grid" class="it-team-grid"></div>
+        </div>
+
+        <!-- Assigned work / task board -->
+        <div class="panel it-panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-kicker">Workflow</div>
+              <h3>Assigned work</h3>
+            </div>
+            <div class="panel-actions">
+              <label class="it-inline-toggle"><input type="checkbox" id="it-tasks-show-done"> <span>Show completed</span></label>
+              <button id="it-task-add" class="btn btn-primary" type="button">+ Assign work</button>
             </div>
           </div>
-          <div id="indirect-tax-category-summary" class="filter-summary" hidden></div>
-          <div class="table-shell">
-            <table>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Category</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="indirect-tax-category-table-body"></tbody>
-            </table>
-          </div>
+          <p class="section-note">Assign a task to a team member. It appears on their dashboard as active work until it is marked done.</p>
+          <div id="it-tasks-list" class="it-tasks-list"></div>
+        </div>
+
+        <!-- Category master, collapsed by default so it stays compact -->
+        <div class="panel it-panel">
+          <details class="it-collapsible">
+            <summary class="it-collapsible-summary">
+              <span class="it-collapsible-titles">
+                <span class="panel-kicker">Admin master</span>
+                <span class="it-collapsible-title">Indirect tax categories</span>
+              </span>
+              <span class="it-collapsible-hint">Manage dropdown categories</span>
+            </summary>
+            <div class="it-collapsible-body">
+              <div class="it-collapsible-actions">
+                <button id="indirect-tax-category-add" class="btn btn-primary small" type="button">Add category</button>
+              </div>
+              <div class="toolbar">
+                <label class="field compact grow">
+                  <span>Search</span>
+                  <input id="indirect-tax-category-search" type="text" placeholder="Search categories">
+                </label>
+                <div class="toolbar-actions">
+                  <button id="indirect-tax-category-clear" class="btn btn-outline small" type="button">Clear</button>
+                </div>
+              </div>
+              <div id="indirect-tax-category-summary" class="filter-summary" hidden></div>
+              <div class="table-shell">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Category</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="indirect-tax-category-table-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </details>
         </div>
       </section>
 
@@ -8569,6 +8762,9 @@ tbody tr { transition: background .14s ease; }
       allEntriesLoadedTo: "",
       lastAmbientRefreshAt: 0,
       myAudit: [],
+      itTasks: [],
+      itTasksLoadedAt: 0,
+      myTasks: [],
       logs: [],
       logsRenderLimit: ADMIN_LOG_PAGE_SIZE,
       logsFilterSig: "",
@@ -9607,7 +9803,7 @@ tbody tr { transition: background .14s ease; }
           renderStorageStats();
           renderHeaderNotificationBell();
         } else {
-          if (state.currentPage === "page-log") await loadGroupApprovals();
+          if (state.currentPage === "page-log") { await loadGroupApprovals(); await loadMyTasks(); }
           if (state.currentPage === "page-my") await loadMyEntries(false);
         }
         state.lastAmbientRefreshAt = Date.now();
@@ -13908,6 +14104,8 @@ tbody tr { transition: background .14s ease; }
     function renderIndirectTaxPage() {
       renderIndirectTaxTable();
       renderIndirectTaxCategoryTable();
+      renderItTeamGrid();
+      renderItTasks();
     }
 
     async function loadIndirectTaxPage(forceRefresh = false) {
@@ -13917,7 +14115,306 @@ tbody tr { transition: background .14s ease; }
       await ensureLookups(true);
       await ensureIndirectTaxCategories(forceRefresh);
       await loadAll(forceRefresh || !state.allEntriesLoaded);
+      await loadItTasks(forceRefresh);
       renderIndirectTaxPage();
+    }
+
+    /* ==================================================================
+       INDIRECT TAX TEAM WORKSPACE
+       - Team overview cards (time invested + calendar access)
+       - Assigned-work task board (admin assign/edit/mark-done)
+       - Members see their active work on their own dashboard
+       Backed by the `assigned_tasks` collection.
+       ================================================================== */
+    const IT_TASKS_COLLECTION = "assigned_tasks";
+    const IT_TASKS_READ_LIMIT = 300;
+
+    // Approved, non-locked members of the Indirect Tax Team.
+    function itTeamMembers() {
+      return (state.employees || [])
+        .filter((u) => isVarunTeamRole(u.role) && u.approved !== false)
+        .map((u) => ({
+          id: u.id,
+          uid: u.uid || u.sourceUid || u.id,
+          name: u.name || u.email || u.id,
+          email: u.email || ""
+        }))
+        .sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
+    }
+
+    function itMemberUidSet() {
+      const set = new Set();
+      itTeamMembers().forEach((m) => { if (m.uid) set.add(m.uid); if (m.id) set.add(m.id); });
+      return set;
+    }
+
+    function itInitials(name) {
+      const parts = String(name || "").trim().split(/\s+/).filter(Boolean);
+      if (!parts.length) return "?";
+      return (parts[0][0] + (parts[1]?.[0] || "")).toUpperCase();
+    }
+
+    function normalizeTaskDoc(docLike) {
+      const data = docLike.data ? (docLike.data() || {}) : docLike;
+      return {
+        id: docLike.id || data.id,
+        title: String(data.title || "").trim(),
+        details: String(data.details || "").trim(),
+        assignedToUid: String(data.assignedToUid || "").trim(),
+        assignedToName: String(data.assignedToName || "").trim(),
+        assignedToEmail: String(data.assignedToEmail || "").trim(),
+        assignedByName: String(data.assignedByName || "").trim(),
+        dueDate: String(data.dueDate || "").trim(),
+        status: data.status === "done" ? "done" : "active",
+        createdAt: data.createdAt || null,
+        completedAt: data.completedAt || null
+      };
+    }
+
+    async function loadItTasks(forceRefresh = false) {
+      if (!isAdmin()) return;
+      try {
+        let snap;
+        try {
+          snap = await getDocs(query(collection(db, IT_TASKS_COLLECTION), orderBy("createdAt", "desc"), limit(IT_TASKS_READ_LIMIT)));
+        } catch (_orderErr) {
+          snap = await getDocs(query(collection(db, IT_TASKS_COLLECTION), limit(IT_TASKS_READ_LIMIT)));
+        }
+        state.itTasks = snap.docs.map(normalizeTaskDoc).sort((a, b) => tsMs(b.createdAt) - tsMs(a.createdAt));
+        state.itTasksLoadedAt = Date.now();
+      } catch (_error) {
+        state.itTasks = [];
+      }
+    }
+
+    function taskIsOverdue(task) {
+      return task.status !== "done" && task.dueDate && task.dueDate < todayStr();
+    }
+
+    function renderItTeamGrid() {
+      const host = byId("it-team-grid");
+      if (!host) return;
+      const members = itTeamMembers();
+      // Hours invested per member, from the currently loaded (range) rows.
+      const rows = indirectTaxAnalysisRowsAllScope();
+      const byUid = {};
+      rows.forEach((row) => {
+        const uid = row.entryKind === "group" ? row.index : (row.record?.uid || row.record?.userId || row.record?.createdByUid || "");
+        const key = uid || normalizeCompareText(row.email);
+        if (!byUid[key]) byUid[key] = { hours: 0, count: 0 };
+        byUid[key].hours += Number(row.hours || 0);
+        byUid[key].count += 1;
+      });
+      if (!members.length) {
+        host.innerHTML = `<div class="it-empty"><strong>No team members yet</strong><span>Assign the Indirect Tax Team role to an employee to see them here.</span></div>`;
+        return;
+      }
+      host.innerHTML = members.map((m) => {
+        const stat = byUid[m.uid] || byUid[m.id] || byUid[normalizeCompareText(m.email)] || { hours: 0, count: 0 };
+        return `
+          <div class="it-team-card">
+            <div class="it-team-card-head">
+              <span class="it-team-avatar">${safe(itInitials(m.name))}</span>
+              <div style="min-width:0;">
+                <div class="it-team-card-name">${safe(m.name)}</div>
+                <div class="it-team-card-email">${safe(m.email || "-")}</div>
+              </div>
+            </div>
+            <div class="it-team-metrics">
+              <div class="it-team-metric"><strong>${safe(stat.hours.toFixed(1))}</strong><span>Hours</span></div>
+              <div class="it-team-metric"><strong>${safe(String(stat.count))}</strong><span>Entries</span></div>
+            </div>
+            <button class="btn btn-outline small" type="button" data-action="open-admin-calendar" data-id="${safe(m.id)}">📅 View calendar</button>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // Team rows regardless of the GST/all toggle, so time-invested reflects
+    // ALL of the member's work in the loaded range.
+    function indirectTaxAnalysisRowsAllScope() {
+      const rows = [];
+      (state.allEntries || []).forEach((record) => {
+        if (!isVarunTeamRecord(record)) return;
+        if (record.entryKind === "group") {
+          const dates = recordDates(record);
+          visibleMemberIds(record).forEach((uid) => {
+            const entry = userEntryForGroup(record, uid);
+            rows.push({ record, entryKind: "group", index: uid, email: entry.email || lookupUser(uid)?.email || "", hours: Number(entry.totalHours || totalHoursFromMap(entry.dailyHours || {}) || 0) });
+          });
+          return;
+        }
+        if (!["single", "bulk"].includes(record.entryKind)) return;
+        const hrs = record.entryKind === "bulk"
+          ? (totalHoursFromMap(record.dailyHours || {}) || Number(record.totalHours || 0))
+          : Number(record.totalHours || record.hours || 0);
+        rows.push({ record, entryKind: record.entryKind, index: 0, email: record.creatorEmail || record.email || "", hours: Number(hrs || 0) });
+      });
+      return rows;
+    }
+
+    function taskCardHtml(task, forAdmin) {
+      const overdue = taskIsOverdue(task);
+      const done = task.status === "done";
+      const meta = [];
+      if (forAdmin) meta.push(`<span class="it-task-chip assignee">${safe(task.assignedToName || task.assignedToEmail || "Unassigned")}</span>`);
+      if (task.dueDate) meta.push(`<span class="it-task-chip due ${overdue ? "overdue" : ""}">Due ${safe(formatDate(task.dueDate))}${overdue ? " · overdue" : ""}</span>`);
+      if (done) meta.push(`<span class="it-task-chip done">Completed${task.completedAt ? " · " + safe(formatDate(new Date(tsMs(task.completedAt)).toISOString().slice(0,10))) : ""}</span>`);
+      if (forAdmin && task.assignedByName) meta.push(`<span class="it-task-chip">By ${safe(task.assignedByName)}</span>`);
+      // All task actions are admin-only. Team members see their work read-only.
+      const actions = [];
+      if (forAdmin) {
+        if (!done) {
+          actions.push(`<button class="btn btn-primary small" type="button" data-action="it-task-done" data-id="${safe(task.id)}">Mark done</button>`);
+        } else {
+          actions.push(`<button class="btn btn-outline small" type="button" data-action="it-task-reopen" data-id="${safe(task.id)}">Undo done</button>`);
+        }
+        actions.push(`<button class="btn btn-outline small" type="button" data-action="it-task-edit" data-id="${safe(task.id)}">Edit</button>`);
+        actions.push(`<button class="btn btn-ghost small" type="button" data-action="it-task-delete" data-id="${safe(task.id)}">Delete</button>`);
+      }
+      return `
+        <div class="it-task-card ${done ? "status-done" : ""} ${overdue ? "overdue" : ""}" data-task-id="${safe(task.id)}">
+          <div class="it-task-main">
+            <div class="it-task-title">${done ? `<span class="it-done-burst">&#10003;</span>` : ""}${safe(task.title || "Untitled task")}</div>
+            ${task.details ? `<div class="it-task-desc">${safe(task.details)}</div>` : ""}
+            <div class="it-task-meta">${meta.join("")}</div>
+          </div>
+          <div class="it-task-actions">${actions.join("")}</div>
+        </div>
+      `;
+    }
+
+    function renderItTasks() {
+      const host = byId("it-tasks-list");
+      if (!host) return;
+      const showDone = byId("it-tasks-show-done")?.checked;
+      const tasks = (state.itTasks || []).filter((t) => showDone || t.status !== "done");
+      if (!tasks.length) {
+        host.innerHTML = `<div class="it-empty"><strong>${showDone ? "No work to show" : "No active work assigned"}</strong><span>Use <em>+ Assign work</em> to give a team member a task. It appears on their dashboard instantly.</span></div>`;
+        return;
+      }
+      host.innerHTML = tasks.map((t) => taskCardHtml(t, true)).join("");
+    }
+
+    function renderMyTasks() {
+      const host = byId("my-tasks-list");
+      const panel = byId("my-tasks-panel");
+      if (!host || !panel) return;
+      const active = (state.myTasks || []).filter((t) => t.status !== "done");
+      if (!active.length) {
+        panel.hidden = true;
+        host.innerHTML = "";
+        return;
+      }
+      panel.hidden = false;
+      host.innerHTML = active.map((t) => taskCardHtml(t, false)).join("");
+    }
+
+    async function loadMyTasks() {
+      if (!state.user?.uid || isAdmin()) { state.myTasks = []; renderMyTasks(); return; }
+      try {
+        const snap = await getDocs(query(collection(db, IT_TASKS_COLLECTION), where("assignedToUid", "==", state.user.uid)));
+        state.myTasks = snap.docs.map(normalizeTaskDoc)
+          .sort((a, b) => (taskIsOverdue(b) - taskIsOverdue(a)) || (String(a.dueDate || "9999").localeCompare(String(b.dueDate || "9999"))));
+      } catch (_error) {
+        state.myTasks = [];
+      }
+      renderMyTasks();
+    }
+
+    function openAssignWorkModal(existing = null) {
+      const members = itTeamMembers();
+      if (!members.length) { toast("No Indirect Tax Team members to assign to yet.", "warn"); return; }
+      const isEdit = !!existing;
+      openModal(
+        isEdit ? "Edit assigned work" : "Assign work",
+        "The task appears on the member's dashboard as active work until it is marked done.",
+        `
+          <div class="field-stack">
+            <label class="field">
+              <span>Task title</span>
+              <input id="it-task-title" type="text" maxlength="140" placeholder="e.g. Draft GST reply for ABC Ltd" value="${safe(existing?.title || "")}">
+            </label>
+            <label class="field">
+              <span>Assign to</span>
+              <select id="it-task-assignee" ${isEdit ? "disabled" : ""}>
+                ${members.map((m) => `<option value="${safe(m.uid)}" data-name="${safe(m.name)}" data-email="${safe(m.email)}" ${existing && existing.assignedToUid === m.uid ? "selected" : ""}>${safe(m.name)}${m.email ? ` (${safe(m.email)})` : ""}</option>`).join("")}
+              </select>
+            </label>
+            <label class="field">
+              <span>Due date <span class="muted">(optional)</span></span>
+              <input id="it-task-due" type="date" value="${safe(existing?.dueDate || "")}">
+            </label>
+            <label class="field">
+              <span>Details <span class="muted">(optional)</span></span>
+              <textarea id="it-task-details" rows="4" placeholder="Scope, references, or notes for the assignee">${safe(existing?.details || "")}</textarea>
+            </label>
+            <div class="button-row">
+              <button class="btn btn-ghost" id="it-task-cancel" type="button">Cancel</button>
+              <button class="btn btn-primary" id="it-task-save" type="button">${isEdit ? "Save changes" : "Assign work"}</button>
+            </div>
+          </div>
+        `
+      );
+      byId("it-task-cancel")?.addEventListener("click", closeModal);
+      let saving = false;
+      byId("it-task-save")?.addEventListener("click", async () => {
+        if (saving) return;
+        const title = String(byId("it-task-title")?.value || "").trim();
+        if (!title) { toast("Task title is required.", "warn"); return; }
+        const sel = byId("it-task-assignee");
+        const opt = sel?.selectedOptions?.[0];
+        const details = String(byId("it-task-details")?.value || "").trim();
+        const dueDate = String(byId("it-task-due")?.value || "").trim();
+        saving = true;
+        setButtonBusy(byId("it-task-save"), true, "Saving...");
+        try {
+          if (isEdit) {
+            await updateDoc(doc(db, IT_TASKS_COLLECTION, existing.id), {
+              title, details, dueDate, updatedAt: Timestamp.now(), updatedByUid: state.user?.uid || ""
+            });
+            toast("Task updated.", "success");
+          } else {
+            await addDoc(collection(db, IT_TASKS_COLLECTION), {
+              title, details, dueDate,
+              assignedToUid: sel?.value || "",
+              assignedToName: opt?.dataset.name || "",
+              assignedToEmail: opt?.dataset.email || "",
+              status: "active",
+              assignedByUid: state.user?.uid || "",
+              assignedByName: profileName(),
+              createdAt: Timestamp.now(),
+              updatedAt: Timestamp.now()
+            });
+            await writeLog({ action: `${profileName()} assigned work`, actorName: profileName(), actorEmail: profileEmail(), type: "user", detail: `${title} → ${opt?.dataset.name || ""}`, detailAdmin: sel?.value || "" });
+            toast("Work assigned.", "success");
+          }
+          closeModal();
+          await loadItTasks(true);
+          renderItTasks();
+        } catch (error) {
+          toast(error?.message || "Could not save the task.", "error");
+          setButtonBusy(byId("it-task-save"), false);
+          saving = false;
+        }
+      });
+    }
+
+    async function setItTaskStatus(id, status, cardEl) {
+      const patch = { status, updatedAt: Timestamp.now() };
+      if (status === "done") { patch.completedAt = Timestamp.now(); patch.completedByUid = state.user?.uid || ""; }
+      else { patch.completedAt = null; }
+      try {
+        if (cardEl && status === "done") cardEl.classList.add("just-done");
+        await updateDoc(doc(db, IT_TASKS_COLLECTION, id), patch);
+        // Small delay lets the animation play before the list re-renders.
+        await new Promise((r) => setTimeout(r, status === "done" ? 380 : 0));
+        if (isAdmin()) { await loadItTasks(true); renderItTasks(); }
+        else { await loadMyTasks(); }
+        toast(status === "done" ? "Marked done." : "Task reopened.", status === "done" ? "success" : "info");
+      } catch (error) {
+        toast(error?.message || "Could not update the task.", "error");
+      }
     }
 
     function clearIndirectTaxFilters() {
@@ -14785,6 +15282,7 @@ tbody tr { transition: background .14s ease; }
       if (state.currentPage === "page-log") {
         await ensureLookups(true);
         await loadGroupApprovals();
+        await loadMyTasks();
         updateRefreshButtonMeta();
         return;
       }
@@ -18968,6 +19466,9 @@ tbody tr { transition: background .14s ease; }
       });
       bind("indirect-tax-clear", "click", clearIndirectTaxFilters);
       bind("indirect-tax-export", "click", exportIndirectTaxExcel);
+      bind("it-tasks-show-done", "change", renderItTasks);
+      bind("it-team-refresh", "click", async () => { await loadAll(true); await loadItTasks(true); renderItTeamGrid(); renderItTasks(); toast("Team view refreshed.", "success"); });
+      bind("my-tasks-refresh", "click", async () => { await loadMyTasks(); toast("Your work refreshed.", "success"); });
       bind("indirect-tax-category-add", "click", () => openIndirectTaxCategoryModal());
       bind("indirect-tax-category-clear", "click", () => {
         setFieldValue("indirect-tax-category-search", "");
@@ -19506,6 +20007,70 @@ tbody tr { transition: background .14s ease; }
 
         if (actionEl.dataset.action === "open-admin-calendar") {
           await openAdminCalendar(actionEl.dataset.id);
+          return;
+        }
+
+        if (actionEl.dataset.action === "it-task-add") {
+          openAssignWorkModal();
+          return;
+        }
+
+        if (actionEl.dataset.action === "it-task-edit") {
+          const task = (state.itTasks || []).find((t) => t.id === actionEl.dataset.id);
+          if (task) openAssignWorkModal(task);
+          return;
+        }
+
+        if (actionEl.dataset.action === "it-task-done" || actionEl.dataset.action === "my-task-done") {
+          const id = actionEl.dataset.id;
+          const task = (state.itTasks || []).find((t) => t.id === id) || (state.myTasks || []).find((t) => t.id === id);
+          const card = actionEl.closest(".it-task-card");
+          const ok = await confirmSubmitModal({
+            title: "Mark this task as done?",
+            copy: "It will move out of active work.",
+            summaryHtml: `<div class="hub-card"><strong>${safe(task?.title || "This task")}</strong>${task?.assignedToName ? `<div class="subline">${safe(task.assignedToName)}</div>` : ""}</div>`,
+            confirmLabel: "Yes, mark done",
+            cancelLabel: "Cancel"
+          });
+          if (!ok) return;
+          await setItTaskStatus(id, "done", card);
+          return;
+        }
+
+        if (actionEl.dataset.action === "it-task-reopen") {
+          const id = actionEl.dataset.id;
+          const task = (state.itTasks || []).find((t) => t.id === id);
+          const ok = await confirmSubmitModal({
+            title: "Undo done — reopen this task?",
+            copy: "The task will return to active work.",
+            summaryHtml: `<div class="hub-card"><strong>${safe(task?.title || "This task")}</strong></div>`,
+            confirmLabel: "Yes, reopen",
+            cancelLabel: "Cancel"
+          });
+          if (!ok) return;
+          await setItTaskStatus(id, "active");
+          return;
+        }
+
+        if (actionEl.dataset.action === "it-task-delete") {
+          const task = (state.itTasks || []).find((t) => t.id === actionEl.dataset.id);
+          if (!task) return;
+          const ok = await confirmSubmitModal({
+            title: "Delete this task?",
+            copy: "This permanently removes the assigned work.",
+            summaryHtml: `<div class="hub-card"><strong>${safe(task.title)}</strong><div class="subline">${safe(task.assignedToName || "")}</div></div>`,
+            confirmLabel: "Delete task",
+            cancelLabel: "Cancel"
+          });
+          if (!ok) return;
+          try {
+            await deleteDoc(doc(db, IT_TASKS_COLLECTION, task.id));
+            toast("Task deleted.", "warn");
+            await loadItTasks(true);
+            renderItTasks();
+          } catch (error) {
+            toast(error?.message || "Could not delete the task.", "error");
+          }
           return;
         }
 
