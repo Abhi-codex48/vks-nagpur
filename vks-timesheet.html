@@ -9084,10 +9084,13 @@ tbody tr { transition: background .14s ease; }
       const today = todayStr();
       const month = todayMonthStr();
       root.querySelectorAll?.('input[type="date"]').forEach((input) => {
+        // Some inputs (e.g. a task due date) are meant to allow today + future.
+        if (input.dataset.allowFuture) { input.removeAttribute("max"); return; }
         input.max = today;
         if (input.value && input.value > today) input.value = today;
       });
       root.querySelectorAll?.('input[type="month"]').forEach((input) => {
+        if (input.dataset.allowFuture) { input.removeAttribute("max"); return; }
         input.max = month;
         if (input.value && input.value > month) input.value = month;
       });
@@ -9095,6 +9098,7 @@ tbody tr { transition: background .14s ease; }
 
     function enforceDateInputRules(input) {
       if (!input) return;
+      if (input.dataset?.allowFuture) return;
       const limit = input.type === "month" ? todayMonthStr() : todayStr();
       if (input.value && input.value > limit) {
         input.value = limit;
@@ -14343,7 +14347,7 @@ tbody tr { transition: background .14s ease; }
             </label>
             <label class="field">
               <span>Due date <span class="muted">(optional)</span></span>
-              <input id="it-task-due" type="date" value="${safe(existing?.dueDate || "")}">
+              <input id="it-task-due" type="date" data-allow-future="1" min="${todayStr()}" value="${safe(existing?.dueDate || "")}">
             </label>
             <label class="field">
               <span>Details <span class="muted">(optional)</span></span>
