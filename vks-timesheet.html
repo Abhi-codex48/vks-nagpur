@@ -2959,6 +2959,7 @@ button.summary-card.clickable {
 .screen.app-screen #page-dashboard .toolbar,
 .screen.app-screen #page-employees .toolbar,
 .screen.app-screen #page-clients .toolbar,
+.screen.app-screen #page-indirect-tax .toolbar,
 .screen.app-screen #page-logs .toolbar,
 .screen.app-screen #page-approvals .bulk-bar {
   position: static;
@@ -2970,6 +2971,7 @@ button.summary-card.clickable {
 .screen.app-screen #page-dashboard .toolbar,
 .screen.app-screen #page-employees .toolbar,
 .screen.app-screen #page-clients .toolbar,
+.screen.app-screen #page-indirect-tax .toolbar,
 .screen.app-screen #page-logs .toolbar {
   box-shadow: 0 10px 20px rgba(15, 23, 42, 0.05);
   background: linear-gradient(180deg, rgba(255, 252, 248, 1), rgba(252, 248, 243, 1));
@@ -3746,6 +3748,11 @@ button.summary-card.clickable {
   color: #334155;
 }
 
+.employee-table-pill.role.varun {
+  background: var(--gold-soft);
+  color: #7a4a00;
+}
+
 .employee-table-pill.status.active {
   background: rgba(16, 185, 129, 0.12);
   color: #0f766e;
@@ -3835,13 +3842,15 @@ button.summary-card.clickable {
 /* Timesheet tables: compact, readable rows on desktop and mobile.
    Long clients/remarks are capped so one record cannot stretch the full table. */
 .screen.app-screen #page-my .table-shell,
-.screen.app-screen #page-dashboard .table-shell {
+.screen.app-screen #page-dashboard .table-shell,
+.screen.app-screen #page-indirect-tax .table-shell {
   overflow-x: auto;
   overflow-y: visible;
 }
 
 .screen.app-screen #page-my table,
-.screen.app-screen #page-dashboard table {
+.screen.app-screen #page-dashboard table,
+.screen.app-screen #page-indirect-tax table {
   table-layout: fixed;
   width: 100%;
   border-collapse: collapse;
@@ -3855,8 +3864,13 @@ button.summary-card.clickable {
   min-width: 1380px;
 }
 
+.screen.app-screen #page-indirect-tax table {
+  min-width: 1220px;
+}
+
 .screen.app-screen #page-my tbody tr,
-.screen.app-screen #page-dashboard tbody tr {
+.screen.app-screen #page-dashboard tbody tr,
+.screen.app-screen #page-indirect-tax tbody tr {
   height: auto !important;
   min-height: 0 !important;
 }
@@ -3864,7 +3878,9 @@ button.summary-card.clickable {
 .screen.app-screen #page-my th,
 .screen.app-screen #page-my td,
 .screen.app-screen #page-dashboard th,
-.screen.app-screen #page-dashboard td {
+.screen.app-screen #page-dashboard td,
+.screen.app-screen #page-indirect-tax th,
+.screen.app-screen #page-indirect-tax td {
   padding: 8px 10px;
   vertical-align: top;
   line-height: 1.35;
@@ -6927,6 +6943,24 @@ tbody tr { transition: background .14s ease; }
 }
 .single-client-card .client-task-chips:empty { display: none; }
 
+.indirect-tax-field {
+  margin-top: var(--s3);
+  padding: var(--s3);
+  border: 1px solid var(--gold-line);
+  border-radius: var(--radius-sm);
+  background: linear-gradient(180deg, rgba(248, 232, 184, 0.34), rgba(255, 253, 247, 0.86));
+  display: grid;
+  gap: var(--s3);
+}
+
+.hidden-field {
+  display: none !important;
+}
+
+.indirect-tax-table-shell table {
+  min-width: 1220px;
+}
+
 /* ============================================================
    MOBILE FIX — Audit / Activity logs become a swipeable row of cards
    (like a table you scroll left/right). Text inside each card is
@@ -7603,6 +7637,7 @@ tbody tr { transition: background .14s ease; }
           <span id="refresh-tab-meta" class="refresh-btn-meta">Last sync: -</span>
         </div>
         <button id="open-guide" class="btn btn-outline small" type="button">Guide</button>
+        <button id="change-pin-button" class="btn btn-outline small" type="button">Change PIN</button>
         <button id="logout-button" class="btn btn-ghost small" type="button">Log out</button>
       </div>
     </header>
@@ -7948,6 +7983,107 @@ tbody tr { transition: background .14s ease; }
           </div>
           <div id="storage-progress-card" class="storage-progress"></div>
           <div id="storage-stats" class="stat-grid"></div>
+        </div>
+      </section>
+
+      <section id="page-indirect-tax" class="page">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-kicker">Admin</div>
+              <h3>Indirect Tax Analysis</h3>
+            </div>
+            <div class="panel-actions">
+              <button id="indirect-tax-export" class="btn btn-outline" type="button">Export Excel</button>
+              <button id="indirect-tax-load" class="btn btn-primary" type="button">Load selected range</button>
+            </div>
+          </div>
+
+          <div id="indirect-tax-stats" class="stat-grid"></div>
+
+          <div class="toolbar">
+            <label class="field compact grow">
+              <span>Search</span>
+              <input id="indirect-tax-search" type="text" placeholder="Employee, client, task, category, remarks">
+            </label>
+            <label class="field compact">
+              <span>From</span>
+              <input id="indirect-tax-from" type="date">
+            </label>
+            <label class="field compact">
+              <span>To</span>
+              <input id="indirect-tax-to" type="date">
+            </label>
+            <label class="field compact">
+              <span>Category</span>
+              <select id="indirect-tax-category-filter">
+                <option value="">All categories</option>
+              </select>
+            </label>
+            <label class="field compact">
+              <span>Entered</span>
+              <input id="indirect-tax-entered" type="date">
+            </label>
+            <div class="toolbar-actions">
+              <button id="indirect-tax-today" class="btn btn-outline small" type="button">Today</button>
+              <button id="indirect-tax-clear" class="btn btn-outline small" type="button">Clear filters</button>
+            </div>
+          </div>
+          <p class="section-note">Shows only entries from <strong>Employee / Professional - Varun Sir Team</strong> where the client work type includes GST &amp; Indirect Taxes.</p>
+          <div id="indirect-tax-filter-summary" class="filter-summary" hidden></div>
+
+          <div class="table-shell indirect-tax-table-shell">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Entered On</th>
+                  <th>Employee</th>
+                  <th>Client</th>
+                  <th>Category</th>
+                  <th>Work type</th>
+                  <th>Hours</th>
+                  <th>Remarks</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="indirect-tax-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-kicker">Admin master</div>
+              <h3>Indirect tax categories</h3>
+            </div>
+            <div class="panel-actions">
+              <button id="indirect-tax-category-add" class="btn btn-primary" type="button">Add category</button>
+            </div>
+          </div>
+          <div class="toolbar">
+            <label class="field compact grow">
+              <span>Search</span>
+              <input id="indirect-tax-category-search" type="text" placeholder="Search categories">
+            </label>
+            <div class="toolbar-actions">
+              <button id="indirect-tax-category-clear" class="btn btn-outline small" type="button">Clear</button>
+            </div>
+          </div>
+          <div id="indirect-tax-category-summary" class="filter-summary" hidden></div>
+          <div class="table-shell">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Category</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="indirect-tax-category-table-body"></tbody>
+            </table>
+          </div>
         </div>
       </section>
 
@@ -8314,6 +8450,18 @@ tbody tr { transition: background .14s ease; }
       "Accounts / Bookkeeping",
       "Others / Special Assignment"
     ];
+    const INDIRECT_TAX_TASK = "GST & Indirect Taxes";
+    const VARUN_TEAM_ROLE = "Employee / Professional - Varun Sir Team";
+    const INDIRECT_TAX_OTHER_CATEGORY = "Others";
+    const DEFAULT_INDIRECT_TAX_CATEGORIES = [
+      "Retainer / Hand Holding Services",
+      "Reply to Audit Paras / Show Cause Notices / Letters",
+      "Departmental GST Audit",
+      "Drafting of Opinions / Memos / Notes",
+      "Drafting of Appeals - Commissioner Appeals / GSTAT",
+      "Due Diligence / Tax Optimisation Assignments",
+      INDIRECT_TAX_OTHER_CATEGORY
+    ];
 
     const STUDY_SUBJECT_OPTIONS = [
       "Financial Reporting",
@@ -8324,7 +8472,7 @@ tbody tr { transition: background .14s ease; }
       "IBS Course"
     ];
 
-    const ROLE_OPTIONS = ["Admin", "Employee / Professional", "CA Article"];
+    const ROLE_OPTIONS = ["Admin", "Employee / Professional", VARUN_TEAM_ROLE, "CA Article"];
     const DEPARTMENT_OPTIONS = [
       "Management",
       "CA Articles",
@@ -8342,6 +8490,7 @@ tbody tr { transition: background .14s ease; }
     const ADMIN_LOG_READ_LIMIT = 300;
     const ADMIN_RECYCLE_READ_LIMIT = 300;
     const ADMIN_DATE_RANGE_DAY_LIMIT = 370;
+    const ADMIN_LOG_PAGE_SIZE = 50;
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -8376,11 +8525,13 @@ tbody tr { transition: background .14s ease; }
       pendingRoleDrafts: {},
       lookups: {
         clients: [],
-        users: []
+        users: [],
+        indirectTaxCategories: []
       },
       directoryBackfillDone: false,
       employees: [],
       clientDocs: [],
+      indirectTaxCategoryDocs: [],
       myEntries: [],
       allEntries: [],
       allEntriesLoaded: false,
@@ -8390,6 +8541,8 @@ tbody tr { transition: background .14s ease; }
       lastAmbientRefreshAt: 0,
       myAudit: [],
       logs: [],
+      logsRenderLimit: ADMIN_LOG_PAGE_SIZE,
+      logsFilterSig: "",
       recycleDocs: [],
       groupApprovals: [],
       groupPendingCreated: [],
@@ -8440,6 +8593,78 @@ tbody tr { transition: background .14s ease; }
 
     function normalizeListKey(list) {
       return uniq((list || []).map((item) => normalizeCompareText(item)).filter(Boolean)).sort().join("|");
+    }
+
+    function isVarunTeamRole(role = state.profile?.role) {
+      return normalizeCompareText(role) === normalizeCompareText(VARUN_TEAM_ROLE);
+    }
+
+    function isIndirectTaxTaskList(tasks = []) {
+      return (Array.isArray(tasks) ? tasks : [tasks]).some((task) => normalizeCompareText(task) === normalizeCompareText(INDIRECT_TAX_TASK));
+    }
+
+    function indirectTaxCategoryOptions() {
+      const loaded = (state.lookups.indirectTaxCategories || []).map((item) => String(item || "").trim()).filter(Boolean);
+      return uniq([...(loaded.length ? loaded : DEFAULT_INDIRECT_TAX_CATEGORIES), INDIRECT_TAX_OTHER_CATEGORY]);
+    }
+
+    function indirectTaxCategoryLabel(row = {}) {
+      const category = String(row.indirectTaxCategory || "").trim();
+      const other = String(row.indirectTaxOtherCategory || row.indirectTaxOtherDetail || "").trim();
+      if (!category) return "";
+      if (normalizeCompareText(category) === normalizeCompareText(INDIRECT_TAX_OTHER_CATEGORY) && other) return `${INDIRECT_TAX_OTHER_CATEGORY}: ${other}`;
+      return category;
+    }
+
+    function canUseIndirectTaxWorkflow(role = state.profile?.role) {
+      return isVarunTeamRole(role);
+    }
+
+    function rowNeedsIndirectTaxCategory(row = {}, role = state.profile?.role) {
+      return canUseIndirectTaxWorkflow(role) && isIndirectTaxTaskList(row.tasks || row.taskList || []);
+    }
+
+    function normalizeIndirectTaxCategoryRow(row = {}, role = state.profile?.role) {
+      const next = { ...(row || {}) };
+      if (!rowNeedsIndirectTaxCategory(next, role)) {
+        delete next.indirectTaxCategory;
+        delete next.indirectTaxOtherCategory;
+        delete next.indirectTaxOtherDetail;
+        return next;
+      }
+      next.indirectTaxCategory = String(next.indirectTaxCategory || "").trim();
+      const other = String(next.indirectTaxOtherCategory || next.indirectTaxOtherDetail || "").trim();
+      if (normalizeCompareText(next.indirectTaxCategory) === normalizeCompareText(INDIRECT_TAX_OTHER_CATEGORY)) {
+        next.indirectTaxOtherCategory = other;
+      } else {
+        delete next.indirectTaxOtherCategory;
+        delete next.indirectTaxOtherDetail;
+      }
+      return next;
+    }
+
+    function indirectTaxCategoryFieldHtml({ prefix, key, row }) {
+      if (!rowNeedsIndirectTaxCategory(row)) return "";
+      const categoryId = `${prefix}-indirect-category-${key}`;
+      const otherId = `${prefix}-indirect-other-${key}`;
+      const category = String(row.indirectTaxCategory || "").trim();
+      const other = String(row.indirectTaxOtherCategory || row.indirectTaxOtherDetail || "").trim();
+      return `
+        <div class="indirect-tax-field">
+          <label class="field">
+            <span>Indirect Tax Category</span>
+            <select id="${safe(categoryId)}" data-indirect-category="${safe(key)}" data-prefix="${safe(prefix)}">
+              <option value="">Select category</option>
+              ${indirectTaxCategoryOptions().map((item) => `<option value="${safe(item)}" ${item === category ? "selected" : ""}>${safe(item)}</option>`).join("")}
+            </select>
+            <div class="field-note"><span>Visible only for Varun Sir Team GST / Indirect Tax work.</span></div>
+          </label>
+          <label class="field ${normalizeCompareText(category) === normalizeCompareText(INDIRECT_TAX_OTHER_CATEGORY) ? "" : "hidden-field"}">
+            <span>Other category detail</span>
+            <input id="${safe(otherId)}" type="text" data-indirect-other="${safe(key)}" data-prefix="${safe(prefix)}" value="${safe(other)}" placeholder="Describe the new indirect-tax work category">
+          </label>
+        </div>
+      `;
     }
 
     function normalizeHoursValue(value) {
@@ -8682,7 +8907,7 @@ tbody tr { transition: background .14s ease; }
     function allowedPageIds() {
       if (!state.profile) return [];
       return isAdmin()
-        ? ["page-dashboard", "page-reporting", "page-approvals", "page-employees", "page-clients", "page-logs", "page-storage", ...(window.location.hash === "#setup" ? ["page-setup"] : [])]
+        ? ["page-dashboard", "page-reporting", "page-approvals", "page-employees", "page-clients", "page-logs", "page-storage", "page-indirect-tax", ...(window.location.hash === "#setup" ? ["page-setup"] : [])]
         : ["page-log", "page-my"];
     }
 
@@ -8918,6 +9143,7 @@ tbody tr { transition: background .14s ease; }
         "page-clients": "&#129309;",
         "page-logs": "&#128221;",
         "page-storage": "&#128190;",
+        "page-indirect-tax": "&#128202;",
         "page-log": "&#9201;",
         "page-my": "&#128203;",
         "page-setup": "&#9881;"
@@ -9060,7 +9286,8 @@ tbody tr { transition: background .14s ease; }
             { id: "page-employees", label: "Employees / Articles" },
             { id: "page-clients", label: "Clients" },
             { id: "page-logs", label: "Logs" },
-            { id: "page-storage", label: "Storage" }
+            { id: "page-storage", label: "Storage" },
+            { id: "page-indirect-tax", label: "Indirect Tax Analysis" }
           ]
         : [
             { id: "page-log", label: "Log Time" },
@@ -9384,6 +9611,111 @@ tbody tr { transition: background .14s ease; }
       state.profile = { ...state.profile, pinSet: true, pinHash: hash, pinAttempts: 0, locked: false };
       setPinDone(state.user.uid);
       enterPortal();
+    }
+
+    function openChangePinModal() {
+      if (!state.user?.uid) {
+        toast("Please sign in first.", "warn");
+        return;
+      }
+      openModal(
+        "Change PIN",
+        "Update the 4-digit session PIN for your own account. Admin can also change their own PIN here.",
+        `
+          <form id="change-pin-form" class="field-stack">
+            <label class="field">
+              <span>Current PIN</span>
+              <input id="change-pin-current" type="password" inputmode="numeric" maxlength="4" autocomplete="current-password" placeholder="4 digits">
+            </label>
+            <div class="grid two">
+              <label class="field">
+                <span>New PIN</span>
+                <input id="change-pin-new" type="password" inputmode="numeric" maxlength="4" autocomplete="new-password" placeholder="4 digits">
+              </label>
+              <label class="field">
+                <span>Confirm new PIN</span>
+                <input id="change-pin-confirm" type="password" inputmode="numeric" maxlength="4" autocomplete="new-password" placeholder="4 digits">
+              </label>
+            </div>
+            <div id="change-pin-error" class="message error" role="alert"></div>
+            <div class="button-row">
+              <button class="btn btn-ghost" id="change-pin-cancel" type="button">Cancel</button>
+              <button class="btn btn-primary" id="change-pin-submit" type="submit">Save New PIN</button>
+            </div>
+          </form>
+        `
+      );
+      byId("change-pin-cancel")?.addEventListener("click", closeModal);
+      let saving = false;
+      byId("change-pin-form")?.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (saving) return;
+        const error = byId("change-pin-error");
+        if (error) error.textContent = "";
+        const current = String(byId("change-pin-current")?.value || "").trim();
+        const next = String(byId("change-pin-new")?.value || "").trim();
+        const confirm = String(byId("change-pin-confirm")?.value || "").trim();
+        if (!/^\d{4}$/.test(current)) {
+          if (error) error.textContent = "Current PIN must be exactly 4 digits.";
+          return;
+        }
+        if (!/^\d{4}$/.test(next)) {
+          if (error) error.textContent = "New PIN must be exactly 4 digits.";
+          return;
+        }
+        if (next !== confirm) {
+          if (error) error.textContent = "New PINs do not match.";
+          return;
+        }
+        if (current === next) {
+          if (error) error.textContent = "New PIN must be different from the current PIN.";
+          return;
+        }
+        saving = true;
+        setButtonBusy(byId("change-pin-submit"), true, "Saving...");
+        try {
+          const freshSnap = await getDoc(doc(db, "users", state.user.uid));
+          const freshProfile = freshSnap.exists() ? { id: freshSnap.id, ...(freshSnap.data() || {}) } : state.profile;
+          const storedHash = String(freshProfile?.pinHash || "").trim().toLowerCase();
+          if (!freshProfile?.pinSet || !storedHash) {
+            if (error) error.textContent = "This account has no current PIN. Log out and complete PIN setup.";
+            return;
+          }
+          const currentHash = await hashPin(current);
+          if (currentHash !== storedHash) {
+            if (error) error.textContent = "Current PIN is incorrect.";
+            return;
+          }
+          const newHash = await hashPin(next);
+          await updateDoc(doc(db, "users", state.user.uid), {
+            pinSet: true,
+            pinHash: newHash,
+            pinAttempts: 0,
+            locked: false,
+            pinChangedAt: Timestamp.now(),
+            pinChangedByUid: state.user.uid,
+            pinChangedByName: profileName()
+          });
+          state.profile = {
+            ...(state.profile || {}),
+            pinSet: true,
+            pinHash: newHash,
+            pinAttempts: 0,
+            locked: false,
+            pinChangedAt: Timestamp.now()
+          };
+          setPinDone(state.user.uid);
+          await writeUserAudit("Changed own PIN", "Self-service PIN change");
+          closeModal();
+          toast("PIN changed successfully.", "success");
+        } catch (err) {
+          if (error) error.textContent = err?.message || "Could not change PIN right now.";
+          toast("Could not change PIN right now.", "error");
+        } finally {
+          saving = false;
+          setButtonBusy(byId("change-pin-submit"), false);
+        }
+      });
     }
 
     async function submitPin() {
@@ -9754,30 +10086,6 @@ tbody tr { transition: background .14s ease; }
       return { label: "Entry", className: "entry" };
     }
 
-    function noteTypeMeta(type) {
-      const raw = String(type || "note").toLowerCase();
-      if (raw === "task") return { label: "Task", icon: "✅", className: "task" };
-      if (raw === "reminder") return { label: "Reminder", icon: "⏰", className: "reminder" };
-      if (raw === "important") return { label: "Important", icon: "❗", className: "important" };
-      return { label: "Note", icon: "📝", className: "note" };
-    }
-
-    function noteTypeUiMeta(type) {
-      const raw = String(type || "note").toLowerCase();
-      if (raw === "task") return { label: "Task", icon: "\u2705", className: "task" };
-      if (raw === "reminder") return { label: "Reminder", icon: "\u23F0", className: "reminder" };
-      if (raw === "important") return { label: "Important", icon: "\u2757", className: "important" };
-      return { label: "Note", icon: "\uD83D\uDCDD", className: "note" };
-    }
-
-    function syncNoteTypeOptions() {
-      const noteType = byId("note-type");
-      if (!noteType) return;
-      Array.from(noteType.options).forEach((option) => {
-        const meta = noteTypeUiMeta(option.value);
-        option.textContent = `${meta.icon} ${meta.label}`;
-      });
-    }
 
     function timeOnlyText(value) {
       const ms = tsMs(value);
@@ -9827,11 +10135,6 @@ tbody tr { transition: background .14s ease; }
       });
     }
 
-    function selectedDatesBetween(from, to, includeSunday = false, excludedDates = []) {
-      const baseDates = allDatesBetween(from, to, includeSunday);
-      const excluded = new Set(excludedDates || []);
-      return baseDates.filter((date) => !excluded.has(date));
-    }
 
     function syncSelectionSet(selectionSet, validIds) {
       const valid = new Set(validIds || []);
@@ -10021,13 +10324,16 @@ tbody tr { transition: background .14s ease; }
           const hours = Number(item?.hours ?? item?.totalHours ?? 0);
           const taskList = Array.isArray(item?.tasks) ? item.tasks : (Array.isArray(item?.taskList) ? item.taskList : []);
           const tasks = uniq(taskList.map((t) => String(t || "").trim()).filter(Boolean));
-          return {
+          const row = normalizeIndirectTaxCategoryRow({
             key: String(item?.key || makeSingleClientDraftKey(client, rawItems.slice(0, index).map((row) => row?.key))),
             client,
             hours: Number.isFinite(hours) && hours > 0 ? Number(hours.toFixed(2)) : 0,
             remarks: String(item?.remarks || "").trim(),
-            tasks
-          };
+            tasks,
+            indirectTaxCategory: String(item?.indirectTaxCategory || "").trim(),
+            indirectTaxOtherCategory: String(item?.indirectTaxOtherCategory || item?.indirectTaxOtherDetail || "").trim()
+          }, source?.role || source?.creatorRole || state.profile?.role);
+          return row;
         })
         .filter(Boolean)
         .filter((item) => {
@@ -10049,17 +10355,25 @@ tbody tr { transition: background .14s ease; }
         client: fallbackClient,
         hours: Number.isFinite(hours) && hours > 0 ? Number(hours.toFixed(2)) : 0,
         remarks: String(source?.remarks || "").trim(),
-        tasks: fallbackTasks
+        tasks: fallbackTasks,
+        indirectTaxCategory: String(source?.indirectTaxCategory || "").trim(),
+        indirectTaxOtherCategory: String(source?.indirectTaxOtherCategory || source?.indirectTaxOtherDetail || "").trim()
       }];
     }
 
-    function singleBreakdownPayload(items) {
-      return normalizeSingleClientBreakdown({ clientBreakdown: items }).map((item) => ({
-        client: item.client,
-        hours: Number(item.hours || 0),
-        remarks: String(item.remarks || "").trim(),
-        tasks: Array.isArray(item.tasks) ? [...item.tasks] : []
-      }));
+    function singleBreakdownPayload(items, role = state.profile?.role) {
+      return normalizeSingleClientBreakdown({ clientBreakdown: items, role }).map((item) => {
+        const row = {
+          client: item.client,
+          hours: Number(item.hours || 0),
+          remarks: String(item.remarks || "").trim(),
+          tasks: Array.isArray(item.tasks) ? [...item.tasks] : []
+        };
+        const normalized = normalizeIndirectTaxCategoryRow({ ...row, indirectTaxCategory: item.indirectTaxCategory, indirectTaxOtherCategory: item.indirectTaxOtherCategory }, role);
+        if (normalized.indirectTaxCategory) row.indirectTaxCategory = normalized.indirectTaxCategory;
+        if (normalized.indirectTaxOtherCategory) row.indirectTaxOtherCategory = normalized.indirectTaxOtherCategory;
+        return row;
+      });
     }
 
     function singleBreakdownTotalHours(items) {
@@ -10086,14 +10400,16 @@ tbody tr { transition: background .14s ease; }
           const taskList = Array.isArray(item?.tasks) ? item.tasks : (Array.isArray(item?.taskList) ? item.taskList : []);
           const tasks = uniq(taskList.map((t) => String(t || "").trim()).filter(Boolean));
           const totalHours = totalHoursFromMap(dailyHours) || Number(item?.totalHours || 0);
-          return {
+          return normalizeIndirectTaxCategoryRow({
             key: String(item?.key || makeSingleClientDraftKey(client, rawItems.slice(0, index).map((row) => row?.key))),
             client,
             tasks,
             remarks: String(item?.remarks || "").trim(),
             dailyHours,
-            totalHours: Number((Number.isFinite(totalHours) && totalHours > 0 ? totalHours : 0).toFixed(2))
-          };
+            totalHours: Number((Number.isFinite(totalHours) && totalHours > 0 ? totalHours : 0).toFixed(2)),
+            indirectTaxCategory: String(item?.indirectTaxCategory || "").trim(),
+            indirectTaxOtherCategory: String(item?.indirectTaxOtherCategory || item?.indirectTaxOtherDetail || "").trim()
+          }, source?.role || source?.creatorRole || state.profile?.role);
         })
         .filter(Boolean)
         .filter((item) => {
@@ -10116,18 +10432,26 @@ tbody tr { transition: background .14s ease; }
         tasks,
         remarks: String(source?.remarks || "").trim(),
         dailyHours,
-        totalHours: Number((totalHoursFromMap(dailyHours) || Number(source?.totalHours || 0)).toFixed(2))
+        totalHours: Number((totalHoursFromMap(dailyHours) || Number(source?.totalHours || 0)).toFixed(2)),
+        indirectTaxCategory: String(source?.indirectTaxCategory || "").trim(),
+        indirectTaxOtherCategory: String(source?.indirectTaxOtherCategory || source?.indirectTaxOtherDetail || "").trim()
       }];
     }
 
-    function bulkBreakdownPayload(items, dates = []) {
-      return normalizeBulkClientBreakdown({ clientBreakdown: items }, dates).map((item) => ({
-        client: item.client,
-        tasks: Array.isArray(item.tasks) ? [...item.tasks] : [],
-        remarks: String(item.remarks || "").trim(),
-        dailyHours: normalizeDailyHours(item.dailyHours, dates),
-        totalHours: Number((totalHoursFromMap(item.dailyHours || {}) || Number(item.totalHours || 0)).toFixed(2))
-      }));
+    function bulkBreakdownPayload(items, dates = [], role = state.profile?.role) {
+      return normalizeBulkClientBreakdown({ clientBreakdown: items, role }, dates).map((item) => {
+        const row = {
+          client: item.client,
+          tasks: Array.isArray(item.tasks) ? [...item.tasks] : [],
+          remarks: String(item.remarks || "").trim(),
+          dailyHours: normalizeDailyHours(item.dailyHours, dates),
+          totalHours: Number((totalHoursFromMap(item.dailyHours || {}) || Number(item.totalHours || 0)).toFixed(2))
+        };
+        const normalized = normalizeIndirectTaxCategoryRow({ ...row, indirectTaxCategory: item.indirectTaxCategory, indirectTaxOtherCategory: item.indirectTaxOtherCategory }, role);
+        if (normalized.indirectTaxCategory) row.indirectTaxCategory = normalized.indirectTaxCategory;
+        if (normalized.indirectTaxOtherCategory) row.indirectTaxOtherCategory = normalized.indirectTaxOtherCategory;
+        return row;
+      });
     }
 
     function bulkDailyTotals(items, dates = []) {
@@ -10419,6 +10743,20 @@ tbody tr { transition: background .14s ease; }
         .join(" | ");
     }
 
+    function indirectTaxCategoryTextForRecord(record) {
+      if (record?.entryKind === "group") {
+        return rowNeedsIndirectTaxCategory(record, record.creatorRole || record.role || "") ? indirectTaxCategoryLabel(record) : "";
+      }
+      if (!["single", "bulk"].includes(record?.entryKind)) return "";
+      const breakdown = record.entryKind === "bulk"
+        ? normalizeBulkClientBreakdown(record, recordDates(record))
+        : normalizeSingleClientBreakdown(record);
+      return breakdown
+        .map((item) => indirectTaxCategoryLabel(item))
+        .filter(Boolean)
+        .join(" | ");
+    }
+
     function shortTaskLabel(task) {
       const text = String(task || "").trim();
       if (text.startsWith("Audit")) return "Audit";
@@ -10437,12 +10775,6 @@ tbody tr { transition: background .14s ease; }
         : '<span class="muted">-</span>';
     }
 
-    function dailyHoursSummary(map) {
-      return Object.entries(map || {})
-        .filter(([, hours]) => Number(hours) > 0)
-        .sort((a, b) => a[0].localeCompare(b[0]))
-        .map(([date, hours]) => `${formatDate(date)}: ${Number(hours).toFixed(1)} h`);
-    }
 
     function singleOrBulkHoursLabel(record) {
       if (record.entryKind === "leave") return "Leave";
@@ -10484,6 +10816,30 @@ tbody tr { transition: background .14s ease; }
 
     function isPendingParticipant(record) {
       return record.entryKind === "group" && record.status === "pending" && (record.pendingUserIds || []).includes(state.user?.uid || "");
+    }
+
+    // Plain-language explanation of why an entry's Edit button is unavailable.
+    // Used by the "Why can't I edit?" helper and by blocked-edit toasts so
+    // non-technical users always know the exact reason.
+    function whyCannotEdit(record) {
+      if (!record) return "This record could not be found. Try refreshing the page.";
+      if (isAdmin()) {
+        return "Admin accounts are review-only and cannot edit entries directly. Only the person who owns an entry can edit it. Use the Trail button to review its history.";
+      }
+      if (record.entryKind === "group") {
+        if (record.status === "pending") {
+          return "This group report is still waiting for teammate approval. It can be edited after everyone has responded and it is finalized.";
+        }
+        const isReporter = String(record.creatorUid || record.uid || "") === String(state.user?.uid || "");
+        if (!isReporter) {
+          return "This is a group report. Only the reporter who created it can change its shared details (client, work type, dates). If your hours or remarks are wrong, ask the reporter to update the report.";
+        }
+        return "You can edit this group report using its Edit button.";
+      }
+      if (!isOwner(record)) {
+        return "You can edit only entries that you created. This entry belongs to another user, so it is read-only for you.";
+      }
+      return "You can edit this entry using its Edit button.";
     }
 
     async function ensureLookups(force = false) {
@@ -10538,6 +10894,36 @@ tbody tr { transition: background .14s ease; }
           state.employees = [];
           state.lookups.users = [];
         }
+      }
+
+      await ensureIndirectTaxCategories(force);
+    }
+
+    async function ensureIndirectTaxCategories(force = false) {
+      if (!force && (state.lookups.indirectTaxCategories || []).length) return;
+      try {
+        const snap = await getDocs(collection(db, "indirect_tax_categories"));
+        let docs = snap.docs.map((item) => ({ id: item.id, ...(item.data() || {}) }))
+          .filter((item) => item.active !== false && String(item.name || "").trim());
+        if (!docs.length && isAdmin()) {
+          for (const name of DEFAULT_INDIRECT_TAX_CATEGORIES) {
+            await addDoc(collection(db, "indirect_tax_categories"), {
+              name,
+              active: true,
+              createdAt: Timestamp.now(),
+              createdByUid: state.user?.uid || "",
+              createdByName: profileName()
+            });
+          }
+          const seeded = await getDocs(collection(db, "indirect_tax_categories"));
+          docs = seeded.docs.map((item) => ({ id: item.id, ...(item.data() || {}) }))
+            .filter((item) => item.active !== false && String(item.name || "").trim());
+        }
+        state.indirectTaxCategoryDocs = docs.sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
+        state.lookups.indirectTaxCategories = state.indirectTaxCategoryDocs.map((item) => String(item.name || "").trim()).filter(Boolean);
+      } catch (_error) {
+        state.indirectTaxCategoryDocs = DEFAULT_INDIRECT_TAX_CATEGORIES.map((name, index) => ({ id: `default-${index}`, name, active: true, readonly: true }));
+        state.lookups.indirectTaxCategories = [...DEFAULT_INDIRECT_TAX_CATEGORIES];
       }
     }
 
@@ -10770,6 +11156,8 @@ tbody tr { transition: background .14s ease; }
         dates: uniq(values.dates || []).sort().join("|"),
         client: normalizeCompareText(values.client),
         tasks: normalizeListKey(values.tasks),
+        indirectTaxCategory: normalizeCompareText(values.indirectTaxCategory),
+        indirectTaxOtherCategory: normalizeCompareText(values.indirectTaxOtherCategory),
         members: uniq(values.memberIds || []).sort().join("|"),
         memberEntries: memberParts.join("||")
       });
@@ -10820,6 +11208,8 @@ tbody tr { transition: background .14s ease; }
         dates: recordDates(record),
         client: clientLabel(record),
         tasks: normalizeTaskList(record),
+        indirectTaxCategory: record.indirectTaxCategory || "",
+        indirectTaxOtherCategory: record.indirectTaxOtherCategory || record.indirectTaxOtherDetail || "",
         memberIds: memberIdList(record),
         memberEntries: record.memberEntries || {}
       }) === target) || null;
@@ -10887,6 +11277,9 @@ tbody tr { transition: background .14s ease; }
       }
     }
 
+    // Throttle so a burst of failed trail writes (e.g. inside a loop) shows
+    // at most one diagnostic toast to admins, never spamming the UI.
+    let lastTrailErrorToastAt = 0;
     async function addTrail(record, action, detail = "") {
       if (!state.user?.uid || !record?.id) return;
       try {
@@ -10902,8 +11295,14 @@ tbody tr { transition: background .14s ease; }
           detail,
           createdAt: Timestamp.now()
         });
-      } catch (_error) {
-        // no-op
+      } catch (error) {
+        // Trail writes stay best-effort (they never block the main action),
+        // but we surface failures so admins can diagnose audit gaps.
+        console.warn("Audit trail write failed:", record?.collection, record?.id, action, error);
+        if (isAdmin() && Date.now() - lastTrailErrorToastAt > 10000) {
+          lastTrailErrorToastAt = Date.now();
+          toast("Note: an audit-trail entry could not be saved. The main action still completed. Check console/rules if this repeats.", "warn");
+        }
       }
     }
 
@@ -11001,28 +11400,26 @@ tbody tr { transition: background .14s ease; }
       return parts.length ? parts.join(" · ") : "No field-level changes";
     }
 
+    // Returns a rich status object so the UI can tell apart three very
+    // different situations that used to all look like "no trail":
+    //   { ok:true, items:[...] }                     -> loaded (may be empty)
+    //   { ok:false, reason:"permission"|"network"|"error", error } -> could not load
     async function fetchTrail(collectionName, id) {
       try {
         const snap = await getDocs(query(collection(db, "entry_trails"), where("recordKey", "==", `${collectionName}:${id}`)));
-        return snap.docs
+        const items = snap.docs
           .map((item) => ({ id: item.id, ...(item.data() || {}) }))
           .sort((a, b) => tsMs(b.createdAt) - tsMs(a.createdAt));
-      } catch (_error) {
-        return [];
+        return { ok: true, items };
+      } catch (error) {
+        const code = String(error?.code || error?.message || "").toLowerCase();
+        let reason = "error";
+        if (code.includes("permission") || code.includes("insufficient")) reason = "permission";
+        else if (code.includes("unavailable") || code.includes("network") || code.includes("offline") || code.includes("failed to get") || code.includes("deadline") || code.includes("fetch")) reason = "network";
+        return { ok: false, items: [], reason, error };
       }
     }
 
-    async function fetchPrivateCollection(name) {
-      if (!state.user?.uid) return [];
-      try {
-        const snap = await getDocs(collection(db, "users", state.user.uid, name));
-        return snap.docs
-          .map((item) => ({ id: item.id, ...(item.data() || {}) }))
-          .sort((a, b) => tsMs(b.updatedAt || b.createdAt) - tsMs(a.updatedAt || a.createdAt));
-      } catch (_error) {
-        return [];
-      }
-    }
 
     async function finalizeGroupRecord(record, force = false) {
       if (!record || record.status !== "pending") return record;
@@ -11194,6 +11591,7 @@ tbody tr { transition: background .14s ease; }
         Client: clientLabel(record),
         Members: record.entryKind === "group" ? memberNames(record, visibleMemberIds(record)).join(", ") : "",
         WorkType: normalizeTaskList(record).join(" | "),
+        "Indirect Tax Category": indirectTaxCategoryTextForRecord(record),
         Hours: record.entryKind === "group" ? visibleMemberIds(record).map((uid) => `${lookupUser(uid)?.name || uid}: ${userEntryForGroup(record, uid).totalHours || 0}`).join(" | ") : singleOrBulkHoursLabel(record),
         Days: recordDates(record).length || 1,
         Remarks: record.entryKind === "group"
@@ -11543,12 +11941,21 @@ tbody tr { transition: background .14s ease; }
       const lower = value.toLowerCase();
       if (lower === "admin") return "admin";
       if (["employee / professional", "employee/professional", "employee professional"].includes(lower)) return "Employee / Professional";
+      if ([
+        "employee / professional - varun sir team",
+        "employee/professional - varun sir team",
+        "employee professional varun sir team",
+        "varun sir team",
+        "varun team"
+      ].includes(lower)) return VARUN_TEAM_ROLE;
       if (["ca article", "ca articles"].includes(lower)) return "CA Article";
       return "CA Article";
     }
 
     function defaultDepartmentForRole(role) {
-      return role === "CA Article" ? "CA Articles" : "Audit Team";
+      if (role === "CA Article") return "CA Articles";
+      if (role === VARUN_TEAM_ROLE) return "Tax Team";
+      return "Audit Team";
     }
 
     function readSpreadsheetCell(row, keys = []) {
@@ -11605,7 +12012,7 @@ tbody tr { transition: background .14s ease; }
           const dateOk = (!from || dates.some((date) => date >= from)) && (!to || dates.some((date) => date <= to));
           const taskOk = !task || normalizeTaskList(record).includes(task);
           const kind = String(record.entryKind || "single").toLowerCase();
-          const searchBlob = [displayDate(record), clientLabel(record), normalizeTaskList(record).join(" "), remarksTextForRecord(record), memberNames(record).join(" "), kind, kind === "single" ? "single entry" : kind === "bulk" ? "bulk entry" : "group entry group report"].join(" ").toLowerCase();
+          const searchBlob = [displayDate(record), clientLabel(record), normalizeTaskList(record).join(" "), indirectTaxCategoryTextForRecord(record), remarksTextForRecord(record), memberNames(record).join(" "), kind, kind === "single" ? "single entry" : kind === "bulk" ? "bulk entry" : "group entry group report"].join(" ").toLowerCase();
           return monthOk && dateOk && taskOk && (!q || searchBlob.includes(q));
         })
         .sort(sortRecords);
@@ -11629,7 +12036,7 @@ tbody tr { transition: background .14s ease; }
           const roleOk = !role || String(record.creatorRole || record.role || "").toLowerCase() === String(role).toLowerCase();
           const taskOk = !task || normalizeTaskList(record).includes(task);
           const kind = String(record.entryKind || "single").toLowerCase();
-          const searchBlob = [displayDate(record), clientLabel(record), normalizeTaskList(record).join(" "), remarksTextForRecord(record, { adminView: true }), record.name, record.email, record.creatorName, record.creatorEmail, memberNames(record).join(" "), kind, kind === "single" ? "single entry" : kind === "bulk" ? "bulk entry" : "group entry group report"].join(" ").toLowerCase();
+          const searchBlob = [displayDate(record), clientLabel(record), normalizeTaskList(record).join(" "), indirectTaxCategoryTextForRecord(record), remarksTextForRecord(record, { adminView: true }), record.name, record.email, record.creatorName, record.creatorEmail, memberNames(record).join(" "), kind, kind === "single" ? "single entry" : kind === "bulk" ? "bulk entry" : "group entry group report"].join(" ").toLowerCase();
           return dateOk && userOk && roleOk && taskOk && (!q || searchBlob.includes(q));
         })
         .sort(sortRecords);
@@ -12149,6 +12556,7 @@ tbody tr { transition: background .14s ease; }
                 </select>
                 <div class="client-task-chips" id="entry-client-task-chips-${safe(item.key)}">${taskChipsHtml}</div>
               </div>
+              ${indirectTaxCategoryFieldHtml({ prefix: "entry-client", key: item.key, row: item })}
             </div>
           `;
           }).join("")
@@ -12181,8 +12589,31 @@ tbody tr { transition: background .14s ease; }
             if (!row) return;
             if (!Array.isArray(row.tasks)) row.tasks = [];
             if (!row.tasks.includes(value)) row.tasks.push(value);
+            if (!rowNeedsIndirectTaxCategory(row)) {
+              row.indirectTaxCategory = "";
+              row.indirectTaxOtherCategory = "";
+            }
             taskPicker.value = "";
             renderSingleEntryClientBreakdown();
+          });
+        }
+        const categoryPicker = byId(`entry-client-indirect-category-${item.key}`);
+        if (categoryPicker) {
+          categoryPicker.addEventListener("change", () => {
+            const row = (state.entryClientDrafts || []).find((x) => x.key === item.key);
+            if (!row) return;
+            row.indirectTaxCategory = String(categoryPicker.value || "").trim();
+            if (normalizeCompareText(row.indirectTaxCategory) !== normalizeCompareText(INDIRECT_TAX_OTHER_CATEGORY)) {
+              row.indirectTaxOtherCategory = "";
+            }
+            renderSingleEntryClientBreakdown();
+          });
+        }
+        const otherInput = byId(`entry-client-indirect-other-${item.key}`);
+        if (otherInput) {
+          otherInput.addEventListener("input", () => {
+            const row = (state.entryClientDrafts || []).find((x) => x.key === item.key);
+            if (row) row.indirectTaxOtherCategory = String(otherInput.value || "").trim();
           });
         }
       });
@@ -12414,7 +12845,11 @@ tbody tr { transition: background .14s ease; }
               const key = recordKey(record);
               const hours = record.entryKind === "group" ? groupHoursLabel(record, state.user?.uid || "") : singleOrBulkHoursLabel(record);
               const actions = [];
-              if (canEditRecord(record)) actions.push(`<button class="btn btn-outline small" type="button" data-action="edit-record" data-collection="${record.collection}" data-id="${record.id}">Edit</button>`);
+              if (canEditRecord(record)) {
+                actions.push(`<button class="btn btn-outline small" type="button" data-action="edit-record" data-collection="${record.collection}" data-id="${record.id}">Edit</button>`);
+              } else if (!isAdmin() && record.entryKind !== "leave") {
+                actions.push(`<button class="btn btn-ghost small" type="button" data-action="why-no-edit" data-collection="${record.collection}" data-id="${record.id}" title="Why can't I edit this entry?" aria-label="Why can't I edit this entry?">Why?</button>`);
+              }
               if (canDeleteRecord(record)) actions.push(`<button class="btn btn-ghost small" type="button" data-action="delete-record" data-context="my" data-collection="${record.collection}" data-id="${record.id}">Delete</button>`);
               actions.push(`<button class="btn btn-outline small" type="button" data-action="view-trail" data-collection="${record.collection}" data-id="${record.id}">Trail</button>`);
               actions.push(`<button class="btn btn-wa small" type="button" data-action="whatsapp-share" data-collection="${record.collection}" data-id="${record.id}" title="Share to WhatsApp" aria-label="Share this entry to WhatsApp"><svg viewBox="0 0 32 32" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M19.11 17.205c-.372 0-1.088 1.39-1.518 1.39a.633.633 0 0 1-.315-.1c-.802-.402-1.504-.817-2.163-1.447-.545-.516-1.146-1.29-1.46-1.963a.426.426 0 0 1-.073-.215c0-.33.99-.945.99-1.49 0-.143-.73-2.09-.832-2.335-.143-.372-.214-.487-.6-.487-.187 0-.36-.043-.53-.043-.302 0-.53.115-.715.315-.36.39-1.085 1.095-1.085 2.582 0 .544.044 1.075.244 1.59.474 1.234 1.92 3.32 3.7 4.45 1.59 1.014 3.394 1.674 4.85 1.674 1.43 0 2.91-.673 3.45-1.876.244-.534.244-1.012.187-1.118-.07-.143-.2-.215-.43-.33-.227-.115-1.74-.86-2.005-.945-.265-.085-.502-.115-.7.085zm-3.114 7.435c-3.265 0-6.31-1.42-8.42-3.857L7 21.04l1.41-3.957A8.81 8.81 0 0 1 7.13 14a8.86 8.86 0 0 1 17.74 0c0 4.86-3.967 8.83-8.87 8.83zM16 4C9.928 4 5 8.928 5 14.987c0 1.926.5 3.81 1.45 5.466L5 26.07l5.78-1.494a10.97 10.97 0 0 0 5.22 1.34c6.072 0 11-4.928 11-10.987S22.072 4 16 4z"/></svg></button>`);
@@ -12546,7 +12981,7 @@ tbody tr { transition: background .14s ease; }
               ${breakdown.map((item) => `
                 <div class="entry-detail-card">
                   <strong>${safe(item.client || "Client")}</strong>
-                  <div class="subline">${safe(Number(item.hours || 0).toFixed(1))} h</div>
+                  <div class="subline">${safe(Number(item.hours || 0).toFixed(1))} h${indirectTaxCategoryLabel(item) ? ` | ${safe(indirectTaxCategoryLabel(item))}` : ""}</div>
                   <div class="entry-detail-note">${safe(item.remarks || "-")}</div>
                 </div>
               `).join("")}
@@ -12563,7 +12998,7 @@ tbody tr { transition: background .14s ease; }
               ${breakdown.map((item) => `
                 <div class="entry-detail-card">
                   <strong>${safe(item.client || "Client")}</strong>
-                  <div class="subline">${safe(Number(item.totalHours || totalHoursFromMap(item.dailyHours || {}) || 0).toFixed(1))} h total</div>
+                  <div class="subline">${safe(Number(item.totalHours || totalHoursFromMap(item.dailyHours || {}) || 0).toFixed(1))} h total${indirectTaxCategoryLabel(item) ? ` | ${safe(indirectTaxCategoryLabel(item))}` : ""}</div>
                   <div class="entry-detail-note">${safe(item.remarks || "-")}</div>
                 </div>
               `).join("")}
@@ -13210,6 +13645,332 @@ tbody tr { transition: background .14s ease; }
       updateAdminLoadNote();
     }
 
+    function indirectTaxRowKey(collectionName, id, index) {
+      return `${collectionName}:${id}:${index}`;
+    }
+
+    function enteredIsoDate(record) {
+      const ms = tsMs(record?.createdAt) || Number(record?.clientSubmitAtMs || 0) || tsMs(record?.updatedAt);
+      if (!ms) return "";
+      try {
+        return new Date(ms).toISOString().slice(0, 10);
+      } catch (_error) {
+        return "";
+      }
+    }
+
+    function indirectTaxAnalysisRows() {
+      const rows = [];
+      (state.allEntries || []).forEach((record) => {
+        const role = record.creatorRole || record.role || "";
+        if (!isVarunTeamRole(role)) return;
+        if (record.entryKind === "group") {
+          if (!isIndirectTaxTaskList(normalizeTaskList(record))) return;
+          const categoryText = indirectTaxCategoryLabel(record);
+          const entered = enteredIsoDate(record);
+          const dates = recordDates(record);
+          visibleMemberIds(record).forEach((uid) => {
+            const entry = userEntryForGroup(record, uid);
+            rows.push({
+              key: indirectTaxRowKey(record.collection, record.id, `group-${uid}`),
+              record,
+              collection: record.collection,
+              id: record.id,
+              index: uid,
+              entryKind: record.entryKind,
+              dates,
+              dateLabel: displayDate(record),
+              entered,
+              enteredText: entered ? formatDate(entered) : "-",
+              employee: entry.name || lookupUser(uid)?.name || uid,
+              email: entry.email || lookupUser(uid)?.email || "",
+              role,
+              client: normalizeClientList(record)[0] || "-",
+              tasks: normalizeTaskList(record),
+              category: categoryText || "Uncategorized",
+              rawCategory: String(record.indirectTaxCategory || "").trim(),
+              otherCategory: String(record.indirectTaxOtherCategory || record.indirectTaxOtherDetail || "").trim(),
+              hours: Number(entry.totalHours || totalHoursFromMap(entry.dailyHours || {}) || 0),
+              remarks: String(entry.remarks || "").trim()
+            });
+          });
+          return;
+        }
+        if (!["single", "bulk"].includes(record.entryKind)) return;
+        const dates = recordDates(record);
+        const breakdown = record.entryKind === "bulk"
+          ? normalizeBulkClientBreakdown(record, dates)
+          : normalizeSingleClientBreakdown(record);
+        breakdown.forEach((item, index) => {
+          if (!isIndirectTaxTaskList(item.tasks || [])) return;
+          const categoryText = indirectTaxCategoryLabel(item);
+          const entered = enteredIsoDate(record);
+          rows.push({
+            key: indirectTaxRowKey(record.collection, record.id, index),
+            record,
+            collection: record.collection,
+            id: record.id,
+            index,
+            entryKind: record.entryKind,
+            dates,
+            dateLabel: displayDate(record),
+            entered,
+            enteredText: entered ? formatDate(entered) : "-",
+            employee: record.creatorName || record.name || "-",
+            email: record.creatorEmail || record.email || "",
+            role,
+            client: item.client || "-",
+            tasks: Array.isArray(item.tasks) ? item.tasks : [],
+            category: categoryText || "Uncategorized",
+            rawCategory: String(item.indirectTaxCategory || "").trim(),
+            otherCategory: String(item.indirectTaxOtherCategory || item.indirectTaxOtherDetail || "").trim(),
+            hours: record.entryKind === "bulk" ? Number(item.totalHours || totalHoursFromMap(item.dailyHours || {}) || 0) : Number(item.hours || 0),
+            remarks: String(item.remarks || "").trim()
+          });
+        });
+      });
+      return rows.sort((a, b) => {
+        const byDate = String(b.dates?.[b.dates.length - 1] || "").localeCompare(String(a.dates?.[a.dates.length - 1] || ""));
+        if (byDate) return byDate;
+        return String(b.entered || "").localeCompare(String(a.entered || ""));
+      });
+    }
+
+    function getFilteredIndirectTaxRows() {
+      const q = String(byId("indirect-tax-search")?.value || "").trim().toLowerCase();
+      const from = byId("indirect-tax-from")?.value || "";
+      const to = byId("indirect-tax-to")?.value || "";
+      const category = byId("indirect-tax-category-filter")?.value || "";
+      const entered = byId("indirect-tax-entered")?.value || "";
+      return indirectTaxAnalysisRows().filter((row) => {
+        const dateOk = (!from || row.dates.some((date) => date >= from)) && (!to || row.dates.some((date) => date <= to));
+        const categoryOk = !category || normalizeCompareText(row.rawCategory || row.category) === normalizeCompareText(category);
+        const enteredOk = !entered || row.entered === entered;
+        const searchBlob = [row.dateLabel, row.enteredText, row.employee, row.email, row.client, row.tasks.join(" "), row.category, row.remarks, row.entryKind].join(" ").toLowerCase();
+        return dateOk && categoryOk && enteredOk && (!q || searchBlob.includes(q));
+      });
+    }
+
+    function renderIndirectTaxCategoryFilterOptions() {
+      const select = byId("indirect-tax-category-filter");
+      if (!select) return;
+      const current = select.value || "";
+      const options = indirectTaxCategoryOptions();
+      select.innerHTML = `<option value="">All categories</option>${options.map((item) => `<option value="${safe(item)}" ${item === current ? "selected" : ""}>${safe(item)}</option>`).join("")}`;
+      if (current && !options.includes(current)) select.value = "";
+    }
+
+    function renderIndirectTaxFilterSummary() {
+      const chips = [];
+      const q = String(byId("indirect-tax-search")?.value || "").trim();
+      const from = byId("indirect-tax-from")?.value || "";
+      const to = byId("indirect-tax-to")?.value || "";
+      const category = byId("indirect-tax-category-filter")?.value || "";
+      const entered = byId("indirect-tax-entered")?.value || "";
+      if (q) chips.push(filterChip("Search", q));
+      if (from) chips.push(filterChip("From", formatDate(from)));
+      if (to) chips.push(filterChip("To", formatDate(to)));
+      if (category) chips.push(filterChip("Category", category));
+      if (entered) chips.push(filterChip("Entered", formatDate(entered)));
+      setFilterSummary("indirect-tax-filter-summary", chips);
+    }
+
+    function renderIndirectTaxStats(rows) {
+      const clients = new Set();
+      const categories = new Set();
+      let hours = 0;
+      (rows || []).forEach((row) => {
+        clients.add(normalizeCompareText(row.client));
+        categories.add(normalizeCompareText(row.category));
+        hours += Number(row.hours || 0);
+      });
+      renderStatCards("indirect-tax-stats", [
+        { label: "Entries", value: String(rows.length), icon: "&#128221;" },
+        { label: "Hours", value: hours.toFixed(1), icon: "&#9201;" },
+        { label: "Clients", value: String([...clients].filter(Boolean).length), icon: "&#129309;" },
+        { label: "Categories", value: String([...categories].filter(Boolean).length), icon: "&#128202;" }
+      ]);
+    }
+
+    function renderIndirectTaxTable() {
+      renderIndirectTaxCategoryFilterOptions();
+      const rows = getFilteredIndirectTaxRows();
+      renderIndirectTaxStats(rows);
+      renderIndirectTaxFilterSummary();
+      const body = byId("indirect-tax-table-body");
+      if (!body) return;
+      body.innerHTML = rows.length
+        ? rows.map((row) => {
+            // Admin has no edit access to entries. The Indirect Tax page is
+            // view / trail / delete only; classification is fixed by the entry
+            // owner (Varun Sir Team member), not by admin.
+            return `
+              <tr class="timesheet-row" tabindex="0" data-collection="${safe(row.collection)}" data-id="${safe(row.id)}" title="Double-click to read full entry">
+                <td>${safe(row.dateLabel)}</td>
+                <td>${safe(row.enteredText)}</td>
+                <td><div class="person"><strong>${safe(row.employee)}</strong><div class="subline">${safe(row.email)}</div></div></td>
+                <td>${safe(row.client)}</td>
+                <td><span class="employee-table-pill status active">${safe(row.category)}</span><div class="subline">${safe(row.entryKind.toUpperCase())}</div></td>
+                <td><div class="chip-row">${workTypeHtml(row.tasks)}</div></td>
+                <td>${safe(row.hours.toFixed(2))} h</td>
+                <td>${remarksHtml({ ...row.record, entryKind: "single", remarks: row.remarks, client: row.client, clients: [row.client], clientBreakdown: [{ client: row.client, remarks: row.remarks, hours: row.hours, tasks: row.tasks }] }, true)}</td>
+                <td><div class="actions"><button class="btn btn-outline small" type="button" data-action="indirect-tax-detail" data-key="${safe(row.key)}">View</button><button class="btn btn-outline small" type="button" data-action="view-trail" data-collection="${safe(row.collection)}" data-id="${safe(row.id)}">Trail</button><button class="btn btn-ghost small" type="button" data-action="delete-record" data-context="admin" data-collection="${safe(row.collection)}" data-id="${safe(row.id)}">Delete</button></div></td>
+              </tr>
+            `;
+          }).join("")
+        : `<tr><td colspan="9" class="muted">No Varun Sir Team indirect-tax records found.</td></tr>`;
+    }
+
+    function getFilteredIndirectTaxCategories() {
+      const q = String(byId("indirect-tax-category-search")?.value || "").trim().toLowerCase();
+      return (state.indirectTaxCategoryDocs || [])
+        .filter((item) => item.active !== false && String(item.name || "").trim())
+        .filter((item) => !q || String(item.name || "").toLowerCase().includes(q))
+        .sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
+    }
+
+    function renderIndirectTaxCategorySummary() {
+      const q = String(byId("indirect-tax-category-search")?.value || "").trim();
+      setFilterSummary("indirect-tax-category-summary", q ? [filterChip("Search", q)] : []);
+    }
+
+    function renderIndirectTaxCategoryTable() {
+      const rows = getFilteredIndirectTaxCategories();
+      renderIndirectTaxCategorySummary();
+      const body = byId("indirect-tax-category-table-body");
+      if (!body) return;
+      body.innerHTML = rows.length
+        ? rows.map((item, index) => `
+            <tr>
+              <td>${index + 1}</td>
+              <td>${safe(item.name || "-")}</td>
+              <td><div class="actions">${item.readonly ? `<span class="subline">Default fallback</span>` : `<button class="btn btn-outline small" type="button" data-action="edit-indirect-category" data-id="${safe(item.id)}">Edit</button><button class="btn btn-ghost small" type="button" data-action="delete-indirect-category" data-id="${safe(item.id)}">Delete</button>`}</div></td>
+            </tr>
+          `).join("")
+        : `<tr><td colspan="3" class="muted">No categories found.</td></tr>`;
+    }
+
+    function renderIndirectTaxPage() {
+      renderIndirectTaxTable();
+      renderIndirectTaxCategoryTable();
+    }
+
+    async function loadIndirectTaxPage(forceRefresh = false) {
+      ensureAdminDefaultAllRange();
+      if (byId("indirect-tax-from") && !byId("indirect-tax-from").value) byId("indirect-tax-from").value = state.allEntriesLoadedFrom || byId("all-from")?.value || `${todayMonthStr()}-01`;
+      if (byId("indirect-tax-to") && !byId("indirect-tax-to").value) byId("indirect-tax-to").value = state.allEntriesLoadedTo || byId("all-to")?.value || todayStr();
+      await ensureLookups(true);
+      await ensureIndirectTaxCategories(forceRefresh);
+      await loadAll(forceRefresh || !state.allEntriesLoaded);
+      renderIndirectTaxPage();
+    }
+
+    function clearIndirectTaxFilters() {
+      setFieldValue("indirect-tax-search", "");
+      setFieldValue("indirect-tax-from", `${todayMonthStr()}-01`);
+      setFieldValue("indirect-tax-to", todayStr());
+      setFieldValue("indirect-tax-category-filter", "");
+      setFieldValue("indirect-tax-entered", "");
+      renderIndirectTaxTable();
+    }
+
+    async function loadSelectedIndirectTaxRange() {
+      setFieldValue("all-from", byId("indirect-tax-from")?.value || `${todayMonthStr()}-01`);
+      setFieldValue("all-to", byId("indirect-tax-to")?.value || todayStr());
+      await loadAll(true);
+      renderIndirectTaxTable();
+      toast("Indirect tax range loaded.", "success");
+    }
+
+    function exportIndirectTaxExcel() {
+      const rows = getFilteredIndirectTaxRows().map((row) => ({
+        Date: row.dateLabel,
+        "Entered on": row.enteredText,
+        Employee: row.employee,
+        Email: row.email,
+        Client: row.client,
+        Category: row.category,
+        "Work type": row.tasks.join(" | "),
+        Hours: row.hours,
+        Remarks: row.remarks,
+        Type: row.entryKind
+      }));
+      exportRowsToExcel(rows, `indirect-tax-analysis-${todayStr()}.xlsx`, "Indirect Tax Analysis");
+    }
+
+    function openIndirectTaxCategoryModal(categoryDoc = null) {
+      openModal(
+        categoryDoc ? "Edit Indirect Tax Category" : "Add Indirect Tax Category",
+        "Categories saved here appear in the Varun Sir Team indirect-tax dropdown.",
+        `
+          <form id="indirect-category-form" class="field-stack">
+            <label class="field"><span>Category name</span><input id="indirect-category-name" type="text" value="${safe(categoryDoc?.name || "")}" placeholder="Category name"></label>
+            <div class="button-row"><button class="btn btn-ghost" id="indirect-category-cancel" type="button">Cancel</button><button id="indirect-category-submit" class="btn btn-primary" type="submit">${categoryDoc ? "Save" : "Add"} Category</button></div>
+          </form>
+        `
+      );
+      byId("indirect-category-cancel")?.addEventListener("click", closeModal);
+      let saving = false;
+      byId("indirect-category-form")?.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (saving) return;
+        saving = true;
+        setButtonBusy(byId("indirect-category-submit"), true, categoryDoc ? "Saving..." : "Adding...");
+        try {
+          const name = String(byId("indirect-category-name")?.value || "").trim();
+          if (!name) return toast("Category name is required.", "warn");
+          const duplicate = (state.indirectTaxCategoryDocs || []).find((item) => normalizeCompareText(item.name) === normalizeCompareText(name) && item.id !== categoryDoc?.id);
+          if (duplicate) return toast("This category already exists.", "warn");
+          if (categoryDoc) {
+            await updateDoc(doc(db, "indirect_tax_categories", categoryDoc.id), { name, updatedAt: Timestamp.now(), updatedByUid: state.user?.uid || "", updatedByName: profileName() });
+          } else {
+            await addDoc(collection(db, "indirect_tax_categories"), { name, active: true, createdAt: Timestamp.now(), createdByUid: state.user?.uid || "", createdByName: profileName() });
+          }
+          await writeLog({ action: `${profileName()} ${categoryDoc ? "updated" : "added"} an indirect tax category`, actorName: profileName(), actorEmail: profileEmail(), type: "user", detail: name, detailAdmin: categoryDoc?.id || "new-indirect-tax-category" });
+          closeModal();
+          toast(categoryDoc ? "Category updated." : "Category added.", "success");
+          await ensureIndirectTaxCategories(true);
+          renderIndirectTaxPage();
+        } finally {
+          saving = false;
+          setButtonBusy(byId("indirect-category-submit"), false);
+        }
+      });
+    }
+
+    function openDeleteIndirectTaxCategoryModal(categoryDoc) {
+      openModal(
+        "Delete Indirect Tax Category",
+        "This removes the category from future dropdown choices. Existing timesheet entries keep their saved category text.",
+        `
+          <div class="field-stack">
+            <div class="hub-card"><strong>${safe(categoryDoc?.name || "-")}</strong></div>
+            <div class="button-row"><button class="btn btn-ghost" id="indirect-category-delete-cancel" type="button">Cancel</button><button class="btn btn-primary" id="indirect-category-delete-confirm" type="button">Delete Category</button></div>
+          </div>
+        `
+      );
+      byId("indirect-category-delete-cancel")?.addEventListener("click", closeModal);
+      byId("indirect-category-delete-confirm")?.addEventListener("click", async () => {
+        await deleteDoc(doc(db, "indirect_tax_categories", categoryDoc.id));
+        await writeLog({ action: `${profileName()} deleted an indirect tax category`, actorName: profileName(), actorEmail: profileEmail(), type: "user", detail: categoryDoc?.name || categoryDoc?.id || "-", detailAdmin: categoryDoc?.id || "-" });
+        closeModal();
+        toast("Category deleted.", "warn");
+        await ensureIndirectTaxCategories(true);
+        renderIndirectTaxPage();
+      });
+    }
+
+    function findIndirectTaxAnalysisRow(rowKey) {
+      return indirectTaxAnalysisRows().find((row) => row.key === rowKey) || null;
+    }
+
+    // Admin has NO edit access to any user's entries (all roles). The former
+    // admin indirect-tax edit flow is permanently disabled; entries can only be
+    // edited by their owner. Kept as a guarded stub to reject any stray trigger.
+    function openAdminIndirectTaxEditModal() {
+      toast("Admin cannot edit entries. Only the entry owner can edit their own records.", "warn");
+    }
+
     /* ==================================================================
        REPORTING CHECK — admin-only feature.
        For a chosen date range and employee filter, computes who reported
@@ -13335,15 +14096,6 @@ tbody tr { transition: background .14s ease; }
       return set;
     }
 
-    function reportingLatestEntryAt(uid) {
-      // Most recent createdAtMs / submittedAt timestamp from this user's entries
-      let latest = 0;
-      reportingRecordsForUid(uid).forEach((rec) => {
-        const t = Number(rec.createdAtMs || rec.updatedAtMs || rec.submittedAtMs || 0);
-        if (t > latest) latest = t;
-      });
-      return latest;
-    }
 
     async function runReportingCheck() {
       if (!isAdmin()) return;
@@ -13619,8 +14371,7 @@ tbody tr { transition: background .14s ease; }
                   <label class="field compact">
                     <span>Role on approval</span>
                     <select id="pending-role-${user.id}">
-                      <option value="CA Article" ${role === "CA Article" ? "selected" : ""}>CA Article</option>
-                      <option value="Employee / Professional" ${role === "Employee / Professional" ? "selected" : ""}>Employee / Professional</option>
+                      ${ROLE_OPTIONS.filter((item) => item !== "Admin").map((item) => `<option value="${safe(item)}" ${role === item ? "selected" : ""}>${safe(item)}</option>`).join("")}
                     </select>
                   </label>
                   <div class="actions">
@@ -13706,6 +14457,8 @@ tbody tr { transition: background .14s ease; }
                   ? "admin"
                   : String(role) === "CA Article"
                     ? "article"
+                    : String(role) === VARUN_TEAM_ROLE
+                      ? "varun"
                     : "";
                 const statusClass = String(status).toLowerCase();
                 const pinClass = user.pinSet ? "ready" : "reset";
@@ -13718,7 +14471,7 @@ tbody tr { transition: background .14s ease; }
                   <td>${safe(user.department || "-")}</td>
                   <td><span class="employee-table-pill status ${safe(statusClass)}">${safe(status)}</span></td>
                   <td><span class="employee-table-pill pin ${safe(pinClass)}">${safe(pinState)}</span></td>
-                  <td><div class="actions">${user.approved === false ? `<button class="btn btn-outline small" type="button" data-action="approve-user" data-id="${user.id}" data-role="${safe(normalizeRoleValue(user.role || "CA Article"))}">Approve</button><button class="btn btn-ghost small" type="button" data-action="open-reject-user" data-id="${user.id}">Reject</button>` : ""}${user.locked ? `<button class="btn btn-outline small" type="button" data-action="unlock-user" data-id="${user.id}">Unlock</button>` : ""}${showCalendar ? `<button class="btn btn-outline small" type="button" data-action="open-admin-calendar" data-id="${user.id}">Calendar</button>` : ""}${String(user.role || "").toLowerCase() !== "admin" ? `<button class="btn btn-outline small" type="button" data-action="admin-reset-pin" data-id="${user.id}">Reset PIN</button><button class="btn btn-ghost small" type="button" data-action="open-remove-user" data-id="${user.id}">Remove</button>` : `<span class="subline">Protected</span>`}</div></td>
+                  <td><div class="actions">${user.approved === false ? `<button class="btn btn-outline small" type="button" data-action="approve-user" data-id="${user.id}" data-role="${safe(normalizeRoleValue(user.role || "CA Article"))}">Approve</button><button class="btn btn-ghost small" type="button" data-action="open-reject-user" data-id="${user.id}">Reject</button>` : ""}${user.locked ? `<button class="btn btn-outline small" type="button" data-action="unlock-user" data-id="${user.id}">Unlock</button>` : ""}${showCalendar ? `<button class="btn btn-outline small" type="button" data-action="open-admin-calendar" data-id="${user.id}">Calendar</button>` : ""}${String(user.role || "").toLowerCase() !== "admin" ? `<button class="btn btn-outline small" type="button" data-action="open-change-role" data-id="${user.id}">Change Role</button><button class="btn btn-outline small" type="button" data-action="admin-reset-pin" data-id="${user.id}">Reset PIN</button><button class="btn btn-ghost small" type="button" data-action="open-remove-user" data-id="${user.id}">Remove</button>` : `<span class="subline">Protected</span>`}</div></td>
                 </tr>
               `;
               }
@@ -13782,6 +14535,15 @@ tbody tr { transition: background .14s ease; }
       });
     }
 
+    function logFilterSignature() {
+      return [
+        String(byId("log-search")?.value || "").trim().toLowerCase(),
+        byId("log-from")?.value || "",
+        byId("log-to")?.value || "",
+        byId("log-type-filter")?.value || ""
+      ].join("|");
+    }
+
     function renderLogsPage() {
       const logs = getFilteredLogs();
       const recycleVisible = getFilteredRecycle();
@@ -13790,8 +14552,27 @@ tbody tr { transition: background .14s ease; }
       renderLogFilterSummary();
       const host = byId("logs-list");
       if (host) {
+        // Reset the visible page whenever the filters change so users always
+        // start from the newest matching logs.
+        const sig = logFilterSignature();
+        if (sig !== state.logsFilterSig) {
+          state.logsFilterSig = sig;
+          state.logsRenderLimit = ADMIN_LOG_PAGE_SIZE;
+        }
+        if (!Number(state.logsRenderLimit) || state.logsRenderLimit < ADMIN_LOG_PAGE_SIZE) {
+          state.logsRenderLimit = ADMIN_LOG_PAGE_SIZE;
+        }
+        const shownLogs = logs.slice(0, state.logsRenderLimit);
+        const hasMore = logs.length > shownLogs.length;
+        const loadMoreHtml = hasMore
+          ? `<div class="button-row" style="justify-content:center;margin-top:14px;">
+               <button class="btn btn-outline" type="button" data-action="logs-load-more">Load more (showing ${shownLogs.length} of ${logs.length})</button>
+             </div>`
+          : (logs.length > ADMIN_LOG_PAGE_SIZE
+              ? `<div class="muted" style="text-align:center;margin-top:12px;">Showing all ${logs.length} matching logs.</div>`
+              : "");
         host.innerHTML = logs.length
-          ? `<div class="activity-log-list">${logs.map((item) => {
+          ? `<div class="activity-log-list">${shownLogs.map((item) => {
               const detailLines = visibleLogLines(item);
               const actorName = item.actorName || item.actorEmail || "-";
               const actorEmail = item.actorEmail && item.actorEmail !== actorName ? item.actorEmail : "";
@@ -13820,7 +14601,7 @@ tbody tr { transition: background .14s ease; }
                 </div>
               </div>
             `;
-            }).join("")}</div>`
+            }).join("")}</div>${loadMoreHtml}`
           : `
               <div class="compact-empty">
                 <span class="card-icon" aria-hidden="true">&#128221;</span>
@@ -13984,6 +14765,11 @@ tbody tr { transition: background .14s ease; }
         updateRefreshButtonMeta();
         return;
       }
+      if (state.currentPage === "page-indirect-tax") {
+        await loadIndirectTaxPage(!!options.force);
+        updateRefreshButtonMeta();
+        return;
+      }
     }
 
     async function submitSingleEntry(event) {
@@ -14018,6 +14804,18 @@ tbody tr { transition: background .14s ease; }
         if (clientMissingTasks) {
           if (error) error.textContent = `Select at least one work type for ${clientMissingTasks.client}.`;
           focusSingleClientCard(clientMissingTasks.key);
+          return;
+        }
+        const missingIndirectCategory = clientRows.find((row) => rowNeedsIndirectTaxCategory(row) && !String(row.indirectTaxCategory || "").trim());
+        if (missingIndirectCategory) {
+          if (error) error.textContent = `Select an indirect tax category for ${missingIndirectCategory.client}.`;
+          focusSingleClientCard(missingIndirectCategory.key);
+          return;
+        }
+        const missingOtherCategory = clientRows.find((row) => rowNeedsIndirectTaxCategory(row) && normalizeCompareText(row.indirectTaxCategory) === normalizeCompareText(INDIRECT_TAX_OTHER_CATEGORY) && !String(row.indirectTaxOtherCategory || "").trim());
+        if (missingOtherCategory) {
+          if (error) error.textContent = `Describe the other indirect tax category for ${missingOtherCategory.client}.`;
+          focusSingleClientCard(missingOtherCategory.key);
           return;
         }
         const unionTasks = uniq(clientRows.flatMap((row) => Array.isArray(row.tasks) ? row.tasks : []));
@@ -14194,26 +14992,92 @@ tbody tr { transition: background .14s ease; }
       }
     }
 
+    function trailItemsHtml(items) {
+      return `<div class="trail-list">${items
+        .map(
+          (item) => `
+            <div class="hub-card trail-card">
+              <strong>${safe(item.action || "-")}</strong>
+              <div class="subline">${safe(item.actorName || item.actorEmail || "-")}</div>
+              ${item.detail ? `<div class="subline">${safe(item.detail)}</div>` : ""}
+              <small>${safe(nowTimestampText(item.createdAt))}</small>
+            </div>
+          `
+        )
+        .join("")}</div>`;
+    }
+
+    function trailEmptyStateHtml(result) {
+      // No error -> the entry simply has no recorded actions yet.
+      if (result?.ok) {
+        return `
+          <div class="compact-empty">
+            <span class="card-icon" aria-hidden="true">&#128220;</span>
+            <div>
+              <strong>No trail recorded yet</strong>
+              <small>Create, edit, delete, and approval actions for this entry will appear here once they happen.</small>
+            </div>
+          </div>`;
+      }
+      const reason = result?.reason || "error";
+      const messages = {
+        permission: {
+          icon: "&#128274;",
+          title: "You don't have access to this trail",
+          copy: "Your account is not allowed to read the history for this entry. Ask an administrator if you need it."
+        },
+        network: {
+          icon: "&#128246;",
+          title: "Could not load the trail",
+          copy: "This looks like a network or connection issue. Check your internet and use Retry below."
+        },
+        error: {
+          icon: "&#9888;",
+          title: "Could not load the trail",
+          copy: "Something went wrong while loading the history. Please use Retry below, or try again later."
+        }
+      };
+      const info = messages[reason] || messages.error;
+      return `
+        <div class="compact-empty">
+          <span class="card-icon" aria-hidden="true">${info.icon}</span>
+          <div>
+            <strong>${info.title}</strong>
+            <small>${info.copy}</small>
+          </div>
+        </div>
+        <div class="button-row" style="justify-content:flex-end;margin-top:12px;">
+          <button class="btn btn-outline small" type="button" data-action="retry-trail" data-collection="${safe(collectionTrailAttr(result))}" data-id="${safe(idTrailAttr(result))}">Retry</button>
+        </div>`;
+    }
+
+    // Small helpers so the Retry button can re-run the same query.
+    function collectionTrailAttr(result) { return result?.__collection || ""; }
+    function idTrailAttr(result) { return result?.__id || ""; }
+
+    function renderTrailModalBody(result) {
+      const host = byId("trail-modal-body");
+      if (!host) return;
+      host.innerHTML = (result?.ok && result.items.length)
+        ? trailItemsHtml(result.items)
+        : trailEmptyStateHtml(result);
+    }
+
     function openTrailModal(collectionName, id) {
-      fetchTrail(collectionName, id).then((items) => {
-        openModal(
-          "Entry Trail",
-          "Recorded create, edit, delete, and approval actions for this entry.",
-          items.length
-            ? `<div class="trail-list">${items
-                .map(
-                  (item) => `
-                    <div class="hub-card trail-card">
-                      <strong>${safe(item.action || "-")}</strong>
-                      <div class="subline">${safe(item.actorName || item.actorEmail || "-")}</div>
-                      ${item.detail ? `<div class="subline">${safe(item.detail)}</div>` : ""}
-                      <small>${safe(nowTimestampText(item.createdAt))}</small>
-                    </div>
-                  `
-                )
-                .join("")}</div>`
-            : `<div class="muted">No trail records found.</div>`
-        );
+      openModal(
+        "Entry Trail",
+        "Recorded create, edit, delete, and approval actions for this entry.",
+        `<div id="trail-modal-body"><div class="compact-empty"><span class="card-icon" aria-hidden="true">&#8987;</span><div><strong>Loading trail…</strong><small>Fetching the recorded history for this entry.</small></div></div></div>`
+      );
+      loadTrailIntoModal(collectionName, id);
+    }
+
+    function loadTrailIntoModal(collectionName, id) {
+      fetchTrail(collectionName, id).then((result) => {
+        // Stamp identity onto the result so Retry knows what to re-load.
+        result.__collection = collectionName;
+        result.__id = id;
+        renderTrailModalBody(result);
       });
     }
 
@@ -14568,11 +15432,11 @@ tbody tr { transition: background .14s ease; }
         return;
       }
       if (isAdmin()) {
-        toast("Admin cannot edit entries.", "warn");
+        toast(whyCannotEdit(record), "warn");
         return;
       }
       if (!canEditRecord(record)) {
-        toast("You can edit only records available to you for editing.", "warn");
+        toast(whyCannotEdit(record), "warn");
         return;
       }
       if (record.entryKind === "leave") {
@@ -14590,7 +15454,11 @@ tbody tr { transition: background .14s ease; }
         const sharedClient = normalizeClientList(record)[0] || "";
         const sharedTasks = normalizeTaskList(record);
         const dates = recordDates(record);
-        const sharedEditState = { tasks: [...sharedTasks] };
+        const sharedEditState = {
+          tasks: [...sharedTasks],
+          indirectTaxCategory: String(record.indirectTaxCategory || "").trim(),
+          indirectTaxOtherCategory: String(record.indirectTaxOtherCategory || record.indirectTaxOtherDetail || "").trim()
+        };
         const draftEntries = {};
         members.forEach((member) => {
           const entry = userEntryForGroup(record, member.id);
@@ -14623,6 +15491,7 @@ tbody tr { transition: background .14s ease; }
                       </select>
                     </label>
                     <div id="group-edit-task-chips" class="chip-row"></div>
+                    <div id="group-edit-indirect-tax-wrap"></div>
                   `
                 : `
                     <div class="hub-card">
@@ -14680,6 +15549,23 @@ tbody tr { transition: background .14s ease; }
             host.innerHTML = sharedEditState.tasks
               .map((task) => `<span class="chip">${safe(shortTaskLabel(task))}<button type="button" data-action="remove-edit-group-task" data-value="${encodeURIComponent(task)}">x</button></span>`)
               .join("");
+            const categoryHost = byId("group-edit-indirect-tax-wrap");
+            if (categoryHost) {
+              if (!rowNeedsIndirectTaxCategory({ tasks: sharedEditState.tasks }, state.profile?.role || "")) {
+                sharedEditState.indirectTaxCategory = "";
+                sharedEditState.indirectTaxOtherCategory = "";
+              }
+              categoryHost.innerHTML = indirectTaxCategoryFieldHtml({
+                prefix: "group-edit",
+                key: "shared",
+                row: {
+                  key: "shared",
+                  tasks: sharedEditState.tasks,
+                  indirectTaxCategory: sharedEditState.indirectTaxCategory,
+                  indirectTaxOtherCategory: sharedEditState.indirectTaxOtherCategory
+                }
+              });
+            }
           };
           const renderGroupEditClientSuggestions = async (forceRefresh = false) => {
             await ensureLookups(forceRefresh);
@@ -14714,6 +15600,22 @@ tbody tr { transition: background .14s ease; }
             byId("group-edit-task-picker").value = "";
             renderGroupEditTaskChips();
           });
+          const groupEditChangeHandler = (event) => {
+            if (!event.target?.matches?.('[data-indirect-category][data-prefix="group-edit"]')) return;
+            sharedEditState.indirectTaxCategory = String(event.target.value || "").trim();
+            if (normalizeCompareText(sharedEditState.indirectTaxCategory) !== normalizeCompareText(INDIRECT_TAX_OTHER_CATEGORY)) {
+              sharedEditState.indirectTaxOtherCategory = "";
+            }
+            renderGroupEditTaskChips();
+          };
+          const groupEditInputHandler = (event) => {
+            if (!event.target?.matches?.('[data-indirect-other][data-prefix="group-edit"]')) return;
+            sharedEditState.indirectTaxOtherCategory = String(event.target.value || "");
+          };
+          modalRoot.addEventListener("change", groupEditChangeHandler);
+          modalRoot.addEventListener("input", groupEditInputHandler);
+          state.modalCleanups.push(() => modalRoot.removeEventListener("change", groupEditChangeHandler));
+          state.modalCleanups.push(() => modalRoot.removeEventListener("input", groupEditInputHandler));
           setSuggestionInput("group-edit-client", "group-edit-client-suggestions");
           const groupEditClickHandler = (event) => {
             const actionEl = event.target.closest("[data-action]");
@@ -14747,6 +15649,12 @@ tbody tr { transition: background .14s ease; }
             tasks = [...sharedEditState.tasks];
             if (!client) return toast("Shared client is required.", "warn");
             if (!tasks.length) return toast("Enter at least one shared work type.", "warn");
+            if (rowNeedsIndirectTaxCategory({ tasks }, state.profile?.role || "")) {
+              if (!sharedEditState.indirectTaxCategory) return toast("Select an indirect tax category for this GST group entry.", "warn");
+              if (normalizeCompareText(sharedEditState.indirectTaxCategory) === normalizeCompareText(INDIRECT_TAX_OTHER_CATEGORY) && !String(sharedEditState.indirectTaxOtherCategory || "").trim()) {
+                return toast("Describe the other indirect-tax category.", "warn");
+              }
+            }
           }
 
           const memberEntries = { ...(record.memberEntries || {}) };
@@ -14789,6 +15697,11 @@ tbody tr { transition: background .14s ease; }
             clients: [client],
             taskList: tasks,
             task: tasks.join(", "),
+            ...(canEditShared ? normalizeIndirectTaxCategoryRow({
+              tasks,
+              indirectTaxCategory: sharedEditState.indirectTaxCategory,
+              indirectTaxOtherCategory: sharedEditState.indirectTaxOtherCategory
+            }, state.profile?.role || "") : {}),
             memberEntries,
             updatedAt: Timestamp.now(),
             lastEditedByUid: state.user?.uid || "",
@@ -14799,6 +15712,7 @@ tbody tr { transition: background .14s ease; }
           await updateDoc(doc(db, "group_entries", record.id), __groupPayload);
           upsertMyEntryCache({
             ...record,
+            ...__groupPayload,
             client,
             clients: [client],
             taskList: tasks,
@@ -14967,6 +15881,7 @@ tbody tr { transition: background .14s ease; }
                     </select>
                     <div class="client-task-chips" id="edit-single-client-task-chips-${safe(item.key)}">${taskChipsHtml}</div>
                   </div>
+                  ${indirectTaxCategoryFieldHtml({ prefix: "edit-single-client", key: item.key, row: item })}
                 </div>
               `;
               }).join("")
@@ -14998,8 +15913,29 @@ tbody tr { transition: background .14s ease; }
                 if (!row) return;
                 if (!Array.isArray(row.tasks)) row.tasks = [];
                 if (!row.tasks.includes(value)) row.tasks.push(value);
+                if (!rowNeedsIndirectTaxCategory(row)) {
+                  row.indirectTaxCategory = "";
+                  row.indirectTaxOtherCategory = "";
+                }
                 taskPicker.value = "";
                 renderClientRows();
+              });
+            }
+            const categoryPicker = byId(`edit-single-client-indirect-category-${item.key}`);
+            if (categoryPicker) {
+              categoryPicker.addEventListener("change", () => {
+                const row = modalState.clientRows.find((x) => x.key === item.key);
+                if (!row) return;
+                row.indirectTaxCategory = String(categoryPicker.value || "").trim();
+                if (normalizeCompareText(row.indirectTaxCategory) !== normalizeCompareText(INDIRECT_TAX_OTHER_CATEGORY)) row.indirectTaxOtherCategory = "";
+                renderClientRows();
+              });
+            }
+            const otherInput = byId(`edit-single-client-indirect-other-${item.key}`);
+            if (otherInput) {
+              otherInput.addEventListener("input", () => {
+                const row = modalState.clientRows.find((x) => x.key === item.key);
+                if (row) row.indirectTaxOtherCategory = String(otherInput.value || "").trim();
               });
             }
           });
@@ -15103,6 +16039,10 @@ tbody tr { transition: background .14s ease; }
             const row = modalState.clientRows.find((item) => item.key === key);
             if (row && Array.isArray(row.tasks)) {
               row.tasks = row.tasks.filter((t) => t !== task);
+              if (!rowNeedsIndirectTaxCategory(row)) {
+                row.indirectTaxCategory = "";
+                row.indirectTaxOtherCategory = "";
+              }
               renderClientRows();
             }
           }
@@ -15128,6 +16068,16 @@ tbody tr { transition: background .14s ease; }
             if (clientMissingTasks) {
               focusClientRow(clientMissingTasks.key);
               return toast(`Select at least one work type for ${clientMissingTasks.client}.`, "warn");
+            }
+            const missingIndirectCategory = modalState.clientRows.find((row) => rowNeedsIndirectTaxCategory(row) && !String(row.indirectTaxCategory || "").trim());
+            if (missingIndirectCategory) {
+              focusClientRow(missingIndirectCategory.key);
+              return toast(`Select an indirect tax category for ${missingIndirectCategory.client}.`, "warn");
+            }
+            const missingOtherCategory = modalState.clientRows.find((row) => rowNeedsIndirectTaxCategory(row) && normalizeCompareText(row.indirectTaxCategory) === normalizeCompareText(INDIRECT_TAX_OTHER_CATEGORY) && !String(row.indirectTaxOtherCategory || "").trim());
+            if (missingOtherCategory) {
+              focusClientRow(missingOtherCategory.key);
+              return toast(`Describe the other indirect tax category for ${missingOtherCategory.client}.`, "warn");
             }
             modalState.tasks = uniq(modalState.clientRows.flatMap((row) => Array.isArray(row.tasks) ? row.tasks : []));
             const invalidHoursRow = modalState.clientRows.find((item) => !(Number(item.hours) > 0));
@@ -15434,319 +16384,6 @@ tbody tr { transition: background .14s ease; }
       groupButton.parentElement.appendChild(button);
     }
 
-    function openLegacySingleClientBulkEntryModal() {
-      const modalState = { clients: [], tasks: [], manualExcluded: new Set(), activeDates: [], submitting: false };
-      openModal(
-        "Bulk / Range Entry",
-        "Legacy bulk entry helper retained for backwards compatibility. The active bulk entry flow supports multiple clients with date-wise time.",
-        `
-          <div class="field-stack">
-            <div class="grid two">
-              <label class="field"><span>From</span><input id="bulk-from" type="date" value="${todayStr()}"></label>
-              <label class="field"><span>To</span><input id="bulk-to" type="date" value="${todayStr()}"></label>
-            </div>
-            <label class="field"><span>Working Days</span><select id="bulk-mode"><option value="no-sun">All days except Sundays</option><option value="yes">All days including Sundays</option></select></label>
-            <div class="field"><span>Client</span><input id="bulk-client-input" type="text" autocomplete="off" placeholder="Search client or type a new one"><div id="bulk-client-suggestions" class="suggestions"></div></div>
-            <div id="bulk-client-chips" class="chip-row"></div>
-            <label class="field"><span>Work Type</span><select id="bulk-task-picker"><option value="">Add work type</option>${TASK_OPTIONS.map((task) => `<option value="${safe(task)}">${safe(task)}</option>`).join("")}</select></label>
-            <div id="bulk-task-chips" class="chip-row"></div>
-            <div class="hub-card">
-              <strong>Working Date Selection</strong>
-              <div id="bulk-date-summary" class="selection-summary"></div>
-              <div id="bulk-date-grid"></div>
-            </div>
-            <label class="field"><span>Hours Per Day</span><div class="hrmin-wrap"><input id="bulk-hours-h" type="number" min="0" max="24" placeholder="0" aria-label="Hours"><span class="hrmin-unit">hr</span><span class="hrmin-divider"></span><input id="bulk-hours-m" type="number" min="0" max="60" placeholder="0" aria-label="Minutes"><span class="hrmin-unit">min</span></div><input id="bulk-hours" type="hidden" value=""></label>
-            <label class="field"><span>Remarks</span><textarea id="bulk-remarks" rows="5" placeholder="Minimum 100 characters"></textarea><div class="field-note"><span id="bulk-remarks-count">0 characters</span><span>Minimum 100 characters required.</span></div></label>
-            <div class="hub-card">
-              <strong>Save For Later</strong>
-              <div class="subline">This draft is saved on this local browser/device only. It is not sent to the database and is not visible to admin unless you submit it.</div>
-            </div>
-            <div class="button-row">
-              <button class="btn btn-outline" id="bulk-save-draft" type="button">Save For Later</button>
-              <button class="btn btn-outline" id="bulk-load-draft" type="button">Load Draft</button>
-              <button class="btn btn-ghost" id="bulk-delete-draft" type="button">Delete Saved Draft</button>
-            </div>
-            <div class="button-row"><button class="btn btn-ghost" id="bulk-cancel" type="button">Cancel</button><button class="btn btn-primary" id="bulk-save" type="button">Submit Bulk Entry</button></div>
-          </div>
-        `
-      );
-      bindHrmPair("bulk-hours-h", "bulk-hours-m", "bulk-hours");
-      bindRemarksCounter("bulk-remarks", "bulk-remarks-count");
-
-      const renderBulkChips = () => {
-        byId("bulk-client-chips").innerHTML = modalState.clients.map((client) => `<span class="chip">${safe(client)}<button type="button" data-action="remove-bulk-client" data-value="${encodeURIComponent(client)}">x</button></span>`).join("");
-        byId("bulk-task-chips").innerHTML = modalState.tasks.map((task) => `<span class="chip">${safe(shortTaskLabel(task))}<button type="button" data-action="remove-bulk-task" data-value="${encodeURIComponent(task)}">x</button></span>`).join("");
-      };
-
-      const renderBulkClientSuggestions = async (forceRefresh = false) => {
-        await ensureLookups(forceRefresh);
-        const input = byId("bulk-client-input");
-        const q = String(input?.value || "").trim().toLowerCase();
-        const options = state.lookups.clients.filter((client) => client.toLowerCase().includes(q) && !modalState.clients.includes(client));
-        if (!input?.matches(":focus")) {
-          clearSuggestions("bulk-client-suggestions");
-          return;
-        }
-        if (!options.length) {
-          setSuggestions("bulk-client-suggestions", suggestionEmptyHtml("No matching client was found. You can still type a client name manually."), { inputId: "bulk-client-input" });
-          return;
-        }
-        setSuggestions(
-          "bulk-client-suggestions",
-          `<div class="suggestion-list">${options.map((client) => `<button class="suggestion-item" type="button" data-action="pick-bulk-client" data-value="${encodeURIComponent(client)}">${safe(client)}</button>`).join("")}</div>`,
-          { inputId: "bulk-client-input" }
-        );
-      };
-
-      const syncBulkDates = () => {
-        const from = byId("bulk-from")?.value || "";
-        const to = byId("bulk-to")?.value || "";
-        const includeSunday = byId("bulk-mode")?.value === "yes";
-        const baseDates = allDatesBetween(from, to, includeSunday);
-        pruneDateSet(modalState.manualExcluded, baseDates);
-        modalState.activeDates = baseDates.filter((date) => !modalState.manualExcluded.has(date));
-        const summary = byId("bulk-date-summary");
-        const grid = byId("bulk-date-grid");
-        if (summary) {
-          summary.innerHTML = baseDates.length
-            ? `
-                <span>${safe(String(modalState.activeDates.length))} selected day(s)</span>
-                <span>${safe(String(baseDates.length - modalState.activeDates.length))} excluded day(s)</span>
-                <span>Click a date to include or exclude it</span>
-              `
-            : `<span>Select a valid range to preview working dates.</span>`;
-        }
-        if (grid) {
-          grid.innerHTML = dateChipGridHtml(baseDates, modalState.manualExcluded, "toggle-bulk-date", "No working dates found for this range.");
-        }
-      };
-
-      const saveBulkDraft = () => {
-        const payload = {
-          from: byId("bulk-from")?.value || "",
-          to: byId("bulk-to")?.value || "",
-          weekendMode: byId("bulk-mode")?.value || "no-sun",
-          clientInput: byId("bulk-client-input")?.value || "",
-          clients: [...modalState.clients],
-          tasks: [...modalState.tasks],
-          manualExcludedDates: [...modalState.manualExcluded],
-          hours: byId("bulk-hours")?.value || "",
-          remarks: byId("bulk-remarks")?.value || ""
-        };
-        const ok = saveLocalDraft("bulk", payload);
-        toast(ok ? "Bulk-entry draft saved on this device." : "Could not save the draft on this device.", ok ? "success" : "error");
-      };
-
-      const loadBulkDraft = () => {
-        const draft = loadLocalDraft("bulk");
-        if (!draft) {
-          toast("No saved bulk-entry draft found on this device.", "warn");
-          return;
-        }
-        if (byId("bulk-from")) byId("bulk-from").value = String(draft.from || todayStr());
-        if (byId("bulk-to")) byId("bulk-to").value = String(draft.to || todayStr());
-        if (byId("bulk-mode")) byId("bulk-mode").value = String(draft.weekendMode || "no-sun");
-        if (byId("bulk-client-input")) byId("bulk-client-input").value = String(draft.clientInput || "");
-        if (byId("bulk-hours")) byId("bulk-hours").value = String(draft.hours || "");
-        fillHrmFromDecimal("bulk-hours-h", "bulk-hours-m", draft.hours || 0);
-        if (byId("bulk-remarks")) byId("bulk-remarks").value = String(draft.remarks || "");
-        updateRemarksCounter("bulk-remarks-count", draft.remarks || "");
-        modalState.clients = uniq(Array.isArray(draft.clients) ? draft.clients.map((item) => String(item || "").trim()).filter(Boolean) : []);
-        modalState.tasks = uniq(Array.isArray(draft.tasks) ? draft.tasks.map((item) => String(item || "").trim()).filter(Boolean) : []);
-        modalState.manualExcluded = new Set(Array.isArray(draft.manualExcludedDates) ? draft.manualExcludedDates.map((item) => String(item || "")) : []);
-        renderBulkChips();
-        applyDateLimits(byId("modal-root"));
-        enforceDateInputRules(byId("bulk-from"));
-        enforceDateInputRules(byId("bulk-to"));
-        syncBulkDates();
-        toast("Bulk-entry draft loaded from this device.", "success");
-      };
-
-      const deleteBulkDraft = () => {
-        const hadDraft = !!loadLocalDraft("bulk");
-        deleteLocalDraft("bulk");
-        toast(hadDraft ? "Saved bulk-entry draft deleted from this device." : "No saved bulk-entry draft found on this device.", "warn");
-      };
-
-      const setBulkSubmitting = (isBusy) => {
-        modalState.submitting = !!isBusy;
-        setButtonBusy(byId("bulk-save"), !!isBusy, "Submitting...");
-        ["bulk-cancel", "bulk-save-draft", "bulk-load-draft", "bulk-delete-draft"].forEach((id) => {
-          const button = byId(id);
-          if (button) button.disabled = !!isBusy;
-        });
-      };
-
-      byId("bulk-client-input")?.addEventListener("input", renderBulkClientSuggestions);
-      byId("bulk-client-input")?.addEventListener("focus", () => renderBulkClientSuggestions(true));
-      byId("bulk-client-input")?.addEventListener("blur", () => window.setTimeout(() => clearSuggestions("bulk-client-suggestions"), 250));
-      setSuggestionInput("bulk-client-input", "bulk-client-suggestions");
-      byId("bulk-from")?.addEventListener("change", syncBulkDates);
-      byId("bulk-to")?.addEventListener("change", syncBulkDates);
-      byId("bulk-mode")?.addEventListener("change", syncBulkDates);
-      byId("bulk-task-picker")?.addEventListener("change", () => {
-        const value = byId("bulk-task-picker").value;
-        if (value && !modalState.tasks.includes(value)) modalState.tasks.push(value);
-        byId("bulk-task-picker").value = "";
-        renderBulkChips();
-      });
-      byId("bulk-save-draft")?.addEventListener("click", saveBulkDraft);
-      byId("bulk-load-draft")?.addEventListener("click", loadBulkDraft);
-      byId("bulk-delete-draft")?.addEventListener("click", deleteBulkDraft);
-      byId("bulk-cancel")?.addEventListener("click", closeModal);
-      byId("bulk-save")?.addEventListener("click", async () => {
-        if (modalState.submitting) return;
-        setBulkSubmitting(true);
-        let submitted = false;
-        let submitClaim = null;
-        try {
-          const from = byId("bulk-from")?.value || "";
-          const to = byId("bulk-to")?.value || "";
-          const includeSunday = byId("bulk-mode")?.value === "yes";
-          const remarks = String(byId("bulk-remarks")?.value || "").trim();
-          const hours = Number(byId("bulk-hours")?.value || 0);
-          const typedClient = String(byId("bulk-client-input")?.value || "").trim();
-          // Bulk entry is for a SINGLE client only. If user typed a new name
-          // without picking from suggestions, use that as the (single) client.
-          if (typedClient) modalState.clients = [typedClient];
-          if (modalState.clients.length > 1) modalState.clients = [modalState.clients[0]];
-          if (!from || !to || from > to) return toast("Select a valid date range.", "warn");
-          if (from === to) return toast("Bulk entry is only for more than one day. Use single entry for one date.", "warn");
-          if (to > todayStr()) return toast("Future dates are not allowed.", "warn");
-          if (!modalState.clients.length) return toast("Add at least one client for the bulk entry.", "warn");
-          if (!modalState.tasks.length) return toast("Add at least one work type.", "warn");
-          if (!(hours > 0)) return toast("Enter valid hours.", "warn");
-          if (remarks.length < 100) return toast("Remarks must be at least 100 characters.", "warn");
-
-          syncBulkDates();
-          const dates = [...modalState.activeDates];
-          if (dates.length < 2) return toast("Bulk entry must still cover more than one day after exclusions.", "warn");
-          const integrityValues = {
-            from,
-            to,
-            dates,
-            clients: [...modalState.clients],
-            tasks: [...modalState.tasks],
-            hours,
-            remarks
-          };
-          const duplicateRecord = await findExactBulkDuplicate(integrityValues);
-          const overlaps = await detectBulkOverlap({ dates });
-          const confirmed = await confirmOverlayModal({
-            title: "Confirm bulk entry",
-            copy: "Review the selected date range, clients, work type, and day-wise time before submitting.",
-            summaryHtml: buildBulkSubmitSummary({
-              from,
-              to,
-              dates,
-              clients: [...modalState.clients],
-              tasks: [...modalState.tasks],
-              hours,
-              remarks,
-              duplicateRecord,
-              overlaps
-            }),
-            confirmLabel: duplicateRecord || overlaps.length ? "Confirm & submit anyway" : "Confirm & submit",
-            cancelLabel: "Go back"
-          });
-          if (!confirmed) {
-            return toast(duplicateRecord || overlaps.length ? "Bulk entry paused. Review before submitting." : "Bulk entry not submitted.", "warn");
-          }
-          const submitSignature = signatureForBulk(integrityValues);
-          submitClaim = claimSubmitAttempt("bulk", submitSignature);
-          if (!submitClaim.ok) return toast(duplicateBlockMessage(submitClaim.status), "warn");
-          const dailyHours = {};
-          dates.forEach((date) => {
-            dailyHours[date] = Number(hours.toFixed(2));
-          });
-          const payload = withOwnershipAliases({
-            name: profileName(),
-            email: profileEmail(),
-            role: state.profile?.role || "Employee / Professional",
-            department: state.profile?.department || "",
-            dates,
-            daysCount: dates.length,
-            bulkFrom: from,
-            bulkTo: to,
-            clients: [...modalState.clients],
-            client: modalState.clients[0],
-            taskList: [...modalState.tasks],
-            task: modalState.tasks.join(", "),
-            weekendOpt: includeSunday ? "yes" : "no-sun",
-            manualExcludedDates: [...modalState.manualExcluded],
-            dailyHours,
-            totalHours: Number(totalHoursFromMap(dailyHours).toFixed(2)),
-            hours: Number(hours.toFixed(2)),
-            remarks,
-            clientSubmitHash: simpleHash(submitSignature),
-            clientSubmitAtMs: Date.now(),
-            entryType: "bulk",
-            createdAt: Timestamp.now(),
-            updatedAt: Timestamp.now()
-          });
-          const ref = await addDoc(collection(db, "bulk_entries"), payload);
-          const record = normalizeBulkDoc({ id: ref.id, ...payload });
-          await addTrail(record, "Submitted", "Bulk entry created");
-          await writeLog({ action: `${profileName()} submitted bulk entry`, actorName: profileName(), actorEmail: profileEmail(), type: "entry", detail: `${from} to ${to} | ${modalState.clients.join(", ")}` });
-          await writeUserAudit("Submitted bulk entry", `${displayDate(record)} | ${modalState.clients.join(", ")}`);
-          deleteLocalDraft("bulk");
-          upsertMyEntryCache(record);
-          submitted = true;
-          completeSubmitAttempt(submitClaim?.key);
-          setEntryLastSaved(`Last saved: Bulk entry for ${displayDate(record)} at ${timeOnlyText(Date.now())}`);
-          closeModal();
-          toast("Bulk entry submitted.", "success");
-          try {
-            await refreshCurrentPage();
-          } catch (_refreshError) {
-            toast("Bulk entry was submitted. The list will update automatically shortly.", "warn");
-          }
-        } catch (_error) {
-          if (!submitted) {
-            releaseSubmitAttempt(submitClaim?.key);
-            toast("Could not submit the bulk entry right now.", "error");
-          }
-        } finally {
-          setBulkSubmitting(false);
-        }
-      });
-
-      const modalRoot = byId("modal-root");
-      const bulkModalListener = (event) => {
-        const actionEl = event.target.closest("[data-action]");
-        if (!actionEl || modalRoot.hidden || !modalRoot.contains(actionEl)) return;
-        if (actionEl.dataset.action === "pick-bulk-client") {
-          // Bulk entry is for a SINGLE client only — replace instead of push.
-          const value = decodeURIComponent(actionEl.dataset.value || "");
-          if (value) modalState.clients = [value];
-          byId("bulk-client-input").value = "";
-          renderBulkChips();
-          clearSuggestions("bulk-client-suggestions");
-        }
-        if (actionEl.dataset.action === "remove-bulk-client") {
-          modalState.clients = [];
-          renderBulkChips();
-        }
-        if (actionEl.dataset.action === "remove-bulk-task") {
-          modalState.tasks = modalState.tasks.filter((task) => task !== decodeURIComponent(actionEl.dataset.value || ""));
-          renderBulkChips();
-        }
-        if (actionEl.dataset.action === "toggle-bulk-date") {
-          const date = decodeURIComponent(actionEl.dataset.value || "");
-          if (!date) return;
-          if (modalState.manualExcluded.has(date)) {
-            modalState.manualExcluded.delete(date);
-          } else {
-            modalState.manualExcluded.add(date);
-          }
-          syncBulkDates();
-        }
-      };
-      modalRoot.addEventListener("click", bulkModalListener);
-      state.modalCleanups.push(() => modalRoot.removeEventListener("click", bulkModalListener));
-      renderBulkChips();
-      syncBulkDates();
-    }
 
     function openBulkEntryModal(record = null) {
       const isEdit = !!record?.id;
@@ -15798,7 +16435,9 @@ tbody tr { transition: background .14s ease; }
         client,
         tasks: uniq(Array.isArray(seed.tasks) ? seed.tasks.map((item) => String(item || "").trim()).filter(Boolean) : []),
         remarks: String(seed.remarks || "").trim(),
-        dailyHours: { ...(seed.dailyHours || {}) }
+        dailyHours: { ...(seed.dailyHours || {}) },
+        indirectTaxCategory: String(seed.indirectTaxCategory || "").trim(),
+        indirectTaxOtherCategory: String(seed.indirectTaxOtherCategory || seed.indirectTaxOtherDetail || "").trim()
       });
 
       const syncClientRows = () => {
@@ -15858,6 +16497,7 @@ tbody tr { transition: background .14s ease; }
                   </select>
                 </label>
                 <div class="chip-row">${(row.tasks || []).map((task) => `<span class="chip">${safe(shortTaskLabel(task))}<button type="button" data-action="remove-bulk-client-task" data-key="${encodeURIComponent(row.key)}" data-task="${encodeURIComponent(task)}">x</button></span>`).join("")}</div>
+                ${indirectTaxCategoryFieldHtml({ prefix: "bulk-client", key: row.key, row })}
                 <div class="bulk-date-hours-grid">
                   ${dates.map((date) => `
                     <label class="member-hour-card">
@@ -16040,6 +16680,10 @@ tbody tr { transition: background .14s ease; }
           if (!modalState.clientRows.length) return toast("Add at least one client.", "warn");
           const missingTasks = modalState.clientRows.find((row) => !row.tasks?.length);
           if (missingTasks) return toast(`Add at least one work type for ${missingTasks.client}.`, "warn");
+          const missingIndirectCategory = modalState.clientRows.find((row) => rowNeedsIndirectTaxCategory(row) && !String(row.indirectTaxCategory || "").trim());
+          if (missingIndirectCategory) return toast(`Select an indirect tax category for ${missingIndirectCategory.client}.`, "warn");
+          const missingOtherCategory = modalState.clientRows.find((row) => rowNeedsIndirectTaxCategory(row) && normalizeCompareText(row.indirectTaxCategory) === normalizeCompareText(INDIRECT_TAX_OTHER_CATEGORY) && !String(row.indirectTaxOtherCategory || "").trim());
+          if (missingOtherCategory) return toast(`Describe the other indirect tax category for ${missingOtherCategory.client}.`, "warn");
           const missingRemarks = modalState.clientRows.find((row) => trimmedRemarkLength(row.remarks) < 100);
           if (missingRemarks) return toast(`Remarks for ${missingRemarks.client} must be at least 100 characters.`, "warn");
           const emptyClient = modalState.clientRows.find((row) => !(totalHoursFromMap(row.dailyHours || {}) > 0));
@@ -16173,6 +16817,10 @@ tbody tr { transition: background .14s ease; }
           const task = decodeURIComponent(actionEl.dataset.task || "");
           const row = modalState.clientRows.find((item) => item.key === key);
           if (row) row.tasks = (row.tasks || []).filter((item) => item !== task);
+          if (row && !rowNeedsIndirectTaxCategory(row)) {
+            row.indirectTaxCategory = "";
+            row.indirectTaxOtherCategory = "";
+          }
           renderClientRows();
           return;
         }
@@ -16192,13 +16840,32 @@ tbody tr { transition: background .14s ease; }
           syncClientRows();
           renderTotals();
         }
+        if (event.target.matches("[data-indirect-other]")) {
+          const key = event.target.dataset.indirectOther || "";
+          const row = modalState.clientRows.find((item) => item.key === key);
+          if (row) row.indirectTaxOtherCategory = String(event.target.value || "").trim();
+        }
       };
       const changeHandler = (event) => {
+        const categoryPicker = event.target.closest("[data-indirect-category]");
+        if (categoryPicker && modalRoot.contains(categoryPicker)) {
+          const row = modalState.clientRows.find((item) => item.key === (categoryPicker.dataset.indirectCategory || ""));
+          if (row) {
+            row.indirectTaxCategory = String(categoryPicker.value || "").trim();
+            if (normalizeCompareText(row.indirectTaxCategory) !== normalizeCompareText(INDIRECT_TAX_OTHER_CATEGORY)) row.indirectTaxOtherCategory = "";
+          }
+          renderClientRows();
+          return;
+        }
         const picker = event.target.closest("[data-bulk-task-picker]");
         if (!picker || !modalRoot.contains(picker)) return;
         const row = modalState.clientRows.find((item) => item.key === (picker.dataset.bulkTaskPicker || ""));
         const value = picker.value || "";
         if (row && value && !(row.tasks || []).includes(value)) row.tasks = [...(row.tasks || []), value];
+        if (row && !rowNeedsIndirectTaxCategory(row)) {
+          row.indirectTaxCategory = "";
+          row.indirectTaxOtherCategory = "";
+        }
         picker.value = "";
         renderClientRows();
       };
@@ -16225,6 +16892,8 @@ tbody tr { transition: background .14s ease; }
         selectedUsers: [],
         selectedTasks: [],
         selectedClient: "",
+        indirectTaxCategory: "",
+        indirectTaxOtherCategory: "",
         memberDrafts: {},
         manualExcluded: new Set(),
         submitting: false
@@ -16250,6 +16919,7 @@ tbody tr { transition: background .14s ease; }
             <div id="group-client-chip" class="chip-row"></div>
             <label class="field"><span>Work Type</span><select id="group-task-picker"><option value="">Add work type</option>${TASK_OPTIONS.map((task) => `<option value="${safe(task)}">${safe(task)}</option>`).join("")}</select></label>
             <div id="group-task-chips" class="chip-row"></div>
+            <div id="group-indirect-tax-wrap"></div>
             <div id="group-member-sections" class="field-stack"></div>
             <div class="hub-card">
               <strong>Save For Later</strong>
@@ -16285,6 +16955,20 @@ tbody tr { transition: background .14s ease; }
         const baseDates = allDatesBetween(from, to, includeSunday);
         pruneDateSet(modalState.manualExcluded, baseDates);
         return baseDates.filter((date) => !modalState.manualExcluded.has(date));
+      };
+
+      const groupIndirectTaxRow = () => ({
+        key: "shared",
+        tasks: modalState.selectedTasks,
+        indirectTaxCategory: modalState.indirectTaxCategory,
+        indirectTaxOtherCategory: modalState.indirectTaxOtherCategory
+      });
+
+      const syncGroupIndirectTaxState = () => {
+        if (!rowNeedsIndirectTaxCategory(groupIndirectTaxRow())) {
+          modalState.indirectTaxCategory = "";
+          modalState.indirectTaxOtherCategory = "";
+        }
       };
 
       const syncMemberDrafts = () => {
@@ -16338,6 +17022,9 @@ tbody tr { transition: background .14s ease; }
         byId("group-user-chips").innerHTML = modalState.selectedUsers.map((user) => `<span class="chip">${safe(user.name)}<button type="button" data-action="remove-group-user" data-id="${user.id}">x</button></span>`).join("");
         byId("group-client-chip").innerHTML = modalState.selectedClient ? `<span class="chip">${safe(modalState.selectedClient)}<button type="button" data-action="clear-group-client">x</button></span>` : "";
         byId("group-task-chips").innerHTML = modalState.selectedTasks.map((task) => `<span class="chip">${safe(shortTaskLabel(task))}<button type="button" data-action="remove-group-task" data-value="${encodeURIComponent(task)}">x</button></span>`).join("");
+        syncGroupIndirectTaxState();
+        const categoryHost = byId("group-indirect-tax-wrap");
+        if (categoryHost) categoryHost.innerHTML = indirectTaxCategoryFieldHtml({ prefix: "group", key: "shared", row: groupIndirectTaxRow() });
 
         const dates = currentGroupDates();
         if (modalState.mode === "range") {
@@ -16414,6 +17101,8 @@ tbody tr { transition: background .14s ease; }
           })),
           selectedClient: modalState.selectedClient || "",
           selectedTasks: [...modalState.selectedTasks],
+          indirectTaxCategory: modalState.indirectTaxCategory || "",
+          indirectTaxOtherCategory: modalState.indirectTaxOtherCategory || "",
           manualExcludedDates: [...modalState.manualExcluded],
           memberDrafts: modalState.memberDrafts
         };
@@ -16437,6 +17126,8 @@ tbody tr { transition: background .14s ease; }
           .filter((user) => user.id && user.id !== state.user?.uid);
         modalState.selectedClient = String(draft.selectedClient || "");
         modalState.selectedTasks = uniq(Array.isArray(draft.selectedTasks) ? draft.selectedTasks.map((item) => String(item || "").trim()).filter(Boolean) : []);
+        modalState.indirectTaxCategory = String(draft.indirectTaxCategory || "").trim();
+        modalState.indirectTaxOtherCategory = String(draft.indirectTaxOtherCategory || draft.indirectTaxOtherDetail || "").trim();
         modalState.manualExcluded = new Set(Array.isArray(draft.manualExcludedDates) ? draft.manualExcludedDates.map((item) => String(item || "")) : []);
         modalState.memberDrafts = draft.memberDrafts && typeof draft.memberDrafts === "object" ? draft.memberDrafts : {};
         renderGroupBits();
@@ -16543,8 +17234,25 @@ tbody tr { transition: background .14s ease; }
         const value = byId("group-task-picker").value;
         if (value && !modalState.selectedTasks.includes(value)) modalState.selectedTasks.push(value);
         byId("group-task-picker").value = "";
+        syncGroupIndirectTaxState();
         renderGroupBits();
       });
+      const groupIndirectChangeHandler = (event) => {
+        if (!event.target?.matches?.('[data-indirect-category][data-prefix="group"]')) return;
+        modalState.indirectTaxCategory = String(event.target.value || "").trim();
+        if (normalizeCompareText(modalState.indirectTaxCategory) !== normalizeCompareText(INDIRECT_TAX_OTHER_CATEGORY)) {
+          modalState.indirectTaxOtherCategory = "";
+        }
+        renderGroupBits();
+      };
+      const groupIndirectInputHandler = (event) => {
+        if (!event.target?.matches?.('[data-indirect-other][data-prefix="group"]')) return;
+        modalState.indirectTaxOtherCategory = String(event.target.value || "");
+      };
+      byId("modal-root")?.addEventListener("change", groupIndirectChangeHandler);
+      byId("modal-root")?.addEventListener("input", groupIndirectInputHandler);
+      state.modalCleanups.push(() => byId("modal-root")?.removeEventListener("change", groupIndirectChangeHandler));
+      state.modalCleanups.push(() => byId("modal-root")?.removeEventListener("input", groupIndirectInputHandler));
       byId("group-save-draft")?.addEventListener("click", saveGroupDraft);
       byId("group-load-draft")?.addEventListener("click", () => {
         loadGroupDraft();
@@ -16562,6 +17270,12 @@ tbody tr { transition: background .14s ease; }
           if (!modalState.selectedUsers.length) return toast("Add at least one other user.", "warn");
           if (!modalState.selectedClient) return toast("Select one shared client.", "warn");
           if (!modalState.selectedTasks.length) return toast("Add at least one work type.", "warn");
+          if (rowNeedsIndirectTaxCategory(groupIndirectTaxRow())) {
+            if (!modalState.indirectTaxCategory) return toast("Select an indirect tax category for this GST group entry.", "warn");
+            if (normalizeCompareText(modalState.indirectTaxCategory) === normalizeCompareText(INDIRECT_TAX_OTHER_CATEGORY) && !String(modalState.indirectTaxOtherCategory || "").trim()) {
+              return toast("Describe the other indirect-tax category.", "warn");
+            }
+          }
 
           const today = todayStr();
           let dates = [];
@@ -16633,6 +17347,8 @@ tbody tr { transition: background .14s ease; }
               dates,
               client: modalState.selectedClient,
               tasks: [...modalState.selectedTasks],
+              indirectTaxCategory: modalState.indirectTaxCategory,
+              indirectTaxOtherCategory: modalState.indirectTaxOtherCategory,
               members,
               memberEntries,
               duplicateRecord,
@@ -16671,6 +17387,7 @@ tbody tr { transition: background .14s ease; }
             client: modalState.selectedClient,
             taskList: [...modalState.selectedTasks],
             task: modalState.selectedTasks.join(", "),
+            ...normalizeIndirectTaxCategoryRow(groupIndirectTaxRow(), state.profile?.role || ""),
             groupMode: modalState.mode,
             weekendOpt: includeSunday ? "yes" : "no-sun",
             manualExcludedDates: modalState.mode === "range" ? [...modalState.manualExcluded] : [],
@@ -16787,7 +17504,7 @@ tbody tr { transition: background .14s ease; }
 
     async function approveUser(id, role) {
       const user = state.employees.find((item) => item.id === id);
-      const department = role === "CA Article" ? "CA Articles" : (user?.department || "Audit Team");
+      const department = user?.department || defaultDepartmentForRole(role);
       await updateDoc(doc(db, "users", id), {
         approved: true,
         role,
@@ -16818,7 +17535,7 @@ tbody tr { transition: background .14s ease; }
       for (const id of ids) {
         const user = state.employees.find((item) => item.id === id);
         const role = selectedApprovalRole(id);
-        const department = role === "CA Article" ? "CA Articles" : (user?.department || "Audit Team");
+        const department = user?.department || defaultDepartmentForRole(role);
         await updateDoc(doc(db, "users", id), {
           approved: true,
           role,
@@ -16839,6 +17556,151 @@ tbody tr { transition: background .14s ease; }
       toast("Selected registrations approved.", "success");
       await loadApprovals();
       await loadEmployeesPage();
+    }
+
+    async function matchingUserDocsForEmail(user) {
+      const selectedId = String(user?.id || "").trim();
+      const email = String(user?.email || "").trim().toLowerCase();
+      const seen = new Set();
+      const docs = [];
+      const pushDoc = (item) => {
+        if (!item?.id || seen.has(item.id)) return;
+        seen.add(item.id);
+        docs.push(item);
+      };
+      if (selectedId) pushDoc({ ...(user || {}), id: selectedId });
+      if (email) {
+        try {
+          const snap = await getDocs(query(collection(db, "users"), where("email", "==", email)));
+          snap.docs.forEach((item) => pushDoc({ id: item.id, ...(item.data() || {}) }));
+        } catch (_error) {
+          // selected row still updates below
+        }
+      }
+      return docs;
+    }
+
+    function openChangeUserRoleModal(id) {
+      const user = state.employees.find((item) => item.id === id);
+      if (!user) {
+        toast("User not found.", "error");
+        return;
+      }
+      if (String(user.email || "").trim().toLowerCase() === FORCED_ADMIN_EMAIL || String(user.role || "").toLowerCase() === "admin") {
+        toast("Admin role is protected.", "warn");
+        return;
+      }
+      const currentRole = normalizeRoleValue(user.role || "CA Article");
+      const currentDept = user.department || defaultDepartmentForRole(currentRole);
+      const roleOptions = ROLE_OPTIONS
+        .filter((role) => role !== "Admin")
+        .map((role) => `<option value="${safe(role)}" ${role === currentRole ? "selected" : ""}>${safe(role)}</option>`)
+        .join("");
+      const deptOptions = DEPARTMENT_OPTIONS
+        .map((dept) => `<option value="${safe(dept)}" ${dept === currentDept ? "selected" : ""}>${safe(dept)}</option>`)
+        .join("");
+      openModal(
+        "Change User Role",
+        "This changes what the user sees after refresh or next login. Existing entries, calendar history, PIN, and login account remain unchanged.",
+        `
+          <div class="field-stack">
+            <div class="hub-card">
+              <strong>${safe(user.name || user.email || user.id)}</strong>
+              <div class="subline">${safe(user.email || "-")}</div>
+              <div class="subline">Current role: ${safe(currentRole)} | Current department: ${safe(currentDept)}</div>
+            </div>
+            <label class="field">
+              <span>New role</span>
+              <select id="role-change-role">${roleOptions}</select>
+            </label>
+            <label class="field">
+              <span>Department</span>
+              <select id="role-change-department">${deptOptions}</select>
+            </label>
+            <div class="hub-card">
+              <strong>Interface impact</strong>
+              <div class="subline" id="role-change-impact"></div>
+            </div>
+            <label class="field">
+              <span>Type CHANGE to confirm</span>
+              <input id="role-change-confirm" type="text" placeholder="CHANGE">
+            </label>
+            <div class="button-row">
+              <button class="btn btn-ghost" id="role-change-cancel" type="button">Cancel</button>
+              <button class="btn btn-primary" id="role-change-save" type="button">Update Role</button>
+            </div>
+          </div>
+        `
+      );
+      const impactText = () => {
+        const role = normalizeRoleValue(byId("role-change-role")?.value || currentRole);
+        if (role === "CA Article") return "User keeps normal article timesheet access. Indirect-tax category fields and Indirect Tax Analysis inclusion stay hidden, even if GST & Indirect Taxes is selected.";
+        if (role === "Employee / Professional") return "User gets normal employee/professional timesheet access. Indirect-tax category fields stay hidden unless later moved to Varun Sir Team.";
+        if (role === VARUN_TEAM_ROLE) return "User gets normal employee/professional timesheet access plus indirect-tax category fields for GST & Indirect Taxes. Their qualifying entries appear in Admin Indirect Tax Analysis.";
+        return "Role controls the user's next portal interface after refresh or next login.";
+      };
+      const syncImpact = () => {
+        const selectedRole = normalizeRoleValue(byId("role-change-role")?.value || currentRole);
+        const dept = byId("role-change-department");
+        if (dept && selectedRole !== currentRole && !dept.dataset.touched) dept.value = defaultDepartmentForRole(selectedRole);
+        const host = byId("role-change-impact");
+        if (host) host.textContent = impactText();
+      };
+      byId("role-change-role")?.addEventListener("change", syncImpact);
+      byId("role-change-department")?.addEventListener("change", () => {
+        const dept = byId("role-change-department");
+        if (dept) dept.dataset.touched = "1";
+      });
+      byId("role-change-cancel")?.addEventListener("click", closeModal);
+      syncImpact();
+      let saving = false;
+      byId("role-change-save")?.addEventListener("click", async () => {
+        if (saving) return;
+        const confirmText = String(byId("role-change-confirm")?.value || "").trim();
+        if (confirmText !== "CHANGE") return toast("Type CHANGE to confirm the role change.", "warn");
+        const newRole = normalizeRoleValue(byId("role-change-role")?.value || currentRole);
+        const newDepartment = String(byId("role-change-department")?.value || defaultDepartmentForRole(newRole)).trim() || defaultDepartmentForRole(newRole);
+        if (newRole === currentRole && newDepartment === currentDept) return toast("No role or department change selected.", "warn");
+        saving = true;
+        setButtonBusy(byId("role-change-save"), true, "Updating...");
+        const cancelButton = byId("role-change-cancel");
+        if (cancelButton) cancelButton.disabled = true;
+        try {
+          const docsToUpdate = await matchingUserDocsForEmail(user);
+          const payload = {
+            role: newRole,
+            department: newDepartment,
+            updatedAt: Timestamp.now(),
+            roleChangedAt: Timestamp.now(),
+            roleChangedByUid: state.user?.uid || "",
+            roleChangedByName: profileName(),
+            roleChangedFrom: currentRole
+          };
+          for (const item of docsToUpdate) {
+            await updateDoc(doc(db, "users", item.id), payload);
+            await syncUserDirectoryEntry({ ...(item || {}), id: item.id, role: newRole, department: newDepartment, approved: item.approved !== false });
+          }
+          await writeLog({
+            action: `${profileName()} changed a user role`,
+            actorName: profileName(),
+            actorEmail: profileEmail(),
+            type: "user",
+            detail: `${user.name || user.email || id} | ${currentRole} -> ${newRole}`,
+            detailAdmin: `Updated docs: ${docsToUpdate.map((item) => item.id).join(", ")} | Department: ${newDepartment}`
+          });
+          closeModal();
+          toast("User role updated. The user's interface changes after refresh or next login.", "success");
+          await loadEmployeesPage();
+          await loadApprovals();
+          if (state.currentPage === "page-indirect-tax") await loadIndirectTaxPage(true);
+        } catch (error) {
+          toast(error?.message || "Could not update user role.", "error");
+        } finally {
+          saving = false;
+          setButtonBusy(byId("role-change-save"), false);
+          if (cancelButton) cancelButton.disabled = false;
+        }
+      });
     }
 
     function openRejectUsersModal(ids) {
@@ -17672,10 +18534,11 @@ tbody tr { transition: background .14s ease; }
       `;
     }
 
-    function buildGroupSubmitSummary({ mode, from, to, dates, client, tasks, members, memberEntries, duplicateRecord, overlaps }) {
+    function buildGroupSubmitSummary({ mode, from, to, dates, client, tasks, indirectTaxCategory, indirectTaxOtherCategory, members, memberEntries, duplicateRecord, overlaps }) {
       const warnings = [];
       const total = Object.values(memberEntries || {}).reduce((sum, entry) => sum + Number(entry.totalHours || 0), 0);
       const highMembers = Object.values(memberEntries || {}).filter((entry) => totalHoursFromMap(entry.dailyHours || {}) / Math.max(dates.length, 1) > 12);
+      const categoryLabel = indirectTaxCategoryLabel({ indirectTaxCategory, indirectTaxOtherCategory });
       if (highMembers.length) warnings.push(warningBoxHtml("warn", "High member time", `${highMembers.map((entry) => entry.name).join(", ")} has unusually high daily time. Please confirm.`));
       if (duplicateRecord) warnings.push(warningBoxHtml("info", "Similar group entry found", `Existing record: ${displayDate(duplicateRecord)} | ${clientLabel(duplicateRecord)}. Submit only if this is separate.`));
       if (overlaps?.length) warnings.push(warningBoxHtml("danger", "Member date overlap found", `${overlaps.slice(0, 4).join(" | ")}${overlaps.length > 4 ? ` | +${overlaps.length - 4} more` : ""}`));
@@ -17690,6 +18553,7 @@ tbody tr { transition: background .14s ease; }
           </div>
           <div style="margin-top:14px;"><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Client</span><strong style="display:block;margin-top:4px;">${safe(client)}</strong></div>
           <div style="margin-top:14px;"><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Work types</span><div class="chip-row" style="margin-top:6px;">${tasks.map((task) => `<span class="chip">${safe(task)}</span>`).join("")}</div></div>
+          ${categoryLabel ? `<div style="margin-top:14px;"><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Indirect Tax Category</span><strong style="display:block;margin-top:4px;">${safe(categoryLabel)}</strong></div>` : ""}
           <div style="margin-top:14px;"><span class="muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;">Member-wise summary</span>
             <div class="entry-detail-grid" style="margin-top:6px;">
               ${members.map((member) => {
@@ -17709,183 +18573,6 @@ tbody tr { transition: background .14s ease; }
       `;
     }
 
-    function openGuideLegacy() {
-      const isAdminView = isAdmin();
-      const isArticleView = isArticle();
-      openModal(
-        "Portal Guide",
-        "Simple guide for who can do what, how reporting works, what updates immediately, and how to read full entries.",
-        `
-          <div class="guide-shell">
-            <section class="guide-hero">
-              <div class="guide-hero-title">
-                <span class="guide-hero-icon">&#128161;</span>
-                <span>Use the portal in this order</span>
-              </div>
-              <p>Sign in, clear the PIN step, report correctly, review your own timesheet, and use the bell whenever something is waiting on you.</p>
-              <div class="guide-path">
-                <span class="guide-path-step">&#128275; Google sign-in</span>
-                <span class="guide-arrow">&rarr;</span>
-                <span class="guide-path-step">&#9989; Approval</span>
-                <span class="guide-arrow">&rarr;</span>
-                <span class="guide-path-step">&#128274; PIN</span>
-                <span class="guide-arrow">&rarr;</span>
-                <span class="guide-path-step">&#128221; Submit work</span>
-                <span class="guide-arrow">&rarr;</span>
-                <span class="guide-path-step">&#128269; Review / export</span>
-              </div>
-              <div class="guide-role-strip">
-                <span class="guide-role-pill user">&#128100; Employee / Professional</span>
-                <span class="guide-role-pill article">&#128218; CA Article</span>
-                <span class="guide-role-pill admin">&#9881;&#65039; Admin</span>
-              </div>
-              <div class="guide-role-map">
-                <div class="guide-role-card">
-                  <strong>Normal user</strong>
-                  <span>Can submit work, see own timesheet, edit/delete own allowed entries, export/print own records, use calendar, and approve group entries involving them.</span>
-                </div>
-                <div class="guide-role-card">
-                  <strong>CA Article</strong>
-                  <span>Gets the same reporting, calendar, approval, edit, export, and print features as a normal user.</span>
-                </div>
-                <div class="guide-role-card">
-                  <strong>Admin</strong>
-                  <span>Can approve users, reset PINs, manage clients, review all timesheets by range, open trails, delete/restore records, view logs, and monitor storage.</span>
-                </div>
-              </div>
-            </section>
-
-            <section class="guide-grid">
-              <article class="guide-card">
-                <div class="guide-card-head">
-                  <span class="guide-card-icon">&#128274;</span>
-                  <h4>Access and PIN</h4>
-                </div>
-                <p>First-time users wait for approval. Every fresh browser session asks for the 4-digit PIN before entering the portal.</p>
-                <div class="guide-step-list">
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>New user:</strong> sign in with Google and wait for admin approval.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Approved user:</strong> set the PIN once, then use it on each fresh browser session.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Security:</strong> 3 wrong PIN attempts lock the account until admin unlocks or resets it.</span></div>
-                </div>
-              </article>
-
-              <article class="guide-card wide">
-                <div class="guide-card-head">
-                  <span class="guide-card-icon">&#128221;</span>
-                  <h4>Three entry types — four reporting paths</h4>
-                </div>
-                <p>There are three entry types, and Group has two sub-modes — Single and Bulk. Use the path that matches what really happened. Pick wrong and you'll need to correct later.</p>
-                <div class="guide-step-list">
-                  <div class="guide-step"><span class="guide-step-icon">&#128313;</span><span><strong>1. Single entry &mdash;</strong> ONE person, ONE day, ONE or MANY clients. This is the default form on the <em>Log time</em> page. For each client you add, enter its own <strong>time, remarks and work type</strong>. (Work type is now per-client, not for the whole day.)</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#128313;</span><span><strong>2. Bulk entry &mdash;</strong> ONE person, ONE or MANY clients, MANY days. Each client keeps its own work type, remarks, and date-wise hours.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#128313;</span><span><strong>3a. Group Single &mdash;</strong> MANY users, ONE day, ONE shared client. Use the <em>Group reporting</em> button, then pick the &quot;Single day&quot; mode. The reporter enters separate hours and remarks for each member. Each member must approve their own section before it counts.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#128313;</span><span><strong>3b. Group Bulk &mdash;</strong> MANY users, MANY days, ONE shared client. Same as Group Single but covers a date range. Same approval flow — each member approves their own participation. Members can reject if hours don't match what they remember working.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>How to search by entry type:</strong> the search bar on My Timesheet / Dashboard accepts <em>single</em>, <em>bulk</em>, or <em>group</em> as a keyword. Type &quot;bulk&quot; to filter only bulk entries.</span></div>
-                </div>
-              </article>
-
-              <article class="guide-card">
-                <div class="guide-card-head">
-                  <span class="guide-card-icon">&#128197;</span>
-                  <h4>Date and Draft Rules</h4>
-                </div>
-                <p>The portal blocks future dates everywhere. Drafts are for unfinished work on the current browser/device only.</p>
-                <div class="guide-step-list">
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>No future dates:</strong> reporting, filters, and edit panels all follow this rule.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Time entry:</strong> enter hours and minutes separately — type 6 in the hr box and 30 in the min box. The system converts automatically. No decimals needed.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Save for later:</strong> use draft buttons if the form is not ready yet.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Submit only when final:</strong> local draft data is not sent until you actually submit.</span></div>
-                </div>
-              </article>
-
-              <article class="guide-card">
-                <div class="guide-card-head">
-                  <span class="guide-card-icon">&#128101;</span>
-                  <h4>Group Approval Flow</h4>
-                </div>
-                <p>Group reports stay with the involved users first. They move into admin-side reporting only after the approval chain finishes.</p>
-                <div class="guide-step-list">
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Reporter:</strong> submits the shared client, dates, work type(s), and member-wise hours.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Members:</strong> approve or reject their participation from their own side.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Visibility:</strong> admin and public activity only see the group record after finalization.</span></div>
-                </div>
-              </article>
-
-              <article class="guide-card">
-                <div class="guide-card-head">
-                  <span class="guide-card-icon">&#9998;&#65039;</span>
-                  <h4>My Timesheet and Edits</h4>
-                </div>
-              <p>Your timesheet is user-specific. It is the place to review, search, export, edit, or delete your own visible records.</p>
-              <div class="guide-step-list">
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Visible here:</strong> your single entries, your bulk entries, and your visible group entries.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Saved first:</strong> when you submit, the entry is saved immediately. The table may keep a short smooth-view copy so the page opens quickly.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Latest view:</strong> the note above the table shows when it will check again. The portal checks again about every 3 minutes.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Calendar:</strong> use the Calendar button in My Timesheet to review your own day-wise reporting history month by month.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Edit rule:</strong> you can edit your own single/bulk entries. In group entries, the reporter edits shared fields and members edit only their own section.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Delete rule:</strong> delete moves the record to recycle first, and trails stay recorded.</span></div>
-                </div>
-              </article>
-
-              <article class="guide-card">
-                <div class="guide-card-head">
-                  <span class="guide-card-icon">&#9889;</span>
-                  <h4>What Updates Immediately</h4>
-                </div>
-                <p>Daily action items still update when you open or use them. The lighter loading rule is mainly for long timesheet lists.</p>
-                <div class="guide-step-list">
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Approvals:</strong> admin gets pending users and locked accounts without waiting for the timesheet list to reload.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Clients:</strong> adding, editing, importing, and deleting clients updates the client list when the action finishes.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Trail and audit:</strong> Trail opens the selected record history when you click it. Your recent activity is loaded on My Timesheet.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Calendar:</strong> calendar data loads when you open the calendar, and the Calendar Refresh button checks again.</span></div>
-                </div>
-              </article>
-
-              <article class="guide-card">
-                <div class="guide-card-head">
-                  <span class="guide-card-icon">&#128269;</span>
-                  <h4>Search, Filters, and Export</h4>
-                </div>
-                <p>Filters update automatically as you type or select. Export should match the filtered list you are currently looking at.</p>
-                <div class="guide-step-list">
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Search fast:</strong> My Timesheet, All Timesheets, Employees / Articles, Clients, and Logs all have search/filter controls.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Use quick actions:</strong> Today and Clear filters help you jump or reset instantly.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Admin timesheets:</strong> choose the range or employee, then load that range. This avoids opening years of records when only one month is needed.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Export:</strong> use Excel export after confirming the list on screen is the list you want.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Client search:</strong> click the search box and suggestions appear. Use mouse click or keyboard arrow + Enter to pick a client from the list.</span></div>
-                </div>
-              </article>
-
-              <article class="guide-card">
-                <div class="guide-card-head">
-                  <span class="guide-card-icon">&#128276;</span>
-                  <h4>Bell and Quick Actions</h4>
-                </div>
-                <p>The bell is the fastest place to see what needs action instead of manually checking every page.</p>
-                <div class="guide-step-list">
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Users:</strong> use the bell for group reminders and items waiting on you instead of looking for a separate notification card on the page.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>Admin:</strong> check pending registrations, locked accounts, and recycle activity.</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>${isAdminView ? "Refresh:" : "Screen updates:"}</strong> ${isAdminView ? "admin can use Refresh when an immediate check is needed. Otherwise the portal checks again about every 3 minutes." : "normal user screens check again automatically about every 3 minutes."}</span></div>
-                </div>
-              </article>
-
-              <article class="guide-card wide">
-                <div class="guide-card-head">
-                  <span class="guide-card-icon">&#9881;&#65039;</span>
-                  <h4>${isAdminView ? "Admin Control Map" : "Important Rules to Remember"}</h4>
-                </div>
-                <p>${isAdminView ? "Admin pages are split by purpose so reporting, approvals, master data, activity, and storage stay separate." : "These are the main operating rules that matter in daily use."}</p>
-                <div class="guide-step-list">
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>${isAdminView ? "Timesheets:" : "Admin cannot edit entries:"}</strong> ${isAdminView ? "daily summary, all records, filters, exports, and trails." : "admin can review, recycle, restore, and audit, but not change your record content."}</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>${isAdminView ? "Approvals:" : "Public log stays limited:"}</strong> ${isAdminView ? "new registrations, lock handling, and PIN reset control update without waiting for timesheet records." : "it shows only safe activity with action and time, not private admin work."}</span></div>
-                  <div class="guide-step"><span class="guide-step-icon">&#10148;</span><span><strong>${isAdminView ? "Employees / Articles, Clients, Logs, Storage:" : "Shared device rule:"}</strong> ${isAdminView ? "master data, activity history, recycle control, and growth monitoring stay separate from entry loading." : "always log out when you leave a shared device."}</span></div>
-                </div>
-              </article>
-            </section>
-          </div>
-        `
-      );
-    }
 
     function openGuide() {
       const isAdminView = isAdmin();
@@ -18127,6 +18814,7 @@ tbody tr { transition: background .14s ease; }
       });
       bind("header-notify", "click", openHeaderNotifications);
       bind("open-guide", "click", openGuide);
+      bind("change-pin-button", "click", openChangePinModal);
       bind("public-log-button", "click", openPublicLog);
       bind("my-calendar", "click", openOwnCalendar);
       bind("pin-clear", "click", clearPinDigits);
@@ -18202,6 +18890,8 @@ tbody tr { transition: background .14s ease; }
       bindFilters(["all-search", "all-from", "all-to", "all-role-filter", "all-task-filter"], renderAllTable);
       bindFilters(["employee-search", "employee-role-filter", "employee-department-filter", "employee-status-filter"], renderEmployeesTable);
       bindFilters(["client-search"], renderClientsTable);
+      bindFilters(["indirect-tax-search", "indirect-tax-from", "indirect-tax-to", "indirect-tax-category-filter", "indirect-tax-entered"], renderIndirectTaxTable);
+      bindFilters(["indirect-tax-category-search"], renderIndirectTaxCategoryTable);
       bindFilters(["log-search", "log-from", "log-to", "log-type-filter"], renderLogsPage);
 
       bind("my-today", "click", applyMyTodayFilters);
@@ -18211,6 +18901,19 @@ tbody tr { transition: background .14s ease; }
       bind("all-clear", "click", clearAllFilters);
       bind("employee-clear", "click", clearEmployeeFilters);
       bind("client-clear", "click", clearClientFilters);
+      bind("indirect-tax-load", "click", loadSelectedIndirectTaxRange);
+      bind("indirect-tax-today", "click", () => {
+        setFieldValue("indirect-tax-from", todayStr());
+        setFieldValue("indirect-tax-to", todayStr());
+        loadSelectedIndirectTaxRange();
+      });
+      bind("indirect-tax-clear", "click", clearIndirectTaxFilters);
+      bind("indirect-tax-export", "click", exportIndirectTaxExcel);
+      bind("indirect-tax-category-add", "click", () => openIndirectTaxCategoryModal());
+      bind("indirect-tax-category-clear", "click", () => {
+        setFieldValue("indirect-tax-category-search", "");
+        renderIndirectTaxCategoryTable();
+      });
       bind("log-today", "click", applyLogTodayFilters);
       bind("log-clear", "click", clearLogFilters);
 
@@ -18245,6 +18948,7 @@ tbody tr { transition: background .14s ease; }
             Type: String(record.entryKind || "single").toUpperCase(),
             Client: clientLabel(record),
             WorkType: normalizeTaskList(record).join(" | "),
+            "Indirect Tax Category": indirectTaxCategoryTextForRecord(record),
             Hours: record.entryKind === "group" ? Number(groupEntry?.totalHours || 0) : record.entryKind === "bulk" ? Number(totalHoursFromMap(record.dailyHours || {}).toFixed(2)) : Number(record.hours || 0),
             Days: recordDates(record).length || 1,
             Remarks: record.entryKind === "group" ? groupEntry?.remarks || "" : remarksTextForRecord(record)
@@ -18514,6 +19218,7 @@ tbody tr { transition: background .14s ease; }
           const searchByPage = {
             "page-my": "my-search",
             "page-dashboard": "all-search",
+            "page-indirect-tax": "indirect-tax-search",
             "page-clients": "client-search",
             "page-logs": "log-search"
           };
@@ -18547,7 +19252,7 @@ tbody tr { transition: background .14s ease; }
           toast("Record not found.", "error");
           return;
         }
-        openEntryDetailModal(record, Boolean(row.closest("#page-dashboard")));
+        openEntryDetailModal(record, Boolean(row.closest("#page-dashboard") || row.closest("#page-indirect-tax")));
       });
       document.addEventListener("click", async (event) => {
         const pageButton = event.target.closest("[data-page]");
@@ -18616,6 +19321,10 @@ tbody tr { transition: background .14s ease; }
           const row = (state.entryClientDrafts || []).find((item) => item.key === key);
           if (row && Array.isArray(row.tasks)) {
             row.tasks = row.tasks.filter((t) => t !== task);
+            if (!rowNeedsIndirectTaxCategory(row)) {
+              row.indirectTaxCategory = "";
+              row.indirectTaxOtherCategory = "";
+            }
             renderSingleEntryClientBreakdown();
           }
           return;
@@ -18649,6 +19358,19 @@ tbody tr { transition: background .14s ease; }
           return;
         }
 
+        if (actionEl.dataset.action === "retry-trail") {
+          const host = byId("trail-modal-body");
+          if (host) host.innerHTML = `<div class="compact-empty"><span class="card-icon" aria-hidden="true">&#8987;</span><div><strong>Loading trail…</strong><small>Fetching the recorded history for this entry.</small></div></div>`;
+          loadTrailIntoModal(actionEl.dataset.collection, actionEl.dataset.id);
+          return;
+        }
+
+        if (actionEl.dataset.action === "logs-load-more") {
+          state.logsRenderLimit = Number(state.logsRenderLimit || ADMIN_LOG_PAGE_SIZE) + ADMIN_LOG_PAGE_SIZE;
+          renderLogsPage();
+          return;
+        }
+
         if (actionEl.dataset.action === "delete-record") {
           const record = findCachedRecord(actionEl.dataset.collection, actionEl.dataset.id) || (await fetchRecord(actionEl.dataset.collection, actionEl.dataset.id));
           if (!record) {
@@ -18666,6 +19388,39 @@ tbody tr { transition: background .14s ease; }
             return;
           }
           openEditRecordModal(record);
+          return;
+        }
+
+        if (actionEl.dataset.action === "why-no-edit") {
+          const record = findCachedRecord(actionEl.dataset.collection, actionEl.dataset.id) || (await fetchRecord(actionEl.dataset.collection, actionEl.dataset.id));
+          openModal(
+            "Why can't I edit this entry?",
+            "These rules keep timesheet history accurate and consistent.",
+            `
+              <div class="hub-card">
+                <div class="subline">${safe(whyCannotEdit(record))}</div>
+              </div>
+              <div class="button-row" style="justify-content:flex-end;margin-top:14px;">
+                <button class="btn btn-primary" id="why-no-edit-ok" type="button">Got it</button>
+              </div>
+            `
+          );
+          byId("why-no-edit-ok")?.addEventListener("click", () => closeModal());
+          return;
+        }
+
+        if (actionEl.dataset.action === "indirect-tax-detail") {
+          const row = findIndirectTaxAnalysisRow(actionEl.dataset.key || "");
+          if (!row) {
+            toast("Indirect tax row not found.", "error");
+            return;
+          }
+          openEntryDetailModal(row.record, true);
+          return;
+        }
+
+        if (actionEl.dataset.action === "indirect-tax-edit") {
+          openAdminIndirectTaxEditModal(actionEl.dataset.key || "");
           return;
         }
 
@@ -18801,6 +19556,11 @@ tbody tr { transition: background .14s ease; }
           return;
         }
 
+        if (actionEl.dataset.action === "open-change-role") {
+          openChangeUserRoleModal(actionEl.dataset.id);
+          return;
+        }
+
         if (actionEl.dataset.action === "edit-client") {
           const clientDoc = state.clientDocs.find((item) => item.id === actionEl.dataset.id);
           if (!clientDoc) {
@@ -18818,6 +19578,26 @@ tbody tr { transition: background .14s ease; }
             return;
           }
           openDeleteClientModal(clientDoc);
+          return;
+        }
+
+        if (actionEl.dataset.action === "edit-indirect-category") {
+          const categoryDoc = state.indirectTaxCategoryDocs.find((item) => item.id === actionEl.dataset.id);
+          if (!categoryDoc) {
+            toast("Category not found.", "error");
+            return;
+          }
+          openIndirectTaxCategoryModal(categoryDoc);
+          return;
+        }
+
+        if (actionEl.dataset.action === "delete-indirect-category") {
+          const categoryDoc = state.indirectTaxCategoryDocs.find((item) => item.id === actionEl.dataset.id);
+          if (!categoryDoc) {
+            toast("Category not found.", "error");
+            return;
+          }
+          openDeleteIndirectTaxCategoryModal(categoryDoc);
           return;
         }
 
