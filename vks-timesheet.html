@@ -8165,7 +8165,7 @@ tbody tr { transition: background .14s ease; }
           <div class="panel-head">
             <div>
               <div class="panel-kicker">Admin</div>
-              <h3>Indirect Tax Analysis</h3>
+              <h3>Indirect Tax</h3>
             </div>
             <div class="panel-actions">
               <button id="indirect-tax-export" class="btn btn-outline" type="button">Export Excel</button>
@@ -9532,7 +9532,7 @@ tbody tr { transition: background .14s ease; }
             { id: "page-clients", label: "Clients" },
             { id: "page-logs", label: "Logs" },
             { id: "page-storage", label: "Storage" },
-            { id: "page-indirect-tax", label: "Indirect Tax Analysis" }
+            { id: "page-indirect-tax", label: "Indirect Tax" }
           ]
         : [
             { id: "page-log", label: "Log Time" },
@@ -14452,7 +14452,7 @@ tbody tr { transition: background .14s ease; }
         Remarks: row.remarks,
         Type: row.entryKind
       }));
-      exportRowsToExcel(rows, `indirect-tax-analysis-${todayStr()}.xlsx`, "Indirect Tax Analysis");
+      exportRowsToExcel(rows, `indirect-tax-${todayStr()}.xlsx`, "Indirect Tax");
     }
 
     function openIndirectTaxCategoryModal(categoryDoc = null) {
@@ -18195,9 +18195,9 @@ tbody tr { transition: background .14s ease; }
       );
       const impactText = () => {
         const role = normalizeRoleValue(byId("role-change-role")?.value || currentRole);
-        if (role === "CA Article") return "User keeps normal article timesheet access. Indirect-tax category fields and Indirect Tax Analysis inclusion stay hidden, even if GST & Indirect Taxes is selected.";
+        if (role === "CA Article") return "User keeps normal article timesheet access. Indirect-tax category fields and Indirect Tax inclusion stay hidden, even if GST & Indirect Taxes is selected.";
         if (role === "Employee / Professional") return "User gets normal employee/professional timesheet access. Indirect-tax category fields stay hidden unless later moved to the Indirect Tax Team.";
-        if (role === VARUN_TEAM_ROLE) return "User joins the Indirect Tax Team: normal timesheet access plus indirect-tax category fields for GST & Indirect Taxes. Their work is confidential and appears only under Admin › Indirect Tax Analysis.";
+        if (role === VARUN_TEAM_ROLE) return "User joins the Indirect Tax Team: normal timesheet access plus indirect-tax category fields for GST & Indirect Taxes. Their work is confidential and appears only under Admin › Indirect Tax.";
         return "Role controls the user's next portal interface after refresh or next login.";
       };
       const syncImpact = () => {
